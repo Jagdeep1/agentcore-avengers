@@ -1,0 +1,341 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="canonical" href="https://agentcore-initiative.aws/days/1/agentcore-runtime/"><!-- Favicon --><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><!-- Primary Meta Tags --><title>AgentCore Runtime - Day 1 | The AgentCore Initiative</title><meta name="title" content="AgentCore Runtime - Day 1 | The AgentCore Initiative"><meta name="description" content="Day 1: The First Avenger - Foundation - Strands Agent + AgentCore Runtime"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://agentcore-initiative.aws/days/1/agentcore-runtime/"><meta property="og:title" content="AgentCore Runtime - Day 1 | The AgentCore Initiative"><meta property="og:description" content="Day 1: The First Avenger - Foundation - Strands Agent + AgentCore Runtime"><meta property="og:image" content="https://agentcore-initiative.aws/images/og/default.png"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://agentcore-initiative.aws/days/1/agentcore-runtime/"><meta name="twitter:title" content="AgentCore Runtime - Day 1 | The AgentCore Initiative"><meta name="twitter:description" content="Day 1: The First Avenger - Foundation - Strands Agent + AgentCore Runtime"><meta name="twitter:image" content="https://agentcore-initiative.aws/images/og/default.png"><!-- Fonts - Plus Jakarta Sans & Geist Mono --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"><!-- Theme initialization (prevents flash) --><script>
+      (function () {
+        const stored = localStorage.getItem('agentcore-initiative-progress');
+        let theme = 'dark';
+        if (stored) {
+          try {
+            const progress = JSON.parse(stored);
+            theme = progress.theme || 'dark';
+          } catch (e) {}
+        }
+        if (theme === 'system') {
+          theme = window.matchMedia('(prefers-color-scheme: light)').matches
+            ? 'light'
+            : 'dark';
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script><link rel="stylesheet" href="/_astro/_slug_.B9ZU_V3V.css">
+<style>.pagination[data-astro-cid-er2v6o3k]{display:flex;justify-content:space-between;gap:1rem}.pagination__link[data-astro-cid-er2v6o3k]{flex:1;max-width:50%;padding:1rem 1.25rem;background:var(--color-bg-elevated);border:var(--border-subtle);border-radius:var(--radius-lg);text-decoration:none;transition:all var(--transition-fast)}.pagination__link[data-astro-cid-er2v6o3k]:hover{background:var(--color-bg-secondary);border-color:var(--border-default)}.pagination__link--prev[data-astro-cid-er2v6o3k]{text-align:left}.pagination__link--next[data-astro-cid-er2v6o3k]{text-align:right;margin-left:auto}.pagination__label[data-astro-cid-er2v6o3k]{display:block;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-muted);margin-bottom:.25rem}.pagination__title[data-astro-cid-er2v6o3k]{display:block;font-size:.9375rem;font-weight:500;color:var(--color-text-primary)}
+</style>
+<link rel="stylesheet" href="/_astro/_slug_.CP5296fy.css"><style>.callout[data-astro-cid-wi7smz4x]{display:flex;gap:1rem;padding:1rem 1.25rem;border-radius:var(--radius-lg);margin:1.5rem 0;border-left:4px solid}.callout--info[data-astro-cid-wi7smz4x]{background:#3b82f614;border-left-color:var(--color-accent-primary)}.callout--info[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-primary)}.callout--warning[data-astro-cid-wi7smz4x]{background:#f59e0b14;border-left-color:var(--color-accent-warning)}.callout--warning[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-warning)}.callout--danger[data-astro-cid-wi7smz4x]{background:#ef444414;border-left-color:var(--color-accent-danger)}.callout--danger[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-danger)}.callout--success[data-astro-cid-wi7smz4x]{background:#10b98114;border-left-color:var(--color-accent-success)}.callout--success[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-success)}.callout--tip[data-astro-cid-wi7smz4x]{background:#8b5cf614;border-left-color:var(--color-accent-purple)}.callout--tip[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-purple)}.callout__icon[data-astro-cid-wi7smz4x]{flex-shrink:0;width:1.25rem;height:1.25rem;margin-top:.125rem}.callout__content[data-astro-cid-wi7smz4x]{flex:1;min-width:0}.callout__title[data-astro-cid-wi7smz4x]{font-weight:600;font-size:.9375rem;color:var(--color-text-primary);margin-bottom:.25rem}.callout__body[data-astro-cid-wi7smz4x]{font-size:.9375rem;color:var(--color-text-secondary);line-height:1.6}.callout__body[data-astro-cid-wi7smz4x] p{margin:0}.callout__body[data-astro-cid-wi7smz4x] p+p{margin-top:.5rem}.callout__body[data-astro-cid-wi7smz4x] code{font-size:.85em}.callout__body[data-astro-cid-wi7smz4x] a{font-weight:500}
+</style></head> <body>  <header class="header" data-astro-cid-mb6pvx4c> <div class="header__container" data-astro-cid-mb6pvx4c> <!-- Logo --> <a href="/" class="header__logo" aria-label="Home" data-astro-cid-mb6pvx4c> <svg class="header__logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" data-astro-cid-mb6pvx4c> <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c></circle> <path d="M16 6 L22 12 L16 18 L10 12 Z" fill="currentColor" opacity="0.5" data-astro-cid-mb6pvx4c></path> <circle cx="16" cy="16" r="4" fill="currentColor" data-astro-cid-mb6pvx4c></circle> </svg> <span class="header__logo-text" data-astro-cid-mb6pvx4c>AgentCore Initiative</span> </a> <!-- Desktop Navigation --> <nav class="header__nav hide-mobile" aria-label="Main navigation" data-astro-cid-mb6pvx4c> <ul class="header__nav-list" data-astro-cid-mb6pvx4c> <li data-astro-cid-mb6pvx4c> <a href="/days" class="header__nav-link header__nav-link--active" data-astro-cid-mb6pvx4c> Course </a> </li><li data-astro-cid-mb6pvx4c> <a href="/troubleshooting" class="header__nav-link" data-astro-cid-mb6pvx4c> Troubleshooting </a> </li><li data-astro-cid-mb6pvx4c> <a href="/reference" class="header__nav-link" data-astro-cid-mb6pvx4c> Reference </a> </li> </ul> </nav> <!-- Actions --> <div class="header__actions" data-astro-cid-mb6pvx4c> <!-- Theme Toggle Button (placeholder - will be React component) --> <button id="theme-toggle" class="header__theme-toggle" aria-label="Toggle theme" type="button" data-astro-cid-mb6pvx4c> <svg class="header__theme-icon header__theme-icon--dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <circle cx="12" cy="12" r="5" data-astro-cid-mb6pvx4c></circle> <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" data-astro-cid-mb6pvx4c></path> </svg> <svg class="header__theme-icon header__theme-icon--light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-mb6pvx4c></path> </svg> </button> <!-- Mobile Menu Toggle --> <button id="mobile-menu-toggle" class="header__mobile-toggle hide-desktop" aria-label="Toggle menu" aria-expanded="false" type="button" data-astro-cid-mb6pvx4c> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <path class="menu-icon" d="M4 6h16M4 12h16M4 18h16" data-astro-cid-mb6pvx4c></path> <path class="close-icon" d="M6 6l12 12M6 18L18 6" style="display: none" data-astro-cid-mb6pvx4c></path> </svg> </button> </div> </div> <!-- Mobile Navigation --> <nav id="mobile-nav" class="header__mobile-nav hide-desktop" aria-label="Mobile navigation" hidden data-astro-cid-mb6pvx4c> <ul class="header__mobile-nav-list" data-astro-cid-mb6pvx4c> <li data-astro-cid-mb6pvx4c> <a href="/days" class="header__mobile-nav-link header__mobile-nav-link--active" data-astro-cid-mb6pvx4c> Course </a> </li><li data-astro-cid-mb6pvx4c> <a href="/troubleshooting" class="header__mobile-nav-link" data-astro-cid-mb6pvx4c> Troubleshooting </a> </li><li data-astro-cid-mb6pvx4c> <a href="/reference" class="header__mobile-nav-link" data-astro-cid-mb6pvx4c> Reference </a> </li> </ul> </nav> </header>  <script type="module">const r=document.getElementById("theme-toggle");r&&r.addEventListener("click",()=>{const e=document.documentElement,t=e.getAttribute("data-theme")==="dark"?"light":"dark";e.setAttribute("data-theme",t);const c=localStorage.getItem("agentcore-initiative-progress");let i={theme:t};if(c)try{i={...JSON.parse(c),theme:t}}catch{}localStorage.setItem("agentcore-initiative-progress",JSON.stringify(i))});const n=document.getElementById("mobile-menu-toggle"),l=document.getElementById("mobile-nav");n&&l&&n.addEventListener("click",()=>{const e=n.getAttribute("aria-expanded")==="true";n.setAttribute("aria-expanded",String(!e)),l.hidden=e;const o=n.querySelector(".menu-icon"),t=n.querySelector(".close-icon");o&&t&&(o.style.display=e?"block":"none",t.style.display=e?"none":"block")});</script> <div class="day-layout" style="--day-accent: #3b82f6" data-astro-cid-vfeiczyy> <!-- Sidebar --> <aside class="day-layout__sidebar hide-mobile" data-astro-cid-vfeiczyy> <div class="day-layout__sidebar-content" data-astro-cid-vfeiczyy> <!-- Day Header --> <div class="day-layout__day-header" data-astro-cid-vfeiczyy> <span class="day-layout__day-number" data-astro-cid-vfeiczyy>Day 1</span> <h2 class="day-layout__day-title" data-astro-cid-vfeiczyy>The First Avenger</h2> <p class="day-layout__day-focus" data-astro-cid-vfeiczyy>Foundation - Strands Agent + AgentCore Runtime</p> </div> <!-- Section Navigation --> <nav class="day-layout__nav" aria-label="Day sections" data-astro-cid-vfeiczyy> <ul class="day-layout__nav-list" data-astro-cid-vfeiczyy> <li data-astro-cid-vfeiczyy> <a href="/days/1/setup" class="day-layout__nav-link" data-section="setup" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Environment Setup </a> </li><li data-astro-cid-vfeiczyy> <a href="/days/1/strands-basics" class="day-layout__nav-link" data-section="strands-basics" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Strands Basics </a> </li><li data-astro-cid-vfeiczyy> <a href="/days/1/agentcore-runtime" class="day-layout__nav-link day-layout__nav-link--active" data-section="agentcore-runtime" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> AgentCore Runtime </a> </li><li data-astro-cid-vfeiczyy> <a href="/days/1/controlled-disasters" class="day-layout__nav-link" data-section="controlled-disasters" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Controlled Disasters </a> </li> </ul> </nav> <!-- Challenge Link --> <a href="/days/1/challenge" class="day-layout__challenge-link" data-astro-cid-vfeiczyy> <span class="day-layout__challenge-icon" data-astro-cid-vfeiczyy> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-vfeiczyy> <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" data-astro-cid-vfeiczyy></polygon> </svg> </span>
+Daily Challenge
+</a> </div> </aside> <!-- Main Content --> <main class="day-layout__main" data-astro-cid-vfeiczyy> <article class="day-layout__content prose" data-astro-cid-vfeiczyy>  <h1 id="agentcore-runtime">AgentCore Runtime</h1>
+<p>Your agent works locally. Now let’s deploy it to <strong>Amazon Bedrock AgentCore Runtime</strong> - a serverless, secure hosting environment designed specifically for agentic workloads.</p>
+<h2 id="why-agentcore-runtime">Why AgentCore Runtime?</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Feature</th><th>Local Development</th><th>AgentCore Runtime</th></tr></thead><tbody><tr><td>Session Isolation</td><td>❌ Single process</td><td>✅ Per-request isolation</td></tr><tr><td>Execution Time</td><td>Limited by local resources</td><td>Extended timeouts for complex tasks</td></tr><tr><td>Scaling</td><td>Manual</td><td>✅ Automatic serverless scaling</td></tr><tr><td>Security</td><td>Your responsibility</td><td>✅ Enterprise-grade sandboxing</td></tr><tr><td>Pricing</td><td>Always running</td><td>✅ Consumption-based (pay per use)</td></tr></tbody></table>
+<aside class="callout callout--info" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Production-Ready</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>AgentCore Runtime handles the infrastructure complexity so you can focus on building agent capabilities.</p> </div> </div> </aside> 
+<h2 id="deployment-architecture">Deployment Architecture</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext"><code><span class="line"><span>┌─────────────────────────────────────────────────────────────┐</span></span>
+<span class="line"><span>│                    AgentCore Starter Toolkit                 │</span></span>
+<span class="line"><span>│  ┌────────────────────────────────────────────────────────┐ │</span></span>
+<span class="line"><span>│  │  agentcore create  →  Scaffold project                  │ │</span></span>
+<span class="line"><span>│  │  agentcore dev     →  Local testing server              │ │</span></span>
+<span class="line"><span>│  │  agentcore launch  →  Deploy to AWS                     │ │</span></span>
+<span class="line"><span>│  │  agentcore invoke  →  Test deployed agent               │ │</span></span>
+<span class="line"><span>│  │  agentcore destroy →  Clean up resources                │ │</span></span>
+<span class="line"><span>│  └────────────────────────────────────────────────────────┘ │</span></span>
+<span class="line"><span>└─────────────────────────────────────────────────────────────┘</span></span>
+<span class="line"><span>                              │</span></span>
+<span class="line"><span>                              ▼</span></span>
+<span class="line"><span>┌─────────────────────────────────────────────────────────────┐</span></span>
+<span class="line"><span>│                    AWS Infrastructure                        │</span></span>
+<span class="line"><span>│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────┐  │</span></span>
+<span class="line"><span>│  │   CodeBuild  │  │     ECR      │  │ AgentCore Runtime│  │</span></span>
+<span class="line"><span>│  │  (Build)     │→ │  (Registry)  │→ │  (Host Agent)    │  │</span></span>
+<span class="line"><span>│  └──────────────┘  └──────────────┘  └──────────────────┘  │</span></span>
+<span class="line"><span>│                                              │               │</span></span>
+<span class="line"><span>│                                              ▼               │</span></span>
+<span class="line"><span>│                                     ┌──────────────────┐    │</span></span>
+<span class="line"><span>│                                     │  CloudWatch Logs │    │</span></span>
+<span class="line"><span>│                                     │  (Observability) │    │</span></span>
+<span class="line"><span>│                                     └──────────────────┘    │</span></span>
+<span class="line"><span>└─────────────────────────────────────────────────────────────┘</span></span></code></pre>
+<h2 id="step-1-prepare-your-agent-for-deployment">Step 1: Prepare Your Agent for Deployment</h2>
+<p>The AgentCore Starter Toolkit requires your agent to follow a specific structure. Let’s update our code:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># agent.py - Updated for AgentCore deployment</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Agent</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands.models </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> BedrockModel</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> bedrock_agentcore.runtime </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> runtime_handler</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Import your tools</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> tools </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> get_current_time, calculate, generate_greeting</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Initialize the model</span></span>
+<span class="line"><span style="color:#E1E4E8">model </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> BedrockModel(</span></span>
+<span class="line"><span style="color:#FFAB70">    model_id</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;anthropic.claude-sonnet-4-20250514-v1:0&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Create the agent</span></span>
+<span class="line"><span style="color:#E1E4E8">agent </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Agent(</span></span>
+<span class="line"><span style="color:#FFAB70">    model</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">model,</span></span>
+<span class="line"><span style="color:#FFAB70">    tools</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[get_current_time, calculate, generate_greeting],</span></span>
+<span class="line"><span style="color:#FFAB70">    system_prompt</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;&quot;&quot;You are AgentOne, a helpful AI assistant deployed on AgentCore.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">You have access to the following tools:</span></span>
+<span class="line"><span style="color:#9ECBFF">- get_current_time: Get the current date and time</span></span>
+<span class="line"><span style="color:#9ECBFF">- calculate: Perform mathematical calculations</span></span>
+<span class="line"><span style="color:#9ECBFF">- generate_greeting: Create personalized greetings</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">Use these tools when appropriate to help users.</span></span>
+<span class="line"><span style="color:#9ECBFF">Always explain what you&#39;re doing and why.&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># AgentCore Runtime handler</span></span>
+<span class="line"><span style="color:#B392F0">@runtime_handler</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> handler</span><span style="color:#E1E4E8">(event, context):</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Handle incoming requests from AgentCore Runtime.&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    user_message </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> event.get(</span><span style="color:#9ECBFF">&quot;message&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    session_id </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> event.get(</span><span style="color:#9ECBFF">&quot;session_id&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;default&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> agent(user_message)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;response&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">(response),</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;session_id&quot;</span><span style="color:#E1E4E8">: session_id</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Local testing support</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#79B8FF"> __name__</span><span style="color:#F97583"> ==</span><span style="color:#9ECBFF"> &quot;__main__&quot;</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    test_event </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span><span style="color:#9ECBFF">&quot;message&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;What time is it?&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;session_id&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;test-123&quot;</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">    result </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> handler(test_event, </span><span style="color:#79B8FF">None</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(result)</span></span></code></pre>
+<h2 id="step-2-create-agentcore-project">Step 2: Create AgentCore Project</h2>
+<p>Use the starter toolkit to scaffold your project:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Create a new AgentCore project</span></span>
+<span class="line"><span style="color:#B392F0">agentcore</span><span style="color:#9ECBFF"> create</span><span style="color:#9ECBFF"> my-first-agent</span><span style="color:#79B8FF"> --framework</span><span style="color:#9ECBFF"> strands</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Navigate to the project</span></span>
+<span class="line"><span style="color:#79B8FF">cd</span><span style="color:#9ECBFF"> my-first-agent</span></span></code></pre>
+<p>This creates the following structure:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext"><code><span class="line"><span>my-first-agent/</span></span>
+<span class="line"><span>├── agent.py              # Your agent code (replace with your code)</span></span>
+<span class="line"><span>├── requirements.txt      # Dependencies</span></span>
+<span class="line"><span>├── Dockerfile           # Container configuration</span></span>
+<span class="line"><span>└── agentcore.yaml       # AgentCore configuration</span></span></code></pre>
+<h2 id="step-3-configure-agentcore">Step 3: Configure AgentCore</h2>
+<p>Review and update <code>agentcore.yaml</code>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D"># agentcore.yaml</span></span>
+<span class="line"><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">my-first-agent</span></span>
+<span class="line"><span style="color:#85E89D">framework</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">strands</span></span>
+<span class="line"><span style="color:#85E89D">runtime</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  timeout</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">300</span><span style="color:#6A737D">          # 5 minutes max execution</span></span>
+<span class="line"><span style="color:#85E89D">  memory</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1024</span><span style="color:#6A737D">          # MB of memory</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">environment</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  AWS_DEFAULT_REGION</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">us-east-1</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Model permissions</span></span>
+<span class="line"><span style="color:#85E89D">bedrock</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  models</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    - </span><span style="color:#9ECBFF">anthropic.claude-sonnet-4-20250514-v1:0</span></span>
+<span class="line"><span style="color:#E1E4E8">    - </span><span style="color:#9ECBFF">anthropic.claude-3-5-haiku-20241022-v1:0</span></span></code></pre>
+<h2 id="step-4-test-locally-with-dev-server">Step 4: Test Locally with Dev Server</h2>
+<p>Before deploying, test with the local development server:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Start the dev server</span></span>
+<span class="line"><span style="color:#B392F0">agentcore</span><span style="color:#9ECBFF"> dev</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Server starts at http://localhost:8080</span></span></code></pre>
+<p>Test with curl:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">curl</span><span style="color:#79B8FF"> -X</span><span style="color:#9ECBFF"> POST</span><span style="color:#9ECBFF"> http://localhost:8080/invoke</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  -H</span><span style="color:#9ECBFF"> &quot;Content-Type: application/json&quot;</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  -d</span><span style="color:#9ECBFF"> &#39;{&quot;message&quot;: &quot;What is 25 * 4 and what time is it?&quot;}&#39;</span></span></code></pre>
+<aside class="callout callout--tip" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Fast Iteration</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>The dev server enables quick iteration without deploying to AWS.
+Use it for all your development and testing.</p> </div> </div> </aside> 
+<h2 id="step-5-enable-observability-optional-but-recommended">Step 5: Enable Observability (Optional but Recommended)</h2>
+<p>Enable CloudWatch Transaction Search before deploying:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Enable observability in AgentCore</span></span>
+<span class="line"><span style="color:#B392F0">aws</span><span style="color:#9ECBFF"> bedrock-agentcore</span><span style="color:#9ECBFF"> enable-transaction-search</span><span style="color:#79B8FF"> --region</span><span style="color:#9ECBFF"> us-east-1</span></span></code></pre>
+<p>This provides:</p>
+<ul>
+<li>Request/response tracing</li>
+<li>Tool invocation logs</li>
+<li>Latency metrics</li>
+<li>Error tracking</li>
+</ul>
+<h2 id="step-6-deploy-to-aws">Step 6: Deploy to AWS</h2>
+<p>Deploy your agent to AgentCore Runtime:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Deploy the agent</span></span>
+<span class="line"><span style="color:#B392F0">agentcore</span><span style="color:#9ECBFF"> launch</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># This will:</span></span>
+<span class="line"><span style="color:#6A737D"># 1. Build a container image</span></span>
+<span class="line"><span style="color:#6A737D"># 2. Push to Amazon ECR</span></span>
+<span class="line"><span style="color:#6A737D"># 3. Create AgentCore Runtime resources</span></span>
+<span class="line"><span style="color:#6A737D"># 4. Deploy your agent</span></span></code></pre>
+<p>Expected output:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext"><code><span class="line"><span>Building agent container...</span></span>
+<span class="line"><span>Pushing to ECR...</span></span>
+<span class="line"><span>Creating AgentCore Runtime...</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>✅ Agent deployed successfully!</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Agent ARN: arn:aws:bedrock-agentcore:us-east-1:123456789012:runtime/my-first-agent</span></span>
+<span class="line"><span>Logs: https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#logsV2:log-groups/log-group/$252Faws$252Fbedrock-agentcore$252Fmy-first-agent</span></span></code></pre>
+<aside class="callout callout--warning" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Deployment Time</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>First deployment takes 3-5 minutes as it builds the container.
+Subsequent deployments are faster due to caching.</p> </div> </div> </aside> 
+<h2 id="step-7-invoke-your-deployed-agent">Step 7: Invoke Your Deployed Agent</h2>
+<h3 id="using-the-cli">Using the CLI</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Invoke with the starter toolkit</span></span>
+<span class="line"><span style="color:#B392F0">agentcore</span><span style="color:#9ECBFF"> invoke</span><span style="color:#79B8FF"> --message</span><span style="color:#9ECBFF"> &quot;Hello! Calculate 15% of 85 please.&quot;</span></span></code></pre>
+<h3 id="using-boto3-sdk">Using boto3 SDK</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># invoke_agent.py</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> boto3</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> json</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">client </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto3.client(</span><span style="color:#9ECBFF">&#39;bedrock-agentcore&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">region_name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;us-east-1&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> client.invoke_agent_runtime(</span></span>
+<span class="line"><span style="color:#FFAB70">    agentRuntimeArn</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;arn:aws:bedrock-agentcore:us-east-1:123456789012:runtime/my-first-agent&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    inputText</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;What time is it and calculate 20</span><span style="color:#79B8FF">% o</span><span style="color:#9ECBFF">f 150&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    sessionId</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;session-001&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Parse the response</span></span>
+<span class="line"><span style="color:#E1E4E8">result </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> json.loads(response[</span><span style="color:#9ECBFF">&#39;completion&#39;</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Agent response: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">result[</span><span style="color:#9ECBFF">&#39;response&#39;</span><span style="color:#E1E4E8">]</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span></code></pre>
+<h3 id="using-aws-cli">Using AWS CLI</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">aws</span><span style="color:#9ECBFF"> bedrock-agentcore</span><span style="color:#9ECBFF"> invoke-agent-runtime</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --agent-runtime-arn</span><span style="color:#9ECBFF"> &quot;arn:aws:bedrock-agentcore:us-east-1:123456789012:runtime/my-first-agent&quot;</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --input-text</span><span style="color:#9ECBFF"> &quot;Greet me enthusiastically as Alex&quot;</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --session-id</span><span style="color:#9ECBFF"> &quot;cli-test-001&quot;</span></span></code></pre>
+<h2 id="understanding-the-invocation-flow">Understanding the Invocation Flow</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext"><code><span class="line"><span>┌───────────────┐     ┌─────────────────────┐     ┌──────────────────┐</span></span>
+<span class="line"><span>│   Your App    │────▶│  AgentCore Runtime  │────▶│  Bedrock Model   │</span></span>
+<span class="line"><span>│   (Client)    │     │  (Hosts Your Agent) │     │  (Claude Sonnet) │</span></span>
+<span class="line"><span>└───────────────┘     └─────────────────────┘     └──────────────────┘</span></span>
+<span class="line"><span>        │                      │                          │</span></span>
+<span class="line"><span>        │  invoke-agent        │                          │</span></span>
+<span class="line"><span>        │ ─────────────────────▶                          │</span></span>
+<span class="line"><span>        │                      │   call LLM               │</span></span>
+<span class="line"><span>        │                      │ ─────────────────────────▶</span></span>
+<span class="line"><span>        │                      │                          │</span></span>
+<span class="line"><span>        │                      │   tool_calls             │</span></span>
+<span class="line"><span>        │                      │◀─────────────────────────│</span></span>
+<span class="line"><span>        │                      │                          │</span></span>
+<span class="line"><span>        │                      │  execute tools locally   │</span></span>
+<span class="line"><span>        │                      │ ─────────┐               │</span></span>
+<span class="line"><span>        │                      │◀─────────┘               │</span></span>
+<span class="line"><span>        │                      │                          │</span></span>
+<span class="line"><span>        │                      │   final response         │</span></span>
+<span class="line"><span>        │                      │◀─────────────────────────│</span></span>
+<span class="line"><span>        │  response            │                          │</span></span>
+<span class="line"><span>        │◀─────────────────────│                          │</span></span></code></pre>
+<h2 id="monitoring-your-agent">Monitoring Your Agent</h2>
+<h3 id="cloudwatch-logs">CloudWatch Logs</h3>
+<p>View agent logs in the AWS Console or CLI:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># View recent logs</span></span>
+<span class="line"><span style="color:#B392F0">aws</span><span style="color:#9ECBFF"> logs</span><span style="color:#9ECBFF"> tail</span><span style="color:#9ECBFF"> /aws/bedrock-agentcore/my-first-agent</span><span style="color:#79B8FF"> --follow</span></span></code></pre>
+<h3 id="metrics-to-watch">Metrics to Watch</h3>
+<ul>
+<li><strong>Invocation count</strong>: How many times your agent is called</li>
+<li><strong>Latency</strong>: Time to process requests</li>
+<li><strong>Error rate</strong>: Failed invocations</li>
+<li><strong>Tool usage</strong>: Which tools are being called</li>
+</ul>
+<h2 id="cleanup">Cleanup</h2>
+<p>When you’re done, clean up AWS resources:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Destroy the deployed agent</span></span>
+<span class="line"><span style="color:#B392F0">agentcore</span><span style="color:#9ECBFF"> destroy</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># This removes:</span></span>
+<span class="line"><span style="color:#6A737D"># - AgentCore Runtime</span></span>
+<span class="line"><span style="color:#6A737D"># - ECR repository</span></span>
+<span class="line"><span style="color:#6A737D"># - CloudWatch log groups</span></span></code></pre>
+<aside class="callout callout--danger" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Don&#39;t Forget to Cleanup</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>AgentCore charges for running agents. Always destroy unused agents
+to avoid unexpected charges.</p> </div> </div> </aside> 
+<h2 id="checkpoint-what-youve-achieved">Checkpoint: What You’ve Achieved</h2>
+<ul>
+<li>✅ Understood AgentCore Runtime architecture</li>
+<li>✅ Prepared your agent for deployment</li>
+<li>✅ Tested locally with the dev server</li>
+<li>✅ Deployed to AgentCore Runtime</li>
+<li>✅ Invoked your production agent</li>
+<li>✅ Learned to monitor and cleanup</li>
+</ul>
+<p><strong>Your agent is now running in production!</strong> But there’s a problem you’ll discover in the next section…</p>
+<h2 id="next-steps">Next Steps</h2>
+<div class="nav-buttons"><a href="/days/1/strands-basics" class="nav-button nav-button--prev"><p>← Strands Basics</p></a><a href="/days/1/controlled-disasters" class="nav-button nav-button--next"><p>Next: Controlled Disasters →</p></a></div>
+<style>
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 3rem;
+  gap: 1rem;
+}
+
+.nav-button {
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+}
+
+.nav-button--prev {
+  color: var(--color-text-secondary);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--border-subtle);
+}
+
+.nav-button--prev:hover {
+  background: var(--color-bg-secondary);
+}
+
+.nav-button--next {
+  color: white;
+  background: var(--color-day-1);
+}
+
+.nav-button--next:hover {
+  opacity: 0.9;
+}
+</style>    </article> <!-- Navigation Footer --> <nav class="day-layout__pagination" aria-label="Page navigation" data-astro-cid-vfeiczyy>  <div class="pagination" data-astro-cid-er2v6o3k> <a href="/days/1/strands-basics" class="pagination__link pagination__link--prev" data-astro-cid-er2v6o3k> <span class="pagination__label" data-astro-cid-er2v6o3k>Previous</span> <span class="pagination__title" data-astro-cid-er2v6o3k>Strands Basics</span> </a> <a href="/days/1/controlled-disasters" class="pagination__link pagination__link--next" data-astro-cid-er2v6o3k> <span class="pagination__label" data-astro-cid-er2v6o3k>Next</span> <span class="pagination__title" data-astro-cid-er2v6o3k>Controlled Disasters</span> </a> </div>  </nav> </main> <!-- Table of Contents --> <aside class="day-layout__toc hide-mobile" data-astro-cid-vfeiczyy> <div class="day-layout__toc-content" data-astro-cid-vfeiczyy> <h3 class="day-layout__toc-title" data-astro-cid-vfeiczyy>On this page</h3> <nav aria-label="Table of contents" data-astro-cid-vfeiczyy> <ul class="day-layout__toc-list" data-astro-cid-vfeiczyy> <li data-astro-cid-vfeiczyy> <a href="#why-agentcore-runtime" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Why AgentCore Runtime? </a> </li><li data-astro-cid-vfeiczyy> <a href="#deployment-architecture" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Deployment Architecture </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-1-prepare-your-agent-for-deployment" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 1: Prepare Your Agent for Deployment </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-2-create-agentcore-project" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 2: Create AgentCore Project </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-3-configure-agentcore" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 3: Configure AgentCore </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-4-test-locally-with-dev-server" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 4: Test Locally with Dev Server </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-5-enable-observability-optional-but-recommended" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 5: Enable Observability (Optional but Recommended) </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-6-deploy-to-aws" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 6: Deploy to AWS </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-7-invoke-your-deployed-agent" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 7: Invoke Your Deployed Agent </a> </li><li data-astro-cid-vfeiczyy> <a href="#using-the-cli" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Using the CLI </a> </li><li data-astro-cid-vfeiczyy> <a href="#using-boto3-sdk" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Using boto3 SDK </a> </li><li data-astro-cid-vfeiczyy> <a href="#using-aws-cli" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Using AWS CLI </a> </li><li data-astro-cid-vfeiczyy> <a href="#understanding-the-invocation-flow" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Understanding the Invocation Flow </a> </li><li data-astro-cid-vfeiczyy> <a href="#monitoring-your-agent" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Monitoring Your Agent </a> </li><li data-astro-cid-vfeiczyy> <a href="#cloudwatch-logs" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> CloudWatch Logs </a> </li><li data-astro-cid-vfeiczyy> <a href="#metrics-to-watch" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Metrics to Watch </a> </li><li data-astro-cid-vfeiczyy> <a href="#cleanup" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Cleanup </a> </li><li data-astro-cid-vfeiczyy> <a href="#checkpoint-what-youve-achieved" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Checkpoint: What You’ve Achieved </a> </li><li data-astro-cid-vfeiczyy> <a href="#next-steps" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Next Steps </a> </li> </ul> </nav> </div> </aside> </div> <footer class="footer" data-astro-cid-b2avyow5> <div class="footer__container" data-astro-cid-b2avyow5> <div class="footer__content" data-astro-cid-b2avyow5> <div class="footer__brand" data-astro-cid-b2avyow5> <span class="footer__logo" data-astro-cid-b2avyow5>AgentCore Initiative</span> <p class="footer__tagline" data-astro-cid-b2avyow5>
+Build production-ready AI agents with AWS AgentCore
+</p> </div> <nav class="footer__nav" aria-label="Footer navigation" data-astro-cid-b2avyow5> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Course</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5><a href="/days/1" data-astro-cid-b2avyow5>Day 1: The First Avenger</a></li> <li data-astro-cid-b2avyow5><a href="/days/2" data-astro-cid-b2avyow5>Day 2: Age of Ultron</a></li> <li data-astro-cid-b2avyow5><a href="/days/3" data-astro-cid-b2avyow5>Day 3: Infinity War</a></li> <li data-astro-cid-b2avyow5><a href="/days/4" data-astro-cid-b2avyow5>Day 4: Endgame</a></li> <li data-astro-cid-b2avyow5><a href="/days/5" data-astro-cid-b2avyow5>Day 5: Assemble</a></li> </ul> </div> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Resources</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5><a href="/troubleshooting" data-astro-cid-b2avyow5>Troubleshooting</a></li> <li data-astro-cid-b2avyow5><a href="/reference/costs" data-astro-cid-b2avyow5>Cost Guide</a></li> <li data-astro-cid-b2avyow5><a href="/reference/cleanup" data-astro-cid-b2avyow5>Cleanup</a></li> </ul> </div> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Links</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5> <a href="https://docs.aws.amazon.com/bedrock-agentcore/" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+AWS AgentCore Docs
+</a> </li> <li data-astro-cid-b2avyow5> <a href="https://github.com/awslabs/amazon-bedrock-agentcore-samples" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+AgentCore Samples
+</a> </li> <li data-astro-cid-b2avyow5> <a href="https://strandsagents.com" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+Strands Agents
+</a> </li> </ul> </div> </nav> </div> <div class="footer__bottom" data-astro-cid-b2avyow5> <p class="footer__copyright" data-astro-cid-b2avyow5>
+&copy; 2026 The AgentCore Initiative. Built with Astro.
+</p> <p class="footer__disclaimer" data-astro-cid-b2avyow5>
+This is an educational resource. AWS and Amazon Bedrock are trademarks of Amazon.com, Inc.
+</p> </div> </div> </footer>   <!-- Global scripts --> <script type="module" src="/_astro/BaseLayout.astro_astro_type_script_index_0_lang.BwEjmFOO.js"></script> </body> </html>   <script type="module" src="/_astro/DayLayout.astro_astro_type_script_index_0_lang.BT_UbId1.js"></script> 

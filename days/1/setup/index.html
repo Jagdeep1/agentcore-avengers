@@ -1,0 +1,239 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="canonical" href="https://agentcore-initiative.aws/days/1/setup/"><!-- Favicon --><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><!-- Primary Meta Tags --><title>Environment Setup - Day 1 | The AgentCore Initiative</title><meta name="title" content="Environment Setup - Day 1 | The AgentCore Initiative"><meta name="description" content="Day 1: The First Avenger - Foundation - Strands Agent + AgentCore Runtime"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://agentcore-initiative.aws/days/1/setup/"><meta property="og:title" content="Environment Setup - Day 1 | The AgentCore Initiative"><meta property="og:description" content="Day 1: The First Avenger - Foundation - Strands Agent + AgentCore Runtime"><meta property="og:image" content="https://agentcore-initiative.aws/images/og/default.png"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://agentcore-initiative.aws/days/1/setup/"><meta name="twitter:title" content="Environment Setup - Day 1 | The AgentCore Initiative"><meta name="twitter:description" content="Day 1: The First Avenger - Foundation - Strands Agent + AgentCore Runtime"><meta name="twitter:image" content="https://agentcore-initiative.aws/images/og/default.png"><!-- Fonts - Plus Jakarta Sans & Geist Mono --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"><!-- Theme initialization (prevents flash) --><script>
+      (function () {
+        const stored = localStorage.getItem('agentcore-initiative-progress');
+        let theme = 'dark';
+        if (stored) {
+          try {
+            const progress = JSON.parse(stored);
+            theme = progress.theme || 'dark';
+          } catch (e) {}
+        }
+        if (theme === 'system') {
+          theme = window.matchMedia('(prefers-color-scheme: light)').matches
+            ? 'light'
+            : 'dark';
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script><link rel="stylesheet" href="/_astro/_slug_.B9ZU_V3V.css">
+<style>.pagination[data-astro-cid-er2v6o3k]{display:flex;justify-content:space-between;gap:1rem}.pagination__link[data-astro-cid-er2v6o3k]{flex:1;max-width:50%;padding:1rem 1.25rem;background:var(--color-bg-elevated);border:var(--border-subtle);border-radius:var(--radius-lg);text-decoration:none;transition:all var(--transition-fast)}.pagination__link[data-astro-cid-er2v6o3k]:hover{background:var(--color-bg-secondary);border-color:var(--border-default)}.pagination__link--prev[data-astro-cid-er2v6o3k]{text-align:left}.pagination__link--next[data-astro-cid-er2v6o3k]{text-align:right;margin-left:auto}.pagination__label[data-astro-cid-er2v6o3k]{display:block;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-muted);margin-bottom:.25rem}.pagination__title[data-astro-cid-er2v6o3k]{display:block;font-size:.9375rem;font-weight:500;color:var(--color-text-primary)}
+</style>
+<link rel="stylesheet" href="/_astro/_slug_.CP5296fy.css"><style>.callout[data-astro-cid-wi7smz4x]{display:flex;gap:1rem;padding:1rem 1.25rem;border-radius:var(--radius-lg);margin:1.5rem 0;border-left:4px solid}.callout--info[data-astro-cid-wi7smz4x]{background:#3b82f614;border-left-color:var(--color-accent-primary)}.callout--info[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-primary)}.callout--warning[data-astro-cid-wi7smz4x]{background:#f59e0b14;border-left-color:var(--color-accent-warning)}.callout--warning[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-warning)}.callout--danger[data-astro-cid-wi7smz4x]{background:#ef444414;border-left-color:var(--color-accent-danger)}.callout--danger[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-danger)}.callout--success[data-astro-cid-wi7smz4x]{background:#10b98114;border-left-color:var(--color-accent-success)}.callout--success[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-success)}.callout--tip[data-astro-cid-wi7smz4x]{background:#8b5cf614;border-left-color:var(--color-accent-purple)}.callout--tip[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-purple)}.callout__icon[data-astro-cid-wi7smz4x]{flex-shrink:0;width:1.25rem;height:1.25rem;margin-top:.125rem}.callout__content[data-astro-cid-wi7smz4x]{flex:1;min-width:0}.callout__title[data-astro-cid-wi7smz4x]{font-weight:600;font-size:.9375rem;color:var(--color-text-primary);margin-bottom:.25rem}.callout__body[data-astro-cid-wi7smz4x]{font-size:.9375rem;color:var(--color-text-secondary);line-height:1.6}.callout__body[data-astro-cid-wi7smz4x] p{margin:0}.callout__body[data-astro-cid-wi7smz4x] p+p{margin-top:.5rem}.callout__body[data-astro-cid-wi7smz4x] code{font-size:.85em}.callout__body[data-astro-cid-wi7smz4x] a{font-weight:500}
+</style></head> <body>  <header class="header" data-astro-cid-mb6pvx4c> <div class="header__container" data-astro-cid-mb6pvx4c> <!-- Logo --> <a href="/" class="header__logo" aria-label="Home" data-astro-cid-mb6pvx4c> <svg class="header__logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" data-astro-cid-mb6pvx4c> <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c></circle> <path d="M16 6 L22 12 L16 18 L10 12 Z" fill="currentColor" opacity="0.5" data-astro-cid-mb6pvx4c></path> <circle cx="16" cy="16" r="4" fill="currentColor" data-astro-cid-mb6pvx4c></circle> </svg> <span class="header__logo-text" data-astro-cid-mb6pvx4c>AgentCore Initiative</span> </a> <!-- Desktop Navigation --> <nav class="header__nav hide-mobile" aria-label="Main navigation" data-astro-cid-mb6pvx4c> <ul class="header__nav-list" data-astro-cid-mb6pvx4c> <li data-astro-cid-mb6pvx4c> <a href="/days" class="header__nav-link header__nav-link--active" data-astro-cid-mb6pvx4c> Course </a> </li><li data-astro-cid-mb6pvx4c> <a href="/troubleshooting" class="header__nav-link" data-astro-cid-mb6pvx4c> Troubleshooting </a> </li><li data-astro-cid-mb6pvx4c> <a href="/reference" class="header__nav-link" data-astro-cid-mb6pvx4c> Reference </a> </li> </ul> </nav> <!-- Actions --> <div class="header__actions" data-astro-cid-mb6pvx4c> <!-- Theme Toggle Button (placeholder - will be React component) --> <button id="theme-toggle" class="header__theme-toggle" aria-label="Toggle theme" type="button" data-astro-cid-mb6pvx4c> <svg class="header__theme-icon header__theme-icon--dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <circle cx="12" cy="12" r="5" data-astro-cid-mb6pvx4c></circle> <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" data-astro-cid-mb6pvx4c></path> </svg> <svg class="header__theme-icon header__theme-icon--light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-mb6pvx4c></path> </svg> </button> <!-- Mobile Menu Toggle --> <button id="mobile-menu-toggle" class="header__mobile-toggle hide-desktop" aria-label="Toggle menu" aria-expanded="false" type="button" data-astro-cid-mb6pvx4c> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <path class="menu-icon" d="M4 6h16M4 12h16M4 18h16" data-astro-cid-mb6pvx4c></path> <path class="close-icon" d="M6 6l12 12M6 18L18 6" style="display: none" data-astro-cid-mb6pvx4c></path> </svg> </button> </div> </div> <!-- Mobile Navigation --> <nav id="mobile-nav" class="header__mobile-nav hide-desktop" aria-label="Mobile navigation" hidden data-astro-cid-mb6pvx4c> <ul class="header__mobile-nav-list" data-astro-cid-mb6pvx4c> <li data-astro-cid-mb6pvx4c> <a href="/days" class="header__mobile-nav-link header__mobile-nav-link--active" data-astro-cid-mb6pvx4c> Course </a> </li><li data-astro-cid-mb6pvx4c> <a href="/troubleshooting" class="header__mobile-nav-link" data-astro-cid-mb6pvx4c> Troubleshooting </a> </li><li data-astro-cid-mb6pvx4c> <a href="/reference" class="header__mobile-nav-link" data-astro-cid-mb6pvx4c> Reference </a> </li> </ul> </nav> </header>  <script type="module">const r=document.getElementById("theme-toggle");r&&r.addEventListener("click",()=>{const e=document.documentElement,t=e.getAttribute("data-theme")==="dark"?"light":"dark";e.setAttribute("data-theme",t);const c=localStorage.getItem("agentcore-initiative-progress");let i={theme:t};if(c)try{i={...JSON.parse(c),theme:t}}catch{}localStorage.setItem("agentcore-initiative-progress",JSON.stringify(i))});const n=document.getElementById("mobile-menu-toggle"),l=document.getElementById("mobile-nav");n&&l&&n.addEventListener("click",()=>{const e=n.getAttribute("aria-expanded")==="true";n.setAttribute("aria-expanded",String(!e)),l.hidden=e;const o=n.querySelector(".menu-icon"),t=n.querySelector(".close-icon");o&&t&&(o.style.display=e?"block":"none",t.style.display=e?"none":"block")});</script> <div class="day-layout" style="--day-accent: #3b82f6" data-astro-cid-vfeiczyy> <!-- Sidebar --> <aside class="day-layout__sidebar hide-mobile" data-astro-cid-vfeiczyy> <div class="day-layout__sidebar-content" data-astro-cid-vfeiczyy> <!-- Day Header --> <div class="day-layout__day-header" data-astro-cid-vfeiczyy> <span class="day-layout__day-number" data-astro-cid-vfeiczyy>Day 1</span> <h2 class="day-layout__day-title" data-astro-cid-vfeiczyy>The First Avenger</h2> <p class="day-layout__day-focus" data-astro-cid-vfeiczyy>Foundation - Strands Agent + AgentCore Runtime</p> </div> <!-- Section Navigation --> <nav class="day-layout__nav" aria-label="Day sections" data-astro-cid-vfeiczyy> <ul class="day-layout__nav-list" data-astro-cid-vfeiczyy> <li data-astro-cid-vfeiczyy> <a href="/days/1/setup" class="day-layout__nav-link day-layout__nav-link--active" data-section="setup" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Environment Setup </a> </li><li data-astro-cid-vfeiczyy> <a href="/days/1/strands-basics" class="day-layout__nav-link" data-section="strands-basics" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Strands Basics </a> </li><li data-astro-cid-vfeiczyy> <a href="/days/1/agentcore-runtime" class="day-layout__nav-link" data-section="agentcore-runtime" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> AgentCore Runtime </a> </li><li data-astro-cid-vfeiczyy> <a href="/days/1/controlled-disasters" class="day-layout__nav-link" data-section="controlled-disasters" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Controlled Disasters </a> </li> </ul> </nav> <!-- Challenge Link --> <a href="/days/1/challenge" class="day-layout__challenge-link" data-astro-cid-vfeiczyy> <span class="day-layout__challenge-icon" data-astro-cid-vfeiczyy> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-vfeiczyy> <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" data-astro-cid-vfeiczyy></polygon> </svg> </span>
+Daily Challenge
+</a> </div> </aside> <!-- Main Content --> <main class="day-layout__main" data-astro-cid-vfeiczyy> <article class="day-layout__content prose" data-astro-cid-vfeiczyy>  <h1 id="environment-setup">Environment Setup</h1>
+<p>Before we build our first agent, we need to configure the development environment. This section ensures you have everything needed to work with Strands Agents and AgentCore Runtime.</p>
+<h2 id="aws-account-configuration">AWS Account Configuration</h2>
+<h3 id="step-1-configure-aws-cli">Step 1: Configure AWS CLI</h3>
+<p>First, ensure your AWS CLI is configured with credentials that have appropriate permissions:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Configure AWS CLI (if not already done)</span></span>
+<span class="line"><span style="color:#B392F0">aws</span><span style="color:#9ECBFF"> configure</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Or use SSO for enterprise accounts</span></span>
+<span class="line"><span style="color:#B392F0">aws</span><span style="color:#9ECBFF"> sso</span><span style="color:#9ECBFF"> login</span><span style="color:#79B8FF"> --profile</span><span style="color:#9ECBFF"> your-profile</span></span></code></pre>
+<aside class="callout callout--info" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Required Permissions</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>Your IAM user/role needs permissions for:</p><ul>
+<li>Amazon Bedrock (model invocation)</li>
+<li>Amazon ECR (container registry)</li>
+<li>AWS CodeBuild (for deployment)</li>
+<li>IAM (to create execution roles)</li>
+<li>CloudWatch Logs (for observability)</li>
+</ul> </div> </div> </aside> 
+<h3 id="step-2-verify-aws-access">Step 2: Verify AWS Access</h3>
+<p>Test that your credentials are working:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Verify your identity</span></span>
+<span class="line"><span style="color:#B392F0">aws</span><span style="color:#9ECBFF"> sts</span><span style="color:#9ECBFF"> get-caller-identity</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Expected output:</span></span>
+<span class="line"><span style="color:#6A737D"># {</span></span>
+<span class="line"><span style="color:#6A737D">#     &quot;UserId&quot;: &quot;AIDAEXAMPLEID&quot;,</span></span>
+<span class="line"><span style="color:#6A737D">#     &quot;Account&quot;: &quot;123456789012&quot;,</span></span>
+<span class="line"><span style="color:#6A737D">#     &quot;Arn&quot;: &quot;arn:aws:iam::123456789012:user/your-user&quot;</span></span>
+<span class="line"><span style="color:#6A737D"># }</span></span></code></pre>
+<h2 id="enable-amazon-bedrock-models">Enable Amazon Bedrock Models</h2>
+<p>AgentCore uses Amazon Bedrock for model inference. You need to enable model access in your AWS account.</p>
+<h3 id="step-1-access-bedrock-console">Step 1: Access Bedrock Console</h3>
+<ol>
+<li>Navigate to <a href="https://console.aws.amazon.com/bedrock">Amazon Bedrock Console</a></li>
+<li>Select <strong>Model access</strong> from the left sidebar</li>
+<li>Click <strong>Manage model access</strong></li>
+</ol>
+<h3 id="step-2-enable-claude-models">Step 2: Enable Claude Models</h3>
+<p>Enable the following models:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Model</th><th>Model ID</th><th>Purpose</th></tr></thead><tbody><tr><td>Claude Sonnet 4</td><td><code>anthropic.claude-sonnet-4-20250514-v1:0</code></td><td>Primary agent model</td></tr><tr><td>Claude Haiku 3.5</td><td><code>anthropic.claude-3-5-haiku-20241022-v1:0</code></td><td>Cost-effective alternative</td></tr></tbody></table>
+<aside class="callout callout--warning" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Model Access Approval</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>Model access requests are typically approved instantly, but some enterprise accounts may require additional approval time.</p> </div> </div> </aside> 
+<h3 id="step-3-verify-model-access">Step 3: Verify Model Access</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># List available foundation models</span></span>
+<span class="line"><span style="color:#B392F0">aws</span><span style="color:#9ECBFF"> bedrock</span><span style="color:#9ECBFF"> list-foundation-models</span><span style="color:#79B8FF"> --by-provider</span><span style="color:#9ECBFF"> anthropic</span><span style="color:#79B8FF"> --query</span><span style="color:#9ECBFF"> &#39;modelSummaries[*].modelId&#39;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Test model invocation</span></span>
+<span class="line"><span style="color:#B392F0">aws</span><span style="color:#9ECBFF"> bedrock-runtime</span><span style="color:#9ECBFF"> invoke-model</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --model-id</span><span style="color:#9ECBFF"> anthropic.claude-sonnet-4-20250514-v1:0</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --body</span><span style="color:#9ECBFF"> &#39;{&quot;anthropic_version&quot;:&quot;bedrock-2023-05-31&quot;,&quot;max_tokens&quot;:100,&quot;messages&quot;:[{&quot;role&quot;:&quot;user&quot;,&quot;content&quot;:&quot;Say hello&quot;}]}&#39;</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --content-type</span><span style="color:#9ECBFF"> application/json</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --accept</span><span style="color:#9ECBFF"> application/json</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#9ECBFF">  /dev/stdout</span></span></code></pre>
+<h2 id="python-environment-setup">Python Environment Setup</h2>
+<h3 id="step-1-create-project-directory">Step 1: Create Project Directory</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Create project directory</span></span>
+<span class="line"><span style="color:#B392F0">mkdir</span><span style="color:#79B8FF"> -p</span><span style="color:#9ECBFF"> agentcore-day1</span></span>
+<span class="line"><span style="color:#79B8FF">cd</span><span style="color:#9ECBFF"> agentcore-day1</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Create virtual environment</span></span>
+<span class="line"><span style="color:#B392F0">python</span><span style="color:#79B8FF"> -m</span><span style="color:#9ECBFF"> venv</span><span style="color:#9ECBFF"> .venv</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Activate virtual environment</span></span>
+<span class="line"><span style="color:#6A737D"># On macOS/Linux:</span></span>
+<span class="line"><span style="color:#79B8FF">source</span><span style="color:#9ECBFF"> .venv/bin/activate</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># On Windows:</span></span>
+<span class="line"><span style="color:#6A737D"># .venv\Scripts\activate</span></span></code></pre>
+<h3 id="step-2-install-dependencies">Step 2: Install Dependencies</h3>
+<p>Install the required packages:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Install Strands Agents SDK</span></span>
+<span class="line"><span style="color:#B392F0">pip</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> strands-agents</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Install Amazon Bedrock AgentCore packages</span></span>
+<span class="line"><span style="color:#B392F0">pip</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> bedrock-agentcore</span></span>
+<span class="line"><span style="color:#B392F0">pip</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> bedrock-agentcore-starter-toolkit</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Verify installations</span></span>
+<span class="line"><span style="color:#B392F0">pip</span><span style="color:#9ECBFF"> list</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> grep</span><span style="color:#79B8FF"> -E</span><span style="color:#9ECBFF"> &quot;(strands|bedrock)&quot;</span></span></code></pre>
+<p>Expected output:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext"><code><span class="line"><span>bedrock-agentcore              x.x.x</span></span>
+<span class="line"><span>bedrock-agentcore-starter-toolkit  x.x.x</span></span>
+<span class="line"><span>strands-agents                 x.x.x</span></span>
+<span class="line"><span>strands-agents-tools           x.x.x</span></span></code></pre>
+<h3 id="step-3-verify-strands-installation">Step 3: Verify Strands Installation</h3>
+<p>Create a quick test file to verify Strands is working:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># test_setup.py</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Agent</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands.models </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> BedrockModel</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Initialize the model</span></span>
+<span class="line"><span style="color:#E1E4E8">model </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> BedrockModel(</span></span>
+<span class="line"><span style="color:#FFAB70">    model_id</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;anthropic.claude-sonnet-4-20250514-v1:0&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    region_name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;us-east-1&quot;</span><span style="color:#6A737D">  # Change to your region</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Create a simple agent</span></span>
+<span class="line"><span style="color:#E1E4E8">agent </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Agent(</span><span style="color:#FFAB70">model</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">model)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Test the agent</span></span>
+<span class="line"><span style="color:#E1E4E8">response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> agent(</span><span style="color:#9ECBFF">&quot;What is 2 + 2? Reply with just the number.&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Agent response: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">response</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span></code></pre>
+<p>Run the test:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">python</span><span style="color:#9ECBFF"> test_setup.py</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Expected output:</span></span>
+<span class="line"><span style="color:#6A737D"># Agent response: 4</span></span></code></pre>
+<aside class="callout callout--success" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Setup Complete!</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>If you see a response from the agent, your environment is correctly configured.
+You’re ready to build your first real agent!</p> </div> </div> </aside> 
+<h2 id="project-structure">Project Structure</h2>
+<p>Create the following project structure for Day 1:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext"><code><span class="line"><span>agentcore-day1/</span></span>
+<span class="line"><span>├── .venv/                  # Virtual environment</span></span>
+<span class="line"><span>├── agent.py                # Your agent code</span></span>
+<span class="line"><span>├── tools.py                # Custom tools</span></span>
+<span class="line"><span>├── requirements.txt        # Dependencies</span></span>
+<span class="line"><span>└── tests/</span></span>
+<span class="line"><span>    └── test_agent.py       # Agent tests</span></span></code></pre>
+<p>Create the requirements file:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># requirements.txt</span></span>
+<span class="line"><span style="color:#B392F0">strands-agents</span><span style="color:#E1E4E8">&gt;</span><span style="color:#9ECBFF">=0.1.0</span></span>
+<span class="line"><span style="color:#B392F0">strands-agents-tools</span><span style="color:#E1E4E8">&gt;</span><span style="color:#9ECBFF">=0.1.0</span></span>
+<span class="line"><span style="color:#B392F0">bedrock-agentcore</span><span style="color:#E1E4E8">&gt;</span><span style="color:#9ECBFF">=0.1.0</span></span>
+<span class="line"><span style="color:#B392F0">bedrock-agentcore-starter-toolkit</span><span style="color:#E1E4E8">&gt;</span><span style="color:#9ECBFF">=0.1.0</span></span>
+<span class="line"><span style="color:#B392F0">boto3</span><span style="color:#E1E4E8">&gt;</span><span style="color:#9ECBFF">=1.35.0</span></span>
+<span class="line"><span style="color:#B392F0">pytest</span><span style="color:#E1E4E8">&gt;</span><span style="color:#9ECBFF">=8.0.0</span></span></code></pre>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="common-issues">Common Issues</h3>
+<p><strong>Issue: <code>ModuleNotFoundError: No module named &#39;strands&#39;</code></strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Ensure virtual environment is activated</span></span>
+<span class="line"><span style="color:#79B8FF">source</span><span style="color:#9ECBFF"> .venv/bin/activate</span><span style="color:#6A737D">  # macOS/Linux</span></span>
+<span class="line"><span style="color:#6A737D"># or</span></span>
+<span class="line"><span style="color:#B392F0">.venv\Scripts\activate</span><span style="color:#6A737D">     # Windows</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Reinstall</span></span>
+<span class="line"><span style="color:#B392F0">pip</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> strands-agents</span></span></code></pre>
+<p><strong>Issue: <code>AccessDeniedException</code> when calling Bedrock</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Check your AWS credentials</span></span>
+<span class="line"><span style="color:#B392F0">aws</span><span style="color:#9ECBFF"> sts</span><span style="color:#9ECBFF"> get-caller-identity</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Verify model is enabled in Bedrock console</span></span>
+<span class="line"><span style="color:#B392F0">aws</span><span style="color:#9ECBFF"> bedrock</span><span style="color:#9ECBFF"> list-foundation-models</span><span style="color:#79B8FF"> --by-provider</span><span style="color:#9ECBFF"> anthropic</span></span></code></pre>
+<p><strong>Issue: <code>Could not connect to the endpoint URL</code></strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Check your region setting</span></span>
+<span class="line"><span style="color:#B392F0">aws</span><span style="color:#9ECBFF"> configure</span><span style="color:#9ECBFF"> get</span><span style="color:#9ECBFF"> region</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Ensure Bedrock is available in your region</span></span>
+<span class="line"><span style="color:#6A737D"># Supported regions: us-east-1, us-west-2, eu-west-1, ap-northeast-1</span></span></code></pre>
+<h2 id="next-steps">Next Steps</h2>
+<p>Your environment is configured and verified. In the next section, we’ll build a real agent with tools and custom behavior.</p>
+<div class="nav-buttons"><a href="/days/1" class="nav-button nav-button--prev"><p>← Back to Overview</p></a><a href="/days/1/strands-basics" class="nav-button nav-button--next"><p>Next: Strands Basics →</p></a></div>
+<style>
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 3rem;
+  gap: 1rem;
+}
+
+.nav-button {
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+}
+
+.nav-button--prev {
+  color: var(--color-text-secondary);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--border-subtle);
+}
+
+.nav-button--prev:hover {
+  background: var(--color-bg-secondary);
+}
+
+.nav-button--next {
+  color: white;
+  background: var(--color-day-1);
+}
+
+.nav-button--next:hover {
+  opacity: 0.9;
+}
+</style>    </article> <!-- Navigation Footer --> <nav class="day-layout__pagination" aria-label="Page navigation" data-astro-cid-vfeiczyy>  <div class="pagination" data-astro-cid-er2v6o3k> <a href="/days/1/day-1" class="pagination__link pagination__link--prev" data-astro-cid-er2v6o3k> <span class="pagination__label" data-astro-cid-er2v6o3k>Previous</span> <span class="pagination__title" data-astro-cid-er2v6o3k>Overview</span> </a> <a href="/days/1/strands-basics" class="pagination__link pagination__link--next" data-astro-cid-er2v6o3k> <span class="pagination__label" data-astro-cid-er2v6o3k>Next</span> <span class="pagination__title" data-astro-cid-er2v6o3k>Strands Basics</span> </a> </div>  </nav> </main> <!-- Table of Contents --> <aside class="day-layout__toc hide-mobile" data-astro-cid-vfeiczyy> <div class="day-layout__toc-content" data-astro-cid-vfeiczyy> <h3 class="day-layout__toc-title" data-astro-cid-vfeiczyy>On this page</h3> <nav aria-label="Table of contents" data-astro-cid-vfeiczyy> <ul class="day-layout__toc-list" data-astro-cid-vfeiczyy> <li data-astro-cid-vfeiczyy> <a href="#aws-account-configuration" class="day-layout__toc-link" data-astro-cid-vfeiczyy> AWS Account Configuration </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-1-configure-aws-cli" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Step 1: Configure AWS CLI </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-2-verify-aws-access" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Step 2: Verify AWS Access </a> </li><li data-astro-cid-vfeiczyy> <a href="#enable-amazon-bedrock-models" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Enable Amazon Bedrock Models </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-1-access-bedrock-console" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Step 1: Access Bedrock Console </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-2-enable-claude-models" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Step 2: Enable Claude Models </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-3-verify-model-access" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Step 3: Verify Model Access </a> </li><li data-astro-cid-vfeiczyy> <a href="#python-environment-setup" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Python Environment Setup </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-1-create-project-directory" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Step 1: Create Project Directory </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-2-install-dependencies" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Step 2: Install Dependencies </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-3-verify-strands-installation" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Step 3: Verify Strands Installation </a> </li><li data-astro-cid-vfeiczyy> <a href="#project-structure" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Project Structure </a> </li><li data-astro-cid-vfeiczyy> <a href="#troubleshooting" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Troubleshooting </a> </li><li data-astro-cid-vfeiczyy> <a href="#common-issues" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Common Issues </a> </li><li data-astro-cid-vfeiczyy> <a href="#next-steps" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Next Steps </a> </li> </ul> </nav> </div> </aside> </div> <footer class="footer" data-astro-cid-b2avyow5> <div class="footer__container" data-astro-cid-b2avyow5> <div class="footer__content" data-astro-cid-b2avyow5> <div class="footer__brand" data-astro-cid-b2avyow5> <span class="footer__logo" data-astro-cid-b2avyow5>AgentCore Initiative</span> <p class="footer__tagline" data-astro-cid-b2avyow5>
+Build production-ready AI agents with AWS AgentCore
+</p> </div> <nav class="footer__nav" aria-label="Footer navigation" data-astro-cid-b2avyow5> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Course</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5><a href="/days/1" data-astro-cid-b2avyow5>Day 1: The First Avenger</a></li> <li data-astro-cid-b2avyow5><a href="/days/2" data-astro-cid-b2avyow5>Day 2: Age of Ultron</a></li> <li data-astro-cid-b2avyow5><a href="/days/3" data-astro-cid-b2avyow5>Day 3: Infinity War</a></li> <li data-astro-cid-b2avyow5><a href="/days/4" data-astro-cid-b2avyow5>Day 4: Endgame</a></li> <li data-astro-cid-b2avyow5><a href="/days/5" data-astro-cid-b2avyow5>Day 5: Assemble</a></li> </ul> </div> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Resources</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5><a href="/troubleshooting" data-astro-cid-b2avyow5>Troubleshooting</a></li> <li data-astro-cid-b2avyow5><a href="/reference/costs" data-astro-cid-b2avyow5>Cost Guide</a></li> <li data-astro-cid-b2avyow5><a href="/reference/cleanup" data-astro-cid-b2avyow5>Cleanup</a></li> </ul> </div> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Links</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5> <a href="https://docs.aws.amazon.com/bedrock-agentcore/" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+AWS AgentCore Docs
+</a> </li> <li data-astro-cid-b2avyow5> <a href="https://github.com/awslabs/amazon-bedrock-agentcore-samples" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+AgentCore Samples
+</a> </li> <li data-astro-cid-b2avyow5> <a href="https://strandsagents.com" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+Strands Agents
+</a> </li> </ul> </div> </nav> </div> <div class="footer__bottom" data-astro-cid-b2avyow5> <p class="footer__copyright" data-astro-cid-b2avyow5>
+&copy; 2026 The AgentCore Initiative. Built with Astro.
+</p> <p class="footer__disclaimer" data-astro-cid-b2avyow5>
+This is an educational resource. AWS and Amazon Bedrock are trademarks of Amazon.com, Inc.
+</p> </div> </div> </footer>   <!-- Global scripts --> <script type="module" src="/_astro/BaseLayout.astro_astro_type_script_index_0_lang.BwEjmFOO.js"></script> </body> </html>   <script type="module" src="/_astro/DayLayout.astro_astro_type_script_index_0_lang.BT_UbId1.js"></script> 

@@ -1,0 +1,1 @@
+import{i as e}from"./progress.TVn-bCZj.js";const d=document.getElementById("next-day-link");d&&e(3)&&d.classList.add("unlocked");window.addEventListener("progress-updated",()=>{d&&e(3)&&d.classList.add("unlocked")});
