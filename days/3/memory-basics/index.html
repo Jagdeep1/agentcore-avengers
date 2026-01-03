@@ -1,0 +1,389 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="canonical" href="https://jagdeep1.github.io/agentcore-avengers/days/3/memory-basics/"><!-- Favicon --><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><!-- Primary Meta Tags --><title>Memory Basics - Day 3 | The AgentCore Initiative</title><meta name="title" content="Memory Basics - Day 3 | The AgentCore Initiative"><meta name="description" content="Day 3: Infinity War - Memory + Tools"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://jagdeep1.github.io/agentcore-avengers/days/3/memory-basics/"><meta property="og:title" content="Memory Basics - Day 3 | The AgentCore Initiative"><meta property="og:description" content="Day 3: Infinity War - Memory + Tools"><meta property="og:image" content="https://jagdeep1.github.io/images/og/default.png"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://jagdeep1.github.io/agentcore-avengers/days/3/memory-basics/"><meta name="twitter:title" content="Memory Basics - Day 3 | The AgentCore Initiative"><meta name="twitter:description" content="Day 3: Infinity War - Memory + Tools"><meta name="twitter:image" content="https://jagdeep1.github.io/images/og/default.png"><!-- Fonts - Plus Jakarta Sans & Geist Mono --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"><!-- Theme initialization (prevents flash) --><script>
+      (function () {
+        const stored = localStorage.getItem('agentcore-initiative-progress');
+        let theme = 'dark';
+        if (stored) {
+          try {
+            const progress = JSON.parse(stored);
+            theme = progress.theme || 'dark';
+          } catch (e) {}
+        }
+        if (theme === 'system') {
+          theme = window.matchMedia('(prefers-color-scheme: light)').matches
+            ? 'light'
+            : 'dark';
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script><link rel="stylesheet" href="/agentcore-avengers/_astro/_slug_.B9ZU_V3V.css">
+<style>.pagination[data-astro-cid-brrrquba]{display:flex;justify-content:space-between;gap:1rem}.pagination__link[data-astro-cid-brrrquba]{flex:1;max-width:50%;padding:1rem 1.25rem;background:var(--color-bg-elevated);border:var(--border-subtle);border-radius:var(--radius-lg);text-decoration:none;transition:all var(--transition-fast)}.pagination__link[data-astro-cid-brrrquba]:hover{background:var(--color-bg-secondary);border-color:var(--border-default)}.pagination__link--prev[data-astro-cid-brrrquba]{text-align:left}.pagination__link--next[data-astro-cid-brrrquba]{text-align:right;margin-left:auto}.pagination__label[data-astro-cid-brrrquba]{display:block;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-muted);margin-bottom:.25rem}.pagination__title[data-astro-cid-brrrquba]{display:block;font-size:.9375rem;font-weight:500;color:var(--color-text-primary)}
+</style>
+<link rel="stylesheet" href="/agentcore-avengers/_astro/_slug_.CP5296fy.css"><style>.callout[data-astro-cid-wi7smz4x]{display:flex;gap:1rem;padding:1rem 1.25rem;border-radius:var(--radius-lg);margin:1.5rem 0;border-left:4px solid}.callout--info[data-astro-cid-wi7smz4x]{background:#3b82f614;border-left-color:var(--color-accent-primary)}.callout--info[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-primary)}.callout--warning[data-astro-cid-wi7smz4x]{background:#f59e0b14;border-left-color:var(--color-accent-warning)}.callout--warning[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-warning)}.callout--danger[data-astro-cid-wi7smz4x]{background:#ef444414;border-left-color:var(--color-accent-danger)}.callout--danger[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-danger)}.callout--success[data-astro-cid-wi7smz4x]{background:#10b98114;border-left-color:var(--color-accent-success)}.callout--success[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-success)}.callout--tip[data-astro-cid-wi7smz4x]{background:#8b5cf614;border-left-color:var(--color-accent-purple)}.callout--tip[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-purple)}.callout__icon[data-astro-cid-wi7smz4x]{flex-shrink:0;width:1.25rem;height:1.25rem;margin-top:.125rem}.callout__content[data-astro-cid-wi7smz4x]{flex:1;min-width:0}.callout__title[data-astro-cid-wi7smz4x]{font-weight:600;font-size:.9375rem;color:var(--color-text-primary);margin-bottom:.25rem}.callout__body[data-astro-cid-wi7smz4x]{font-size:.9375rem;color:var(--color-text-secondary);line-height:1.6}.callout__body[data-astro-cid-wi7smz4x] p{margin:0}.callout__body[data-astro-cid-wi7smz4x] p+p{margin-top:.5rem}.callout__body[data-astro-cid-wi7smz4x] code{font-size:.85em}.callout__body[data-astro-cid-wi7smz4x] a{font-weight:500}
+</style></head> <body>  <header class="header" data-astro-cid-mb6pvx4c> <div class="header__container" data-astro-cid-mb6pvx4c> <!-- Logo --> <a href="/agentcore-avengers" class="header__logo" aria-label="Home" data-astro-cid-mb6pvx4c> <svg class="header__logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" data-astro-cid-mb6pvx4c> <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c></circle> <path d="M16 6 L22 12 L16 18 L10 12 Z" fill="currentColor" opacity="0.5" data-astro-cid-mb6pvx4c></path> <circle cx="16" cy="16" r="4" fill="currentColor" data-astro-cid-mb6pvx4c></circle> </svg> <span class="header__logo-text" data-astro-cid-mb6pvx4c>AgentCore Initiative</span> </a> <!-- Desktop Navigation --> <nav class="header__nav hide-mobile" aria-label="Main navigation" data-astro-cid-mb6pvx4c> <ul class="header__nav-list" data-astro-cid-mb6pvx4c> <li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengersdays" class="header__nav-link" data-astro-cid-mb6pvx4c> Course </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengerstroubleshooting" class="header__nav-link" data-astro-cid-mb6pvx4c> Troubleshooting </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengersreference" class="header__nav-link" data-astro-cid-mb6pvx4c> Reference </a> </li> </ul> </nav> <!-- Actions --> <div class="header__actions" data-astro-cid-mb6pvx4c> <!-- Theme Toggle Button (placeholder - will be React component) --> <button id="theme-toggle" class="header__theme-toggle" aria-label="Toggle theme" type="button" data-astro-cid-mb6pvx4c> <svg class="header__theme-icon header__theme-icon--dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <circle cx="12" cy="12" r="5" data-astro-cid-mb6pvx4c></circle> <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" data-astro-cid-mb6pvx4c></path> </svg> <svg class="header__theme-icon header__theme-icon--light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-mb6pvx4c></path> </svg> </button> <!-- Mobile Menu Toggle --> <button id="mobile-menu-toggle" class="header__mobile-toggle hide-desktop" aria-label="Toggle menu" aria-expanded="false" type="button" data-astro-cid-mb6pvx4c> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <path class="menu-icon" d="M4 6h16M4 12h16M4 18h16" data-astro-cid-mb6pvx4c></path> <path class="close-icon" d="M6 6l12 12M6 18L18 6" style="display: none" data-astro-cid-mb6pvx4c></path> </svg> </button> </div> </div> <!-- Mobile Navigation --> <nav id="mobile-nav" class="header__mobile-nav hide-desktop" aria-label="Mobile navigation" hidden data-astro-cid-mb6pvx4c> <ul class="header__mobile-nav-list" data-astro-cid-mb6pvx4c> <li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengersdays" class="header__mobile-nav-link" data-astro-cid-mb6pvx4c> Course </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengerstroubleshooting" class="header__mobile-nav-link" data-astro-cid-mb6pvx4c> Troubleshooting </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengersreference" class="header__mobile-nav-link" data-astro-cid-mb6pvx4c> Reference </a> </li> </ul> </nav> </header>  <script type="module">const r=document.getElementById("theme-toggle");r&&r.addEventListener("click",()=>{const e=document.documentElement,t=e.getAttribute("data-theme")==="dark"?"light":"dark";e.setAttribute("data-theme",t);const c=localStorage.getItem("agentcore-initiative-progress");let i={theme:t};if(c)try{i={...JSON.parse(c),theme:t}}catch{}localStorage.setItem("agentcore-initiative-progress",JSON.stringify(i))});const n=document.getElementById("mobile-menu-toggle"),l=document.getElementById("mobile-nav");n&&l&&n.addEventListener("click",()=>{const e=n.getAttribute("aria-expanded")==="true";n.setAttribute("aria-expanded",String(!e)),l.hidden=e;const o=n.querySelector(".menu-icon"),t=n.querySelector(".close-icon");o&&t&&(o.style.display=e?"block":"none",t.style.display=e?"none":"block")});</script> <div class="day-layout" style="--day-accent: #8b5cf6" data-astro-cid-vfeiczyy> <!-- Sidebar --> <aside class="day-layout__sidebar hide-mobile" data-astro-cid-vfeiczyy> <div class="day-layout__sidebar-content" data-astro-cid-vfeiczyy> <!-- Day Header --> <div class="day-layout__day-header" data-astro-cid-vfeiczyy> <span class="day-layout__day-number" data-astro-cid-vfeiczyy>Day 3</span> <h2 class="day-layout__day-title" data-astro-cid-vfeiczyy>Infinity War</h2> <p class="day-layout__day-focus" data-astro-cid-vfeiczyy>Memory + Tools</p> </div> <!-- Section Navigation --> <nav class="day-layout__nav" aria-label="Day sections" data-astro-cid-vfeiczyy> <ul class="day-layout__nav-list" data-astro-cid-vfeiczyy> <li data-astro-cid-vfeiczyy> <a href="/agentcore-avengersdays/3/memory-basics" class="day-layout__nav-link day-layout__nav-link--active" data-section="memory-basics" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Memory Basics </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengersdays/3/memory-strategies" class="day-layout__nav-link" data-section="memory-strategies" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Memory Strategies </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengersdays/3/tools" class="day-layout__nav-link" data-section="tools" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Code Interpreter &amp; Browser </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengersdays/3/controlled-disasters" class="day-layout__nav-link" data-section="controlled-disasters" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Controlled Disasters </a> </li> </ul> </nav> <!-- Challenge Link --> <a href="/agentcore-avengersdays/3/challenge" class="day-layout__challenge-link" data-astro-cid-vfeiczyy> <span class="day-layout__challenge-icon" data-astro-cid-vfeiczyy> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-vfeiczyy> <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" data-astro-cid-vfeiczyy></polygon> </svg> </span>
+Daily Challenge
+</a> </div> </aside> <!-- Main Content --> <main class="day-layout__main" data-astro-cid-vfeiczyy> <article class="day-layout__content prose" data-astro-cid-vfeiczyy>  <h1 id="memory-basics">Memory Basics</h1>
+<p>Remember Day 1? Your agent forgot everything between requests. That’s because AI models are inherently stateless - each request starts fresh with no knowledge of previous interactions.</p>
+<p><strong>AgentCore Memory</strong> solves this by providing managed memory services that persist context across interactions.</p>
+<h2 id="two-types-of-memory">Two Types of Memory</h2>
+<p>AgentCore Memory provides two complementary memory types:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext"><code><span class="line"><span>┌─────────────────────────────────────────────────────────────────────┐</span></span>
+<span class="line"><span>│                        Memory Types                                  │</span></span>
+<span class="line"><span>├─────────────────────────────────────────────────────────────────────┤</span></span>
+<span class="line"><span>│                                                                      │</span></span>
+<span class="line"><span>│  SHORT-TERM MEMORY                    LONG-TERM MEMORY               │</span></span>
+<span class="line"><span>│  ════════════════                     ═══════════════                │</span></span>
+<span class="line"><span>│                                                                      │</span></span>
+<span class="line"><span>│  Scope: Single session                Scope: Across all sessions     │</span></span>
+<span class="line"><span>│  Duration: Session lifetime           Duration: Persistent           │</span></span>
+<span class="line"><span>│  Content: Raw conversation turns      Content: Extracted insights    │</span></span>
+<span class="line"><span>│                                                                      │</span></span>
+<span class="line"><span>│  ┌─────────────────────┐             ┌─────────────────────┐        │</span></span>
+<span class="line"><span>│  │ User: My name is    │             │ Preferences:        │        │</span></span>
+<span class="line"><span>│  │       Sarah         │             │ - Prefers Python    │        │</span></span>
+<span class="line"><span>│  │                     │             │ - Morning meetings  │        │</span></span>
+<span class="line"><span>│  │ Agent: Hello Sarah! │             │                     │        │</span></span>
+<span class="line"><span>│  │                     │             │ Facts:              │        │</span></span>
+<span class="line"><span>│  │ User: I prefer      │      ──►    │ - Name: Sarah       │        │</span></span>
+<span class="line"><span>│  │       Python        │             │ - Team: Engineering │        │</span></span>
+<span class="line"><span>│  │                     │             │                     │        │</span></span>
+<span class="line"><span>│  │ Agent: Noted!       │             │ Summary:            │        │</span></span>
+<span class="line"><span>│  └─────────────────────┘             │ - Discussed project │        │</span></span>
+<span class="line"><span>│                                      │   setup and prefs   │        │</span></span>
+<span class="line"><span>│                                      └─────────────────────┘        │</span></span>
+<span class="line"><span>│                                                                      │</span></span>
+<span class="line"><span>└─────────────────────────────────────────────────────────────────────┘</span></span></code></pre>
+<aside class="callout callout--info" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>When to Use Each</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p><strong>Short-term</strong>: For immediate context like “what did I just ask?”
+<strong>Long-term</strong>: For persistent knowledge like “what are my preferences?”</p> </div> </div> </aside> 
+<h2 id="creating-a-memory-resource">Creating a Memory Resource</h2>
+<h3 id="step-1-create-memory-via-sdk">Step 1: Create Memory via SDK</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> boto3</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">memory_client </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto3.client(</span><span style="color:#9ECBFF">&#39;bedrock-agentcore-memory&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">region_name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;us-east-1&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Create a memory resource</span></span>
+<span class="line"><span style="color:#E1E4E8">response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> memory_client.create_memory(</span></span>
+<span class="line"><span style="color:#FFAB70">    name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;day3-agent-memory&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    description</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;Memory for Day 3 agent with conversation persistence&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Enable both memory types</span></span>
+<span class="line"><span style="color:#FFAB70">    memoryConfig</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;shortTermMemory&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;enabled&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;maxTurns&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">50</span><span style="color:#E1E4E8">,  </span><span style="color:#6A737D"># Keep last 50 conversation turns</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;longTermMemory&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;enabled&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;strategies&#39;</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">&#39;USER_PREFERENCE&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;SEMANTIC&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;SUMMARY&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#FFAB70">    tags</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;project&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;agentcore-initiative&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;day&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;3&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">memory_id </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> response[</span><span style="color:#9ECBFF">&#39;memoryId&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Created memory: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">memory_id</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span></code></pre>
+<h3 id="step-2-configure-memory-settings">Step 2: Configure Memory Settings</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># Update memory configuration</span></span>
+<span class="line"><span style="color:#E1E4E8">memory_client.update_memory(</span></span>
+<span class="line"><span style="color:#FFAB70">    memoryId</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">memory_id,</span></span>
+<span class="line"><span style="color:#FFAB70">    memoryConfig</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;shortTermMemory&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;enabled&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;maxTurns&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;tokenLimit&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">8000</span><span style="color:#E1E4E8">,  </span><span style="color:#6A737D"># Max tokens for context window</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;longTermMemory&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;enabled&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;strategies&#39;</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">&#39;USER_PREFERENCE&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;SEMANTIC&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;SUMMARY&#39;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;consolidation&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;enabled&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;interval&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;END_OF_SESSION&#39;</span><span style="color:#6A737D">  # When to consolidate</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span></code></pre>
+<h2 id="integrating-memory-with-strands">Integrating Memory with Strands</h2>
+<h3 id="basic-integration">Basic Integration</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># agent_with_memory.py</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Agent</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands.models </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> BedrockModel</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> bedrock_agentcore.memory </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> MemoryClient</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> bedrock_agentcore.runtime </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> runtime_handler</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Initialize clients</span></span>
+<span class="line"><span style="color:#E1E4E8">model </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> BedrockModel(</span><span style="color:#FFAB70">model_id</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;anthropic.claude-sonnet-4-20250514-v1:0&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">memory </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> MemoryClient(</span><span style="color:#FFAB70">memory_id</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;mem-xxxxxxxxxxxx&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Create agent</span></span>
+<span class="line"><span style="color:#E1E4E8">agent </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Agent(</span></span>
+<span class="line"><span style="color:#FFAB70">    model</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">model,</span></span>
+<span class="line"><span style="color:#FFAB70">    system_prompt</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;&quot;&quot;You are a helpful assistant with memory capabilities.</span></span>
+<span class="line"><span style="color:#9ECBFF">You can remember previous conversations and user preferences.</span></span>
+<span class="line"><span style="color:#9ECBFF">Use your memory to provide personalized, contextual responses.&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">@runtime_handler</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> handler</span><span style="color:#E1E4E8">(event, context):</span></span>
+<span class="line"><span style="color:#E1E4E8">    session_id </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> event.get(</span><span style="color:#9ECBFF">&#39;session_id&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;default&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    user_id </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> event.get(</span><span style="color:#9ECBFF">&#39;userContext&#39;</span><span style="color:#E1E4E8">, {}).get(</span><span style="color:#9ECBFF">&#39;sub&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;anonymous&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    message </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> event.get(</span><span style="color:#9ECBFF">&#39;message&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Retrieve conversation history (short-term)</span></span>
+<span class="line"><span style="color:#E1E4E8">    history </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> memory.get_session_history(</span></span>
+<span class="line"><span style="color:#FFAB70">        sessionId</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">session_id,</span></span>
+<span class="line"><span style="color:#FFAB70">        maxTurns</span><span style="color:#F97583">=</span><span style="color:#79B8FF">20</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Retrieve relevant long-term memories</span></span>
+<span class="line"><span style="color:#E1E4E8">    relevant_memories </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> memory.search_memories(</span></span>
+<span class="line"><span style="color:#FFAB70">        userId</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">user_id,</span></span>
+<span class="line"><span style="color:#FFAB70">        query</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">message,</span></span>
+<span class="line"><span style="color:#FFAB70">        maxResults</span><span style="color:#F97583">=</span><span style="color:#79B8FF">5</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Build context for the agent</span></span>
+<span class="line"><span style="color:#E1E4E8">    context_prompt </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> build_context(history, relevant_memories)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Get response with context</span></span>
+<span class="line"><span style="color:#E1E4E8">    response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> agent(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">context_prompt</span><span style="color:#79B8FF">}\n\n</span><span style="color:#9ECBFF">User: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">message</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Save the interaction to memory</span></span>
+<span class="line"><span style="color:#E1E4E8">    memory.add_message(</span></span>
+<span class="line"><span style="color:#FFAB70">        sessionId</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">session_id,</span></span>
+<span class="line"><span style="color:#FFAB70">        role</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;user&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        content</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">message</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"><span style="color:#E1E4E8">    memory.add_message(</span></span>
+<span class="line"><span style="color:#FFAB70">        sessionId</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">session_id,</span></span>
+<span class="line"><span style="color:#FFAB70">        role</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;assistant&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        content</span><span style="color:#F97583">=</span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">(response)</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;response&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">(response),</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;session_id&#39;</span><span style="color:#E1E4E8">: session_id</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> build_context</span><span style="color:#E1E4E8">(history, memories):</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Build context string from history and memories.&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    context_parts </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> []</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> memories:</span></span>
+<span class="line"><span style="color:#E1E4E8">        context_parts.append(</span><span style="color:#9ECBFF">&quot;Relevant memories about this user:&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">        for</span><span style="color:#E1E4E8"> mem </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> memories:</span></span>
+<span class="line"><span style="color:#E1E4E8">            context_parts.append(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;- </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">mem[</span><span style="color:#9ECBFF">&#39;content&#39;</span><span style="color:#E1E4E8">]</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> history:</span></span>
+<span class="line"><span style="color:#E1E4E8">        context_parts.append(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">Recent conversation:&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">        for</span><span style="color:#E1E4E8"> turn </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> history[</span><span style="color:#F97583">-</span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">:]:  </span><span style="color:#6A737D"># Last 10 turns</span></span>
+<span class="line"><span style="color:#E1E4E8">            context_parts.append(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">turn[</span><span style="color:#9ECBFF">&#39;role&#39;</span><span style="color:#E1E4E8">].title()</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">turn[</span><span style="color:#9ECBFF">&#39;content&#39;</span><span style="color:#E1E4E8">]</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#9ECBFF"> &#39;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">&#39;</span><span style="color:#E1E4E8">.join(context_parts)</span></span></code></pre>
+<h3 id="using-the-strands-memory-integration">Using the Strands Memory Integration</h3>
+<p>Strands Agents SDK provides built-in memory support:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># Using Strands built-in memory integration</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Agent</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands.models </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> BedrockModel</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands.memory </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> AgentCoreMemory</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Initialize memory with AgentCore</span></span>
+<span class="line"><span style="color:#E1E4E8">memory </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> AgentCoreMemory(</span></span>
+<span class="line"><span style="color:#FFAB70">    memory_id</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;mem-xxxxxxxxxxxx&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    region</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;us-east-1&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Create agent with automatic memory management</span></span>
+<span class="line"><span style="color:#E1E4E8">agent </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Agent(</span></span>
+<span class="line"><span style="color:#FFAB70">    model</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">BedrockModel(</span><span style="color:#FFAB70">model_id</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;anthropic.claude-sonnet-4-20250514-v1:0&quot;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#FFAB70">    memory</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">memory,  </span><span style="color:#6A737D"># Strands handles memory automatically</span></span>
+<span class="line"><span style="color:#FFAB70">    system_prompt</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;You are a helpful assistant that remembers user preferences.&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Memory is automatically managed!</span></span>
+<span class="line"><span style="color:#E1E4E8">response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> agent(</span><span style="color:#9ECBFF">&quot;My name is Sarah and I prefer Python.&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(response)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Later in another session...</span></span>
+<span class="line"><span style="color:#E1E4E8">response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> agent(</span><span style="color:#9ECBFF">&quot;What&#39;s my name and preferred language?&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(response)  </span><span style="color:#6A737D"># &quot;Your name is Sarah and you prefer Python!&quot;</span></span></code></pre>
+<h2 id="testing-memory-persistence">Testing Memory Persistence</h2>
+<h3 id="test-short-term-memory">Test Short-Term Memory</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># test_short_term.py</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> test_short_term_memory</span><span style="color:#E1E4E8">():</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Test that agent remembers within a session.&quot;&quot;&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    session_id </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> &quot;test-session-001&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Turn 1: Introduce yourself</span></span>
+<span class="line"><span style="color:#E1E4E8">    response1 </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> invoke_agent(</span></span>
+<span class="line"><span style="color:#FFAB70">        message</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;Hi, my name is Alex and I&#39;m working on a data pipeline.&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        session_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">session_id</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Turn 1: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">response1</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Turn 2: Reference previous context</span></span>
+<span class="line"><span style="color:#E1E4E8">    response2 </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> invoke_agent(</span></span>
+<span class="line"><span style="color:#FFAB70">        message</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;What was I working on again?&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        session_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">session_id</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Turn 2: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">response2</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#6A737D">    # Expected: &quot;You mentioned you&#39;re working on a data pipeline.&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Turn 3: Continue the conversation</span></span>
+<span class="line"><span style="color:#E1E4E8">    response3 </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> invoke_agent(</span></span>
+<span class="line"><span style="color:#FFAB70">        message</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;Can you help me with that?&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        session_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">session_id</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Turn 3: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">response3</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#6A737D">    # Agent should remember the data pipeline context</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">test_short_term_memory()</span></span></code></pre>
+<h3 id="test-long-term-memory">Test Long-Term Memory</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># test_long_term.py</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> test_long_term_memory</span><span style="color:#E1E4E8">():</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Test that agent remembers across sessions.&quot;&quot;&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    user_id </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> &quot;user-123&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Session 1: Establish preferences</span></span>
+<span class="line"><span style="color:#E1E4E8">    session1 </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> &quot;session-001&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    invoke_agent(</span></span>
+<span class="line"><span style="color:#FFAB70">        message</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;I always prefer TypeScript over JavaScript.&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        session_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">session1,</span></span>
+<span class="line"><span style="color:#FFAB70">        user_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">user_id</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"><span style="color:#E1E4E8">    invoke_agent(</span></span>
+<span class="line"><span style="color:#FFAB70">        message</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;My favorite color is blue.&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        session_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">session1,</span></span>
+<span class="line"><span style="color:#FFAB70">        user_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">user_id</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # End session 1 (triggers memory consolidation)</span></span>
+<span class="line"><span style="color:#E1E4E8">    end_session(session1)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Session 2: New session, same user</span></span>
+<span class="line"><span style="color:#E1E4E8">    session2 </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> &quot;session-002&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> invoke_agent(</span></span>
+<span class="line"><span style="color:#FFAB70">        message</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;If I&#39;m starting a new project, what language should I use?&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        session_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">session2,</span></span>
+<span class="line"><span style="color:#FFAB70">        user_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">user_id</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Session 2: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">response</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#6A737D">    # Expected: Mentions TypeScript based on remembered preference</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">test_long_term_memory()</span></span></code></pre>
+<aside class="callout callout--success" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Memory Working!</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>If your agent remembers the user’s preference from a previous session,
+your long-term memory is correctly configured!</p> </div> </div> </aside> 
+<h2 id="memory-api-reference">Memory API Reference</h2>
+<h3 id="core-operations">Core Operations</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># Add a message to session history</span></span>
+<span class="line"><span style="color:#E1E4E8">memory.add_message(</span></span>
+<span class="line"><span style="color:#FFAB70">    sessionId</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;session-123&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    role</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;user&#39;</span><span style="color:#E1E4E8">,  </span><span style="color:#6A737D"># or &#39;assistant&#39;</span></span>
+<span class="line"><span style="color:#FFAB70">    content</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;Hello!&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Get session history</span></span>
+<span class="line"><span style="color:#E1E4E8">history </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> memory.get_session_history(</span></span>
+<span class="line"><span style="color:#FFAB70">    sessionId</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;session-123&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    maxTurns</span><span style="color:#F97583">=</span><span style="color:#79B8FF">50</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Search long-term memories</span></span>
+<span class="line"><span style="color:#E1E4E8">memories </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> memory.search_memories(</span></span>
+<span class="line"><span style="color:#FFAB70">    userId</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;user-456&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    query</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;What are my preferences?&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    maxResults</span><span style="color:#F97583">=</span><span style="color:#79B8FF">10</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Manually add a long-term memory</span></span>
+<span class="line"><span style="color:#E1E4E8">memory.add_memory(</span></span>
+<span class="line"><span style="color:#FFAB70">    userId</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;user-456&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    content</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;Prefers morning meetings&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    memoryType</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;USER_PREFERENCE&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Delete a memory</span></span>
+<span class="line"><span style="color:#E1E4E8">memory.delete_memory(</span><span style="color:#FFAB70">memoryId</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;memory-789&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># End session (triggers consolidation)</span></span>
+<span class="line"><span style="color:#E1E4E8">memory.end_session(</span><span style="color:#FFAB70">sessionId</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;session-123&#39;</span><span style="color:#E1E4E8">)</span></span></code></pre>
+<h3 id="session-management">Session Management</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># Create a new session</span></span>
+<span class="line"><span style="color:#E1E4E8">session </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> memory.create_session(</span></span>
+<span class="line"><span style="color:#FFAB70">    userId</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;user-456&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    metadata</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;source&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;web-app&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;topic&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;project-planning&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Get session info</span></span>
+<span class="line"><span style="color:#E1E4E8">session_info </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> memory.get_session(</span><span style="color:#FFAB70">sessionId</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;session-123&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Session started: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">session_info[</span><span style="color:#9ECBFF">&#39;createdAt&#39;</span><span style="color:#E1E4E8">]</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Turn count: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">session_info[</span><span style="color:#9ECBFF">&#39;turnCount&#39;</span><span style="color:#E1E4E8">]</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># List user sessions</span></span>
+<span class="line"><span style="color:#E1E4E8">sessions </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> memory.list_sessions(</span><span style="color:#FFAB70">userId</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;user-456&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">for</span><span style="color:#E1E4E8"> s </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> sessions:</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Session </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">s[</span><span style="color:#9ECBFF">&#39;sessionId&#39;</span><span style="color:#E1E4E8">]</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">s[</span><span style="color:#9ECBFF">&#39;turnCount&#39;</span><span style="color:#E1E4E8">]</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF"> turns&quot;</span><span style="color:#E1E4E8">)</span></span></code></pre>
+<h2 id="checkpoint">Checkpoint</h2>
+<p>At this point, you have:</p>
+<ul>
+<li>✅ Understood short-term vs long-term memory</li>
+<li>✅ Created a memory resource</li>
+<li>✅ Integrated memory with your agent</li>
+<li>✅ Tested memory persistence</li>
+</ul>
+<p><strong>Next, we’ll explore advanced memory strategies.</strong></p>
+<div class="nav-buttons"><a href="/days/3" class="nav-button nav-button--prev"><p>← Back to Overview</p></a><a href="/days/3/memory-strategies" class="nav-button nav-button--next"><p>Next: Memory Strategies →</p></a></div>
+<style>
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 3rem;
+  gap: 1rem;
+}
+
+.nav-button {
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+}
+
+.nav-button--prev {
+  color: var(--color-text-secondary);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--border-subtle);
+}
+
+.nav-button--prev:hover {
+  background: var(--color-bg-secondary);
+}
+
+.nav-button--next {
+  color: white;
+  background: var(--color-day-3);
+}
+
+.nav-button--next:hover {
+  opacity: 0.9;
+}
+</style>   </article> <!-- Navigation Footer --> <nav class="day-layout__pagination" aria-label="Page navigation" data-astro-cid-vfeiczyy>  <div class="pagination" data-astro-cid-brrrquba> <a href="/agentcore-avengersdays/3/day-3" class="pagination__link pagination__link--prev" data-astro-cid-brrrquba> <span class="pagination__label" data-astro-cid-brrrquba>Previous</span> <span class="pagination__title" data-astro-cid-brrrquba>Overview</span> </a> <a href="/agentcore-avengersdays/3/memory-strategies" class="pagination__link pagination__link--next" data-astro-cid-brrrquba> <span class="pagination__label" data-astro-cid-brrrquba>Next</span> <span class="pagination__title" data-astro-cid-brrrquba>Memory Strategies</span> </a> </div>  </nav> </main> <!-- Table of Contents --> <aside class="day-layout__toc hide-mobile" data-astro-cid-vfeiczyy> <div class="day-layout__toc-content" data-astro-cid-vfeiczyy> <h3 class="day-layout__toc-title" data-astro-cid-vfeiczyy>On this page</h3> <nav aria-label="Table of contents" data-astro-cid-vfeiczyy> <ul class="day-layout__toc-list" data-astro-cid-vfeiczyy> <li data-astro-cid-vfeiczyy> <a href="#two-types-of-memory" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Two Types of Memory </a> </li><li data-astro-cid-vfeiczyy> <a href="#creating-a-memory-resource" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Creating a Memory Resource </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-1-create-memory-via-sdk" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Step 1: Create Memory via SDK </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-2-configure-memory-settings" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Step 2: Configure Memory Settings </a> </li><li data-astro-cid-vfeiczyy> <a href="#integrating-memory-with-strands" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Integrating Memory with Strands </a> </li><li data-astro-cid-vfeiczyy> <a href="#basic-integration" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Basic Integration </a> </li><li data-astro-cid-vfeiczyy> <a href="#using-the-strands-memory-integration" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Using the Strands Memory Integration </a> </li><li data-astro-cid-vfeiczyy> <a href="#testing-memory-persistence" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Testing Memory Persistence </a> </li><li data-astro-cid-vfeiczyy> <a href="#test-short-term-memory" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Test Short-Term Memory </a> </li><li data-astro-cid-vfeiczyy> <a href="#test-long-term-memory" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Test Long-Term Memory </a> </li><li data-astro-cid-vfeiczyy> <a href="#memory-api-reference" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Memory API Reference </a> </li><li data-astro-cid-vfeiczyy> <a href="#core-operations" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Core Operations </a> </li><li data-astro-cid-vfeiczyy> <a href="#session-management" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Session Management </a> </li><li data-astro-cid-vfeiczyy> <a href="#checkpoint" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Checkpoint </a> </li> </ul> </nav> </div> </aside> </div> <footer class="footer" data-astro-cid-b2avyow5> <div class="footer__container" data-astro-cid-b2avyow5> <div class="footer__content" data-astro-cid-b2avyow5> <div class="footer__brand" data-astro-cid-b2avyow5> <span class="footer__logo" data-astro-cid-b2avyow5>AgentCore Initiative</span> <p class="footer__tagline" data-astro-cid-b2avyow5>
+Build production-ready AI agents with AWS AgentCore
+</p> </div> <nav class="footer__nav" aria-label="Footer navigation" data-astro-cid-b2avyow5> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Course</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5><a href="/agentcore-avengersdays/1" data-astro-cid-b2avyow5>Day 1: The First Avenger</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengersdays/2" data-astro-cid-b2avyow5>Day 2: Age of Ultron</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengersdays/3" data-astro-cid-b2avyow5>Day 3: Infinity War</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengersdays/4" data-astro-cid-b2avyow5>Day 4: Endgame</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengersdays/5" data-astro-cid-b2avyow5>Day 5: Assemble</a></li> </ul> </div> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Resources</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5><a href="/agentcore-avengerstroubleshooting" data-astro-cid-b2avyow5>Troubleshooting</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengersreference/costs" data-astro-cid-b2avyow5>Cost Guide</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengersreference/cleanup" data-astro-cid-b2avyow5>Cleanup</a></li> </ul> </div> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Links</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5> <a href="https://docs.aws.amazon.com/bedrock-agentcore/" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+AWS AgentCore Docs
+</a> </li> <li data-astro-cid-b2avyow5> <a href="https://github.com/awslabs/amazon-bedrock-agentcore-samples" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+AgentCore Samples
+</a> </li> <li data-astro-cid-b2avyow5> <a href="https://strandsagents.com" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+Strands Agents
+</a> </li> </ul> </div> </nav> </div> <div class="footer__bottom" data-astro-cid-b2avyow5> <p class="footer__copyright" data-astro-cid-b2avyow5>
+&copy; 2026 The AgentCore Initiative. Built with Astro.
+</p> <p class="footer__disclaimer" data-astro-cid-b2avyow5>
+This is an educational resource. AWS and Amazon Bedrock are trademarks of Amazon.com, Inc.
+</p> </div> </div> </footer>   <!-- Global scripts --> <script type="module" src="/agentcore-avengers/_astro/BaseLayout.astro_astro_type_script_index_0_lang.BwEjmFOO.js"></script> </body> </html>   <script type="module" src="/agentcore-avengers/_astro/DayLayout.astro_astro_type_script_index_0_lang.BT_UbId1.js"></script> 
