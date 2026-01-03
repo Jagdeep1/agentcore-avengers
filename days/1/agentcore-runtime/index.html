@@ -64,10 +64,10 @@ Daily Challenge
 <h2 id="deployment-architecture">Deployment Architecture</h2>
 <p>The deployment process follows three main stages: configure, launch, and invoke.</p>
 <h3 id="configuration-stage">Configuration Stage</h3>
-<p><img src="/images/day-1/configure.png" alt="AgentCore Configuration Workflow"/></p>
+<p><img src="/agentcore-avengers/images/day-1/configure.png" alt="AgentCore Configuration Workflow"/></p>
 <p>The configuration process takes your agent code (models, framework, and AgentCore Runtime decorator) and generates a Docker file for containerization.</p>
 <h3 id="launch-stage">Launch Stage</h3>
-<p><img src="/images/day-1/launch.png" alt="AgentCore Launch Process"/></p>
+<p><img src="/agentcore-avengers/images/day-1/launch.png" alt="AgentCore Launch Process"/></p>
 <p>During launch:</p>
 <ol>
 <li><strong>AWS CodeBuild</strong> builds your Docker container</li>
@@ -80,7 +80,7 @@ Daily Challenge
 </li>
 </ol>
 <h3 id="invocation-stage">Invocation Stage</h3>
-<p><img src="/images/day-1/invoke.png" alt="AgentCore Invocation Flow"/></p>
+<p><img src="/agentcore-avengers/images/day-1/invoke.png" alt="AgentCore Invocation Flow"/></p>
 <p>The user’s application invokes the Runtime Endpoint, which routes requests to your Runtime Agent for processing.</p>
 <h2 id="step-1-prepare-your-agent-for-deployment">Step 1: Prepare Your Agent for Deployment</h2>
 <p>The AgentCore Starter Toolkit requires your agent to follow a specific structure. Let’s update our code:</p>
@@ -231,7 +231,7 @@ Subsequent deployments are faster due to caching.</p> </div> </div> </aside>
 <span class="line"><span style="color:#79B8FF">  --session-id</span><span style="color:#9ECBFF"> &quot;cli-test-001&quot;</span></span></code></pre>
 <h2 id="understanding-the-invocation-flow">Understanding the Invocation Flow</h2>
 <p>Once deployed, your agent follows this invocation pattern:</p>
-<p><img src="/images/day-1/invoke.png" alt="AgentCore Invocation Architecture"/></p>
+<p><img src="/agentcore-avengers/images/day-1/invoke.png" alt="AgentCore Invocation Architecture"/></p>
 <p>The complete flow:</p>
 <ol>
 <li><strong>User Application</strong> sends an invoke request with a payload to the <strong>Runtime Endpoint</strong></li>
