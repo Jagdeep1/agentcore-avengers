@@ -15,7 +15,7 @@
         }
         document.documentElement.setAttribute('data-theme', theme);
       })();
-    </script><link rel="stylesheet" href="/agentcore-avengers/_astro/_slug_.B9ZU_V3V.css">
+    </script><link rel="stylesheet" href="/agentcore-avengers/_astro/_slug_.DVOvUGV-.css">
 <style>.pagination[data-astro-cid-er2v6o3k]{display:flex;justify-content:space-between;gap:1rem}.pagination__link[data-astro-cid-er2v6o3k]{flex:1;max-width:50%;padding:1rem 1.25rem;background:var(--color-bg-elevated);border:var(--border-subtle);border-radius:var(--radius-lg);text-decoration:none;transition:all var(--transition-fast)}.pagination__link[data-astro-cid-er2v6o3k]:hover{background:var(--color-bg-secondary);border-color:var(--border-default)}.pagination__link--prev[data-astro-cid-er2v6o3k]{text-align:left}.pagination__link--next[data-astro-cid-er2v6o3k]{text-align:right;margin-left:auto}.pagination__label[data-astro-cid-er2v6o3k]{display:block;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-muted);margin-bottom:.25rem}.pagination__title[data-astro-cid-er2v6o3k]{display:block;font-size:.9375rem;font-weight:500;color:var(--color-text-primary)}
 </style>
 <link rel="stylesheet" href="/agentcore-avengers/_astro/_slug_.CP5296fy.css"><style>.callout[data-astro-cid-wi7smz4x]{display:flex;gap:1rem;padding:1rem 1.25rem;border-radius:var(--radius-lg);margin:1.5rem 0;border-left:4px solid}.callout--info[data-astro-cid-wi7smz4x]{background:#3b82f614;border-left-color:var(--color-accent-primary)}.callout--info[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-primary)}.callout--warning[data-astro-cid-wi7smz4x]{background:#f59e0b14;border-left-color:var(--color-accent-warning)}.callout--warning[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-warning)}.callout--danger[data-astro-cid-wi7smz4x]{background:#ef444414;border-left-color:var(--color-accent-danger)}.callout--danger[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-danger)}.callout--success[data-astro-cid-wi7smz4x]{background:#10b98114;border-left-color:var(--color-accent-success)}.callout--success[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-success)}.callout--tip[data-astro-cid-wi7smz4x]{background:#8b5cf614;border-left-color:var(--color-accent-purple)}.callout--tip[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-purple)}.callout__icon[data-astro-cid-wi7smz4x]{flex-shrink:0;width:1.25rem;height:1.25rem;margin-top:.125rem}.callout__content[data-astro-cid-wi7smz4x]{flex:1;min-width:0}.callout__title[data-astro-cid-wi7smz4x]{font-weight:600;font-size:.9375rem;color:var(--color-text-primary);margin-bottom:.25rem}.callout__body[data-astro-cid-wi7smz4x]{font-size:.9375rem;color:var(--color-text-secondary);line-height:1.6}.callout__body[data-astro-cid-wi7smz4x] p{margin:0}.callout__body[data-astro-cid-wi7smz4x] p+p{margin-top:.5rem}.callout__body[data-astro-cid-wi7smz4x] code{font-size:.85em}.callout__body[data-astro-cid-wi7smz4x] a{font-weight:500}
@@ -62,80 +62,74 @@ Daily Challenge
 <table><thead><tr><th>Feature</th><th>Local Development</th><th>AgentCore Runtime</th></tr></thead><tbody><tr><td>Session Isolation</td><td>❌ Single process</td><td>✅ Per-request isolation</td></tr><tr><td>Execution Time</td><td>Limited by local resources</td><td>Extended timeouts for complex tasks</td></tr><tr><td>Scaling</td><td>Manual</td><td>✅ Automatic serverless scaling</td></tr><tr><td>Security</td><td>Your responsibility</td><td>✅ Enterprise-grade sandboxing</td></tr><tr><td>Pricing</td><td>Always running</td><td>✅ Consumption-based (pay per use)</td></tr></tbody></table>
 <aside class="callout callout--info" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Production-Ready</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>AgentCore Runtime handles the infrastructure complexity so you can focus on building agent capabilities.</p> </div> </div> </aside> 
 <h2 id="deployment-architecture">Deployment Architecture</h2>
-<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext"><code><span class="line"><span>┌─────────────────────────────────────────────────────────────┐</span></span>
-<span class="line"><span>│                    AgentCore Starter Toolkit                 │</span></span>
-<span class="line"><span>│  ┌────────────────────────────────────────────────────────┐ │</span></span>
-<span class="line"><span>│  │  agentcore create  →  Scaffold project                  │ │</span></span>
-<span class="line"><span>│  │  agentcore dev     →  Local testing server              │ │</span></span>
-<span class="line"><span>│  │  agentcore launch  →  Deploy to AWS                     │ │</span></span>
-<span class="line"><span>│  │  agentcore invoke  →  Test deployed agent               │ │</span></span>
-<span class="line"><span>│  │  agentcore destroy →  Clean up resources                │ │</span></span>
-<span class="line"><span>│  └────────────────────────────────────────────────────────┘ │</span></span>
-<span class="line"><span>└─────────────────────────────────────────────────────────────┘</span></span>
-<span class="line"><span>                              │</span></span>
-<span class="line"><span>                              ▼</span></span>
-<span class="line"><span>┌─────────────────────────────────────────────────────────────┐</span></span>
-<span class="line"><span>│                    AWS Infrastructure                        │</span></span>
-<span class="line"><span>│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────┐  │</span></span>
-<span class="line"><span>│  │   CodeBuild  │  │     ECR      │  │ AgentCore Runtime│  │</span></span>
-<span class="line"><span>│  │  (Build)     │→ │  (Registry)  │→ │  (Host Agent)    │  │</span></span>
-<span class="line"><span>│  └──────────────┘  └──────────────┘  └──────────────────┘  │</span></span>
-<span class="line"><span>│                                              │               │</span></span>
-<span class="line"><span>│                                              ▼               │</span></span>
-<span class="line"><span>│                                     ┌──────────────────┐    │</span></span>
-<span class="line"><span>│                                     │  CloudWatch Logs │    │</span></span>
-<span class="line"><span>│                                     │  (Observability) │    │</span></span>
-<span class="line"><span>│                                     └──────────────────┘    │</span></span>
-<span class="line"><span>└─────────────────────────────────────────────────────────────┘</span></span></code></pre>
+<p>The deployment process follows three main stages: configure, launch, and invoke.</p>
+<h3 id="configuration-stage">Configuration Stage</h3>
+<p><img src="/images/day-1/configure.png" alt="AgentCore Configuration Workflow"/></p>
+<p>The configuration process takes your agent code (models, framework, and AgentCore Runtime decorator) and generates a Docker file for containerization.</p>
+<h3 id="launch-stage">Launch Stage</h3>
+<p><img src="/images/day-1/launch.png" alt="AgentCore Launch Process"/></p>
+<p>During launch:</p>
+<ol>
+<li><strong>AWS CodeBuild</strong> builds your Docker container</li>
+<li>Container image is pushed to <strong>Amazon ECR Repository</strong></li>
+<li><strong>AgentCore Runtime</strong> creates the runtime environment with:
+<ul>
+<li><strong>Runtime Agent</strong>: Your containerized agent code</li>
+<li><strong>Runtime Endpoint</strong>: HTTP endpoint for invocations</li>
+</ul>
+</li>
+</ol>
+<h3 id="invocation-stage">Invocation Stage</h3>
+<p><img src="/images/day-1/invoke.png" alt="AgentCore Invocation Flow"/></p>
+<p>The user’s application invokes the Runtime Endpoint, which routes requests to your Runtime Agent for processing.</p>
 <h2 id="step-1-prepare-your-agent-for-deployment">Step 1: Prepare Your Agent for Deployment</h2>
 <p>The AgentCore Starter Toolkit requires your agent to follow a specific structure. Let’s update our code:</p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># agent.py - Updated for AgentCore deployment</span></span>
-<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Agent</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Agent, tool</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands_tools </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> calculator</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> bedrock_agentcore.runtime </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> BedrockAgentCoreApp</span></span>
 <span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands.models </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> BedrockModel</span></span>
-<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> bedrock_agentcore.runtime </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> runtime_handler</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> datetime </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> datetime</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#6A737D"># Import your tools</span></span>
-<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> tools </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> get_current_time, calculate, generate_greeting</span></span>
+<span class="line"><span style="color:#E1E4E8">app </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> BedrockAgentCoreApp()</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#6A737D"># Initialize the model</span></span>
+<span class="line"><span style="color:#B392F0">@tool</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> get_weather</span><span style="color:#E1E4E8">() -&gt; </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Get the current weather.&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#9ECBFF"> &quot;sunny&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">@tool</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> get_current_time</span><span style="color:#E1E4E8">() -&gt; </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Get the current date and time.&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> datetime.now().isoformat()</span></span>
+<span class="line"></span>
 <span class="line"><span style="color:#E1E4E8">model </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> BedrockModel(</span></span>
 <span class="line"><span style="color:#FFAB70">    model_id</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;anthropic.claude-sonnet-4-20250514-v1:0&quot;</span><span style="color:#E1E4E8">,</span></span>
 <span class="line"><span style="color:#E1E4E8">)</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#6A737D"># Create the agent</span></span>
 <span class="line"><span style="color:#E1E4E8">agent </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Agent(</span></span>
 <span class="line"><span style="color:#FFAB70">    model</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">model,</span></span>
-<span class="line"><span style="color:#FFAB70">    tools</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[get_current_time, calculate, generate_greeting],</span></span>
-<span class="line"><span style="color:#FFAB70">    system_prompt</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;&quot;&quot;You are AgentOne, a helpful AI assistant deployed on AgentCore.</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#9ECBFF">You have access to the following tools:</span></span>
-<span class="line"><span style="color:#9ECBFF">- get_current_time: Get the current date and time</span></span>
-<span class="line"><span style="color:#9ECBFF">- calculate: Perform mathematical calculations</span></span>
-<span class="line"><span style="color:#9ECBFF">- generate_greeting: Create personalized greetings</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#9ECBFF">Use these tools when appropriate to help users.</span></span>
-<span class="line"><span style="color:#9ECBFF">Always explain what you&#39;re doing and why.&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#FFAB70">    tools</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[calculator, get_weather, get_current_time],</span></span>
+<span class="line"><span style="color:#FFAB70">    system_prompt</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;You&#39;re a helpful assistant. You can do simple math calculations, tell the weather, and get the current time.&quot;</span></span>
 <span class="line"><span style="color:#E1E4E8">)</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#6A737D"># AgentCore Runtime handler</span></span>
-<span class="line"><span style="color:#B392F0">@runtime_handler</span></span>
-<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> handler</span><span style="color:#E1E4E8">(event, context):</span></span>
+<span class="line"><span style="color:#B392F0">@app.entrypoint</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> handle_request</span><span style="color:#E1E4E8">(payload):</span></span>
 <span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Handle incoming requests from AgentCore Runtime.&quot;&quot;&quot;</span></span>
-<span class="line"><span style="color:#E1E4E8">    user_message </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> event.get(</span><span style="color:#9ECBFF">&quot;message&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;&quot;</span><span style="color:#E1E4E8">)</span></span>
-<span class="line"><span style="color:#E1E4E8">    session_id </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> event.get(</span><span style="color:#9ECBFF">&quot;session_id&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;default&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    user_input </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> payload.get(</span><span style="color:#9ECBFF">&quot;prompt&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;User input: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">user_input</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> agent(user_input)</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> response.message[</span><span style="color:#9ECBFF">&#39;content&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;text&#39;</span><span style="color:#E1E4E8">]</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#E1E4E8">    response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> agent(user_message)</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span></span>
-<span class="line"><span style="color:#9ECBFF">        &quot;response&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">(response),</span></span>
-<span class="line"><span style="color:#9ECBFF">        &quot;session_id&quot;</span><span style="color:#E1E4E8">: session_id</span></span>
-<span class="line"><span style="color:#E1E4E8">    }</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#6A737D"># Local testing support</span></span>
 <span class="line"><span style="color:#F97583">if</span><span style="color:#79B8FF"> __name__</span><span style="color:#F97583"> ==</span><span style="color:#9ECBFF"> &quot;__main__&quot;</span><span style="color:#E1E4E8">:</span></span>
-<span class="line"><span style="color:#E1E4E8">    test_event </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span><span style="color:#9ECBFF">&quot;message&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;What time is it?&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;session_id&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;test-123&quot;</span><span style="color:#E1E4E8">}</span></span>
-<span class="line"><span style="color:#E1E4E8">    result </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> handler(test_event, </span><span style="color:#79B8FF">None</span><span style="color:#E1E4E8">)</span></span>
-<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(result)</span></span></code></pre>
+<span class="line"><span style="color:#E1E4E8">    app.run()</span></span></code></pre>
+<aside class="callout callout--info" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>What BedrockAgentCoreApp Does</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>When you use <code>BedrockAgentCoreApp</code>, it automatically:</p><ul>
+<li>Creates an HTTP server listening on port 8080</li>
+<li>Implements the required <code>/invocations</code> endpoint for processing requests</li>
+<li>Implements the <code>/ping</code> endpoint for health checks</li>
+<li>Handles proper content types and response formats</li>
+<li>Manages error handling according to AWS standards</li>
+</ul><p>The <code>@app.entrypoint</code> decorator marks your function as the entry point for all agent invocations.</p> </div> </div> </aside> 
 <h2 id="step-2-create-agentcore-project">Step 2: Create AgentCore Project</h2>
 <p>Use the starter toolkit to scaffold your project:</p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Create a new AgentCore project</span></span>
@@ -223,40 +217,38 @@ Subsequent deployments are faster due to caching.</p> </div> </div> </aside>
 <span class="line"></span>
 <span class="line"><span style="color:#E1E4E8">response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> client.invoke_agent_runtime(</span></span>
 <span class="line"><span style="color:#FFAB70">    agentRuntimeArn</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;arn:aws:bedrock-agentcore:us-east-1:123456789012:runtime/my-first-agent&#39;</span><span style="color:#E1E4E8">,</span></span>
-<span class="line"><span style="color:#FFAB70">    inputText</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;What time is it and calculate 20</span><span style="color:#79B8FF">% o</span><span style="color:#9ECBFF">f 150&#39;</span><span style="color:#E1E4E8">,</span></span>
-<span class="line"><span style="color:#FFAB70">    sessionId</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;session-001&#39;</span></span>
+<span class="line"><span style="color:#FFAB70">    qualifier</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;DEFAULT&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    payload</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">json.dumps({</span><span style="color:#9ECBFF">&quot;prompt&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;What is 2+2?&quot;</span><span style="color:#E1E4E8">})  </span><span style="color:#6A737D"># Note: &#39;prompt&#39; not &#39;message&#39;</span></span>
 <span class="line"><span style="color:#E1E4E8">)</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#6A737D"># Parse the response</span></span>
-<span class="line"><span style="color:#E1E4E8">result </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> json.loads(response[</span><span style="color:#9ECBFF">&#39;completion&#39;</span><span style="color:#E1E4E8">])</span></span>
-<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Agent response: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">result[</span><span style="color:#9ECBFF">&#39;response&#39;</span><span style="color:#E1E4E8">]</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span></code></pre>
+<span class="line"><span style="color:#E1E4E8">result </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> json.loads(response[</span><span style="color:#9ECBFF">&#39;response&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Agent response: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">result</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span></code></pre>
 <h3 id="using-aws-cli">Using AWS CLI</h3>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">aws</span><span style="color:#9ECBFF"> bedrock-agentcore</span><span style="color:#9ECBFF"> invoke-agent-runtime</span><span style="color:#79B8FF"> \</span></span>
 <span class="line"><span style="color:#79B8FF">  --agent-runtime-arn</span><span style="color:#9ECBFF"> &quot;arn:aws:bedrock-agentcore:us-east-1:123456789012:runtime/my-first-agent&quot;</span><span style="color:#79B8FF"> \</span></span>
 <span class="line"><span style="color:#79B8FF">  --input-text</span><span style="color:#9ECBFF"> &quot;Greet me enthusiastically as Alex&quot;</span><span style="color:#79B8FF"> \</span></span>
 <span class="line"><span style="color:#79B8FF">  --session-id</span><span style="color:#9ECBFF"> &quot;cli-test-001&quot;</span></span></code></pre>
 <h2 id="understanding-the-invocation-flow">Understanding the Invocation Flow</h2>
-<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext"><code><span class="line"><span>┌───────────────┐     ┌─────────────────────┐     ┌──────────────────┐</span></span>
-<span class="line"><span>│   Your App    │────▶│  AgentCore Runtime  │────▶│  Bedrock Model   │</span></span>
-<span class="line"><span>│   (Client)    │     │  (Hosts Your Agent) │     │  (Claude Sonnet) │</span></span>
-<span class="line"><span>└───────────────┘     └─────────────────────┘     └──────────────────┘</span></span>
-<span class="line"><span>        │                      │                          │</span></span>
-<span class="line"><span>        │  invoke-agent        │                          │</span></span>
-<span class="line"><span>        │ ─────────────────────▶                          │</span></span>
-<span class="line"><span>        │                      │   call LLM               │</span></span>
-<span class="line"><span>        │                      │ ─────────────────────────▶</span></span>
-<span class="line"><span>        │                      │                          │</span></span>
-<span class="line"><span>        │                      │   tool_calls             │</span></span>
-<span class="line"><span>        │                      │◀─────────────────────────│</span></span>
-<span class="line"><span>        │                      │                          │</span></span>
-<span class="line"><span>        │                      │  execute tools locally   │</span></span>
-<span class="line"><span>        │                      │ ─────────┐               │</span></span>
-<span class="line"><span>        │                      │◀─────────┘               │</span></span>
-<span class="line"><span>        │                      │                          │</span></span>
-<span class="line"><span>        │                      │   final response         │</span></span>
-<span class="line"><span>        │                      │◀─────────────────────────│</span></span>
-<span class="line"><span>        │  response            │                          │</span></span>
-<span class="line"><span>        │◀─────────────────────│                          │</span></span></code></pre>
+<p>Once deployed, your agent follows this invocation pattern:</p>
+<p><img src="/images/day-1/invoke.png" alt="AgentCore Invocation Architecture"/></p>
+<p>The complete flow:</p>
+<ol>
+<li><strong>User Application</strong> sends an invoke request with a payload to the <strong>Runtime Endpoint</strong></li>
+<li><strong>Runtime Endpoint</strong> authenticates and routes the request to your <strong>Runtime Agent</strong></li>
+<li><strong>Runtime Agent</strong> executes your agent code with the <code>@app.entrypoint</code> function</li>
+<li>Agent invokes <strong>Amazon Bedrock LLMs</strong> for reasoning and decision-making</li>
+<li>Agent executes tools locally within the runtime container</li>
+<li><strong>Runtime Agent</strong> formats and returns the response through the <strong>Runtime Endpoint</strong></li>
+<li><strong>User Application</strong> receives the final response</li>
+</ol>
+<p>This architecture provides:</p>
+<ul>
+<li><strong>Isolation</strong>: Each invocation runs in a secure, isolated container</li>
+<li><strong>Scalability</strong>: AgentCore automatically scales based on demand</li>
+<li><strong>Security</strong>: IAM-based authentication with VPC support</li>
+<li><strong>Observability</strong>: Built-in CloudWatch Logs integration</li>
+</ul>
 <h2 id="monitoring-your-agent">Monitoring Your Agent</h2>
 <h3 id="cloudwatch-logs">CloudWatch Logs</h3>
 <p>View agent logs in the AWS Console or CLI:</p>
@@ -326,7 +318,7 @@ to avoid unexpected charges.</p> </div> </div> </aside>
 .nav-button--next:hover {
   opacity: 0.9;
 }
-</style>    </article> <!-- Navigation Footer --> <nav class="day-layout__pagination" aria-label="Page navigation" data-astro-cid-vfeiczyy>  <div class="pagination" data-astro-cid-er2v6o3k> <a href="/agentcore-avengers/days/1/strands-basics" class="pagination__link pagination__link--prev" data-astro-cid-er2v6o3k> <span class="pagination__label" data-astro-cid-er2v6o3k>Previous</span> <span class="pagination__title" data-astro-cid-er2v6o3k>Strands Basics</span> </a> <a href="/agentcore-avengers/days/1/controlled-disasters" class="pagination__link pagination__link--next" data-astro-cid-er2v6o3k> <span class="pagination__label" data-astro-cid-er2v6o3k>Next</span> <span class="pagination__title" data-astro-cid-er2v6o3k>Controlled Disasters</span> </a> </div>  </nav> </main> <!-- Table of Contents --> <aside class="day-layout__toc hide-mobile" data-astro-cid-vfeiczyy> <div class="day-layout__toc-content" data-astro-cid-vfeiczyy> <h3 class="day-layout__toc-title" data-astro-cid-vfeiczyy>On this page</h3> <nav aria-label="Table of contents" data-astro-cid-vfeiczyy> <ul class="day-layout__toc-list" data-astro-cid-vfeiczyy> <li data-astro-cid-vfeiczyy> <a href="#why-agentcore-runtime" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Why AgentCore Runtime? </a> </li><li data-astro-cid-vfeiczyy> <a href="#deployment-architecture" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Deployment Architecture </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-1-prepare-your-agent-for-deployment" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 1: Prepare Your Agent for Deployment </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-2-create-agentcore-project" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 2: Create AgentCore Project </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-3-configure-agentcore" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 3: Configure AgentCore </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-4-test-locally-with-dev-server" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 4: Test Locally with Dev Server </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-5-enable-observability-optional-but-recommended" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 5: Enable Observability (Optional but Recommended) </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-6-deploy-to-aws" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 6: Deploy to AWS </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-7-invoke-your-deployed-agent" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 7: Invoke Your Deployed Agent </a> </li><li data-astro-cid-vfeiczyy> <a href="#using-the-cli" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Using the CLI </a> </li><li data-astro-cid-vfeiczyy> <a href="#using-boto3-sdk" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Using boto3 SDK </a> </li><li data-astro-cid-vfeiczyy> <a href="#using-aws-cli" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Using AWS CLI </a> </li><li data-astro-cid-vfeiczyy> <a href="#understanding-the-invocation-flow" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Understanding the Invocation Flow </a> </li><li data-astro-cid-vfeiczyy> <a href="#monitoring-your-agent" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Monitoring Your Agent </a> </li><li data-astro-cid-vfeiczyy> <a href="#cloudwatch-logs" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> CloudWatch Logs </a> </li><li data-astro-cid-vfeiczyy> <a href="#metrics-to-watch" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Metrics to Watch </a> </li><li data-astro-cid-vfeiczyy> <a href="#cleanup" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Cleanup </a> </li><li data-astro-cid-vfeiczyy> <a href="#checkpoint-what-youve-achieved" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Checkpoint: What You’ve Achieved </a> </li><li data-astro-cid-vfeiczyy> <a href="#next-steps" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Next Steps </a> </li> </ul> </nav> </div> </aside> </div> <footer class="footer" data-astro-cid-b2avyow5> <div class="footer__container" data-astro-cid-b2avyow5> <div class="footer__content" data-astro-cid-b2avyow5> <div class="footer__brand" data-astro-cid-b2avyow5> <span class="footer__logo" data-astro-cid-b2avyow5>AgentCore Initiative</span> <p class="footer__tagline" data-astro-cid-b2avyow5>
+</style>    </article> <!-- Navigation Footer --> <nav class="day-layout__pagination" aria-label="Page navigation" data-astro-cid-vfeiczyy>  <div class="pagination" data-astro-cid-er2v6o3k> <a href="/agentcore-avengers/days/1/strands-basics" class="pagination__link pagination__link--prev" data-astro-cid-er2v6o3k> <span class="pagination__label" data-astro-cid-er2v6o3k>Previous</span> <span class="pagination__title" data-astro-cid-er2v6o3k>Strands Basics</span> </a> <a href="/agentcore-avengers/days/1/controlled-disasters" class="pagination__link pagination__link--next" data-astro-cid-er2v6o3k> <span class="pagination__label" data-astro-cid-er2v6o3k>Next</span> <span class="pagination__title" data-astro-cid-er2v6o3k>Controlled Disasters</span> </a> </div>  </nav> </main> <!-- Table of Contents --> <aside class="day-layout__toc hide-mobile" data-astro-cid-vfeiczyy> <div class="day-layout__toc-content" data-astro-cid-vfeiczyy> <h3 class="day-layout__toc-title" data-astro-cid-vfeiczyy>On this page</h3> <nav aria-label="Table of contents" data-astro-cid-vfeiczyy> <ul class="day-layout__toc-list" data-astro-cid-vfeiczyy> <li data-astro-cid-vfeiczyy> <a href="#why-agentcore-runtime" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Why AgentCore Runtime? </a> </li><li data-astro-cid-vfeiczyy> <a href="#deployment-architecture" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Deployment Architecture </a> </li><li data-astro-cid-vfeiczyy> <a href="#configuration-stage" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Configuration Stage </a> </li><li data-astro-cid-vfeiczyy> <a href="#launch-stage" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Launch Stage </a> </li><li data-astro-cid-vfeiczyy> <a href="#invocation-stage" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Invocation Stage </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-1-prepare-your-agent-for-deployment" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 1: Prepare Your Agent for Deployment </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-2-create-agentcore-project" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 2: Create AgentCore Project </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-3-configure-agentcore" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 3: Configure AgentCore </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-4-test-locally-with-dev-server" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 4: Test Locally with Dev Server </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-5-enable-observability-optional-but-recommended" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 5: Enable Observability (Optional but Recommended) </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-6-deploy-to-aws" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 6: Deploy to AWS </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-7-invoke-your-deployed-agent" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 7: Invoke Your Deployed Agent </a> </li><li data-astro-cid-vfeiczyy> <a href="#using-the-cli" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Using the CLI </a> </li><li data-astro-cid-vfeiczyy> <a href="#using-boto3-sdk" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Using boto3 SDK </a> </li><li data-astro-cid-vfeiczyy> <a href="#using-aws-cli" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Using AWS CLI </a> </li><li data-astro-cid-vfeiczyy> <a href="#understanding-the-invocation-flow" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Understanding the Invocation Flow </a> </li><li data-astro-cid-vfeiczyy> <a href="#monitoring-your-agent" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Monitoring Your Agent </a> </li><li data-astro-cid-vfeiczyy> <a href="#cloudwatch-logs" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> CloudWatch Logs </a> </li><li data-astro-cid-vfeiczyy> <a href="#metrics-to-watch" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Metrics to Watch </a> </li><li data-astro-cid-vfeiczyy> <a href="#cleanup" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Cleanup </a> </li><li data-astro-cid-vfeiczyy> <a href="#checkpoint-what-youve-achieved" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Checkpoint: What You’ve Achieved </a> </li><li data-astro-cid-vfeiczyy> <a href="#next-steps" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Next Steps </a> </li> </ul> </nav> </div> </aside> </div> <footer class="footer" data-astro-cid-b2avyow5> <div class="footer__container" data-astro-cid-b2avyow5> <div class="footer__content" data-astro-cid-b2avyow5> <div class="footer__brand" data-astro-cid-b2avyow5> <span class="footer__logo" data-astro-cid-b2avyow5>AgentCore Initiative</span> <p class="footer__tagline" data-astro-cid-b2avyow5>
 Build production-ready AI agents with AWS AgentCore
 </p> </div> <nav class="footer__nav" aria-label="Footer navigation" data-astro-cid-b2avyow5> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Course</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/1" data-astro-cid-b2avyow5>Day 1: The First Avenger</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/2" data-astro-cid-b2avyow5>Day 2: Age of Ultron</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/3" data-astro-cid-b2avyow5>Day 3: Infinity War</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/4" data-astro-cid-b2avyow5>Day 4: Endgame</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/5" data-astro-cid-b2avyow5>Day 5: Assemble</a></li> </ul> </div> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Resources</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/troubleshooting" data-astro-cid-b2avyow5>Troubleshooting</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/reference/costs" data-astro-cid-b2avyow5>Cost Guide</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/reference/cleanup" data-astro-cid-b2avyow5>Cleanup</a></li> </ul> </div> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Links</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5> <a href="https://docs.aws.amazon.com/bedrock-agentcore/" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
 AWS AgentCore Docs

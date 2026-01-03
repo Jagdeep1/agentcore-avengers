@@ -15,7 +15,7 @@
         }
         document.documentElement.setAttribute('data-theme', theme);
       })();
-    </script><link rel="stylesheet" href="/agentcore-avengers/_astro/_slug_.B9ZU_V3V.css">
+    </script><link rel="stylesheet" href="/agentcore-avengers/_astro/_slug_.DVOvUGV-.css">
 <style>.pagination[data-astro-cid-er2v6o3k]{display:flex;justify-content:space-between;gap:1rem}.pagination__link[data-astro-cid-er2v6o3k]{flex:1;max-width:50%;padding:1rem 1.25rem;background:var(--color-bg-elevated);border:var(--border-subtle);border-radius:var(--radius-lg);text-decoration:none;transition:all var(--transition-fast)}.pagination__link[data-astro-cid-er2v6o3k]:hover{background:var(--color-bg-secondary);border-color:var(--border-default)}.pagination__link--prev[data-astro-cid-er2v6o3k]{text-align:left}.pagination__link--next[data-astro-cid-er2v6o3k]{text-align:right;margin-left:auto}.pagination__label[data-astro-cid-er2v6o3k]{display:block;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-muted);margin-bottom:.25rem}.pagination__title[data-astro-cid-er2v6o3k]{display:block;font-size:.9375rem;font-weight:500;color:var(--color-text-primary)}
 </style>
 <link rel="stylesheet" href="/agentcore-avengers/_astro/_slug_.CP5296fy.css"><style>.callout[data-astro-cid-wi7smz4x]{display:flex;gap:1rem;padding:1rem 1.25rem;border-radius:var(--radius-lg);margin:1.5rem 0;border-left:4px solid}.callout--info[data-astro-cid-wi7smz4x]{background:#3b82f614;border-left-color:var(--color-accent-primary)}.callout--info[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-primary)}.callout--warning[data-astro-cid-wi7smz4x]{background:#f59e0b14;border-left-color:var(--color-accent-warning)}.callout--warning[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-warning)}.callout--danger[data-astro-cid-wi7smz4x]{background:#ef444414;border-left-color:var(--color-accent-danger)}.callout--danger[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-danger)}.callout--success[data-astro-cid-wi7smz4x]{background:#10b98114;border-left-color:var(--color-accent-success)}.callout--success[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-success)}.callout--tip[data-astro-cid-wi7smz4x]{background:#8b5cf614;border-left-color:var(--color-accent-purple)}.callout--tip[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-purple)}.callout__icon[data-astro-cid-wi7smz4x]{flex-shrink:0;width:1.25rem;height:1.25rem;margin-top:.125rem}.callout__content[data-astro-cid-wi7smz4x]{flex:1;min-width:0}.callout__title[data-astro-cid-wi7smz4x]{font-weight:600;font-size:.9375rem;color:var(--color-text-primary);margin-bottom:.25rem}.callout__body[data-astro-cid-wi7smz4x]{font-size:.9375rem;color:var(--color-text-secondary);line-height:1.6}.callout__body[data-astro-cid-wi7smz4x] p{margin:0}.callout__body[data-astro-cid-wi7smz4x] p+p{margin-top:.5rem}.callout__body[data-astro-cid-wi7smz4x] code{font-size:.85em}.callout__body[data-astro-cid-wi7smz4x] a{font-weight:500}
@@ -23,26 +23,6 @@
 Daily Challenge
 </a> </div> </aside> <!-- Main Content --> <main class="day-layout__main" data-astro-cid-vfeiczyy> <article class="day-layout__content prose" data-astro-cid-vfeiczyy>  <h1 id="strands-basics">Strands Basics</h1>
 <p>Strands Agents is an open-source SDK that simplifies AI agent development using a <strong>model-driven approach</strong>. Instead of manually orchestrating steps, you let the LLM decide how to accomplish tasks.</p>
-<h2 id="the-model-driven-philosophy">The Model-Driven Philosophy</h2>
-<p>Traditional agent frameworks require you to define explicit workflows:</p>
-<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># Traditional approach (verbose, rigid)</span></span>
-<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> handle_query</span><span style="color:#E1E4E8">(query):</span></span>
-<span class="line"><span style="color:#F97583">    if</span><span style="color:#9ECBFF"> &quot;weather&quot;</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> query:</span></span>
-<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> get_weather()</span></span>
-<span class="line"><span style="color:#F97583">    elif</span><span style="color:#9ECBFF"> &quot;calculate&quot;</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> query:</span></span>
-<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> calculator()</span></span>
-<span class="line"><span style="color:#F97583">    else</span><span style="color:#E1E4E8">:</span></span>
-<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> llm_response(query)</span></span></code></pre>
-<p>Strands takes a different approach - you provide tools and let the model decide:</p>
-<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># Strands approach (elegant, flexible)</span></span>
-<span class="line"><span style="color:#E1E4E8">agent </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Agent(</span></span>
-<span class="line"><span style="color:#FFAB70">    model</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">model,</span></span>
-<span class="line"><span style="color:#FFAB70">    tools</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[get_weather, calculator]</span></span>
-<span class="line"><span style="color:#E1E4E8">)</span></span>
-<span class="line"><span style="color:#E1E4E8">response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> agent(</span><span style="color:#9ECBFF">&quot;What&#39;s the weather and what&#39;s 15% tip on $45?&quot;</span><span style="color:#E1E4E8">)</span></span>
-<span class="line"><span style="color:#6A737D"># Model automatically calls both tools and combines results</span></span></code></pre>
-<aside class="callout callout--info" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Why Model-Driven?</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>Modern LLMs like Claude are excellent at reasoning about when to use tools.
-By trusting the model’s judgment, you get more flexible agents with less code.</p> </div> </div> </aside> 
 <h2 id="your-first-agent">Your First Agent</h2>
 <p>Let’s build a real agent step by step.</p>
 <h3 id="step-1-basic-agent-structure">Step 1: Basic Agent Structure</h3>
@@ -76,9 +56,9 @@ By trusting the model’s judgment, you get more flexible agents with less code.
 <h3 id="step-2-adding-custom-tools">Step 2: Adding Custom Tools</h3>
 <p>Tools extend your agent’s capabilities. Let’s create a <code>tools.py</code> file:</p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># tools.py</span></span>
-<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands.tools </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> tool</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> tool</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands_tools </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> calculator  </span><span style="color:#6A737D"># Built-in calculator from Strands</span></span>
 <span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> datetime </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> datetime</span></span>
-<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> math</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#B392F0">@tool</span></span>
 <span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> get_current_time</span><span style="color:#E1E4E8">() -&gt; </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">:</span></span>
@@ -90,57 +70,22 @@ By trusting the model’s judgment, you get more flexible agents with less code.
 <span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> datetime.now().isoformat()</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#B392F0">@tool</span></span>
-<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> calculate</span><span style="color:#E1E4E8">(expression: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">) -&gt; </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">:</span></span>
-<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Evaluate a mathematical expression.</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#9ECBFF">    Args:</span></span>
-<span class="line"><span style="color:#9ECBFF">        expression: A mathematical expression to evaluate (e.g., &quot;2 + 2&quot;, &quot;sqrt(16)&quot;)</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> get_weather</span><span style="color:#E1E4E8">() -&gt; </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Get the current weather.</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#9ECBFF">    Returns:</span></span>
-<span class="line"><span style="color:#9ECBFF">        str: The result of the calculation</span></span>
+<span class="line"><span style="color:#9ECBFF">        str: Current weather conditions</span></span>
 <span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;</span></span>
-<span class="line"><span style="color:#6A737D">    # Safe evaluation with limited operations</span></span>
-<span class="line"><span style="color:#E1E4E8">    allowed_names </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
-<span class="line"><span style="color:#9ECBFF">        &quot;sqrt&quot;</span><span style="color:#E1E4E8">: math.sqrt,</span></span>
-<span class="line"><span style="color:#9ECBFF">        &quot;sin&quot;</span><span style="color:#E1E4E8">: math.sin,</span></span>
-<span class="line"><span style="color:#9ECBFF">        &quot;cos&quot;</span><span style="color:#E1E4E8">: math.cos,</span></span>
-<span class="line"><span style="color:#9ECBFF">        &quot;tan&quot;</span><span style="color:#E1E4E8">: math.tan,</span></span>
-<span class="line"><span style="color:#9ECBFF">        &quot;pi&quot;</span><span style="color:#E1E4E8">: math.pi,</span></span>
-<span class="line"><span style="color:#9ECBFF">        &quot;e&quot;</span><span style="color:#E1E4E8">: math.e,</span></span>
-<span class="line"><span style="color:#9ECBFF">        &quot;abs&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">abs</span><span style="color:#E1E4E8">,</span></span>
-<span class="line"><span style="color:#9ECBFF">        &quot;round&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">round</span><span style="color:#E1E4E8">,</span></span>
-<span class="line"><span style="color:#E1E4E8">    }</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#F97583">    try</span><span style="color:#E1E4E8">:</span></span>
-<span class="line"><span style="color:#6A737D">        # Only allow safe mathematical operations</span></span>
-<span class="line"><span style="color:#E1E4E8">        result </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> eval</span><span style="color:#E1E4E8">(expression, {</span><span style="color:#9ECBFF">&quot;__builtins__&quot;</span><span style="color:#E1E4E8">: {}}, allowed_names)</span></span>
-<span class="line"><span style="color:#F97583">        return</span><span style="color:#79B8FF"> str</span><span style="color:#E1E4E8">(result)</span></span>
-<span class="line"><span style="color:#F97583">    except</span><span style="color:#79B8FF"> Exception</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> e:</span></span>
-<span class="line"><span style="color:#F97583">        return</span><span style="color:#F97583"> f</span><span style="color:#9ECBFF">&quot;Error: </span><span style="color:#79B8FF">{str</span><span style="color:#E1E4E8">(e)</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#B392F0">@tool</span></span>
-<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> generate_greeting</span><span style="color:#E1E4E8">(name: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, style: </span><span style="color:#79B8FF">str</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;formal&quot;</span><span style="color:#E1E4E8">) -&gt; </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">:</span></span>
-<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Generate a personalized greeting.</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#9ECBFF">    Args:</span></span>
-<span class="line"><span style="color:#9ECBFF">        name: The name of the person to greet</span></span>
-<span class="line"><span style="color:#9ECBFF">        style: The greeting style - &#39;formal&#39;, &#39;casual&#39;, or &#39;enthusiastic&#39;</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#9ECBFF">    Returns:</span></span>
-<span class="line"><span style="color:#9ECBFF">        str: A personalized greeting message</span></span>
-<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;</span></span>
-<span class="line"><span style="color:#E1E4E8">    greetings </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
-<span class="line"><span style="color:#9ECBFF">        &quot;formal&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Good day, </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">name</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">. It is a pleasure to assist you.&quot;</span><span style="color:#E1E4E8">,</span></span>
-<span class="line"><span style="color:#9ECBFF">        &quot;casual&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Hey </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">name</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">! What&#39;s up?&quot;</span><span style="color:#E1E4E8">,</span></span>
-<span class="line"><span style="color:#9ECBFF">        &quot;enthusiastic&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;WOW! </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">name</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">! SO GREAT to meet you! 🎉&quot;</span></span>
-<span class="line"><span style="color:#E1E4E8">    }</span></span>
-<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> greetings.get(style, greetings[</span><span style="color:#9ECBFF">&quot;formal&quot;</span><span style="color:#E1E4E8">])</span></span></code></pre>
+<span class="line"><span style="color:#6A737D">    # Dummy implementation for learning purposes</span></span>
+<span class="line"><span style="color:#6A737D">    # In production, you&#39;d call a real weather API</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#9ECBFF"> &quot;sunny&quot;</span></span></code></pre>
 <h3 id="step-3-integrate-tools-with-agent">Step 3: Integrate Tools with Agent</h3>
 <p>Update <code>agent.py</code> to use the tools:</p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># agent.py</span></span>
 <span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Agent</span></span>
 <span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands.models </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> BedrockModel</span></span>
-<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> tools </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> get_current_time, calculate, generate_greeting</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands_tools </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> calculator</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> tools </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> get_current_time, get_weather</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#6A737D"># Initialize the model</span></span>
 <span class="line"><span style="color:#E1E4E8">model </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> BedrockModel(</span></span>
@@ -151,16 +96,8 @@ By trusting the model’s judgment, you get more flexible agents with less code.
 <span class="line"><span style="color:#6A737D"># Create the agent with tools</span></span>
 <span class="line"><span style="color:#E1E4E8">agent </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Agent(</span></span>
 <span class="line"><span style="color:#FFAB70">    model</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">model,</span></span>
-<span class="line"><span style="color:#FFAB70">    tools</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[get_current_time, calculate, generate_greeting],</span></span>
-<span class="line"><span style="color:#FFAB70">    system_prompt</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;&quot;&quot;You are AgentOne, a helpful AI assistant.</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#9ECBFF">You have access to the following tools:</span></span>
-<span class="line"><span style="color:#9ECBFF">- get_current_time: Get the current date and time</span></span>
-<span class="line"><span style="color:#9ECBFF">- calculate: Perform mathematical calculations</span></span>
-<span class="line"><span style="color:#9ECBFF">- generate_greeting: Create personalized greetings</span></span>
-<span class="line"></span>
-<span class="line"><span style="color:#9ECBFF">Use these tools when appropriate to help users.</span></span>
-<span class="line"><span style="color:#9ECBFF">Always explain what you&#39;re doing and why.&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#FFAB70">    tools</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[calculator, get_current_time, get_weather],</span></span>
+<span class="line"><span style="color:#FFAB70">    system_prompt</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;You&#39;re a helpful assistant. You can do simple math calculations, tell the weather, and get the current time.&quot;</span></span>
 <span class="line"><span style="color:#E1E4E8">)</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#6A737D"># Interactive chat loop</span></span>
@@ -187,35 +124,54 @@ By trusting the model’s judgment, you get more flexible agents with less code.
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">python</span><span style="color:#9ECBFF"> agent.py</span></span></code></pre>
 <p><strong>Test prompts:</strong></p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext"><code><span class="line"><span>You: What time is it?</span></span>
+<span class="line"><span>You: What&#39;s the weather like?</span></span>
 <span class="line"><span>You: Calculate 15% tip on a $67.50 bill</span></span>
-<span class="line"><span>You: Greet my friend Sarah in an enthusiastic way</span></span>
-<span class="line"><span>You: What&#39;s the square root of 144, and what time is it right now?</span></span></code></pre>
-<aside class="callout callout--tip" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Observe the Agent</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>Watch how the agent decides which tools to call. For the last prompt,
-it should automatically use both <code>calculate</code> and <code>get_current_time</code>.</p> </div> </div> </aside> 
+<span class="line"><span>You: What&#39;s the square root of 144, and what time is it right now?</span></span>
+<span class="line"><span>You: How&#39;s the weather and what&#39;s 20% of 150?</span></span></code></pre>
+<aside class="callout callout--tip" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Observe the Agent</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>Watch how the agent decides which tools to call. For multi-part prompts,
+it should automatically use multiple tools (<code>calculator</code>, <code>get_current_time</code>, <code>get_weather</code>).</p> </div> </div> </aside> 
 <h2 id="understanding-the-agent-loop">Understanding the Agent Loop</h2>
-<p>Here’s what happens when you send a message:</p>
-<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext"><code><span class="line"><span>┌──────────────────────────────────────────────────────────────┐</span></span>
-<span class="line"><span>│                     AGENT LOOP                                │</span></span>
-<span class="line"><span>├──────────────────────────────────────────────────────────────┤</span></span>
-<span class="line"><span>│                                                               │</span></span>
-<span class="line"><span>│  1. User Input                                                │</span></span>
-<span class="line"><span>│     &quot;What&#39;s 15% tip on $67.50 and what time is it?&quot;          │</span></span>
-<span class="line"><span>│                           │                                   │</span></span>
-<span class="line"><span>│                           ▼                                   │</span></span>
-<span class="line"><span>│  2. LLM Reasoning                                             │</span></span>
-<span class="line"><span>│     &quot;I need to calculate the tip and get the time.           │</span></span>
-<span class="line"><span>│      I&#39;ll use the calculate and get_current_time tools.&quot;     │</span></span>
-<span class="line"><span>│                           │                                   │</span></span>
-<span class="line"><span>│                           ▼                                   │</span></span>
-<span class="line"><span>│  3. Tool Execution                                            │</span></span>
-<span class="line"><span>│     calculate(&quot;67.50 * 0.15&quot;) → &quot;10.125&quot;                     │</span></span>
-<span class="line"><span>│     get_current_time() → &quot;2025-01-03T14:30:00&quot;               │</span></span>
-<span class="line"><span>│                           │                                   │</span></span>
-<span class="line"><span>│                           ▼                                   │</span></span>
-<span class="line"><span>│  4. LLM Synthesis                                             │</span></span>
-<span class="line"><span>│     &quot;The tip is $10.13 and the current time is 2:30 PM&quot;      │</span></span>
-<span class="line"><span>│                                                               │</span></span>
-<span class="line"><span>└──────────────────────────────────────────────────────────────┘</span></span></code></pre>
+<p>Here’s what happens when you send a message to your local agent:</p>
+<p><img src="/images/day-1/architecture_local.png" alt="Local Agent Development Architecture"/></p>
+<p>The agent follows this flow:</p>
+<ol>
+<li>
+<p><strong>User Input</strong>: You send a message (e.g., “What’s 15% tip on $67.50 and what time is it?”)</p>
+</li>
+<li>
+<p><strong>Agent Receives Task</strong>: The Strands agent running in your local environment processes the request</p>
+</li>
+<li>
+<p><strong>Tool Access</strong>: The agent has access to tools registered with it:</p>
+<ul>
+<li><code>calculator()</code> - For mathematical operations</li>
+<li><code>get_weather()</code> - For weather information</li>
+<li><code>get_current_time()</code> - For time queries</li>
+</ul>
+</li>
+<li>
+<p><strong>LLM Reasoning</strong>: The agent invokes the Amazon Bedrock LLM (Claude) to:</p>
+<ul>
+<li>Understand the user’s intent</li>
+<li>Decide which tools are needed</li>
+<li>Determine the order of operations</li>
+</ul>
+</li>
+<li>
+<p><strong>Tool Execution</strong>: The agent executes tools based on the LLM’s plan:</p>
+<ul>
+<li><code>calculator(&quot;67.50 * 0.15&quot;)</code> → “10.125”</li>
+<li><code>get_current_time()</code> → “2025-01-03T14:30:00”</li>
+</ul>
+</li>
+<li>
+<p><strong>Response Synthesis</strong>: The LLM receives tool outputs and generates a coherent response: “The 15% tip on $67.50 is $10.13, and the current time is 2:30 PM”</p>
+</li>
+<li>
+<p><strong>Return to User</strong>: The formatted response is returned to you</p>
+</li>
+</ol>
+<aside class="callout callout--tip" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Local vs Runtime</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>This same agent loop works identically when deployed to AgentCore Runtime - the only difference is the execution environment. Local development uses your laptop, while production uses AgentCore’s serverless infrastructure.</p> </div> </div> </aside> 
 <h2 id="advanced-tool-documentation">Advanced: Tool Documentation</h2>
 <p>The <code>@tool</code> decorator automatically extracts documentation from your functions. Good documentation helps the model understand when to use each tool:</p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python"><code><span class="line"><span style="color:#B392F0">@tool</span></span>
@@ -308,7 +264,7 @@ Clear, detailed documentation leads to better tool selection.</p> </div> </div> 
 .nav-button--next:hover {
   opacity: 0.9;
 }
-</style>    </article> <!-- Navigation Footer --> <nav class="day-layout__pagination" aria-label="Page navigation" data-astro-cid-vfeiczyy>  <div class="pagination" data-astro-cid-er2v6o3k> <a href="/agentcore-avengers/days/1/setup" class="pagination__link pagination__link--prev" data-astro-cid-er2v6o3k> <span class="pagination__label" data-astro-cid-er2v6o3k>Previous</span> <span class="pagination__title" data-astro-cid-er2v6o3k>Environment Setup</span> </a> <a href="/agentcore-avengers/days/1/agentcore-runtime" class="pagination__link pagination__link--next" data-astro-cid-er2v6o3k> <span class="pagination__label" data-astro-cid-er2v6o3k>Next</span> <span class="pagination__title" data-astro-cid-er2v6o3k>AgentCore Runtime</span> </a> </div>  </nav> </main> <!-- Table of Contents --> <aside class="day-layout__toc hide-mobile" data-astro-cid-vfeiczyy> <div class="day-layout__toc-content" data-astro-cid-vfeiczyy> <h3 class="day-layout__toc-title" data-astro-cid-vfeiczyy>On this page</h3> <nav aria-label="Table of contents" data-astro-cid-vfeiczyy> <ul class="day-layout__toc-list" data-astro-cid-vfeiczyy> <li data-astro-cid-vfeiczyy> <a href="#the-model-driven-philosophy" class="day-layout__toc-link" data-astro-cid-vfeiczyy> The Model-Driven Philosophy </a> </li><li data-astro-cid-vfeiczyy> <a href="#your-first-agent" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Your First Agent </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-1-basic-agent-structure" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Step 1: Basic Agent Structure </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-2-adding-custom-tools" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Step 2: Adding Custom Tools </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-3-integrate-tools-with-agent" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Step 3: Integrate Tools with Agent </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-4-test-your-agent" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Step 4: Test Your Agent </a> </li><li data-astro-cid-vfeiczyy> <a href="#understanding-the-agent-loop" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Understanding the Agent Loop </a> </li><li data-astro-cid-vfeiczyy> <a href="#advanced-tool-documentation" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Advanced: Tool Documentation </a> </li><li data-astro-cid-vfeiczyy> <a href="#handling-errors-gracefully" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Handling Errors Gracefully </a> </li><li data-astro-cid-vfeiczyy> <a href="#checkpoint-what-youve-built" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Checkpoint: What You’ve Built </a> </li><li data-astro-cid-vfeiczyy> <a href="#next-steps" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Next Steps </a> </li> </ul> </nav> </div> </aside> </div> <footer class="footer" data-astro-cid-b2avyow5> <div class="footer__container" data-astro-cid-b2avyow5> <div class="footer__content" data-astro-cid-b2avyow5> <div class="footer__brand" data-astro-cid-b2avyow5> <span class="footer__logo" data-astro-cid-b2avyow5>AgentCore Initiative</span> <p class="footer__tagline" data-astro-cid-b2avyow5>
+</style>    </article> <!-- Navigation Footer --> <nav class="day-layout__pagination" aria-label="Page navigation" data-astro-cid-vfeiczyy>  <div class="pagination" data-astro-cid-er2v6o3k> <a href="/agentcore-avengers/days/1/setup" class="pagination__link pagination__link--prev" data-astro-cid-er2v6o3k> <span class="pagination__label" data-astro-cid-er2v6o3k>Previous</span> <span class="pagination__title" data-astro-cid-er2v6o3k>Environment Setup</span> </a> <a href="/agentcore-avengers/days/1/agentcore-runtime" class="pagination__link pagination__link--next" data-astro-cid-er2v6o3k> <span class="pagination__label" data-astro-cid-er2v6o3k>Next</span> <span class="pagination__title" data-astro-cid-er2v6o3k>AgentCore Runtime</span> </a> </div>  </nav> </main> <!-- Table of Contents --> <aside class="day-layout__toc hide-mobile" data-astro-cid-vfeiczyy> <div class="day-layout__toc-content" data-astro-cid-vfeiczyy> <h3 class="day-layout__toc-title" data-astro-cid-vfeiczyy>On this page</h3> <nav aria-label="Table of contents" data-astro-cid-vfeiczyy> <ul class="day-layout__toc-list" data-astro-cid-vfeiczyy> <li data-astro-cid-vfeiczyy> <a href="#your-first-agent" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Your First Agent </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-1-basic-agent-structure" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Step 1: Basic Agent Structure </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-2-adding-custom-tools" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Step 2: Adding Custom Tools </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-3-integrate-tools-with-agent" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Step 3: Integrate Tools with Agent </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-4-test-your-agent" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Step 4: Test Your Agent </a> </li><li data-astro-cid-vfeiczyy> <a href="#understanding-the-agent-loop" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Understanding the Agent Loop </a> </li><li data-astro-cid-vfeiczyy> <a href="#advanced-tool-documentation" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Advanced: Tool Documentation </a> </li><li data-astro-cid-vfeiczyy> <a href="#handling-errors-gracefully" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Handling Errors Gracefully </a> </li><li data-astro-cid-vfeiczyy> <a href="#checkpoint-what-youve-built" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Checkpoint: What You’ve Built </a> </li><li data-astro-cid-vfeiczyy> <a href="#next-steps" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Next Steps </a> </li> </ul> </nav> </div> </aside> </div> <footer class="footer" data-astro-cid-b2avyow5> <div class="footer__container" data-astro-cid-b2avyow5> <div class="footer__content" data-astro-cid-b2avyow5> <div class="footer__brand" data-astro-cid-b2avyow5> <span class="footer__logo" data-astro-cid-b2avyow5>AgentCore Initiative</span> <p class="footer__tagline" data-astro-cid-b2avyow5>
 Build production-ready AI agents with AWS AgentCore
 </p> </div> <nav class="footer__nav" aria-label="Footer navigation" data-astro-cid-b2avyow5> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Course</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/1" data-astro-cid-b2avyow5>Day 1: The First Avenger</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/2" data-astro-cid-b2avyow5>Day 2: Age of Ultron</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/3" data-astro-cid-b2avyow5>Day 3: Infinity War</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/4" data-astro-cid-b2avyow5>Day 4: Endgame</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/5" data-astro-cid-b2avyow5>Day 5: Assemble</a></li> </ul> </div> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Resources</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/troubleshooting" data-astro-cid-b2avyow5>Troubleshooting</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/reference/costs" data-astro-cid-b2avyow5>Cost Guide</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/reference/cleanup" data-astro-cid-b2avyow5>Cleanup</a></li> </ul> </div> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Links</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5> <a href="https://docs.aws.amazon.com/bedrock-agentcore/" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
 AWS AgentCore Docs
