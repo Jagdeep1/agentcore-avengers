@@ -59,29 +59,6 @@ aws sts get-caller-identity
 # }
 ```
 
-## Enable Amazon Bedrock Models
-
-AgentCore uses Amazon Bedrock for model inference. You need to enable model access in your AWS account.
-
-### Step 1: Access Bedrock Console
-
-1. Navigate to [Amazon Bedrock Console](https://console.aws.amazon.com/bedrock)
-2. Select **Model access** from the left sidebar
-3. Click **Manage model access**
-
-### Step 2: Enable Claude Models
-
-Enable the following models:
-
-| Model | Model ID | Purpose |
-|-------|----------|---------|
-| Claude Sonnet 4 | `anthropic.claude-sonnet-4-20250514-v1:0` | Primary agent model |
-| Claude Haiku 3.5 | `anthropic.claude-3-5-haiku-20241022-v1:0` | Cost-effective alternative |
-
-<Callout type="warning" title="Model Access Approval">
-  Model access requests are typically approved instantly, but some enterprise accounts may require additional approval time.
-</Callout>
-
 ### Step 3: Verify Model Access
 
 ```bash
