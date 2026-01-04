@@ -1,0 +1,650 @@
+---
+title: "Tool Guardrails"
+dayNumber: 4
+avengersTitle: "Endgame"
+focus: "Guardrails + Observability"
+description: "Add safety constraints to Code Interpreter and Browser tools to prevent dangerous operations."
+estimatedTime: "45 minutes"
+objectives:
+  - "Configure Code Interpreter execution limits and import restrictions"
+  - "Set up Browser URL allowlisting and navigation constraints"
+  - "Implement custom tool validation logic"
+  - "Test tool guardrails with dangerous scenarios"
+order: 4
+published: true
+---
+
+import Callout from '@/components/content/Callout.astro';
+
+# Tool Guardrails
+
+Content guardrails protect inputs and outputs. **Tool guardrails** protect what your agent can **do**.
+
+## The Tool Security Model
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                    Tool Execution with Guardrails                    │
+│                                                                      │
+│  Agent wants to: execute_python("import os; os.system('rm -rf /')")│
+│      │                                                               │
+│      ▼                                                               │
+│  ┌──────────────────────────────────────────────────────────────┐   │
+│  │                CODE INTERPRETER GUARDRAILS                    │   │
+│  │                                                                │   │
+│  │  ❌ Blocked import: 'os'                                       │   │
+│  │  ❌ Blocked pattern: 'os.system'                               │   │
+│  │  ✓  Execution time: < 60s                                     │   │
+│  │  ✓  Memory usage: < 512MB                                     │   │
+│  └──────────────────────────────────────────────────────────────┘   │
+│      │                                                               │
+│      ▼                                                               │
+│  ❌ EXECUTION BLOCKED                                                │
+│                                                                      │
+│  Error: "Code contains blocked imports or patterns"                 │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+## Code Interpreter Guardrails
+
+### Execution Constraints
+
+```python
+import boto3
+
+code_client = boto3.client('bedrock-agentcore-tools', region_name='us-east-1')
+
+# Create Code Interpreter with guardrails
+response = code_client.create_code_interpreter(
+    name='safe-code-interpreter',
+    configuration={
+        'runtime': 'python3.11',
+
+        # Execution limits
+        'timeout': 60,           # Max 60 seconds per execution
+        'memorySize': 512,       # Max 512MB memory
+        'diskSize': 1024,        # Max 1GB disk space
+
+        # Network restrictions
+        'networkMode': 'DISABLED',  # No internet access
+
+        # Import restrictions
+        'allowedImports': [
+            'pandas',
+            'numpy',
+            'matplotlib',
+            'seaborn',
+            'scipy',
+            'scikit-learn'
+        ],
+
+        # Pattern blocking
+        'blockedPatterns': [
+            r'__import__\s*\(',
+            r'eval\s*\(',
+            r'exec\s*\(',
+            r'compile\s*\(',
+            r'subprocess',
+            r'os\.system',
+            r'os\.popen',
+            r'open\s*\([^)]*["\']w["\']',  # File writes
+        ],
+
+        # File system restrictions
+        'allowedPaths': [
+            '/tmp',      # Read/write
+            '/data'      # Read-only
+        ],
+        'blockedPaths': [
+            '/etc',
+            '/root',
+            '/home'
+        ]
+    }
+)
+
+code_interpreter_id = response['codeInterpreterId']
+```
+
+### Import Allowlisting
+
+Only permit safe, necessary libraries:
+
+```python
+# Good: Specific allowlist
+allowed_imports = [
+    'pandas',      # Data manipulation
+    'numpy',       # Numerical computing
+    'matplotlib',  # Visualization
+    'datetime',    # Date/time operations
+    'json',        # JSON parsing
+    're',          # Regex (safe subset)
+]
+
+# Bad: Too permissive
+allowed_imports = ['*']  # Allows everything!
+```
+
+### Pattern Blocking
+
+Block dangerous code patterns:
+
+```python
+blocked_patterns = {
+    # Command execution
+    r'os\.system': 'System command execution',
+    r'subprocess\.': 'Subprocess execution',
+    r'__import__\s*\(': 'Dynamic imports',
+
+    # Code evaluation
+    r'eval\s*\(': 'Arbitrary code evaluation',
+    r'exec\s*\(': 'Arbitrary code execution',
+    r'compile\s*\(': 'Code compilation',
+
+    # File system access
+    r'open\s*\([^)]*["\'][wa]["\']': 'File writes',
+    r'os\.remove': 'File deletion',
+    r'shutil\.rmtree': 'Directory deletion',
+
+    # Network access
+    r'socket\.': 'Raw socket access',
+    r'urllib\.request': 'URL requests',
+    r'requests\.': 'HTTP requests',
+
+    # Process manipulation
+    r'os\.fork': 'Process forking',
+    r'multiprocessing\.': 'Multiprocessing'
+}
+```
+
+<Callout type="warning" title="Regex Bypasses">
+  Regex blocking isn't foolproof. Attackers can obfuscate:
+  ```python
+  # Blocked: os.system
+  # Bypass: getattr(__import__('os'), 'system')
+  ```
+  Use multiple layers: import allowlisting + pattern blocking + sandboxing.
+</Callout>
+
+### Resource Limits
+
+Prevent resource exhaustion:
+
+```python
+# Timeout example
+with CodeInterpreterSession(code_interpreter_id='ci-xxxx') as session:
+    try:
+        # This infinite loop will timeout after 60s
+        result = session.execute("""
+while True:
+    x = 1 + 1
+""")
+    except TimeoutError:
+        print("Execution exceeded time limit")
+
+# Memory limit example
+try:
+    # This will fail when memory exceeds 512MB
+    result = session.execute("""
+data = []
+for i in range(10**9):
+    data.append(i)
+""")
+except MemoryError:
+    print("Execution exceeded memory limit")
+```
+
+### Validation Wrapper
+
+Add validation before execution:
+
+```python
+import re
+from strands.tools import tool
+from bedrock_agentcore.tools import CodeInterpreterSession
+
+def validate_code(code: str) -> tuple[bool, str]:
+    """Validate code before execution.
+
+    Returns:
+        (is_valid, error_message)
+    """
+    # Check for blocked patterns
+    blocked = {
+        r'__import__': 'Dynamic imports not allowed',
+        r'eval\(': 'eval() not allowed',
+        r'exec\(': 'exec() not allowed',
+        r'os\.system': 'System commands not allowed',
+        r'subprocess': 'Subprocess not allowed',
+    }
+
+    for pattern, message in blocked.items():
+        if re.search(pattern, code):
+            return False, f"Code validation failed: {message}"
+
+    # Check imports
+    imports = re.findall(r'^\s*(?:import|from)\s+(\w+)', code, re.MULTILINE)
+    allowed = {'pandas', 'numpy', 'matplotlib', 'datetime', 'json', 're'}
+
+    for imp in imports:
+        if imp not in allowed:
+            return False, f"Import '{imp}' not allowed"
+
+    # Check code length
+    if len(code) > 10000:
+        return False, "Code too long (max 10000 characters)"
+
+    return True, ""
+
+@tool
+def execute_python_safe(code: str) -> str:
+    """Execute Python code with validation.
+
+    Args:
+        code: Python code to execute
+
+    Returns:
+        Execution output or error message
+    """
+    # Validate first
+    valid, error = validate_code(code)
+    if not valid:
+        return f"❌ {error}"
+
+    # Execute with timeout
+    with CodeInterpreterSession(code_interpreter_id='ci-xxxx') as session:
+        try:
+            result = session.execute(code)
+            return result.output
+        except TimeoutError:
+            return "❌ Execution timeout (max 60 seconds)"
+        except MemoryError:
+            return "❌ Memory limit exceeded (max 512MB)"
+        except Exception as e:
+            return f"❌ Execution error: {str(e)}"
+```
+
+## Browser Guardrails
+
+### URL Allowlisting
+
+Restrict which domains the agent can visit:
+
+```python
+# Create Browser with URL restrictions
+browser_response = code_client.create_browser(
+    name='safe-browser',
+    configuration={
+        'headless': True,
+        'timeout': 30,
+
+        # URL allowlist
+        'allowedDomains': [
+            '*.wikipedia.org',
+            '*.github.com',
+            'docs.python.org',
+            'stackoverflow.com'
+        ],
+
+        # URL blocklist (takes precedence)
+        'blockedDomains': [
+            'localhost',
+            '127.0.0.1',
+            '*.internal',
+            '*.local',
+            '10.*',      # Private IP ranges
+            '172.16.*',
+            '192.168.*'
+        ],
+
+        # Navigation limits
+        'maxNavigations': 10,    # Max 10 page loads per session
+        'maxRedirects': 3,       # Max 3 redirects per navigation
+
+        # Security settings
+        'blockThirdPartyCookies': True,
+        'blockJavaScript': False,  # May break sites, test carefully
+        'blockPopups': True
+    }
+)
+
+browser_id = browser_response['browserId']
+```
+
+### URL Validation
+
+Validate URLs before navigation:
+
+```python
+from urllib.parse import urlparse
+import ipaddress
+
+def is_url_allowed(url: str, allowed_domains: list[str], blocked_domains: list[str]) -> tuple[bool, str]:
+    """Check if URL is allowed.
+
+    Returns:
+        (is_allowed, reason)
+    """
+    try:
+        parsed = urlparse(url)
+
+        # Check scheme
+        if parsed.scheme not in ['http', 'https']:
+            return False, f"Scheme '{parsed.scheme}' not allowed"
+
+        # Check for IP addresses (often internal)
+        hostname = parsed.hostname
+        try:
+            ip = ipaddress.ip_address(hostname)
+            if ip.is_private or ip.is_loopback:
+                return False, "Private/loopback IPs not allowed"
+        except ValueError:
+            pass  # Not an IP, continue
+
+        # Check blocklist first
+        for blocked in blocked_domains:
+            if matches_pattern(hostname, blocked):
+                return False, f"Domain blocked: {blocked}"
+
+        # Check allowlist
+        allowed = False
+        for pattern in allowed_domains:
+            if matches_pattern(hostname, pattern):
+                allowed = True
+                break
+
+        if not allowed:
+            return False, f"Domain not in allowlist"
+
+        return True, ""
+
+    except Exception as e:
+        return False, f"Invalid URL: {str(e)}"
+
+def matches_pattern(hostname: str, pattern: str) -> bool:
+    """Check if hostname matches domain pattern."""
+    # Handle wildcards
+    if pattern.startswith('*.'):
+        return hostname.endswith(pattern[2:])
+    return hostname == pattern
+```
+
+### Browser Tool with Validation
+
+```python
+from strands.tools import tool
+from bedrock_agentcore.tools import BrowserSession
+
+@tool
+def browse_website_safe(url: str, action: str = "screenshot") -> str:
+    """Browse a website safely with URL validation.
+
+    Args:
+        url: URL to visit
+        action: Action to perform (screenshot, get_text, get_links)
+
+    Returns:
+        Result or error message
+    """
+    # Validate URL
+    allowed = ['*.wikipedia.org', '*.github.com', 'docs.python.org']
+    blocked = ['localhost', '127.0.0.1', '*.internal']
+
+    is_allowed, reason = is_url_allowed(url, allowed, blocked)
+    if not is_allowed:
+        return f"❌ URL not allowed: {reason}"
+
+    # Navigate with safeguards
+    with BrowserSession(browser_id='br-xxxx') as browser:
+        try:
+            browser.navigate(url)
+            browser.wait_for_load(timeout=30)
+
+            if action == "screenshot":
+                screenshot = browser.screenshot()
+                return f"Screenshot captured: {len(screenshot)} bytes"
+
+            elif action == "get_text":
+                text = browser.get_text()
+                # Limit output size
+                return text[:5000]
+
+            elif action == "get_links":
+                links = browser.get_links()
+                # Filter links to allowed domains
+                safe_links = [
+                    link for link in links[:20]
+                    if is_url_allowed(link['href'], allowed, blocked)[0]
+                ]
+                return "\n".join([f"- {l['text']}: {l['href']}" for l in safe_links])
+
+        except TimeoutError:
+            return "❌ Navigation timeout"
+        except Exception as e:
+            return f"❌ Browser error: {str(e)}"
+```
+
+## Custom Tool Guardrails
+
+For your own tools, implement similar patterns:
+
+```python
+@tool
+def database_query_safe(query: str) -> str:
+    """Execute database query with safety checks.
+
+    Args:
+        query: SQL query to execute
+
+    Returns:
+        Query results or error
+    """
+    # Validation layer
+    if not is_query_safe(query):
+        return "❌ Query contains dangerous operations"
+
+    # Parameter sanitization
+    query = sanitize_query(query)
+
+    # Read-only enforcement
+    if not query.strip().upper().startswith('SELECT'):
+        return "❌ Only SELECT queries allowed"
+
+    # Row limit
+    if 'LIMIT' not in query.upper():
+        query += ' LIMIT 100'
+
+    # Timeout
+    try:
+        result = execute_with_timeout(query, timeout=10)
+        return format_results(result)
+    except TimeoutError:
+        return "❌ Query timeout"
+
+def is_query_safe(query: str) -> bool:
+    """Check for SQL injection and dangerous operations."""
+    dangerous = ['DROP', 'DELETE', 'UPDATE', 'INSERT', 'TRUNCATE', 'ALTER', 'CREATE']
+    query_upper = query.upper()
+
+    for keyword in dangerous:
+        if keyword in query_upper:
+            return False
+
+    return True
+```
+
+## Testing Tool Guardrails
+
+### Code Interpreter Test Suite
+
+```python
+# test_code_guardrails.py
+import pytest
+
+test_cases = [
+    # Should block
+    {
+        'code': 'import os; os.system("ls")',
+        'should_block': True,
+        'reason': 'Blocked import (os)'
+    },
+    {
+        'code': '__import__("subprocess").run(["ls"])',
+        'should_block': True,
+        'reason': 'Dynamic import'
+    },
+    {
+        'code': 'while True: pass',
+        'should_block': True,
+        'reason': 'Timeout (infinite loop)'
+    },
+
+    # Should allow
+    {
+        'code': 'import pandas as pd; df = pd.DataFrame({"a": [1, 2, 3]}); print(df)',
+        'should_block': False,
+        'reason': 'Safe pandas usage'
+    },
+    {
+        'code': 'x = [i**2 for i in range(100)]; print(sum(x))',
+        'should_block': False,
+        'reason': 'Safe computation'
+    }
+]
+
+@pytest.mark.parametrize('case', test_cases)
+def test_code_guardrail(case):
+    result = execute_python_safe(case['code'])
+
+    if case['should_block']:
+        assert result.startswith('❌'), f"Expected block: {case['reason']}"
+    else:
+        assert not result.startswith('❌'), f"Should allow: {case['reason']}"
+```
+
+### Browser Test Suite
+
+```python
+# test_browser_guardrails.py
+test_urls = [
+    # Should block
+    ('http://localhost:8080', True, 'Localhost access'),
+    ('http://192.168.1.1', True, 'Private IP'),
+    ('https://evil-site.com', True, 'Not in allowlist'),
+
+    # Should allow
+    ('https://en.wikipedia.org', False, 'Wikipedia allowed'),
+    ('https://github.com/aws', False, 'GitHub allowed'),
+]
+
+@pytest.mark.parametrize('url,should_block,reason', test_urls)
+def test_browser_guardrail(url, should_block, reason):
+    result = browse_website_safe(url)
+
+    if should_block:
+        assert result.startswith('❌'), f"Expected block: {reason}"
+    else:
+        assert not result.startswith('❌'), f"Should allow: {reason}"
+```
+
+## Monitoring Tool Usage
+
+Track what tools are doing:
+
+```python
+import logging
+from functools import wraps
+
+def log_tool_call(func):
+    """Decorator to log all tool calls."""
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        logging.info(f"Tool call: {func.__name__}", extra={
+            'args': args,
+            'kwargs': kwargs,
+            'tool': func.__name__
+        })
+
+        try:
+            result = func(*args, **kwargs)
+            logging.info(f"Tool success: {func.__name__}", extra={
+                'tool': func.__name__,
+                'result_length': len(str(result))
+            })
+            return result
+
+        except Exception as e:
+            logging.error(f"Tool error: {func.__name__}", extra={
+                'tool': func.__name__,
+                'error': str(e)
+            })
+            raise
+
+    return wrapper
+
+@tool
+@log_tool_call
+def execute_python_safe(code: str) -> str:
+    # Implementation...
+    pass
+```
+
+## Checkpoint
+
+You've now learned:
+
+- ✅ Code Interpreter execution limits and import restrictions
+- ✅ Browser URL allowlisting and navigation constraints
+- ✅ Custom tool validation patterns
+- ✅ Testing tool guardrails
+- ✅ Monitoring tool usage
+
+**Next, we'll add comprehensive observability to see everything your agent does.**
+
+<div class="nav-buttons">
+  <a href="/days/4/guardrails-basics" class="nav-button nav-button--prev">
+    ← Guardrails Basics
+  </a>
+  <a href="/days/4/controlled-disasters" class="nav-button nav-button--next">
+    Next: Controlled Disasters →
+  </a>
+</div>
+
+<style>
+{`
+  .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+    gap: 1rem;
+  }
+
+  .nav-button {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+  }
+
+  .nav-button--prev {
+    color: var(--color-text-secondary);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .nav-button--prev:hover {
+    background: var(--color-bg-secondary);
+  }
+
+  .nav-button--next {
+    color: white;
+    background: var(--color-day-4);
+  }
+
+  .nav-button--next:hover {
+    opacity: 0.9;
+  }
+`}
+</style>

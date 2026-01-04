@@ -1,0 +1,459 @@
+---
+title: "Multi-Tenancy"
+dayNumber: 2
+avengersTitle: "Age of Ultron"
+focus: "Identity + AgentCore Gateway"
+description: "Implement tenant isolation to ensure users can only access their own data through Gateway interceptors."
+estimatedTime: "45 minutes"
+objectives:
+  - "Understand multi-tenant security requirements"
+  - "Implement Gateway interceptors for tenant isolation"
+  - "Filter tools based on user permissions"
+  - "Propagate identity context through tool invocations"
+order: 3
+published: true
+---
+
+import Callout from '@/components/content/Callout.astro';
+
+# Multi-Tenancy
+
+In production, multiple users (or tenants) share your agent infrastructure. **Multi-tenancy** ensures each user can only access their own data - even when using shared tools.
+
+## The Multi-Tenant Challenge
+
+Consider this scenario:
+
+```
+User A: "Show me my GitHub repositories"
+User B: "Show me my GitHub repositories"
+
+Without isolation:
+  → Both users see ALL repositories
+  → Data leak! Security disaster!
+
+With isolation:
+  → User A sees only User A's repos
+  → User B sees only User B's repos
+  → Properly secured
+```
+
+<Callout type="danger" title="Critical Security">
+  Multi-tenant isolation isn't optional for production agents.
+  A single data leak can destroy user trust and violate compliance requirements.
+</Callout>
+
+## Gateway Interceptors
+
+AgentCore Gateway provides **interceptors** - Lambda functions that run before and after tool invocations:
+
+```
+┌────────────────────────────────────────────────────────────────────┐
+│                        Tool Invocation Flow                         │
+│                                                                     │
+│  Agent Request                                                      │
+│       │                                                             │
+│       ▼                                                             │
+│  ┌─────────────────────────────────────────┐                       │
+│  │         REQUEST INTERCEPTOR              │                       │
+│  │  • Validate tenant ID                    │                       │
+│  │  • Filter available tools                │                       │
+│  │  • Inject tenant context                 │                       │
+│  │  • Transform request                     │                       │
+│  └─────────────────────────────────────────┘                       │
+│       │                                                             │
+│       ▼                                                             │
+│  ┌─────────────────────────────────────────┐                       │
+│  │           GATEWAY TARGET                 │                       │
+│  │         (API / Lambda / MCP)             │                       │
+│  └─────────────────────────────────────────┘                       │
+│       │                                                             │
+│       ▼                                                             │
+│  ┌─────────────────────────────────────────┐                       │
+│  │         RESPONSE INTERCEPTOR             │                       │
+│  │  • Filter response data                  │                       │
+│  │  • Redact sensitive fields               │                       │
+│  │  • Audit logging                         │                       │
+│  └─────────────────────────────────────────┘                       │
+│       │                                                             │
+│       ▼                                                             │
+│  Agent Response                                                     │
+└────────────────────────────────────────────────────────────────────┘
+```
+
+## Implementing Tenant Isolation
+
+### Step 1: Create Request Interceptor
+
+```python
+# lambda/request_interceptor.py
+import json
+import logging
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+def handler(event, context):
+    """
+    Request interceptor for tenant isolation.
+
+    This function runs BEFORE every tool invocation through Gateway.
+    """
+
+    # Extract request details
+    tool_name = event.get('toolName')
+    tool_input = event.get('toolInput', {})
+    headers = event.get('headers', {})
+
+    # Extract tenant context from JWT claims
+    user_context = event.get('userContext', {})
+    tenant_id = user_context.get('custom:tenant_id')
+    user_id = user_context.get('sub')
+
+    logger.info(f"Request interceptor: tool={tool_name}, tenant={tenant_id}, user={user_id}")
+
+    # Validate tenant exists
+    if not tenant_id:
+        return {
+            'statusCode': 403,
+            'error': 'TENANT_REQUIRED',
+            'message': 'Tenant ID is required for this operation'
+        }
+
+    # Inject tenant context into the request
+    modified_input = {
+        **tool_input,
+        '_tenant_context': {
+            'tenant_id': tenant_id,
+            'user_id': user_id,
+            'request_id': context.aws_request_id
+        }
+    }
+
+    # Add tenant header for downstream services
+    modified_headers = {
+        **headers,
+        'X-Tenant-ID': tenant_id,
+        'X-User-ID': user_id
+    }
+
+    return {
+        'statusCode': 200,
+        'toolInput': modified_input,
+        'headers': modified_headers,
+        'continue': True  # Proceed to target
+    }
+```
+
+### Step 2: Create Response Interceptor
+
+```python
+# lambda/response_interceptor.py
+import json
+import logging
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+def handler(event, context):
+    """
+    Response interceptor for data filtering and auditing.
+
+    This function runs AFTER every tool invocation.
+    """
+
+    tool_name = event.get('toolName')
+    tool_output = event.get('toolOutput', {})
+    user_context = event.get('userContext', {})
+
+    tenant_id = user_context.get('custom:tenant_id')
+    user_id = user_context.get('sub')
+
+    # Filter response based on tenant
+    filtered_output = filter_response_for_tenant(
+        tool_output,
+        tenant_id
+    )
+
+    # Redact sensitive fields
+    redacted_output = redact_sensitive_data(filtered_output)
+
+    # Audit logging
+    logger.info(json.dumps({
+        'event': 'TOOL_INVOCATION',
+        'tool': tool_name,
+        'tenant_id': tenant_id,
+        'user_id': user_id,
+        'request_id': context.aws_request_id,
+        'success': True
+    }))
+
+    return {
+        'statusCode': 200,
+        'toolOutput': redacted_output
+    }
+
+def filter_response_for_tenant(data, tenant_id):
+    """Filter response to only include tenant's data."""
+    if isinstance(data, list):
+        return [
+            item for item in data
+            if item.get('tenant_id') == tenant_id or 'tenant_id' not in item
+        ]
+    return data
+
+def redact_sensitive_data(data):
+    """Redact sensitive fields from response."""
+    sensitive_fields = ['password', 'secret', 'token', 'api_key', 'ssn']
+
+    if isinstance(data, dict):
+        return {
+            k: '[REDACTED]' if k.lower() in sensitive_fields else redact_sensitive_data(v)
+            for k, v in data.items()
+        }
+    elif isinstance(data, list):
+        return [redact_sensitive_data(item) for item in data]
+    return data
+```
+
+### Step 3: Attach Interceptors to Gateway
+
+```python
+import boto3
+
+gateway_client = boto3.client('bedrock-agentcore-gateway', region_name='us-east-1')
+
+# Update gateway with interceptors
+gateway_client.update_gateway(
+    gatewayId='gw-xxxx',
+    requestInterceptor={
+        'lambdaArn': 'arn:aws:lambda:us-east-1:123456789012:function:request-interceptor'
+    },
+    responseInterceptor={
+        'lambdaArn': 'arn:aws:lambda:us-east-1:123456789012:function:response-interceptor'
+    }
+)
+```
+
+## Dynamic Tool Filtering
+
+Interceptors can filter which tools are available to each user:
+
+```python
+# lambda/request_interceptor.py (extended)
+
+# Tool permissions by role
+TOOL_PERMISSIONS = {
+    'admin': ['*'],  # All tools
+    'developer': ['search_code', 'create_branch', 'view_commits'],
+    'viewer': ['search_code', 'view_commits'],
+}
+
+def filter_tools_for_user(event, context):
+    """Filter available tools based on user role."""
+
+    user_context = event.get('userContext', {})
+    user_role = user_context.get('custom:role', 'viewer')
+
+    # Get allowed tools for this role
+    allowed_tools = TOOL_PERMISSIONS.get(user_role, [])
+
+    if event.get('operation') == 'list_tools':
+        # Filter tool list
+        all_tools = event.get('tools', [])
+
+        if '*' in allowed_tools:
+            filtered_tools = all_tools
+        else:
+            filtered_tools = [
+                t for t in all_tools
+                if t['name'] in allowed_tools
+            ]
+
+        return {
+            'statusCode': 200,
+            'tools': filtered_tools
+        }
+
+    # For tool invocation, verify permission
+    tool_name = event.get('toolName')
+
+    if '*' not in allowed_tools and tool_name not in allowed_tools:
+        return {
+            'statusCode': 403,
+            'error': 'TOOL_NOT_PERMITTED',
+            'message': f'User role "{user_role}" cannot access tool "{tool_name}"'
+        }
+
+    return {'statusCode': 200, 'continue': True}
+```
+
+<Callout type="tip" title="Fine-Grained Access">
+  Interceptors enable sophisticated access control:
+  - Role-based tool filtering
+  - Time-based access restrictions
+  - Resource-level permissions
+  - Dynamic policy evaluation
+</Callout>
+
+## Identity Propagation
+
+When tools call other services, maintain the identity chain:
+
+```python
+# In your request interceptor
+def propagate_identity(event, context):
+    """Propagate user identity through the tool chain."""
+
+    user_context = event.get('userContext', {})
+    headers = event.get('headers', {})
+
+    # Create an "act on behalf of" token
+    # This allows downstream services to know who the original user is
+    act_as_headers = {
+        **headers,
+        'X-Original-User': user_context.get('sub'),
+        'X-Original-Tenant': user_context.get('custom:tenant_id'),
+        'X-Agent-ID': event.get('agentId'),
+        'X-Trace-ID': context.aws_request_id
+    }
+
+    return {
+        'statusCode': 200,
+        'headers': act_as_headers,
+        'continue': True
+    }
+```
+
+## Testing Multi-Tenant Isolation
+
+Create a test suite to verify isolation:
+
+```python
+# test_multi_tenancy.py
+import pytest
+import boto3
+
+gateway_client = boto3.client('bedrock-agentcore-gateway')
+
+class TestMultiTenantIsolation:
+
+    def test_tenant_a_cannot_see_tenant_b_data(self):
+        """Verify data isolation between tenants."""
+
+        # Invoke as Tenant A
+        response_a = gateway_client.invoke_tool(
+            gatewayId='gw-xxxx',
+            toolName='list_documents',
+            toolInput={},
+            authContext={'tenant_id': 'tenant-a'}
+        )
+
+        # Invoke as Tenant B
+        response_b = gateway_client.invoke_tool(
+            gatewayId='gw-xxxx',
+            toolName='list_documents',
+            toolInput={},
+            authContext={'tenant_id': 'tenant-b'}
+        )
+
+        # Verify isolation
+        docs_a = response_a['result']['documents']
+        docs_b = response_b['result']['documents']
+
+        # No overlap should exist
+        ids_a = {d['id'] for d in docs_a}
+        ids_b = {d['id'] for d in docs_b}
+
+        assert ids_a.isdisjoint(ids_b), "Data leak detected!"
+
+    def test_tool_filtering_by_role(self):
+        """Verify tools are filtered based on user role."""
+
+        # List tools as admin
+        admin_tools = gateway_client.list_tools(
+            gatewayId='gw-xxxx',
+            authContext={'role': 'admin'}
+        )
+
+        # List tools as viewer
+        viewer_tools = gateway_client.list_tools(
+            gatewayId='gw-xxxx',
+            authContext={'role': 'viewer'}
+        )
+
+        assert len(admin_tools['tools']) > len(viewer_tools['tools'])
+
+    def test_unauthorized_tool_access_blocked(self):
+        """Verify viewers cannot access admin tools."""
+
+        with pytest.raises(Exception) as exc_info:
+            gateway_client.invoke_tool(
+                gatewayId='gw-xxxx',
+                toolName='delete_all_data',  # Admin-only tool
+                toolInput={},
+                authContext={'role': 'viewer'}
+            )
+
+        assert 'TOOL_NOT_PERMITTED' in str(exc_info.value)
+```
+
+## Checkpoint
+
+You've learned:
+
+- ✅ Why multi-tenant isolation is critical
+- ✅ How Gateway interceptors work
+- ✅ Implementing request and response interceptors
+- ✅ Dynamic tool filtering by user role
+- ✅ Identity propagation through tool chains
+- ✅ Testing isolation
+
+**Next, we'll experience what happens without these protections.**
+
+<div class="nav-buttons">
+  <a href="/days/2/agentcore-gateway" class="nav-button nav-button--prev">
+    ← AgentCore Gateway
+  </a>
+  <a href="/days/2/controlled-disasters" class="nav-button nav-button--next">
+    Next: Controlled Disasters →
+  </a>
+</div>
+
+<style>
+{`
+  .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+    gap: 1rem;
+  }
+
+  .nav-button {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+  }
+
+  .nav-button--prev {
+    color: var(--color-text-secondary);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .nav-button--prev:hover {
+    background: var(--color-bg-secondary);
+  }
+
+  .nav-button--next {
+    color: white;
+    background: var(--color-day-2);
+  }
+
+  .nav-button--next:hover {
+    opacity: 0.9;
+  }
+`}
+</style>

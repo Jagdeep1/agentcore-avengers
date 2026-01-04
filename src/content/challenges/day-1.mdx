@@ -1,0 +1,189 @@
+---
+dayNumber: 1
+title: "The First Agent Challenge"
+description: "Deploy a custom Strands agent with at least 3 unique tools to AgentCore Runtime"
+requirements:
+  - id: "req-1"
+    text: "Create a Strands agent with a custom system prompt"
+    tier: "required"
+    hints:
+      - "Use the Agent class from strands"
+      - "System prompt should describe your agent's purpose"
+  - id: "req-2"
+    text: "Implement at least 3 custom tools with proper documentation"
+    tier: "required"
+    hints:
+      - "Use the @tool decorator"
+      - "Include type hints and docstrings"
+  - id: "req-3"
+    text: "Test agent locally with the agentcore dev server"
+    tier: "required"
+    hints:
+      - "Run agentcore dev"
+      - "Test all tools work correctly"
+  - id: "req-4"
+    text: "Deploy agent to AgentCore Runtime"
+    tier: "required"
+    hints:
+      - "Run agentcore launch"
+      - "Note your agent ARN"
+  - id: "req-5"
+    text: "Successfully invoke deployed agent via CLI or SDK"
+    tier: "required"
+    hints:
+      - "Use agentcore invoke or boto3"
+      - "Capture the response"
+  - id: "bronze-1"
+    text: "Add error handling to all tools"
+    tier: "bronze"
+    hints:
+      - "Use try/except blocks"
+      - "Return meaningful error messages"
+  - id: "bronze-2"
+    text: "Add input validation to tools"
+    tier: "bronze"
+    hints:
+      - "Validate parameters before processing"
+      - "Reject invalid inputs gracefully"
+  - id: "silver-1"
+    text: "Create a tool that makes external API calls"
+    tier: "silver"
+    hints:
+      - "Use requests library"
+      - "Handle network errors"
+      - "Consider using a free API like weather or jokes"
+  - id: "silver-2"
+    text: "Add unit tests for your tools"
+    tier: "silver"
+    hints:
+      - "Use pytest"
+      - "Test both success and error cases"
+  - id: "gold-1"
+    text: "Implement a tool that uses another AI model"
+    tier: "gold"
+    hints:
+      - "Call Claude Haiku for a subtask"
+      - "Use it for summarization or classification"
+  - id: "gold-2"
+    text: "Document the vanishing context disaster with screenshots"
+    tier: "gold"
+    hints:
+      - "Capture before/after conversation"
+      - "Write a brief explanation of the cause"
+resources:
+  - title: "Strands Agents Documentation"
+    url: "https://strandsagents.com/docs"
+  - title: "AgentCore Starter Toolkit"
+    url: "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-get-started-toolkit.html"
+  - title: "AWS Bedrock AgentCore Samples"
+    url: "https://github.com/awslabs/amazon-bedrock-agentcore-samples"
+---
+
+import Callout from '@/components/content/Callout.astro';
+
+# Day 1 Challenge: The First Agent
+
+You've learned the fundamentals. Now it's time to build something of your own.
+
+## Your Mission
+
+Build and deploy a **custom Strands agent** that showcases your understanding of:
+
+- Agent architecture
+- Tool creation
+- AgentCore Runtime deployment
+
+## Requirements Breakdown
+
+### Required (Must Complete)
+
+These are the minimum requirements to pass Day 1:
+
+1. **Custom System Prompt**: Your agent should have a unique personality and purpose
+2. **Three Custom Tools**: Build tools that do something interesting and useful
+3. **Local Testing**: Verify everything works with `agentcore dev`
+4. **Deployment**: Get your agent running in AgentCore Runtime
+5. **Invocation**: Successfully call your deployed agent
+
+<Callout type="info" title="Ideas for Tools">
+  - Weather lookup
+  - Unit conversion
+  - Random joke generator
+  - Simple calculations
+  - Date/time utilities
+  - Text transformation (uppercase, reverse, etc.)
+</Callout>
+
+### Bronze Tier
+
+Go beyond the basics with robust error handling:
+
+- All tools should gracefully handle invalid inputs
+- Error messages should be helpful and actionable
+- No uncaught exceptions should crash the agent
+
+### Silver Tier
+
+Demonstrate professional-grade development:
+
+- External API integration (weather, news, etc.)
+- Comprehensive unit tests with pytest
+- Test coverage for edge cases
+
+### Gold Tier
+
+Show mastery with advanced techniques:
+
+- Multi-model architecture (use Claude Haiku for subtasks)
+- Complete documentation of the vanishing context disaster
+
+## Submission Checklist
+
+Before marking Day 1 complete, verify:
+
+- [ ] Agent responds correctly to test prompts
+- [ ] All tools function as documented
+- [ ] Agent is deployed and accessible
+- [ ] You can demonstrate the vanishing context disaster
+- [ ] Code is clean and well-commented
+
+## Example Agent Ideas
+
+Need inspiration? Here are some agent concepts:
+
+### 1. Math Tutor Agent
+Tools: calculate, explain_concept, generate_practice_problem
+
+### 2. Travel Helper Agent
+Tools: convert_currency, get_timezone, translate_phrase
+
+### 3. Dev Productivity Agent
+Tools: generate_uuid, base64_encode, format_json
+
+### 4. Wellness Coach Agent
+Tools: get_motivational_quote, calculate_bmi, suggest_exercise
+
+## Getting Unstuck
+
+If you're stuck:
+
+1. **Review the sections** - Re-read Strands Basics and AgentCore Runtime
+2. **Check the samples** - Look at [awslabs/amazon-bedrock-agentcore-samples](https://github.com/awslabs/amazon-bedrock-agentcore-samples)
+3. **Simplify first** - Start with one tool and add more once it works
+4. **Test incrementally** - Don't wait until deployment to test
+
+<Callout type="warning" title="Common Mistakes">
+  - Forgetting to activate the virtual environment
+  - Missing type hints in tool parameters
+  - Not cleaning up after testing (run `agentcore destroy`)
+</Callout>
+
+## Completing Day 1
+
+Once you've completed the required items and any stretch goals you want to attempt:
+
+1. Mark your completed items in the checklist below
+2. The system will track your tier achievement
+3. Day 2 will unlock when all required items are checked
+
+**Remember**: The goal isn't just to check boxes - it's to deeply understand how agents work. Take your time, experiment, and learn from the disasters!

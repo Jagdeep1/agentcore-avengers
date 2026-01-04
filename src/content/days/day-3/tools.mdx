@@ -1,0 +1,500 @@
+---
+title: "Code Interpreter & Browser"
+dayNumber: 3
+avengersTitle: "Infinity War"
+focus: "Memory + Tools (Browser, Code Interpreter)"
+description: "Give your agent powerful capabilities with Code Interpreter for computation and Browser for web automation."
+estimatedTime: "60 minutes"
+objectives:
+  - "Execute Python code safely with Code Interpreter"
+  - "Analyze data and generate visualizations"
+  - "Automate web interactions with Browser tool"
+  - "Combine tools for complex workflows"
+order: 3
+published: true
+---
+
+import Callout from '@/components/content/Callout.astro';
+
+# Code Interpreter & Browser
+
+Memory lets your agent remember. Now let's give it the ability to **do** - execute code, analyze data, and interact with the web.
+
+## AgentCore Code Interpreter
+
+![Code Interpreter Architecture](/images/day-3/code-interpreter-architecture.png)
+
+Code Interpreter provides a secure, sandboxed Python environment where your agent can write and execute code.
+
+### Why Code Interpreter?
+
+Without Code Interpreter:
+```
+User: "What's the average of 15.7, 23.4, 18.9, 21.2?"
+Agent: "Let me calculate... the average is approximately 19.8"
+       (May hallucinate the answer)
+```
+
+With Code Interpreter:
+```
+User: "What's the average of 15.7, 23.4, 18.9, 21.2?"
+Agent: *executes Python code*
+       >>> numbers = [15.7, 23.4, 18.9, 21.2]
+       >>> sum(numbers) / len(numbers)
+       19.8
+Agent: "The average is exactly 19.8"
+       (Computed, not hallucinated)
+```
+
+### Setting Up Code Interpreter
+
+```python
+from strands import Agent
+from strands.models import BedrockModel
+from bedrock_agentcore.tools import code_interpreter
+
+model = BedrockModel(model_id="anthropic.claude-sonnet-4-20250514-v1:0")
+
+# Create agent with code interpreter tool
+agent = Agent(
+    model=model,
+    tools=[code_interpreter],
+    system_prompt="""You are a data analysis assistant with Python execution capabilities.
+
+Use the code interpreter to:
+- Analyze data and compute statistics
+- Create visualizations with matplotlib
+- Process and transform data structures
+- Perform mathematical calculations
+
+Always show your work by writing clear, commented code."""
+)
+
+# Example usage
+response = agent("Calculate the average of [15.7, 23.4, 18.9, 21.2] and show your work")
+print(response.message["content"][0]["text"])
+```
+
+<Callout type="info" title="Built-in Tool">
+The `code_interpreter` from `bedrock_agentcore.tools` is a pre-configured tool that handles all the session management automatically.
+</Callout>
+
+### Using Code Interpreter in Your Agent
+
+```python
+# agent_with_code.py
+from strands import Agent
+from strands.models import BedrockModel
+from strands.tools import tool
+from bedrock_agentcore.tools import CodeInterpreterSession
+
+model = BedrockModel(model_id="anthropic.claude-sonnet-4-20250514-v1:0")
+
+@tool
+def execute_python(code: str) -> str:
+    """Execute Python code and return the result.
+
+    Args:
+        code: Python code to execute
+
+    Returns:
+        The output of the code execution
+    """
+    with CodeInterpreterSession(code_interpreter_id='ci-xxxx') as session:
+        result = session.execute(code)
+
+        if result.error:
+            return f"Error: {result.error}"
+
+        return result.output
+
+@tool
+def analyze_data(data: str, analysis_type: str) -> str:
+    """Analyze data using Python.
+
+    Args:
+        data: CSV or JSON data to analyze
+        analysis_type: Type of analysis (summary, correlation, visualization)
+
+    Returns:
+        Analysis results
+    """
+    with CodeInterpreterSession(code_interpreter_id='ci-xxxx') as session:
+        # Upload data to session
+        session.upload_data(data, filename='data.csv')
+
+        if analysis_type == 'summary':
+            code = """
+import pandas as pd
+df = pd.read_csv('data.csv')
+print(df.describe().to_string())
+"""
+        elif analysis_type == 'correlation':
+            code = """
+import pandas as pd
+df = pd.read_csv('data.csv')
+numeric_cols = df.select_dtypes(include='number')
+print(numeric_cols.corr().to_string())
+"""
+        elif analysis_type == 'visualization':
+            code = """
+import pandas as pd
+import matplotlib.pyplot as plt
+df = pd.read_csv('data.csv')
+df.hist(figsize=(10, 8))
+plt.savefig('output.png')
+print('Visualization saved to output.png')
+"""
+
+        result = session.execute(code)
+
+        # If visualization, get the image
+        if analysis_type == 'visualization' and not result.error:
+            image = session.download_file('output.png')
+            # Return as base64 or save to S3
+            return f"Visualization created: {len(image)} bytes"
+
+        return result.output
+
+# Create agent with code tools
+agent = Agent(
+    model=model,
+    tools=[execute_python, analyze_data],
+    system_prompt="""You are a data analyst assistant with code execution capabilities.
+When asked to perform calculations or analyze data, use the execute_python tool.
+Always show your work by writing clear, commented code."""
+)
+```
+
+### Pre-installed Libraries
+
+Code Interpreter includes common data science libraries:
+
+| Category | Libraries |
+|----------|-----------|
+| **Data** | pandas, numpy, scipy |
+| **Visualization** | matplotlib, seaborn, plotly |
+| **ML** | scikit-learn, statsmodels |
+| **Utilities** | requests, beautifulsoup4, openpyxl |
+
+<Callout type="tip" title="Large File Support">
+  Code Interpreter can process files from S3, enabling analysis of
+  gigabyte-scale datasets without API limitations.
+</Callout>
+
+### Session Management
+
+```python
+# Sessions maintain state between executions
+with CodeInterpreterSession(code_interpreter_id='ci-xxxx') as session:
+    # Execution 1: Define a function
+    session.execute("""
+def calculate_metrics(values):
+    return {
+        'mean': sum(values) / len(values),
+        'max': max(values),
+        'min': min(values)
+    }
+""")
+
+    # Execution 2: Use the function (state persists)
+    result = session.execute("""
+data = [10, 20, 30, 40, 50]
+metrics = calculate_metrics(data)
+print(metrics)
+""")
+    print(result.output)  # {'mean': 30.0, 'max': 50, 'min': 10}
+```
+
+## AgentCore Browser
+
+![Browser Tool Architecture](/images/day-3/browser-tool-architecture.png)
+
+Browser tool enables web automation - navigating sites, filling forms, clicking buttons, and capturing screenshots.
+
+### Setting Up Browser Tool
+
+```python
+from strands import Agent
+from strands.models import BedrockModel
+from bedrock_agentcore.tools import AgentCoreBrowser
+
+model = BedrockModel(model_id="anthropic.claude-sonnet-4-20250514-v1:0")
+
+# Initialize browser tool
+browser = AgentCoreBrowser()
+
+# Create agent with browser tool
+agent = Agent(
+    model=model,
+    tools=[browser],
+    system_prompt="""You are a web research assistant.
+
+Use the browser tool to:
+- Navigate to websites
+- Extract information from pages
+- Fill forms and interact with elements
+- Take screenshots for verification"""
+)
+
+# Example usage
+response = agent("Go to news.ycombinator.com and summarize the top 3 stories")
+print(response.message["content"][0]["text"])
+```
+
+<Callout type="tip" title="Headless Browser">
+AgentCoreBrowser runs in headless mode by default for efficiency, but can capture screenshots for verification.
+</Callout>
+
+### Using Browser in Your Agent
+
+```python
+from strands.tools import tool
+from bedrock_agentcore.tools import BrowserSession
+
+@tool
+def browse_website(url: str, action: str = "screenshot") -> str:
+    """Browse a website and perform actions.
+
+    Args:
+        url: The URL to navigate to
+        action: Action to perform (screenshot, get_text, get_links)
+
+    Returns:
+        Result of the browser action
+    """
+    with BrowserSession(browser_id='br-xxxx') as browser:
+        # Navigate to URL
+        browser.navigate(url)
+
+        # Wait for page load
+        browser.wait_for_load()
+
+        if action == "screenshot":
+            screenshot = browser.screenshot()
+            # Return as base64 or save
+            return f"Screenshot captured: {len(screenshot)} bytes"
+
+        elif action == "get_text":
+            text = browser.get_text()
+            return text[:5000]  # Limit response size
+
+        elif action == "get_links":
+            links = browser.get_links()
+            return "\n".join([f"- {link['text']}: {link['href']}" for link in links[:20]])
+
+@tool
+def fill_form(url: str, form_data: dict) -> str:
+    """Fill and submit a web form.
+
+    Args:
+        url: The URL with the form
+        form_data: Dictionary of field names to values
+
+    Returns:
+        Result of form submission
+    """
+    with BrowserSession(browser_id='br-xxxx') as browser:
+        browser.navigate(url)
+        browser.wait_for_load()
+
+        # Fill form fields
+        for field, value in form_data.items():
+            browser.fill(f"input[name='{field}']", value)
+
+        # Submit form
+        browser.click("button[type='submit']")
+        browser.wait_for_navigation()
+
+        return f"Form submitted. New URL: {browser.current_url}"
+
+@tool
+def web_search(query: str) -> str:
+    """Search the web and return results.
+
+    Args:
+        query: Search query
+
+    Returns:
+        Search results with titles and URLs
+    """
+    with BrowserSession(browser_id='br-xxxx') as browser:
+        # Navigate to search engine
+        browser.navigate(f"https://www.google.com/search?q={query}")
+        browser.wait_for_load()
+
+        # Extract search results
+        results = browser.evaluate("""
+            Array.from(document.querySelectorAll('div.g')).slice(0, 5).map(el => ({
+                title: el.querySelector('h3')?.textContent,
+                url: el.querySelector('a')?.href,
+                snippet: el.querySelector('.VwiC3b')?.textContent
+            }))
+        """)
+
+        return "\n\n".join([
+            f"**{r['title']}**\n{r['url']}\n{r['snippet']}"
+            for r in results if r['title']
+        ])
+
+# Add browser tools to agent
+agent = Agent(
+    model=model,
+    tools=[browse_website, fill_form, web_search, execute_python, analyze_data],
+    system_prompt="""You are an assistant with web browsing and code execution capabilities.
+Use browse_website for reading web content.
+Use web_search for finding information online.
+Use execute_python for calculations and data analysis."""
+)
+```
+
+### Browser Actions Reference
+
+```python
+# Navigation
+browser.navigate(url)
+browser.back()
+browser.forward()
+browser.refresh()
+
+# Interaction
+browser.click(selector)
+browser.fill(selector, value)
+browser.select(selector, value)
+browser.hover(selector)
+
+# Information
+browser.screenshot()
+browser.get_text()
+browser.get_html()
+browser.get_links()
+browser.evaluate(javascript)
+
+# Waiting
+browser.wait_for_load()
+browser.wait_for_selector(selector)
+browser.wait_for_navigation()
+```
+
+## Combining Tools: Complex Workflows
+
+The real power comes from combining memory, code, and browser:
+
+```python
+# Example: Research and analyze workflow
+@tool
+def research_and_analyze(topic: str) -> str:
+    """Research a topic online and analyze the findings.
+
+    Args:
+        topic: Topic to research
+
+    Returns:
+        Analysis of research findings
+    """
+    # Step 1: Search the web
+    with BrowserSession(browser_id='br-xxxx') as browser:
+        browser.navigate(f"https://www.google.com/search?q={topic}")
+        browser.wait_for_load()
+
+        # Get top results
+        results = browser.evaluate("""
+            Array.from(document.querySelectorAll('div.g a')).slice(0, 3).map(a => a.href)
+        """)
+
+        # Visit each result and extract text
+        texts = []
+        for url in results:
+            browser.navigate(url)
+            browser.wait_for_load()
+            texts.append(browser.get_text()[:2000])
+
+    # Step 2: Analyze with Code Interpreter
+    with CodeInterpreterSession(code_interpreter_id='ci-xxxx') as session:
+        # Combine texts for analysis
+        combined = "\n---\n".join(texts)
+
+        code = f"""
+from collections import Counter
+import re
+
+text = '''{combined}'''
+
+# Word frequency analysis
+words = re.findall(r'\\w+', text.lower())
+common = Counter(words).most_common(20)
+print("Most common terms:")
+for word, count in common:
+    print(f"  {{word}}: {{count}}")
+
+# Basic statistics
+print(f"\\nTotal words: {{len(words)}}")
+print(f"Unique words: {{len(set(words))}}")
+"""
+        result = session.execute(code)
+
+    return f"Research on '{topic}':\n\n{result.output}"
+```
+
+<Callout type="warning" title="Tool Safety">
+  These tools are powerful but potentially dangerous without guardrails.
+  Day 4 adds the safety controls needed for production use.
+</Callout>
+
+## Checkpoint
+
+You've now learned:
+
+- ✅ Setting up and using Code Interpreter
+- ✅ Data analysis and visualization
+- ✅ Browser automation and web interaction
+- ✅ Combining tools for complex workflows
+
+**Next, we'll see what happens when tools aren't properly controlled.**
+
+<div class="nav-buttons">
+  <a href="/days/3/memory-strategies" class="nav-button nav-button--prev">
+    ← Memory Strategies
+  </a>
+  <a href="/days/3/controlled-disasters" class="nav-button nav-button--next">
+    Next: Controlled Disasters →
+  </a>
+</div>
+
+<style>
+{`
+  .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+    gap: 1rem;
+  }
+
+  .nav-button {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+  }
+
+  .nav-button--prev {
+    color: var(--color-text-secondary);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .nav-button--prev:hover {
+    background: var(--color-bg-secondary);
+  }
+
+  .nav-button--next {
+    color: white;
+    background: var(--color-day-3);
+  }
+
+  .nav-button--next:hover {
+    opacity: 0.9;
+  }
+`}
+</style>

@@ -1,0 +1,1088 @@
+---
+title: "Orchestration & Deployment"
+dayNumber: 5
+avengersTitle: "Assemble"
+focus: "Multi-Agent Capstone"
+description: "Build the dynamic orchestrator and deploy the complete multi-agent pipeline"
+estimatedTime: "90 minutes"
+objectives:
+  - "Understand multi-agent orchestration patterns"
+  - "Build an LLM-based dynamic routing orchestrator"
+  - "Deploy all agents to AgentCore Runtime"
+  - "Configure API Gateway for production access"
+  - "Test the complete end-to-end pipeline"
+order: 5
+published: true
+---
+
+import Callout from '@/components/content/Callout.astro';
+
+# Orchestration & Deployment
+
+The Orchestrator is the brain of your multi-agent system. It decides which agents to invoke and in what order, based on the user's intent.
+
+## Multi-Agent Orchestration Patterns
+
+### Pattern 1: Sequential Pipeline
+
+```
+User Query → Extract → Transform → Report → Response
+
+Pros: Simple, predictable
+Cons: Always runs all agents, even for simple queries
+```
+
+### Pattern 2: Hardcoded Router
+
+```python
+if "price" in query:
+    return extract_agent(query)
+elif "risk" in query:
+    return extract_agent(query) -> transform_agent
+elif "report" in query:
+    return extract_agent -> transform_agent -> report_agent
+```
+
+```
+Pros: Fast, deterministic
+Cons: Brittle, requires maintenance, misses nuanced queries
+```
+
+### Pattern 3: Dynamic LLM Routing (Our Approach)
+
+```
+User Query → Orchestrator LLM → Decides routing → Executes agents → Response
+
+Pros: Flexible, handles nuanced queries, adapts to new patterns
+Cons: Slightly more latency, requires good prompt engineering
+```
+
+## Orchestrator Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           ORCHESTRATOR AGENT                                 │
+│                                                                              │
+│  User: "Generate a risk report for Apple"                                   │
+│                                                                              │
+│  ┌──────────────────────────────────────────────────────────────────────┐   │
+│  │                    ROUTING DECISION (LLM)                             │   │
+│  │                                                                        │   │
+│  │  "This request needs:                                                 │   │
+│  │   1. Data extraction (stock data + SEC filings)                       │   │
+│  │   2. Risk analysis (VaR, volatility, Sharpe)                          │   │
+│  │   3. Report generation (risk report format)"                          │   │
+│  │                                                                        │   │
+│  │  Routing: Extract → Transform → Report                                │   │
+│  └──────────────────────────────────────────────────────────────────────┘   │
+│                                                                              │
+│  ┌─────────────┐     ┌─────────────┐     ┌─────────────┐                   │
+│  │   Extract   │────▶│  Transform  │────▶│   Report    │                   │
+│  │    Tool     │     │    Tool     │     │    Tool     │                   │
+│  └─────────────┘     └─────────────┘     └─────────────┘                   │
+│                                                                              │
+│  Response: [Professional risk report in Markdown]                           │
+│                                                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+## Agent-as-Tool Pattern
+
+Each deployed agent becomes a tool for the orchestrator:
+
+```python
+# tools/agent_tools.py
+import boto3
+import json
+from strands.tools import tool
+
+agentcore_client = boto3.client('bedrock-agentcore', region_name='us-west-2')
+
+# Agent ARNs (from deployment)
+EXTRACT_AGENT_ARN = "arn:aws:bedrock-agentcore:us-west-2:ACCOUNT:agent-runtime/extract-agent"
+TRANSFORM_AGENT_ARN = "arn:aws:bedrock-agentcore:us-west-2:ACCOUNT:agent-runtime/transform-agent"
+REPORT_AGENT_ARN = "arn:aws:bedrock-agentcore:us-west-2:ACCOUNT:agent-runtime/report-agent"
+
+
+def invoke_agent(agent_arn: str, payload: dict) -> str:
+    """Invoke an AgentCore agent and return the response."""
+    response = agentcore_client.invoke_agent_runtime(
+        agentRuntimeArn=agent_arn,
+        qualifier="DEFAULT",
+        payload=json.dumps(payload)
+    )
+
+    # Handle streaming response
+    result = ""
+    for line in response["response"].iter_lines():
+        if line:
+            result += line.decode("utf-8")
+
+    return result
+
+
+@tool
+def extract_financial_data(query: str, tickers: list[str] = None) -> str:
+    """Extract financial data from market APIs and SEC filings.
+
+    Use this tool FIRST when you need to gather raw financial data.
+
+    Capabilities:
+    - Current stock prices and fundamentals (Yahoo Finance)
+    - Historical price data
+    - SEC filings from Knowledge Base (10-K, 10-Q)
+    - Risk factors and management discussion
+
+    Args:
+        query: The data extraction request
+        tickers: Optional list of stock symbols to focus on
+
+    Returns:
+        Extracted financial data in structured format
+    """
+    payload = {"prompt": query}
+    if tickers:
+        payload["tickers"] = tickers
+
+    return invoke_agent(EXTRACT_AGENT_ARN, payload)
+
+
+@tool
+def analyze_financial_data(data: str, analysis_type: str = "full") -> str:
+    """Analyze financial data with statistical and risk metrics.
+
+    Use this tool AFTER extract_financial_data when analysis is needed.
+
+    Capabilities:
+    - Risk metrics: VaR, Sharpe ratio, volatility, max drawdown
+    - Technical analysis: Moving averages, trends, signals
+    - Performance comparison across multiple stocks
+    - Custom calculations via Code Interpreter
+
+    Args:
+        data: Raw financial data from Extract Agent
+        analysis_type: Type of analysis - "risk", "technical", "comparison", "full"
+
+    Returns:
+        Analysis results with metrics and interpretations
+    """
+    return invoke_agent(TRANSFORM_AGENT_ARN, {
+        "data": data,
+        "analysis_type": analysis_type
+    })
+
+
+@tool
+def generate_financial_report(analysis: str, company: str, report_type: str = "full") -> str:
+    """Generate a professional financial report from analysis results.
+
+    Use this tool LAST to produce the final output.
+
+    Report types:
+    - "quick": 3-5 bullet points
+    - "brief": Executive summary (1 page)
+    - "risk": Risk-focused report
+    - "full": Comprehensive analysis report
+
+    Args:
+        analysis: Analysis results from Transform Agent
+        company: Company name for the report header
+        report_type: Type of report to generate
+
+    Returns:
+        Professional Markdown report
+    """
+    return invoke_agent(REPORT_AGENT_ARN, {
+        "analysis": analysis,
+        "company": company,
+        "report_type": report_type
+    })
+```
+
+## Building the Orchestrator
+
+```python
+# agents/orchestrator_agent.py
+from strands import Agent
+from strands.models import BedrockModel
+from bedrock_agentcore.runtime import BedrockAgentCoreApp
+
+# Import agent tools
+from tools.agent_tools import (
+    extract_financial_data,
+    analyze_financial_data,
+    generate_financial_report
+)
+
+app = BedrockAgentCoreApp()
+
+ORCHESTRATOR_SYSTEM_PROMPT = """You are a Financial Analytics Orchestrator.
+
+Your role is to coordinate three specialized agents to answer financial queries:
+
+## Available Agents (as tools)
+
+### 1. Extract Agent (extract_financial_data)
+**Purpose:** Gather raw financial data
+**Data sources:**
+- Yahoo Finance: Current prices, fundamentals, historical data
+- Knowledge Base: SEC filings (10-K, 10-Q), risk factors
+**When to use:** FIRST, when any financial data is needed
+
+### 2. Transform Agent (analyze_financial_data)
+**Purpose:** Analyze and calculate metrics
+**Capabilities:**
+- Risk metrics: VaR, Sharpe ratio, volatility, max drawdown
+- Technical analysis: Moving averages, trend signals
+- Performance comparison
+**When to use:** AFTER extraction, when analysis is needed
+
+### 3. Report Agent (generate_financial_report)
+**Purpose:** Generate professional reports
+**Formats:** quick, brief, risk, full
+**When to use:** LAST, to format final output
+
+## Routing Decision Matrix
+
+| User Intent | Workflow |
+|-------------|----------|
+| "What is X's stock price?" | Extract only |
+| "Get data for X" | Extract only |
+| "What are the risk factors for X?" | Extract (KB) only |
+| "Analyze X" | Extract → Transform |
+| "Calculate risk for X" | Extract → Transform |
+| "Compare X and Y" | Extract → Transform |
+| "Generate a report for X" | Extract → Transform → Report |
+| "Risk report for X" | Extract → Transform → Report (risk) |
+| "Full analysis of X" | Extract → Transform → Report (full) |
+
+## Execution Guidelines
+
+1. **Understand the intent first** - Is this a data request, analysis request, or report request?
+2. **Start with Extract** - Almost all queries need data first
+3. **Chain appropriately** - Pass output from one agent as input to the next
+4. **Match report type** - Use the right report format for the request
+5. **Handle errors** - If one agent fails, report the issue clearly
+
+## Example Flows
+
+**Query: "What's Apple's current price?"**
+→ extract_financial_data("Get current stock price for Apple", tickers=["AAPL"])
+→ Return extracted data directly
+
+**Query: "Analyze Tesla's risk profile"**
+→ extract_financial_data("Get Tesla stock data and SEC risk factors", tickers=["TSLA"])
+→ analyze_financial_data(extracted_data, analysis_type="risk")
+→ Return analysis results
+
+**Query: "Generate a comprehensive report for Microsoft"**
+→ extract_financial_data("Get Microsoft financial data and SEC filings", tickers=["MSFT"])
+→ analyze_financial_data(extracted_data, analysis_type="full")
+→ generate_financial_report(analysis, company="Microsoft", report_type="full")
+→ Return final report
+
+## Response Format
+
+Always explain your routing decision briefly before executing:
+
+"I'll help you with [request]. This requires [workflow explanation].
+
+[Execute agents]
+
+[Final response or report]"
+"""
+
+model = BedrockModel(
+    model_id="anthropic.claude-sonnet-4-20250514-v1:0",
+    region_name="us-west-2"
+)
+
+orchestrator = Agent(
+    model=model,
+    tools=[
+        extract_financial_data,
+        analyze_financial_data,
+        generate_financial_report
+    ],
+    system_prompt=ORCHESTRATOR_SYSTEM_PROMPT
+)
+
+
+@app.entrypoint
+def handle_request(payload: dict) -> dict:
+    """Main entry point for the Financial Analytics Pipeline.
+
+    Args:
+        payload: Dictionary with 'prompt' (user query) and optional 'session_id'
+
+    Returns:
+        Response from the orchestrated pipeline
+    """
+    prompt = payload.get("prompt", "")
+    session_id = payload.get("session_id")
+
+    response = orchestrator(prompt)
+
+    return dict(
+        response=response.message["content"][0]["text"],
+        session_id=session_id,
+        agent="orchestrator",
+        status="success"
+    )
+
+
+if __name__ == "__main__":
+    app.run()
+```
+
+## Deploying the Complete Pipeline
+
+### Step 1: Deploy All Agents
+
+```bash
+# Deploy Extract Agent
+agentcore deploy \
+  --name extract-agent \
+  --entry agents/extract_agent.py \
+  --requirements requirements.txt \
+  --region us-west-2 \
+  --profile claude
+
+# Deploy Transform Agent
+agentcore deploy \
+  --name transform-agent \
+  --entry agents/transform_agent.py \
+  --requirements requirements.txt \
+  --region us-west-2 \
+  --profile claude
+
+# Deploy Report Agent
+agentcore deploy \
+  --name report-agent \
+  --entry agents/report_agent.py \
+  --requirements requirements.txt \
+  --region us-west-2 \
+  --profile claude
+
+# Deploy Orchestrator (after other agents are deployed)
+agentcore deploy \
+  --name orchestrator-agent \
+  --entry agents/orchestrator_agent.py \
+  --requirements requirements.txt \
+  --region us-west-2 \
+  --profile claude
+```
+
+### Step 2: Store Agent ARNs
+
+```bash
+# Get deployed agent ARNs
+agentcore list --profile claude
+
+# Store in Parameter Store
+aws ssm put-parameter \
+  --name "/agentcore/pipeline/extract-agent-arn" \
+  --value "arn:aws:bedrock-agentcore:us-west-2:123456789:agent-runtime/extract-agent" \
+  --type String \
+  --profile claude
+
+aws ssm put-parameter \
+  --name "/agentcore/pipeline/transform-agent-arn" \
+  --value "arn:aws:bedrock-agentcore:us-west-2:123456789:agent-runtime/transform-agent" \
+  --type String \
+  --profile claude
+
+aws ssm put-parameter \
+  --name "/agentcore/pipeline/report-agent-arn" \
+  --value "arn:aws:bedrock-agentcore:us-west-2:123456789:agent-runtime/report-agent" \
+  --type String \
+  --profile claude
+```
+
+### Step 3: Update Agent Tools to Use Parameters
+
+```python
+# tools/agent_tools.py (production version)
+import boto3
+from functools import lru_cache
+
+ssm = boto3.client('ssm', region_name='us-west-2')
+
+@lru_cache(maxsize=10)
+def get_agent_arn(agent_name: str) -> str:
+    """Get agent ARN from Parameter Store."""
+    response = ssm.get_parameter(
+        Name=f"/agentcore/pipeline/{agent_name}-arn"
+    )
+    return response['Parameter']['Value']
+
+# Use in tools
+EXTRACT_AGENT_ARN = get_agent_arn("extract-agent")
+```
+
+## Integrating Day 2: AgentCore Gateway
+
+Expose your pipeline via AgentCore Gateway with authentication:
+
+```python
+# gateway_config.py
+from bedrock_agentcore.gateway import GatewayConfig, create_gateway
+
+# Configure Gateway for the orchestrator
+gateway_config = GatewayConfig(
+    name="financial-analytics-gateway",
+    description="Financial Analytics Pipeline API",
+
+    # Authentication (from Day 2)
+    auth_config=dict(
+        type="JWT",
+        issuer="https://your-identity-provider.com",
+        audience="financial-analytics-api",
+        required_claims=["sub", "email"]
+    ),
+
+    # Rate limiting
+    rate_limit=dict(
+        requests_per_minute=60,
+        burst_limit=10
+    ),
+
+    # Multi-tenancy support
+    tenant_isolation=True,
+    tenant_id_claim="tenant_id"
+)
+
+# Create the Gateway
+gateway = create_gateway(
+    config=gateway_config,
+    agent_arn=ORCHESTRATOR_ARN
+)
+
+print(f"Gateway URL: {gateway.invoke_url}")
+```
+
+### Gateway Deployment
+
+```bash
+# Deploy Gateway via CLI
+agentcore gateway create \
+  --name financial-analytics-gateway \
+  --agent-arn $ORCHESTRATOR_ARN \
+  --auth-type jwt \
+  --issuer "https://your-identity-provider.com" \
+  --profile claude
+```
+
+<Callout type="tip" title="From Day 2">
+  Review Day 2 for detailed Gateway configuration including OAuth flows,
+  multi-tenant setup, and Token Vault integration for external APIs.
+</Callout>
+
+## Integrating Day 3: Conversation Memory
+
+Add memory to the orchestrator for multi-turn conversations:
+
+```python
+# memory_config.py
+from bedrock_agentcore.memory import AgentCoreMemory
+
+# Configure memory for orchestrator
+memory = AgentCoreMemory(
+    memory_id="financial-orchestrator-memory",
+    session_ttl=3600,  # 1 hour sessions
+
+    # Long-term memory extracts user preferences
+    long_term_config=dict(
+        enabled=True,
+        extraction_model="anthropic.claude-haiku-3-20240307-v1:0",
+        extract_fields=["preferred_report_format", "risk_tolerance", "watched_tickers"]
+    )
+)
+
+# Update orchestrator with memory
+orchestrator = Agent(
+    model=model,
+    tools=[extract_financial_data, analyze_financial_data, generate_financial_report],
+    system_prompt=ORCHESTRATOR_SYSTEM_PROMPT,
+    memory=memory  # Enable conversation memory
+)
+```
+
+### Memory-Enabled Conversations
+
+With memory, users can have natural multi-turn conversations:
+
+```python
+# Session 1: User establishes context
+"Analyze Apple's risk profile"  # Full analysis
+"How does that compare to Microsoft?"  # Remembers Apple context
+"Generate a report for both"  # Uses accumulated context
+
+# Later session: Memory recalls preferences
+"Show me the latest on my watched stocks"  # Knows user's tickers
+"Use my preferred format"  # Remembers report format preference
+```
+
+### Updated Entry Point with Session Support
+
+```python
+@app.entrypoint
+def handle_request(payload: dict) -> dict:
+    """Entry point with memory support."""
+    prompt = payload.get("prompt", "")
+    session_id = payload.get("session_id")  # Client provides session ID
+
+    # Memory maintains context across requests in same session
+    response = orchestrator(prompt, session_id=session_id)
+
+    return dict(
+        response=response.message["content"][0]["text"],
+        session_id=session_id,
+        agent="orchestrator",
+        status="success"
+    )
+```
+
+<Callout type="tip" title="From Day 3">
+  Review Day 3 for memory branching (exploring alternative scenarios)
+  and long-term semantic extraction patterns.
+</Callout>
+
+## Integrating Day 4: Comprehensive Guardrails
+
+Apply guardrails to **ALL** agents, not just the orchestrator:
+
+### Create Financial Analytics Guardrail
+
+```python
+# guardrails/financial_guardrail.py
+import boto3
+
+bedrock = boto3.client('bedrock', region_name='us-west-2')
+
+response = bedrock.create_guardrail(
+    name='financial-analytics-guardrail',
+    description='Guardrails for financial analytics pipeline',
+
+    # Content filters
+    contentPolicyConfig=dict(
+        filtersConfig=[
+            dict(type='SEXUAL', inputStrength='HIGH', outputStrength='HIGH'),
+            dict(type='VIOLENCE', inputStrength='HIGH', outputStrength='HIGH'),
+            dict(type='HATE', inputStrength='HIGH', outputStrength='HIGH'),
+            dict(type='MISCONDUCT', inputStrength='HIGH', outputStrength='HIGH')
+        ]
+    ),
+
+    # Financial-specific topic restrictions
+    topicPolicyConfig=dict(
+        topicsConfig=[
+            dict(
+                name='investment-advice',
+                definition='Specific buy, sell, or hold recommendations for securities',
+                examples=['You should buy AAPL stock', 'Sell all your Tesla shares'],
+                type='DENY'
+            ),
+            dict(
+                name='guaranteed-returns',
+                definition='Promises or guarantees of investment returns',
+                examples=['This stock will definitely go up', 'Guaranteed 20% returns'],
+                type='DENY'
+            ),
+            dict(
+                name='insider-trading',
+                definition='Discussion of non-public material information',
+                examples=['I heard from an insider that...', 'Before the announcement...'],
+                type='DENY'
+            )
+        ]
+    ),
+
+    # PII protection
+    sensitiveInformationPolicyConfig=dict(
+        piiEntitiesConfig=[
+            dict(type='SSN', action='BLOCK'),
+            dict(type='CREDIT_DEBIT_CARD_NUMBER', action='BLOCK'),
+            dict(type='BANK_ACCOUNT_NUMBER', action='BLOCK')
+        ]
+    ),
+
+    blockedInputMessaging='This request cannot be processed due to policy restrictions.',
+    blockedOutputsMessaging='This response was blocked due to policy restrictions.'
+)
+
+GUARDRAIL_ID = response['guardrailId']
+print(f"Created guardrail: {GUARDRAIL_ID}")
+```
+
+### Apply to All Agents
+
+```python
+# Apply guardrail to each agent's model
+def create_guarded_model(guardrail_id: str, guardrail_version: str = "1"):
+    return BedrockModel(
+        model_id="anthropic.claude-sonnet-4-20250514-v1:0",
+        region_name="us-west-2",
+        guardrail_config=dict(
+            guardrailIdentifier=guardrail_id,
+            guardrailVersion=guardrail_version,
+            trace='enabled'
+        )
+    )
+
+# All agents use guarded model
+extract_model = create_guarded_model(GUARDRAIL_ID)
+transform_model = create_guarded_model(GUARDRAIL_ID)
+report_model = create_guarded_model(GUARDRAIL_ID)
+orchestrator_model = create_guarded_model(GUARDRAIL_ID)
+```
+
+<Callout type="warning" title="From Day 4">
+  Remember tool-specific guardrails:
+  - Browser Tool: Restrict to approved financial sites
+  - Code Interpreter: Limit imports, timeout, no network
+  Review Day 4 for tool guardrail configuration.
+</Callout>
+
+## Integrating Day 4: Distributed Observability
+
+Track requests across all agents with distributed tracing:
+
+```python
+# observability/distributed_tracing.py
+from bedrock_agentcore.observability import setup_observability, create_span, get_current_trace_id
+
+def configure_pipeline_observability():
+    """Configure observability for all pipeline agents."""
+    agents = ["extract-agent", "transform-agent", "report-agent", "orchestrator-agent"]
+
+    for agent_name in agents:
+        setup_observability(
+            agent_id=agent_name,
+            enable_traces=True,
+            enable_metrics=True,
+            log_level="INFO",
+            cloudwatch_namespace="AgentCore/FinancialPipeline",
+            # Enable distributed tracing
+            propagate_trace_context=True
+        )
+
+# In orchestrator, create parent span
+@app.entrypoint
+def handle_request(payload: dict) -> dict:
+    with create_span("orchestrator-pipeline-request") as span:
+        # Record request metadata
+        span.set_attribute("user_query", payload.get("prompt", "")[:100])
+        span.set_attribute("session_id", payload.get("session_id", "anonymous"))
+
+        try:
+            response = orchestrator(payload.get("prompt"))
+
+            # Record success metrics
+            span.set_attribute("status", "success")
+            span.set_attribute("agents_invoked", response.agents_called)
+
+            return dict(
+                response=response.message["content"][0]["text"],
+                trace_id=get_current_trace_id()  # Return for debugging
+            )
+
+        except Exception as e:
+            span.set_attribute("status", "error")
+            span.set_attribute("error_message", str(e))
+            raise
+```
+
+### CloudWatch Dashboard
+
+Create a dashboard for pipeline monitoring:
+
+```python
+# observability/dashboard.py
+import boto3
+
+cloudwatch = boto3.client('cloudwatch', region_name='us-west-2')
+
+# Create dashboard
+dashboard_body = dict(
+    widgets=[
+        dict(
+            type="metric",
+            properties=dict(
+                title="Pipeline Latency by Agent",
+                metrics=[
+                    ["AgentCore/FinancialPipeline", "Latency", "AgentId", "extract-agent"],
+                    ["...", "transform-agent"],
+                    ["...", "report-agent"],
+                    ["...", "orchestrator-agent"]
+                ],
+                period=60,
+                stat="Average"
+            )
+        ),
+        dict(
+            type="metric",
+            properties=dict(
+                title="Error Rate by Agent",
+                metrics=[
+                    ["AgentCore/FinancialPipeline", "Errors", "AgentId", "extract-agent"],
+                    ["...", "transform-agent"],
+                    ["...", "report-agent"],
+                    ["...", "orchestrator-agent"]
+                ],
+                period=60,
+                stat="Sum"
+            )
+        ),
+        dict(
+            type="metric",
+            properties=dict(
+                title="Token Usage",
+                metrics=[
+                    ["AgentCore/FinancialPipeline", "InputTokens", "AgentId", "orchestrator-agent"],
+                    ["...", "OutputTokens", "...", "..."]
+                ],
+                period=300,
+                stat="Sum"
+            )
+        )
+    ]
+)
+
+cloudwatch.put_dashboard(
+    DashboardName='FinancialAnalyticsPipeline',
+    DashboardBody=json.dumps(dashboard_body)
+)
+```
+
+<Callout type="tip" title="From Day 4">
+  Review Day 4 for custom metrics, alerting rules, and trace analysis.
+</Callout>
+
+## Integrating Day 4: Pipeline Evaluations
+
+Add quality checks for your pipeline:
+
+```python
+# evaluations/report_quality.py
+from bedrock_agentcore.evaluation import Evaluator, EvaluationDataset
+
+# Define evaluation criteria for reports
+report_evaluator = Evaluator(
+    name="report-quality-evaluator",
+    model_id="anthropic.claude-sonnet-4-20250514-v1:0",
+    criteria=[
+        dict(
+            name="completeness",
+            description="Report includes Executive Summary, Key Metrics, Risk Assessment, and Recommendations",
+            scoring="binary"
+        ),
+        dict(
+            name="accuracy",
+            description="Financial metrics match input data, calculations are correct",
+            scoring="1-5"
+        ),
+        dict(
+            name="clarity",
+            description="Report is clear, well-organized, and actionable",
+            scoring="1-5"
+        ),
+        dict(
+            name="compliance",
+            description="Report does not contain investment advice or guarantees",
+            scoring="binary"
+        )
+    ]
+)
+
+# Create evaluation dataset
+test_cases = EvaluationDataset([
+    dict(
+        input="Generate a risk report for Apple",
+        expected_sections=["Executive Summary", "Risk Metrics", "Recommendations"],
+        expected_metrics=["VaR", "Sharpe Ratio", "Volatility"],
+        forbidden_content=["you should buy", "guaranteed returns"]
+    ),
+    dict(
+        input="Analyze Microsoft's risk profile",
+        expected_sections=["Risk Assessment", "Key Metrics"],
+        expected_metrics=["VaR", "Volatility", "Max Drawdown"],
+        forbidden_content=["investment advice", "will definitely"]
+    )
+])
+
+# Run evaluation
+def evaluate_pipeline():
+    results = report_evaluator.evaluate(
+        agent=orchestrator,
+        dataset=test_cases
+    )
+
+    print(f"Completeness: {results.avg('completeness'):.0%}")
+    print(f"Accuracy: {results.avg('accuracy'):.1f}/5")
+    print(f"Clarity: {results.avg('clarity'):.1f}/5")
+    print(f"Compliance: {results.avg('compliance'):.0%}")
+
+    # Fail if below thresholds
+    assert results.avg('completeness') >= 0.9, "Completeness below 90%"
+    assert results.avg('accuracy') >= 4.0, "Accuracy below 4/5"
+    assert results.avg('compliance') >= 1.0, "Compliance failures detected"
+
+    return results
+```
+
+### Continuous Evaluation
+
+Set up online evaluation for production monitoring:
+
+```python
+# evaluations/online_eval.py
+from bedrock_agentcore.evaluation import OnlineEvaluator
+
+online_evaluator = OnlineEvaluator(
+    name="financial-pipeline-monitor",
+    evaluator=report_evaluator,
+
+    # Sample 10% of production traffic
+    sample_rate=0.1,
+
+    # Alert on failures
+    alert_config=dict(
+        sns_topic_arn="arn:aws:sns:us-west-2:ACCOUNT:pipeline-alerts",
+        threshold_completeness=0.85,
+        threshold_accuracy=3.5,
+        threshold_compliance=0.95
+    )
+)
+
+# Attach to orchestrator
+orchestrator.add_callback(online_evaluator.evaluate_response)
+```
+
+<Callout type="tip" title="From Day 4">
+  Review Day 4 for on-demand vs online evaluation patterns and
+  custom evaluator development.
+</Callout>
+
+## End-to-End Testing
+
+### Test Suite
+
+```python
+# test_pipeline_e2e.py
+import boto3
+import json
+
+agentcore = boto3.client('bedrock-agentcore', region_name='us-west-2')
+ORCHESTRATOR_ARN = "arn:aws:bedrock-agentcore:us-west-2:ACCOUNT:agent-runtime/orchestrator-agent"
+
+def invoke_pipeline(query: str) -> str:
+    """Invoke the orchestrator with a query."""
+    response = agentcore.invoke_agent_runtime(
+        agentRuntimeArn=ORCHESTRATOR_ARN,
+        qualifier="DEFAULT",
+        payload=json.dumps({"prompt": query})
+    )
+
+    result = ""
+    for line in response["response"].iter_lines():
+        if line:
+            result += line.decode("utf-8")
+
+    return result
+
+
+# Test cases
+test_cases = [
+    # Data only
+    {
+        "query": "What is Apple's current stock price?",
+        "expected_agents": ["extract"],
+        "expected_content": ["price", "AAPL"]
+    },
+
+    # Data + Analysis
+    {
+        "query": "Analyze the risk profile for Tesla",
+        "expected_agents": ["extract", "transform"],
+        "expected_content": ["volatility", "VaR", "Sharpe"]
+    },
+
+    # Full pipeline
+    {
+        "query": "Generate a comprehensive risk report for Microsoft",
+        "expected_agents": ["extract", "transform", "report"],
+        "expected_content": ["Risk Assessment", "Volatility", "Recommendation"]
+    },
+
+    # KB query
+    {
+        "query": "What are Amazon's key risk factors from their 10-K?",
+        "expected_agents": ["extract"],
+        "expected_content": ["risk", "factor"]
+    },
+
+    # Comparison
+    {
+        "query": "Compare the performance of AAPL and MSFT",
+        "expected_agents": ["extract", "transform"],
+        "expected_content": ["comparison", "return", "Sharpe"]
+    }
+]
+
+# Run tests
+for test in test_cases:
+    print(f"\n{'='*60}")
+    print(f"Query: {test['query']}")
+    print(f"{'='*60}\n")
+
+    result = invoke_pipeline(test["query"])
+    print(result[:500] + "..." if len(result) > 500 else result)
+
+    # Validate expected content
+    for expected in test['expected_content']:
+        if expected.lower() not in result.lower():
+            print(f"\n⚠️  Missing expected content: {expected}")
+```
+
+### Sample Outputs
+
+**Query: "What is Apple's current stock price?"**
+
+```
+I'll get the current stock price for Apple.
+
+**Apple Inc. (AAPL)**
+- Current Price: $175.50
+- Day Change: +$2.15 (+1.24%)
+- 52-Week Range: $142.00 - $182.34
+- Market Cap: $2.85T
+
+Data from Yahoo Finance as of 2025-01-04
+```
+
+**Query: "Generate a comprehensive risk report for Microsoft"**
+
+```
+I'll generate a comprehensive risk report for Microsoft. This requires:
+1. Extracting financial data and SEC filings
+2. Calculating risk metrics
+3. Generating a full report
+
+[Executing pipeline...]
+
+# Microsoft Corporation (MSFT) - Risk Assessment Report
+
+**Report Date:** January 4, 2025
+**Analysis Period:** 1 Year
+
+## Executive Summary
+
+Microsoft demonstrates a moderate risk profile with strong risk-adjusted
+returns (Sharpe 1.32). Annual volatility of 22.8% is slightly below the
+technology sector average...
+
+[Full report continues...]
+```
+
+<Callout type="success" title="Pipeline Complete!">
+  Congratulations! You've built a production-grade multi-agent financial
+  analytics pipeline with Knowledge Bases, specialized agents, and
+  dynamic orchestration.
+</Callout>
+
+## Production Checklist
+
+Before going to production, ensure ALL Day 1-4 integrations are complete:
+
+**Core Pipeline (Day 1):**
+- ✅ All agents deployed and responding to AgentCore Runtime
+- ✅ Agent ARNs stored in Parameter Store
+- ✅ End-to-end pipeline tests passing
+
+**Security & Access (Day 2):**
+- ✅ AgentCore Gateway configured with JWT authentication
+- ✅ Rate limiting enabled
+- ✅ Multi-tenancy configured (if needed)
+- ✅ IAM permissions properly scoped
+
+**Tools & Context (Day 3):**
+- ✅ Memory integration in orchestrator
+- ✅ Browser Tool enabled in Extract Agent
+- ✅ Code Interpreter enabled in Transform Agent
+
+**Safety & Quality (Day 4):**
+- ✅ Guardrails applied to ALL agents
+- ✅ Financial-specific topic restrictions configured
+- ✅ Distributed observability with tracing
+- ✅ CloudWatch dashboard deployed
+- ✅ Evaluation tests passing (>90% completeness, 100% compliance)
+
+## Checkpoint
+
+You've now completed the Day 5 capstone with full Days 1-4 integration:
+
+**Multi-Agent Pipeline:**
+- ✅ Knowledge Bases with SEC filings
+- ✅ Extract Agent (Yahoo Finance + KB + Browser Tool)
+- ✅ Transform Agent (Risk metrics + Code Interpreter)
+- ✅ Report Agent for synthesis
+- ✅ Orchestrator with dynamic LLM routing
+
+**Days 1-4 Integration:**
+- ✅ AgentCore Gateway for API access (Day 2)
+- ✅ Conversation Memory (Day 3)
+- ✅ Browser Tool for news (Day 3)
+- ✅ Code Interpreter for analysis (Day 3)
+- ✅ Guardrails on all agents (Day 4)
+- ✅ Distributed observability (Day 4)
+- ✅ Pipeline evaluations (Day 4)
+
+**Time for the Day 5 Challenge!**
+
+<div class="nav-buttons">
+  <a href="/days/5/report-agent" class="nav-button nav-button--prev">
+    ← Report Agent
+  </a>
+  <a href="/days/5/challenge" class="nav-button nav-button--next">
+    Day 5 Challenge →
+  </a>
+</div>
+
+<style>
+{`
+  .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+    gap: 1rem;
+  }
+
+  .nav-button {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+  }
+
+  .nav-button--prev {
+    color: var(--color-text-secondary);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .nav-button--prev:hover {
+    background: var(--color-bg-secondary);
+  }
+
+  .nav-button--next {
+    color: white;
+    background: var(--color-tier-gold);
+  }
+
+  .nav-button--next:hover {
+    opacity: 0.9;
+  }
+`}
+</style>

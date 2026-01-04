@@ -1,0 +1,292 @@
+---
+dayNumber: 3
+title: "The Memory & Tools Challenge"
+description: "Build an agent with persistent memory and tool capabilities that can remember context and perform computations"
+requirements:
+  - id: "req-1"
+    text: "Create an AgentCore Memory resource"
+    tier: "required"
+    hints:
+      - "Use create_memory API"
+      - "Enable both short-term and long-term memory"
+  - id: "req-2"
+    text: "Integrate memory with your agent for conversation persistence"
+    tier: "required"
+    hints:
+      - "Use Strands memory integration or manual API calls"
+      - "Test that agent remembers context within a session"
+  - id: "req-3"
+    text: "Configure at least one memory extraction strategy"
+    tier: "required"
+    hints:
+      - "USER_PREFERENCE, SEMANTIC, or SUMMARY"
+      - "Verify memories are being extracted"
+  - id: "req-4"
+    text: "Set up Code Interpreter and execute Python code"
+    tier: "required"
+    hints:
+      - "Create a code interpreter resource"
+      - "Test with a simple calculation"
+  - id: "req-5"
+    text: "Create a tool that uses Code Interpreter for data analysis"
+    tier: "required"
+    hints:
+      - "Accept data input (CSV, list, etc.)"
+      - "Return computed results"
+  - id: "bronze-1"
+    text: "Implement all three built-in memory strategies"
+    tier: "bronze"
+    hints:
+      - "USER_PREFERENCE, SEMANTIC, and SUMMARY"
+      - "Test that each extracts different information"
+  - id: "bronze-2"
+    text: "Test and verify long-term memory persistence across sessions"
+    tier: "bronze"
+    hints:
+      - "Create session 1, establish facts"
+      - "Create session 2, verify recall"
+  - id: "silver-1"
+    text: "Set up Browser tool and navigate to a website"
+    tier: "silver"
+    hints:
+      - "Create browser resource"
+      - "Navigate and capture screenshot"
+  - id: "silver-2"
+    text: "Create a research tool that combines Browser and Code Interpreter"
+    tier: "silver"
+    hints:
+      - "Browse to gather data"
+      - "Analyze with Code Interpreter"
+  - id: "gold-1"
+    text: "Implement a custom memory extraction strategy"
+    tier: "gold"
+    hints:
+      - "Extend CustomStrategy class"
+      - "Extract domain-specific information"
+  - id: "gold-2"
+    text: "Document the vulnerabilities discovered in controlled disasters"
+    tier: "gold"
+    hints:
+      - "Test infinite loop handling"
+      - "Test URL validation gaps"
+      - "Write detailed notes"
+resources:
+  - title: "AgentCore Memory Documentation"
+    url: "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/memory.html"
+  - title: "Memory Strategies Deep Dive"
+    url: "https://aws.amazon.com/blogs/machine-learning/building-smarter-ai-agents-agentcore-long-term-memory-deep-dive/"
+  - title: "Code Interpreter Documentation"
+    url: "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/code-interpreter-tool.html"
+  - title: "Code Interpreter Blog"
+    url: "https://aws.amazon.com/blogs/machine-learning/introducing-the-amazon-bedrock-agentcore-code-interpreter/"
+---
+
+import Callout from '@/components/content/Callout.astro';
+
+# Day 3 Challenge: The Memory & Tools Challenge
+
+Your agent has learned security. Now it needs capabilities - memory to remember and tools to act.
+
+## Your Mission
+
+Transform your secure agent into a capable assistant that can:
+
+- **Remember**: Persist conversation context and learn user preferences
+- **Compute**: Execute code for calculations and data analysis
+- **Browse** (Silver+): Navigate the web to gather information
+
+## Architecture Goal
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                    Capable Agent Architecture                        │
+│                                                                      │
+│  ┌────────────────────────────────────────────────────────────────┐ │
+│  │                     AgentCore Memory                            │ │
+│  │  ┌──────────────┐ ┌──────────────┐ ┌──────────────┐            │ │
+│  │  │ Short-Term   │ │ Long-Term    │ │ Strategies   │            │ │
+│  │  │ (Session)    │ │ (Persistent) │ │ (Extraction) │            │ │
+│  │  └──────────────┘ └──────────────┘ └──────────────┘            │ │
+│  └────────────────────────────────────────────────────────────────┘ │
+│                              │                                       │
+│                              ▼                                       │
+│  ┌────────────────────────────────────────────────────────────────┐ │
+│  │                     Your Agent                                  │ │
+│  │                (Memory-Enabled, Tool-Capable)                   │ │
+│  └────────────────────────────────────────────────────────────────┘ │
+│                              │                                       │
+│              ┌───────────────┴───────────────┐                      │
+│              ▼                               ▼                       │
+│  ┌──────────────────────┐      ┌──────────────────────┐            │
+│  │   Code Interpreter   │      │    Browser Tool      │            │
+│  │   (Compute)          │      │    (Browse)          │            │
+│  └──────────────────────┘      └──────────────────────┘            │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+## Requirements Breakdown
+
+### Required (Must Complete)
+
+1. **Memory Resource**: Create and configure AgentCore Memory
+2. **Memory Integration**: Connect memory to your agent
+3. **Extraction Strategy**: Configure at least one strategy
+4. **Code Interpreter**: Set up code execution capability
+5. **Data Analysis Tool**: Create a tool that computes results
+
+<Callout type="info" title="Focus on Memory First">
+  Get memory working before adding Code Interpreter.
+  Test conversation persistence thoroughly.
+</Callout>
+
+### Bronze Tier
+
+Go deeper with memory:
+- Use all three built-in strategies
+- Verify long-term memory works across sessions
+
+### Silver Tier
+
+Add web capabilities:
+- Browser tool for web navigation
+- Combined research tool (browse + analyze)
+
+### Gold Tier
+
+Advanced implementations:
+- Custom memory extraction strategy
+- Comprehensive vulnerability documentation
+
+## Validation Steps
+
+### Test Memory Persistence
+
+```python
+# Session 1
+response = agent("My name is Jordan and I prefer dark mode.")
+print(response)
+
+# End session
+end_session(session_id)
+
+# Session 2 (new session, same user)
+response = agent("What's my name and theme preference?")
+print(response)
+# Expected: "Your name is Jordan and you prefer dark mode"
+```
+
+### Test Code Execution
+
+```python
+# Ask for computation
+response = agent("Calculate the compound interest on $10,000 at 5% for 10 years")
+print(response)
+# Expected: Shows Python code execution with result ~$16,288.95
+```
+
+### Test Data Analysis
+
+```python
+# Provide data for analysis
+response = agent("""
+Analyze this sales data:
+Month,Sales
+Jan,10500
+Feb,12300
+Mar,11800
+Apr,13200
+May,14100
+Jun,13800
+
+What's the average and trend?
+""")
+print(response)
+# Expected: Uses Code Interpreter to calculate statistics
+```
+
+## Example: Data Analyst Agent
+
+Here's what a complete Day 3 agent looks like:
+
+```python
+from strands import Agent
+from strands.models import BedrockModel
+from strands.memory import AgentCoreMemory
+from strands.tools import tool
+from bedrock_agentcore.tools import CodeInterpreterSession
+
+# Memory setup
+memory = AgentCoreMemory(
+    memory_id='mem-xxxx',
+    strategies=['USER_PREFERENCE', 'SEMANTIC', 'SUMMARY']
+)
+
+# Code Interpreter tool
+@tool
+def analyze_data(data: str, question: str) -> str:
+    """Analyze data using Python.
+
+    Args:
+        data: CSV data to analyze
+        question: Question to answer about the data
+
+    Returns:
+        Analysis results
+    """
+    with CodeInterpreterSession(code_interpreter_id='ci-xxxx') as session:
+        session.upload_data(data, 'data.csv')
+
+        code = f"""
+import pandas as pd
+df = pd.read_csv('data.csv')
+
+# Answer the question: {question}
+print("Data shape:", df.shape)
+print("\\nSummary statistics:")
+print(df.describe())
+print("\\nColumn types:")
+print(df.dtypes)
+"""
+        result = session.execute(code)
+        return result.output
+
+# Create agent
+agent = Agent(
+    model=BedrockModel(model_id="anthropic.claude-sonnet-4-20250514-v1:0"),
+    memory=memory,
+    tools=[analyze_data],
+    system_prompt="""You are a data analyst assistant.
+You remember user preferences and past analyses.
+Use the analyze_data tool for any data-related questions."""
+)
+```
+
+## Common Pitfalls
+
+<Callout type="warning" title="Watch Out For">
+
+1. **Session ID management**: Use consistent session IDs within conversations
+2. **Memory consolidation timing**: Long-term memories may not appear instantly
+3. **Code timeout**: Set appropriate execution limits
+4. **Large outputs**: Truncate Code Interpreter results if too long
+
+</Callout>
+
+## Getting Help
+
+If stuck:
+
+1. **Review the sections** - Memory Basics, Strategies, and Tools
+2. **Check AWS docs** - Linked in Resources section
+3. **Test incrementally** - Memory first, then Code Interpreter
+4. **Use simple examples** - Start with basic calculations
+
+## Completing Day 3
+
+Once you've completed the required items and any stretch goals:
+
+1. Mark your completed items in the checklist below
+2. Day 4 will unlock when all required items are checked
+3. Your tier achievement is tracked automatically
+
+**Remember**: The goal is building an agent that truly remembers and can truly compute. Take time to verify memory persistence and code execution work correctly.

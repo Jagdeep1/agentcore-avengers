@@ -1,0 +1,293 @@
+---
+title: "Environment Setup"
+dayNumber: 1
+avengersTitle: "The First Avenger"
+focus: "Foundation - Strands Agent + AgentCore Runtime"
+description: "Configure your AWS environment and install the required tools for AgentCore development."
+estimatedTime: "30 minutes"
+objectives:
+  - "Configure AWS CLI with proper credentials"
+  - "Enable Claude Sonnet 4 in Amazon Bedrock"
+  - "Install Strands Agents SDK and AgentCore toolkit"
+  - "Verify your setup with a connectivity test"
+order: 1
+published: true
+---
+
+import Callout from '@/components/content/Callout.astro';
+
+# Environment Setup
+
+Before we build our first agent, we need to configure the development environment. This section ensures you have everything needed to work with Strands Agents and AgentCore Runtime.
+
+## AWS Account Configuration
+
+### Step 1: Configure AWS CLI
+
+First, ensure your AWS CLI is configured with credentials that have appropriate permissions:
+
+```bash
+# Configure AWS CLI (if not already done)
+aws configure
+
+# Or use SSO for enterprise accounts
+aws sso login --profile your-profile
+```
+
+<Callout type="info" title="Required Permissions">
+  Your IAM user/role needs permissions for:
+  - Amazon Bedrock (model invocation)
+  - Amazon ECR (container registry)
+  - AWS CodeBuild (for deployment)
+  - IAM (to create execution roles)
+  - CloudWatch Logs (for observability)
+</Callout>
+
+### Step 2: Verify AWS Access
+
+Test that your credentials are working:
+
+```bash
+# Verify your identity
+aws sts get-caller-identity
+
+# Expected output:
+# {
+#     "UserId": "AIDAEXAMPLEID",
+#     "Account": "123456789012",
+#     "Arn": "arn:aws:iam::123456789012:user/your-user"
+# }
+```
+
+## Enable Amazon Bedrock Models
+
+AgentCore uses Amazon Bedrock for model inference. You need to enable model access in your AWS account.
+
+### Step 1: Access Bedrock Console
+
+1. Navigate to [Amazon Bedrock Console](https://console.aws.amazon.com/bedrock)
+2. Select **Model access** from the left sidebar
+3. Click **Manage model access**
+
+### Step 2: Enable Claude Models
+
+Enable the following models:
+
+| Model | Model ID | Purpose |
+|-------|----------|---------|
+| Claude Sonnet 4 | `anthropic.claude-sonnet-4-20250514-v1:0` | Primary agent model |
+| Claude Haiku 3.5 | `anthropic.claude-3-5-haiku-20241022-v1:0` | Cost-effective alternative |
+
+<Callout type="warning" title="Model Access Approval">
+  Model access requests are typically approved instantly, but some enterprise accounts may require additional approval time.
+</Callout>
+
+### Step 3: Verify Model Access
+
+```bash
+# List available foundation models
+aws bedrock list-foundation-models --by-provider anthropic --query 'modelSummaries[*].modelId'
+
+# Test model invocation
+aws bedrock-runtime invoke-model \
+  --model-id anthropic.claude-sonnet-4-20250514-v1:0 \
+  --body '{"anthropic_version":"bedrock-2023-05-31","max_tokens":100,"messages":[{"role":"user","content":"Say hello"}]}' \
+  --content-type application/json \
+  --accept application/json \
+  /dev/stdout
+```
+
+## Python Environment Setup
+
+### Step 1: Create Project Directory
+
+```bash
+# Create project directory
+mkdir -p agentcore-day1
+cd agentcore-day1
+
+# Create virtual environment
+python -m venv .venv
+
+# Activate virtual environment
+# On macOS/Linux:
+source .venv/bin/activate
+
+# On Windows:
+# .venv\Scripts\activate
+```
+
+### Step 2: Install Dependencies
+
+Install the required packages:
+
+```bash
+# Install Strands Agents SDK
+pip install strands-agents
+pip install strands-agents-tools  # Includes built-in tools like calculator
+
+# Install Amazon Bedrock AgentCore packages
+pip install bedrock-agentcore
+pip install bedrock-agentcore-starter-toolkit
+
+# Verify installations
+pip list | grep -E "(strands|bedrock)"
+```
+
+Expected output:
+```
+bedrock-agentcore              x.x.x
+bedrock-agentcore-starter-toolkit  x.x.x
+strands-agents                 x.x.x
+strands-agents-tools           x.x.x
+```
+
+### Step 3: Verify Strands Installation
+
+Create a quick test file to verify Strands is working:
+
+```python
+# test_setup.py
+from strands import Agent
+from strands.models import BedrockModel
+
+# Initialize the model
+model = BedrockModel(
+    model_id="anthropic.claude-sonnet-4-20250514-v1:0",
+    region_name="us-east-1"  # Change to your region
+)
+
+# Create a simple agent
+agent = Agent(model=model)
+
+# Test the agent
+response = agent("What is 2 + 2? Reply with just the number.")
+print(f"Agent response: {response}")
+```
+
+Run the test:
+
+```bash
+python test_setup.py
+
+# Expected output:
+# Agent response: 4
+```
+
+<Callout type="success" title="Setup Complete!">
+  If you see a response from the agent, your environment is correctly configured.
+  You're ready to build your first real agent!
+</Callout>
+
+## Project Structure
+
+Create the following project structure for Day 1:
+
+```
+agentcore-day1/
+├── .venv/                  # Virtual environment
+├── agent.py                # Your agent code
+├── tools.py                # Custom tools
+├── requirements.txt        # Dependencies
+└── tests/
+    └── test_agent.py       # Agent tests
+```
+
+Create the requirements file:
+
+```bash
+# requirements.txt
+strands-agents>=0.1.0
+strands-agents-tools>=0.1.0
+bedrock-agentcore>=0.1.0
+bedrock-agentcore-starter-toolkit>=0.1.0
+boto3>=1.35.0
+pytest>=8.0.0
+```
+
+## Troubleshooting
+
+### Common Issues
+
+**Issue: `ModuleNotFoundError: No module named 'strands'`**
+
+```bash
+# Ensure virtual environment is activated
+source .venv/bin/activate  # macOS/Linux
+# or
+.venv\Scripts\activate     # Windows
+
+# Reinstall
+pip install strands-agents
+```
+
+**Issue: `AccessDeniedException` when calling Bedrock**
+
+```bash
+# Check your AWS credentials
+aws sts get-caller-identity
+
+# Verify model is enabled in Bedrock console
+aws bedrock list-foundation-models --by-provider anthropic
+```
+
+**Issue: `Could not connect to the endpoint URL`**
+
+```bash
+# Check your region setting
+aws configure get region
+
+# Ensure Bedrock is available in your region
+# Supported regions: us-east-1, us-west-2, eu-west-1, ap-northeast-1
+```
+
+## Next Steps
+
+Your environment is configured and verified. In the next section, we'll build a real agent with tools and custom behavior.
+
+<div class="nav-buttons">
+  <a href="/days/1" class="nav-button nav-button--prev">
+    ← Back to Overview
+  </a>
+  <a href="/days/1/strands-basics" class="nav-button nav-button--next">
+    Next: Strands Basics →
+  </a>
+</div>
+
+<style>
+{`
+  .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+    gap: 1rem;
+  }
+
+  .nav-button {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+  }
+
+  .nav-button--prev {
+    color: var(--color-text-secondary);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .nav-button--prev:hover {
+    background: var(--color-bg-secondary);
+  }
+
+  .nav-button--next {
+    color: white;
+    background: var(--color-day-1);
+  }
+
+  .nav-button--next:hover {
+    opacity: 0.9;
+  }
+`}
+</style>

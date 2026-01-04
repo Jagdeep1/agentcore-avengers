@@ -1,0 +1,182 @@
+---
+/**
+ * Day 5 Challenge Page - Capstone
+ */
+
+import DayLayout from '@/layouts/DayLayout.astro';
+import SelfAssessment from '@/components/course/SelfAssessment.astro';
+import { getDayChallenge, getSectionsInfo } from '@/lib/content';
+
+// Don't build Day 5 challenge in production (GitHub Pages)
+if (import.meta.env.PROD) {
+  return Astro.redirect('/');
+}
+
+const dayNumber = 5;
+const challenge = await getDayChallenge(dayNumber);
+const sections = await getSectionsInfo(dayNumber);
+
+const sidebarSections = sections
+  .filter((s) => s.order > 0)
+  .map((s) => ({ slug: s.slug, title: s.title, order: s.order }));
+
+if (!challenge) {
+  return Astro.redirect(`/days/${dayNumber}`);
+}
+
+const { Content, headings } = await challenge.render();
+---
+
+<DayLayout
+  title={`Challenge - Day ${dayNumber}`}
+  dayNumber={dayNumber}
+  sections={sidebarSections}
+  currentSection="challenge"
+  headings={headings}
+>
+  <Content />
+
+  <div class="assessment-section">
+    <h2>Self Assessment</h2>
+    <p class="assessment-intro">
+      Check off each item as you complete it. Your progress is saved automatically.
+      Complete all <strong>Required</strong> items to complete the course!
+    </p>
+
+    <SelfAssessment
+      dayNumber={dayNumber}
+      requirements={challenge.data.requirements}
+    />
+  </div>
+
+  {challenge.data.resources && challenge.data.resources.length > 0 && (
+    <div class="resources-section">
+      <h2>Resources</h2>
+      <ul class="resources-list">
+        {challenge.data.resources.map((resource) => (
+          <li>
+            <a href={resource.url} target="_blank" rel="noopener noreferrer">
+              {resource.title}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                <polyline points="15 3 21 3 21 9" />
+                <line x1="10" y1="14" x2="21" y2="3" />
+              </svg>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
+
+  <Fragment slot="pagination">
+    <div class="challenge-nav">
+      <a href={`/days/${dayNumber}/orchestration`} class="nav-link nav-link--prev">
+        ← Back to Orchestration
+      </a>
+      <div class="completion-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M8 12l3 3 5-6" />
+        </svg>
+        Course Complete!
+      </div>
+    </div>
+  </Fragment>
+</DayLayout>
+
+<style>
+  .assessment-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: var(--border-subtle);
+  }
+
+  .assessment-section h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .assessment-intro {
+    color: var(--color-text-secondary);
+    margin-bottom: 1.5rem;
+  }
+
+  .resources-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: var(--border-subtle);
+  }
+
+  .resources-section h2 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .resources-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .resources-list a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-accent-primary);
+    text-decoration: none;
+  }
+
+  .resources-list a:hover {
+    text-decoration: underline;
+  }
+
+  .resources-list svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .challenge-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .nav-link {
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .nav-link--prev {
+    color: var(--color-text-secondary);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .nav-link--prev:hover {
+    background: var(--color-bg-secondary);
+  }
+
+  .completion-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: linear-gradient(135deg, var(--color-tier-gold) 0%, #b8860b 100%);
+    color: white;
+    font-weight: 600;
+    border-radius: var(--radius-md);
+  }
+
+  .completion-badge svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+</style>

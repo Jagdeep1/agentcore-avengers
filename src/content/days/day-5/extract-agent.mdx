@@ -1,0 +1,709 @@
+---
+title: "Extract Agent"
+dayNumber: 5
+avengersTitle: "Assemble"
+focus: "Multi-Agent Capstone"
+description: "Build the data extraction agent with Yahoo Finance and Knowledge Base tools"
+estimatedTime: "45 minutes"
+objectives:
+  - "Create Yahoo Finance data extraction tool"
+  - "Integrate KB retrieval tool from Module 1"
+  - "Build a focused Extract Agent with clear system prompt"
+  - "Deploy to AgentCore Runtime"
+  - "Test with various financial queries"
+order: 2
+published: true
+---
+
+import Callout from '@/components/content/Callout.astro';
+
+# Extract Agent
+
+The Extract Agent is the data gatherer. It fetches financial data from three sources:
+- **Real-time market data** from Yahoo Finance
+- **Historical SEC filings** from the Knowledge Base
+- **Financial news** via Browser Tool (from Day 3)
+
+## Extract Agent Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          EXTRACT AGENT                                       │
+│                                                                              │
+│  System Prompt: "You gather financial data from multiple sources..."        │
+│                                                                              │
+│  ┌───────────────────────────────────────────────────────────────────────┐  │
+│  │                              TOOLS                                     │  │
+│  │                                                                        │  │
+│  │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐       │  │
+│  │  │  fetch_stock_   │  │  query_sec_     │  │  browser_tool   │       │  │
+│  │  │     data        │  │    filings      │  │   (Day 3)       │       │  │
+│  │  │                 │  │                 │  │                 │       │  │
+│  │  │  Yahoo Finance  │  │  Knowledge Base │  │  Financial News │       │  │
+│  │  │  - Price        │  │  - 10-K reports │  │  - Headlines    │       │  │
+│  │  │  - Fundamentals │  │  - Risk factors │  │  - Sentiment    │       │  │
+│  │  │  - History      │  │  - Financials   │  │  - Events       │       │  │
+│  │  └─────────────────┘  └─────────────────┘  └─────────────────┘       │  │
+│  └───────────────────────────────────────────────────────────────────────┘  │
+│                                                                              │
+│  Output: Structured JSON with normalized financial data                      │
+│                                                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+## Yahoo Finance Tool
+
+Install the yfinance library:
+
+```bash
+pip install yfinance
+```
+
+Create the market data tool:
+
+```python
+# tools/yahoo_finance.py
+import yfinance as yf
+from strands.tools import tool
+from datetime import datetime, timedelta
+
+@tool
+def fetch_stock_data(ticker: str, period: str = "1y") -> dict:
+    """Fetch real-time stock data from Yahoo Finance.
+
+    Use this tool to get current market data including:
+    - Current stock price and daily change
+    - Market capitalization and volume
+    - P/E ratio, dividend yield, and other fundamentals
+    - Historical price data
+
+    Args:
+        ticker: Stock symbol (e.g., 'AAPL', 'MSFT', 'GOOGL')
+        period: Historical data period ('1d', '5d', '1mo', '3mo', '6mo', '1y', '2y', '5y')
+
+    Returns:
+        Dictionary with stock data and metrics
+    """
+    try:
+        stock = yf.Ticker(ticker)
+        info = stock.info
+
+        # Get historical data
+        history = stock.history(period=period)
+
+        # Calculate additional metrics
+        if not history.empty:
+            current_price = history['Close'].iloc[-1]
+            start_price = history['Close'].iloc[0]
+            period_return = ((current_price - start_price) / start_price) * 100
+            volatility = history['Close'].pct_change().std() * (252 ** 0.5) * 100  # Annualized
+        else:
+            current_price = info.get('currentPrice', 0)
+            period_return = 0
+            volatility = 0
+
+        return {
+            'ticker': ticker.upper(),
+            'company_name': info.get('longName', ticker),
+            'sector': info.get('sector', 'Unknown'),
+            'industry': info.get('industry', 'Unknown'),
+
+            # Price data
+            'current_price': current_price,
+            'previous_close': info.get('previousClose'),
+            'day_change': info.get('regularMarketChange'),
+            'day_change_percent': info.get('regularMarketChangePercent'),
+
+            # Valuation
+            'market_cap': info.get('marketCap'),
+            'pe_ratio': info.get('trailingPE'),
+            'forward_pe': info.get('forwardPE'),
+            'peg_ratio': info.get('pegRatio'),
+            'price_to_book': info.get('priceToBook'),
+
+            # Financials
+            'revenue': info.get('totalRevenue'),
+            'net_income': info.get('netIncomeToCommon'),
+            'profit_margin': info.get('profitMargins'),
+            'operating_margin': info.get('operatingMargins'),
+
+            # Dividends
+            'dividend_yield': info.get('dividendYield'),
+            'dividend_rate': info.get('dividendRate'),
+
+            # Trading
+            'volume': info.get('volume'),
+            'avg_volume': info.get('averageVolume'),
+            'fifty_two_week_high': info.get('fiftyTwoWeekHigh'),
+            'fifty_two_week_low': info.get('fiftyTwoWeekLow'),
+
+            # Calculated metrics
+            'period_return_percent': round(period_return, 2),
+            'annualized_volatility_percent': round(volatility, 2),
+
+            # Historical prices (last 10 data points)
+            'price_history': {
+                'dates': history.index.strftime('%Y-%m-%d').tolist()[-10:],
+                'prices': history['Close'].round(2).tolist()[-10:]
+            },
+
+            'data_timestamp': datetime.now().isoformat()
+        }
+
+    except Exception as e:
+        return {
+            'ticker': ticker.upper(),
+            'error': f"Failed to fetch data: {str(e)}",
+            'data_timestamp': datetime.now().isoformat()
+        }
+
+
+@tool
+def fetch_multiple_stocks(tickers: list[str]) -> list[dict]:
+    """Fetch data for multiple stocks at once.
+
+    Args:
+        tickers: List of stock symbols (e.g., ['AAPL', 'MSFT', 'GOOGL'])
+
+    Returns:
+        List of stock data dictionaries
+    """
+    results = []
+    for ticker in tickers[:10]:  # Limit to 10 stocks
+        data = fetch_stock_data(ticker, period="1mo")
+        results.append(data)
+    return results
+
+
+@tool
+def get_stock_history(ticker: str, period: str = "1y") -> dict:
+    """Get detailed historical price data for a stock.
+
+    Use this for time-series analysis, charting, or calculating metrics
+    that need historical prices.
+
+    Args:
+        ticker: Stock symbol
+        period: Data period ('1mo', '3mo', '6mo', '1y', '2y', '5y')
+
+    Returns:
+        Dictionary with full historical data
+    """
+    try:
+        stock = yf.Ticker(ticker)
+        history = stock.history(period=period)
+
+        if history.empty:
+            return {'ticker': ticker, 'error': 'No historical data available'}
+
+        return {
+            'ticker': ticker.upper(),
+            'period': period,
+            'data_points': len(history),
+            'start_date': history.index[0].strftime('%Y-%m-%d'),
+            'end_date': history.index[-1].strftime('%Y-%m-%d'),
+            'dates': history.index.strftime('%Y-%m-%d').tolist(),
+            'open': history['Open'].round(2).tolist(),
+            'high': history['High'].round(2).tolist(),
+            'low': history['Low'].round(2).tolist(),
+            'close': history['Close'].round(2).tolist(),
+            'volume': history['Volume'].tolist()
+        }
+
+    except Exception as e:
+        return {
+            'ticker': ticker.upper(),
+            'error': f"Failed to fetch history: {str(e)}"
+        }
+```
+
+<Callout type="tip" title="Rate Limiting">
+  Yahoo Finance has informal rate limits. Add delays between requests in production
+  or use caching for frequently requested data.
+</Callout>
+
+## Knowledge Base Tool
+
+Import the KB tool from Module 1:
+
+```python
+# tools/kb_retrieval.py
+import boto3
+from strands.tools import tool
+
+bedrock_agent_runtime = boto3.client('bedrock-agent-runtime', region_name='us-west-2')
+
+KB_ID = 'your-knowledge-base-id'  # From Module 1
+MODEL_ARN = 'arn:aws:bedrock:us-west-2::foundation-model/anthropic.claude-sonnet-4-20250514-v1:0'
+
+@tool
+def query_sec_filings(query: str, ticker: str = None) -> str:
+    """Query SEC filings from the Knowledge Base.
+
+    Use this tool to find information from company SEC filings including:
+    - 10-K annual reports (financials, risk factors, business description)
+    - 10-Q quarterly reports
+    - Management discussion and analysis
+    - Risk factors and forward-looking statements
+
+    Args:
+        query: The question to answer from SEC filings
+        ticker: Optional stock ticker to filter results (e.g., 'AAPL', 'MSFT')
+
+    Returns:
+        Answer generated from SEC filings with source citations
+    """
+    config = {
+        'type': 'KNOWLEDGE_BASE',
+        'knowledgeBaseConfiguration': {
+            'knowledgeBaseId': KB_ID,
+            'modelArn': MODEL_ARN,
+            'retrievalConfiguration': {
+                'vectorSearchConfiguration': {
+                    'numberOfResults': 5
+                }
+            }
+        }
+    }
+
+    if ticker:
+        config['knowledgeBaseConfiguration']['retrievalConfiguration']['vectorSearchConfiguration']['filter'] = {
+            'equals': {'key': 'ticker', 'value': ticker.upper()}
+        }
+
+    try:
+        response = bedrock_agent_runtime.retrieve_and_generate(
+            input={'text': query},
+            retrieveAndGenerateConfiguration=config
+        )
+
+        answer = response['output']['text']
+
+        # Add citation info
+        sources = set()
+        for citation in response.get('citations', []):
+            for ref in citation.get('retrievedReferences', []):
+                uri = ref['location']['s3Location']['uri']
+                sources.add(uri.split('/')[-1])
+
+        if sources:
+            answer += f"\n\n[Sources: {', '.join(sources)}]"
+
+        return answer
+
+    except Exception as e:
+        return f"Error querying SEC filings: {str(e)}"
+```
+
+## Browser Tool for Financial News
+
+The Browser Tool from Day 3 enables web research for real-time financial news:
+
+```python
+# tools/financial_news.py
+from bedrock_agentcore.tools import browser_tool
+from strands.tools import tool
+
+@tool
+def fetch_financial_news(ticker: str, max_articles: int = 5) -> dict:
+    """Fetch latest financial news for a company using Browser Tool.
+
+    Use this to get real-time news that might affect stock prices:
+    - Earnings announcements
+    - Product launches
+    - Management changes
+    - Market sentiment
+
+    Args:
+        ticker: Stock symbol (e.g., 'AAPL', 'TSLA')
+        max_articles: Maximum number of articles to fetch
+
+    Returns:
+        Dictionary with news headlines and summaries
+    """
+    # Navigate to Yahoo Finance news page
+    news_url = f"https://finance.yahoo.com/quote/{ticker}/news"
+
+    result = browser_tool.navigate(
+        url=news_url,
+        action="extract_text",
+        wait_for_selector=".news-stream"
+    )
+
+    # Parse the extracted content
+    return dict(
+        ticker=ticker.upper(),
+        source="Yahoo Finance News",
+        content=result.get("text", ""),
+        url=news_url,
+        fetched_at=datetime.now().isoformat()
+    )
+
+
+@tool
+def search_financial_news(query: str) -> dict:
+    """Search for financial news across the web.
+
+    Use for broader market news or specific topics:
+    - "Federal Reserve interest rate decision"
+    - "Tech sector earnings season"
+    - "Oil price forecast"
+
+    Args:
+        query: Search query for financial news
+
+    Returns:
+        Search results with relevant articles
+    """
+    search_url = f"https://news.google.com/search?q={query}+stock+market"
+
+    result = browser_tool.navigate(
+        url=search_url,
+        action="extract_text"
+    )
+
+    return dict(
+        query=query,
+        source="Google News",
+        content=result.get("text", ""),
+        fetched_at=datetime.now().isoformat()
+    )
+```
+
+<Callout type="tip" title="From Day 3">
+  The Browser Tool gives your agent web research capabilities. Review Day 3
+  for browser tool best practices, including rate limiting and ethical scraping.
+</Callout>
+
+<Callout type="warning" title="Browser Guardrails">
+  In production, apply guardrails to restrict browser navigation to approved
+  financial sites. See the Orchestration module for guardrail configuration.
+</Callout>
+
+## Building the Extract Agent
+
+Now combine the tools into a focused extraction agent:
+
+```python
+# agents/extract_agent.py
+from strands import Agent
+from strands.models import BedrockModel
+from bedrock_agentcore.runtime import BedrockAgentCoreApp
+
+# Import tools
+from tools.yahoo_finance import fetch_stock_data, fetch_multiple_stocks, get_stock_history
+from tools.kb_retrieval import query_sec_filings
+from tools.financial_news import fetch_financial_news, search_financial_news
+
+app = BedrockAgentCoreApp()
+
+EXTRACT_SYSTEM_PROMPT = """You are a Financial Data Extraction Agent.
+
+Your role is to gather financial data from multiple sources:
+1. **Real-time market data** from Yahoo Finance (prices, fundamentals, history)
+2. **SEC filings** from the Knowledge Base (10-K, 10-Q, risk factors)
+3. **Financial news** via Browser Tool (headlines, sentiment, events)
+
+## Guidelines
+
+### When to use each tool:
+- `fetch_stock_data`: Current prices, fundamentals, basic metrics
+- `get_stock_history`: Detailed historical prices for analysis
+- `fetch_multiple_stocks`: Comparing multiple companies
+- `query_sec_filings`: Company filings, risk factors, management discussion
+- `fetch_financial_news`: Recent news for a specific stock
+- `search_financial_news`: Broader market news or topics
+
+### Output Format:
+Always return data in a structured JSON format that downstream agents can process:
+
+```json
+{
+  "request_type": "stock_data | sec_filing | comparison",
+  "tickers": ["AAPL"],
+  "data": {
+    // Relevant data from tools
+  },
+  "sources": ["Yahoo Finance", "SEC 10-K"],
+  "timestamp": "ISO timestamp"
+}
+```
+
+### Best Practices:
+1. Always validate ticker symbols before querying
+2. Combine data sources when appropriate (e.g., current price + SEC revenue)
+3. Note any missing or unavailable data
+4. Include data timestamps for freshness awareness
+
+### Do NOT:
+- Perform analysis or calculations (Transform Agent does that)
+- Generate reports (Report Agent does that)
+- Make investment recommendations
+- Hallucinate data - only return what tools provide
+"""
+
+model = BedrockModel(
+    model_id="anthropic.claude-sonnet-4-20250514-v1:0",
+    region_name="us-west-2"
+)
+
+extract_agent = Agent(
+    model=model,
+    tools=[
+        fetch_stock_data,
+        fetch_multiple_stocks,
+        get_stock_history,
+        query_sec_filings,
+        fetch_financial_news,      # Browser tool (Day 3)
+        search_financial_news      # Browser tool (Day 3)
+    ],
+    system_prompt=EXTRACT_SYSTEM_PROMPT
+)
+
+
+@app.entrypoint
+def extract_financial_data(payload: dict) -> dict:
+    """Entry point for the Extract Agent.
+
+    Args:
+        payload: Dictionary with 'prompt' (query) and optional 'tickers' list
+
+    Returns:
+        Extracted financial data in structured format
+    """
+    prompt = payload.get("prompt", "")
+    tickers = payload.get("tickers", [])
+
+    # Add ticker context if provided
+    if tickers:
+        prompt = prompt + "\n\nFocus on these tickers: " + ', '.join(tickers)
+
+    response = extract_agent(prompt)
+
+    return dict(
+        data=response.message["content"][0]["text"],
+        agent="extract",
+        status="success"
+    )
+
+
+if __name__ == "__main__":
+    app.run()
+```
+
+## Local Testing
+
+Test the agent before deployment:
+
+```python
+# test_extract_agent.py
+from agents.extract_agent import extract_agent
+
+test_queries = [
+    # Market data queries
+    {
+        "prompt": "Get the current stock price and fundamentals for Apple",
+        "expected_tools": ["fetch_stock_data"]
+    },
+    {
+        "prompt": "Get historical prices for Tesla over the last 6 months",
+        "expected_tools": ["get_stock_history"]
+    },
+    {
+        "prompt": "Compare current prices of AAPL, MSFT, and GOOGL",
+        "expected_tools": ["fetch_multiple_stocks"]
+    },
+
+    # SEC filing queries
+    {
+        "prompt": "What are Apple's main risk factors according to their latest 10-K?",
+        "expected_tools": ["query_sec_filings"]
+    },
+    {
+        "prompt": "What was Microsoft's revenue breakdown by segment?",
+        "expected_tools": ["query_sec_filings"]
+    },
+
+    # Combined queries
+    {
+        "prompt": "Get Apple's current stock price and their reported risk factors",
+        "expected_tools": ["fetch_stock_data", "query_sec_filings"]
+    }
+]
+
+for test in test_queries:
+    print(f"\n{'='*60}")
+    print(f"Query: {test['prompt']}")
+    print(f"Expected tools: {test['expected_tools']}")
+    print(f"{'='*60}\n")
+
+    response = extract_agent(test['prompt'])
+    print(response.message["content"][0]["text"])
+```
+
+## Deploying to AgentCore Runtime
+
+### Create requirements.txt
+
+```
+strands-agents>=0.1.0
+bedrock-agentcore>=0.1.0
+yfinance>=0.2.0
+boto3>=1.34.0
+```
+
+### Deploy Command
+
+```bash
+# Deploy the Extract Agent
+agentcore deploy \
+  --name extract-agent \
+  --entry agents/extract_agent.py \
+  --requirements requirements.txt \
+  --region us-west-2 \
+  --profile claude
+```
+
+### Verify Deployment
+
+```bash
+# List deployed agents
+agentcore list --profile claude
+
+# Test invocation
+agentcore invoke extract-agent \
+  --payload '{"prompt": "Get AAPL current price"}' \
+  --profile claude
+```
+
+## Configuration Management
+
+Store configuration securely:
+
+```python
+# config.py
+import boto3
+import os
+from functools import lru_cache
+
+ssm = boto3.client('ssm', region_name='us-west-2')
+
+@lru_cache(maxsize=10)
+def get_parameter(name: str, decrypt: bool = True) -> str:
+    """Get parameter from SSM Parameter Store."""
+    response = ssm.get_parameter(
+        Name=name,
+        WithDecryption=decrypt
+    )
+    return response['Parameter']['Value']
+
+# Usage
+KB_ID = get_parameter('/agentcore/extract-agent/kb-id')
+```
+
+### Setting Parameters
+
+```bash
+# Store KB ID in Parameter Store
+aws ssm put-parameter \
+  --name "/agentcore/extract-agent/kb-id" \
+  --value "your-kb-id" \
+  --type String \
+  --profile claude
+```
+
+## Error Handling
+
+Add robust error handling:
+
+```python
+from strands.tools import tool
+import logging
+
+logger = logging.getLogger(__name__)
+
+@tool
+def fetch_stock_data_safe(ticker: str, period: str = "1y") -> dict:
+    """Fetch stock data with comprehensive error handling."""
+    try:
+        # Validate ticker
+        if not ticker or len(ticker) > 10:
+            return {"error": "Invalid ticker symbol", "ticker": ticker}
+
+        # Attempt fetch
+        result = fetch_stock_data(ticker, period)
+
+        # Validate result
+        if "error" in result:
+            logger.warning(f"Data fetch warning for {ticker}: {result['error']}")
+
+        return result
+
+    except Exception as e:
+        logger.error(f"Failed to fetch data for {ticker}: {e}")
+        return {
+            "ticker": ticker,
+            "error": f"Unexpected error: {str(e)}",
+            "fallback": True
+        }
+```
+
+## Checkpoint
+
+You've now built:
+
+- ✅ Yahoo Finance tool for real-time market data
+- ✅ Integration with Knowledge Base for SEC filings
+- ✅ Browser Tool for financial news (Day 3 integration)
+- ✅ Focused Extract Agent with clear responsibilities
+- ✅ Deployment to AgentCore Runtime
+- ✅ Local and remote testing patterns
+
+**Next, we'll build the Transform Agent that analyzes this extracted data.**
+
+<div class="nav-buttons">
+  <a href="/days/5/knowledge-bases" class="nav-button nav-button--prev">
+    ← Knowledge Bases
+  </a>
+  <a href="/days/5/transform-agent" class="nav-button nav-button--next">
+    Next: Transform Agent →
+  </a>
+</div>
+
+<style>
+{`
+  .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+    gap: 1rem;
+  }
+
+  .nav-button {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+  }
+
+  .nav-button--prev {
+    color: var(--color-text-secondary);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .nav-button--prev:hover {
+    background: var(--color-bg-secondary);
+  }
+
+  .nav-button--next {
+    color: white;
+    background: var(--color-day-5);
+  }
+
+  .nav-button--next:hover {
+    opacity: 0.9;
+  }
+`}
+</style>

@@ -1,0 +1,307 @@
+---
+title: "Controlled Disasters"
+dayNumber: 2
+avengersTitle: "Age of Ultron"
+focus: "Identity + AgentCore Gateway"
+description: "Experience the security vulnerabilities that occur without proper Identity and Gateway configuration."
+estimatedTime: "30 minutes"
+objectives:
+  - "Experience the 'Open Door' disaster firsthand"
+  - "Understand the risks of unsecured agent access"
+  - "See how credentials can leak without Gateway"
+  - "Appreciate why security must be built-in, not bolted-on"
+order: 4
+published: true
+---
+
+import Callout from '@/components/content/Callout.astro';
+import DisasterScenario from '@/components/course/DisasterScenario.astro';
+
+# Controlled Disasters
+
+You've learned how to secure your agent. Now let's see what happens when you **don't**.
+
+## The Open Door
+
+<DisasterScenario
+  title="The Open Door"
+  symptom="Any request to your agent succeeds - no authentication required. API credentials appear in logs and error messages."
+  cause="No Identity configuration, credentials stored in code or environment variables."
+  solution="AgentCore Identity for authentication, Gateway for secure credential management."
+  dayReference={2}
+/>
+
+### Reproducing the Disaster
+
+Let's deploy an intentionally insecure agent:
+
+```python
+# INSECURE_agent.py - DO NOT USE IN PRODUCTION
+from strands import Agent
+from strands.models import BedrockModel
+import requests
+import os
+
+# ❌ BAD: Credentials in environment variables
+GITHUB_TOKEN = os.environ.get('GITHUB_TOKEN')
+SLACK_TOKEN = os.environ.get('SLACK_TOKEN')
+
+model = BedrockModel(model_id="anthropic.claude-sonnet-4-20250514-v1:0")
+
+@tool
+def get_github_repos() -> str:
+    """List GitHub repositories."""
+    # ❌ BAD: Direct API call with exposed credentials
+    response = requests.get(
+        'https://api.github.com/user/repos',
+        headers={'Authorization': f'token {GITHUB_TOKEN}'}
+    )
+    return str(response.json())
+
+@tool
+def send_slack_message(channel: str, message: str) -> str:
+    """Send a Slack message."""
+    # ❌ BAD: Credentials in request
+    response = requests.post(
+        'https://slack.com/api/chat.postMessage',
+        headers={'Authorization': f'Bearer {SLACK_TOKEN}'},
+        json={'channel': channel, 'text': message}
+    )
+    return str(response.json())
+
+agent = Agent(
+    model=model,
+    tools=[get_github_repos, send_slack_message],
+)
+
+# ❌ BAD: No authentication on handler
+def handler(event, context):
+    # Anyone can call this!
+    return {"response": str(agent(event.get("message")))}
+```
+
+### What Goes Wrong
+
+**1. Unauthorized Access**
+
+```bash
+# Anyone with the endpoint can invoke the agent
+curl -X POST https://your-agent.execute-api.amazonaws.com/invoke \
+  -d '{"message": "List all GitHub repos"}'
+
+# Works without any authentication!
+```
+
+**2. Credential Exposure in Logs**
+
+```
+# CloudWatch Logs show:
+2025-01-03 14:30:00 INFO Calling GitHub API with token: ghp_xxxx...
+2025-01-03 14:30:01 ERROR Request failed: {"Authorization": "Bearer xoxb-xxxx..."}
+```
+
+<Callout type="danger" title="Real-World Impact">
+  In 2023, over 12.8 million secrets were exposed in public GitHub repositories.
+  Credentials in logs are a leading cause of security breaches.
+</Callout>
+
+**3. No Tenant Isolation**
+
+```bash
+# User A's request
+curl -X POST .../invoke -d '{"message": "Show my documents"}'
+# Returns: ALL documents from ALL users
+
+# User B's request
+curl -X POST .../invoke -d '{"message": "Show my documents"}'
+# Returns: Same documents - includes User A's private data!
+```
+
+### The Attack Surface
+
+Without Identity and Gateway, your agent is vulnerable to:
+
+| Attack | Impact | Prevention |
+|--------|--------|------------|
+| **Unauthorized Invocation** | Anyone can use your agent | Identity JWT validation |
+| **Credential Theft** | API keys stolen from logs/code | Gateway credential management |
+| **Data Leakage** | Users see each other's data | Gateway interceptors for isolation |
+| **Resource Abuse** | Unlimited API calls on your bill | Identity rate limiting |
+| **Privilege Escalation** | Users access admin tools | Gateway tool filtering |
+
+## Exercise: Audit Your Day 1 Agent
+
+Go back to your Day 1 agent and identify vulnerabilities:
+
+### Security Checklist
+
+```markdown
+# Day 1 Agent Security Audit
+
+## Authentication
+- [ ] Can anyone invoke the agent without credentials?
+- [ ] Are invocations logged with user identity?
+- [ ] Is there rate limiting per user?
+
+## Credential Management
+- [ ] Are API keys stored in code or environment variables?
+- [ ] Do credentials appear in logs or error messages?
+- [ ] Are credentials rotated regularly?
+
+## Data Isolation
+- [ ] Can one user access another user's data?
+- [ ] Are tool responses filtered by user context?
+- [ ] Is there an audit trail of data access?
+
+## Findings:
+[Document your vulnerabilities here]
+```
+
+### Expected Findings
+
+Your Day 1 agent likely has these issues:
+
+1. **No inbound authentication**: Anyone with the endpoint can invoke
+2. **No credential management**: If you added API calls, credentials are exposed
+3. **No tenant isolation**: All users share the same context
+4. **No audit logging**: No record of who did what
+
+## The Fix: Apply Today's Learnings
+
+Now let's secure the agent using what you learned:
+
+```python
+# SECURE_agent.py - Production-ready
+from strands import Agent
+from strands.models import BedrockModel
+from strands.tools.mcp import MCPClient
+from bedrock_agentcore.runtime import runtime_handler
+from bedrock_agentcore.identity import IdentityClient, require_auth
+
+# ✅ GOOD: Use Identity for authentication
+identity = IdentityClient()
+
+# ✅ GOOD: Use Gateway for tool access (credentials managed externally)
+gateway = MCPClient(
+    endpoint="https://gateway.bedrock-agentcore.../gw-xxxx"
+)
+
+model = BedrockModel(model_id="anthropic.claude-sonnet-4-20250514-v1:0")
+
+# ✅ GOOD: Tools from Gateway (no credentials in code)
+tools = gateway.list_tools()
+
+agent = Agent(model=model, tools=tools)
+
+@runtime_handler
+@require_auth  # ✅ GOOD: Require valid JWT
+def handler(event, context):
+    # ✅ GOOD: Extract authenticated user context
+    user = event.get('userContext', {})
+    user_id = user.get('sub')
+    tenant_id = user.get('custom:tenant_id')
+
+    if not user_id:
+        return {"error": "Authentication required"}
+
+    # ✅ GOOD: Pass context for tenant isolation
+    response = agent(
+        event.get("message"),
+        context={
+            'user_id': user_id,
+            'tenant_id': tenant_id
+        }
+    )
+
+    # ✅ GOOD: Audit logging
+    logger.info(f"Agent invocation: user={user_id}, tenant={tenant_id}")
+
+    return {"response": str(response)}
+```
+
+### Before vs After
+
+| Aspect | Insecure (Day 1) | Secure (Day 2) |
+|--------|------------------|----------------|
+| Authentication | None | JWT validation via Identity |
+| Credentials | In code/env vars | Managed by Gateway |
+| Logging | Exposes secrets | Redacted, auditable |
+| Isolation | None | Tenant context enforced |
+| Tool Access | Direct API calls | Gateway MCP interface |
+
+## Reflection Questions
+
+1. **Why can't security be added later?**
+   - Architecture decisions made early are hard to change
+   - Retrofitting auth requires touching every component
+   - Data that leaked can't be un-leaked
+
+2. **What's the cost of the "Open Door"?**
+   - Unauthorized usage charges
+   - Data breach liability
+   - Reputation damage
+   - Compliance violations
+
+3. **How does Gateway solve credential management?**
+   - Credentials stored in secure vault
+   - Injected at request time, never exposed
+   - Automatic rotation and refresh
+   - Audit trail of all access
+
+## Summary
+
+Today's disaster demonstrated:
+
+- ✅ How unsecured agents are trivially exploitable
+- ✅ Why credentials must never be in code
+- ✅ The importance of tenant isolation
+- ✅ How Identity + Gateway solve these problems
+
+**Time for the Day 2 Challenge!**
+
+<div class="nav-buttons">
+  <a href="/days/2/multi-tenancy" class="nav-button nav-button--prev">
+    ← Multi-Tenancy
+  </a>
+  <a href="/days/2/challenge" class="nav-button nav-button--next">
+    Day 2 Challenge →
+  </a>
+</div>
+
+<style>
+{`
+  .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+    gap: 1rem;
+  }
+
+  .nav-button {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+  }
+
+  .nav-button--prev {
+    color: var(--color-text-secondary);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .nav-button--prev:hover {
+    background: var(--color-bg-secondary);
+  }
+
+  .nav-button--next {
+    color: white;
+    background: var(--color-tier-gold);
+  }
+
+  .nav-button--next:hover {
+    opacity: 0.9;
+  }
+`}
+</style>

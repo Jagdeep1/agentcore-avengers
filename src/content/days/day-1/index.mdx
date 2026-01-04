@@ -1,0 +1,145 @@
+---
+title: "Overview"
+dayNumber: 1
+avengersTitle: "The First Avenger"
+focus: "Foundation - Strands Agent + AgentCore Runtime"
+description: "Build your first AI agent with Strands SDK and deploy it to AWS AgentCore Runtime. Learn the fundamentals of model-driven agent development."
+estimatedTime: "3-4 hours"
+objectives:
+  - "Set up your AWS development environment for AgentCore"
+  - "Build a functional AI agent using Strands Agents SDK"
+  - "Deploy your agent to AgentCore Runtime"
+  - "Understand the agent lifecycle and invocation patterns"
+  - "Experience your first controlled disaster"
+controlledDisasters:
+  - name: "The Vanishing Context"
+    symptom: "Agent forgets previous conversation turns after each request"
+    cause: "No memory persistence - each invocation starts fresh"
+    motivation: "Why Day 3's Memory component is essential for production agents"
+starterTemplate: "https://github.com/awslabs/amazon-bedrock-agentcore-samples/tree/main/day-1-starter"
+order: 0
+published: true
+---
+
+import Callout from '@/components/content/Callout.astro';
+import DisasterScenario from '@/components/course/DisasterScenario.astro';
+
+# Day 1: The First Avenger
+
+Welcome to **The AgentCore Initiative**. Today marks the beginning of your journey from agent hobbyist to production engineer.
+
+By the end of this day, you'll have a fully functional AI agent running in AWS AgentCore Runtime - and you'll understand exactly why that matters.
+
+## What You'll Build
+
+Today we're building **AgentOne** - a conversational assistant that can:
+
+- Respond to natural language queries
+- Use tools to perform actions
+- Run in a production-ready AWS environment
+
+<Callout type="info" title="Model-Driven Development">
+  Strands Agents uses a **model-driven approach** where the LLM handles reasoning and planning.
+  You define the tools and prompts; the model decides when and how to use them.
+</Callout>
+
+## Today's Architecture
+
+### Local Development Phase
+
+During development, your agent runs locally on your laptop:
+
+![Local Development Architecture](/images/day-1/architecture_local.png)
+
+You develop and test your Strands agent locally, with the agent invoking Amazon Bedrock LLMs in the AWS Cloud for reasoning. Tools execute in your local environment.
+
+### Production Deployment Phase
+
+After testing locally, you deploy to AgentCore Runtime:
+
+![AgentCore Runtime Architecture](/images/day-1/architecture_runtime.png)
+
+In production, everything runs in AWS:
+- **AgentCore Runtime** hosts your agent in a secure container
+- **Runtime Agent** executes your agent code
+- **Runtime Endpoint** provides the invocation interface
+- **Amazon Bedrock** provides the LLM capabilities
+- Tools execute within the runtime container
+
+This progression from local to production is the core of today's learning journey.
+
+## Learning Path
+
+| Section | Topic | Time |
+|---------|-------|------|
+| 1 | [Environment Setup](/days/1/setup) | 30 min |
+| 2 | [Strands Basics](/days/1/strands-basics) | 60 min |
+| 3 | [AgentCore Runtime](/days/1/agentcore-runtime) | 60 min |
+| 4 | [Controlled Disasters](/days/1/controlled-disasters) | 30 min |
+
+## Prerequisites Check
+
+Before proceeding, ensure you have:
+
+- [ ] AWS account with admin access
+- [ ] AWS CLI installed and configured
+- [ ] Python 3.10+ installed
+- [ ] Access to Claude Sonnet 4 in Amazon Bedrock
+- [ ] Code editor ready (VS Code recommended)
+
+<Callout type="warning" title="AWS Costs">
+  This day will incur approximately **$1-5** in AWS costs, primarily from Bedrock model invocations.
+  We'll cover cleanup procedures to minimize charges.
+</Callout>
+
+## Today's Controlled Disaster
+
+At the end of this day, you'll experience your first controlled failure:
+
+<DisasterScenario
+  title="The Vanishing Context"
+  symptom="Your agent forgets the entire conversation after each request. Ask it your name, tell it, then ask again - it won't remember."
+  cause="AgentCore Runtime provides session isolation, but without the Memory component, there's no persistence between invocations."
+  solution="Day 3 introduces AgentCore Memory for persistent conversation history and long-term knowledge."
+  dayReference={3}
+/>
+
+This isn't a bug - it's a **learning moment**. Understanding *why* your agent forgets context reveals why enterprise features like Memory aren't optional luxuries.
+
+## Ready?
+
+Let's begin with environment setup.
+
+<div class="cta-section">
+  <a href="/days/1/setup" class="cta-button">
+    Start Section 1: Environment Setup →
+  </a>
+</div>
+
+<style>
+{`
+  .cta-section {
+    margin-top: 3rem;
+    text-align: center;
+  }
+
+  .cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, var(--color-day-1) 0%, #2563eb 100%);
+    color: white;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: var(--radius-lg);
+    transition: all 0.3s ease;
+  }
+
+  .cta-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(59, 130, 246, 0.4);
+  }
+`}
+</style>

@@ -1,0 +1,748 @@
+---
+title: "Transform Agent"
+dayNumber: 5
+avengersTitle: "Assemble"
+focus: "Multi-Agent Capstone"
+description: "Build the analysis agent with risk metrics, statistics, and Code Interpreter"
+estimatedTime: "45 minutes"
+objectives:
+  - "Create risk calculation tools (VaR, Sharpe, volatility)"
+  - "Integrate Code Interpreter for advanced analysis"
+  - "Build a focused Transform Agent"
+  - "Deploy and test the analysis pipeline"
+order: 3
+published: true
+---
+
+import Callout from '@/components/content/Callout.astro';
+
+# Transform Agent
+
+The Transform Agent is the analyst. It takes raw data from the Extract Agent and produces meaningful insights:
+- **Risk metrics**: VaR, Sharpe ratio, maximum drawdown
+- **Statistical analysis**: Moving averages, correlations, trends
+- **Visualizations**: Charts via Code Interpreter
+
+## Transform Agent Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                       TRANSFORM AGENT                                    │
+│                                                                          │
+│  Input: Raw financial data from Extract Agent                           │
+│                                                                          │
+│  ┌─────────────────────────────────────────────────────────────────┐    │
+│  │                         TOOLS                                    │    │
+│  │                                                                   │    │
+│  │  ┌─────────────────┐         ┌─────────────────┐                │    │
+│  │  │  calculate_     │         │  code_          │                │    │
+│  │  │  risk_metrics   │         │  interpreter    │                │    │
+│  │  │                 │         │                 │                │    │
+│  │  │  - VaR          │         │  - Custom calcs │                │    │
+│  │  │  - Sharpe       │         │  - Charts       │                │    │
+│  │  │  - Volatility   │         │  - Complex math │                │    │
+│  │  │  - Drawdown     │         │                 │                │    │
+│  │  └─────────────────┘         └─────────────────┘                │    │
+│  │                                                                   │    │
+│  │  ┌─────────────────┐         ┌─────────────────┐                │    │
+│  │  │  calculate_     │         │  compare_       │                │    │
+│  │  │  moving_avgs    │         │  performance    │                │    │
+│  │  └─────────────────┘         └─────────────────┘                │    │
+│  └─────────────────────────────────────────────────────────────────┘    │
+│                                                                          │
+│  Output: Analysis results with metrics and visualizations               │
+│                                                                          │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+## Risk Calculation Tools
+
+### Core Risk Metrics Tool
+
+```python
+# tools/risk_metrics.py
+import numpy as np
+from strands.tools import tool
+from typing import Optional
+
+@tool
+def calculate_risk_metrics(
+    prices: list[float],
+    confidence_level: float = 0.95,
+    risk_free_rate: float = 0.05
+) -> dict:
+    """Calculate comprehensive risk metrics from price history.
+
+    Use this tool to assess investment risk including:
+    - Value at Risk (VaR) - potential loss at given confidence
+    - Sharpe Ratio - risk-adjusted returns
+    - Volatility - price variability
+    - Maximum Drawdown - largest peak-to-trough decline
+
+    Args:
+        prices: List of historical prices (oldest to newest)
+        confidence_level: Confidence for VaR calculation (default 0.95 = 95%)
+        risk_free_rate: Annual risk-free rate for Sharpe (default 0.05 = 5%)
+
+    Returns:
+        Dictionary with risk metrics and interpretation
+    """
+    if len(prices) < 20:
+        return {"error": "Insufficient data - need at least 20 price points"}
+
+    prices = np.array(prices)
+
+    # Calculate daily returns
+    returns = np.diff(prices) / prices[:-1]
+
+    # Value at Risk (Historical VaR)
+    var_daily = np.percentile(returns, (1 - confidence_level) * 100)
+    var_annual = var_daily * np.sqrt(252)
+
+    # Volatility (Annualized Standard Deviation)
+    daily_volatility = np.std(returns)
+    annual_volatility = daily_volatility * np.sqrt(252)
+
+    # Sharpe Ratio
+    annual_return = np.mean(returns) * 252
+    sharpe_ratio = (annual_return - risk_free_rate) / annual_volatility if annual_volatility > 0 else 0
+
+    # Maximum Drawdown
+    cumulative_returns = np.cumprod(1 + returns)
+    running_max = np.maximum.accumulate(cumulative_returns)
+    drawdowns = (cumulative_returns - running_max) / running_max
+    max_drawdown = np.min(drawdowns)
+
+    # Sortino Ratio (downside deviation only)
+    negative_returns = returns[returns < 0]
+    downside_std = np.std(negative_returns) * np.sqrt(252) if len(negative_returns) > 0 else annual_volatility
+    sortino_ratio = (annual_return - risk_free_rate) / downside_std if downside_std > 0 else 0
+
+    # Interpret results
+    risk_level = "High" if annual_volatility > 0.30 else "Medium" if annual_volatility > 0.15 else "Low"
+    sharpe_quality = "Excellent" if sharpe_ratio > 1.5 else "Good" if sharpe_ratio > 1 else "Fair" if sharpe_ratio > 0.5 else "Poor"
+
+    return {
+        "metrics": {
+            "var_95_daily": round(var_daily * 100, 2),
+            "var_95_annual": round(var_annual * 100, 2),
+            "volatility_daily": round(daily_volatility * 100, 2),
+            "volatility_annual": round(annual_volatility * 100, 2),
+            "sharpe_ratio": round(sharpe_ratio, 3),
+            "sortino_ratio": round(sortino_ratio, 3),
+            "max_drawdown": round(max_drawdown * 100, 2),
+            "annual_return": round(annual_return * 100, 2)
+        },
+        "interpretation": {
+            "risk_level": risk_level,
+            "sharpe_quality": sharpe_quality,
+            "var_interpretation": f"With {int(confidence_level*100)}% confidence, daily loss will not exceed {abs(round(var_daily * 100, 2))}%",
+            "drawdown_interpretation": f"Worst historical decline was {abs(round(max_drawdown * 100, 2))}% from peak"
+        },
+        "parameters": {
+            "data_points": len(prices),
+            "confidence_level": confidence_level,
+            "risk_free_rate": risk_free_rate
+        }
+    }
+```
+
+### Moving Averages Tool
+
+```python
+@tool
+def calculate_moving_averages(
+    prices: list[float],
+    short_window: int = 20,
+    long_window: int = 50
+) -> dict:
+    """Calculate moving averages and trend signals.
+
+    Use this for technical analysis and trend identification:
+    - Simple Moving Average (SMA)
+    - Exponential Moving Average (EMA)
+    - Golden Cross / Death Cross signals
+
+    Args:
+        prices: List of historical prices
+        short_window: Short MA period (default 20)
+        long_window: Long MA period (default 50)
+
+    Returns:
+        Moving averages and trend signals
+    """
+    if len(prices) < long_window:
+        return {"error": f"Need at least {long_window} price points"}
+
+    prices = np.array(prices)
+
+    # Simple Moving Averages
+    sma_short = np.convolve(prices, np.ones(short_window)/short_window, mode='valid')
+    sma_long = np.convolve(prices, np.ones(long_window)/long_window, mode='valid')
+
+    # Exponential Moving Averages
+    def ema(data, span):
+        alpha = 2 / (span + 1)
+        ema_values = [data[0]]
+        for price in data[1:]:
+            ema_values.append(alpha * price + (1 - alpha) * ema_values[-1])
+        return np.array(ema_values)
+
+    ema_short = ema(prices, short_window)
+    ema_long = ema(prices, long_window)
+
+    # Current values
+    current_price = prices[-1]
+    current_sma_short = sma_short[-1]
+    current_sma_long = sma_long[-1]
+    current_ema_short = ema_short[-1]
+    current_ema_long = ema_long[-1]
+
+    # Trend signals
+    sma_trend = "Bullish" if current_sma_short > current_sma_long else "Bearish"
+    ema_trend = "Bullish" if current_ema_short > current_ema_long else "Bearish"
+
+    # Price vs MA signals
+    price_vs_sma = "Above" if current_price > current_sma_short else "Below"
+
+    # Detect crossovers (last 5 days)
+    crossover_signal = None
+    if len(sma_short) >= 5 and len(sma_long) >= 5:
+        recent_short = sma_short[-5:]
+        recent_long = sma_long[-5:][:len(recent_short)]
+
+        for i in range(1, len(recent_short)):
+            if recent_short[i-1] < recent_long[i-1] and recent_short[i] > recent_long[i]:
+                crossover_signal = "Golden Cross (Bullish)"
+                break
+            elif recent_short[i-1] > recent_long[i-1] and recent_short[i] < recent_long[i]:
+                crossover_signal = "Death Cross (Bearish)"
+                break
+
+    return {
+        "current_values": {
+            "price": round(current_price, 2),
+            f"sma_{short_window}": round(current_sma_short, 2),
+            f"sma_{long_window}": round(current_sma_long, 2),
+            f"ema_{short_window}": round(current_ema_short, 2),
+            f"ema_{long_window}": round(current_ema_long, 2)
+        },
+        "signals": {
+            "sma_trend": sma_trend,
+            "ema_trend": ema_trend,
+            "price_vs_short_sma": price_vs_sma,
+            "crossover": crossover_signal or "None detected"
+        },
+        "analysis": {
+            "trend_alignment": "Strong" if sma_trend == ema_trend else "Mixed",
+            "recommendation": f"{sma_trend} bias based on MA analysis"
+        }
+    }
+```
+
+### Performance Comparison Tool
+
+```python
+@tool
+def compare_performance(
+    portfolio_prices: dict[str, list[float]],
+    benchmark_ticker: str = "SPY"
+) -> dict:
+    """Compare performance of multiple assets.
+
+    Use this to analyze relative performance across stocks:
+    - Total returns comparison
+    - Risk-adjusted returns
+    - Correlation analysis
+    - Beta calculation
+
+    Args:
+        portfolio_prices: Dictionary of ticker -> price list
+        benchmark_ticker: Benchmark for beta calculation (default SPY)
+
+    Returns:
+        Comparative performance metrics
+    """
+    results = {}
+    benchmark_returns = None
+
+    # Calculate returns for each asset
+    for ticker, prices in portfolio_prices.items():
+        if len(prices) < 20:
+            results[ticker] = {"error": "Insufficient data"}
+            continue
+
+        prices_arr = np.array(prices)
+        returns = np.diff(prices_arr) / prices_arr[:-1]
+
+        total_return = (prices_arr[-1] / prices_arr[0] - 1) * 100
+        annual_return = np.mean(returns) * 252 * 100
+        volatility = np.std(returns) * np.sqrt(252) * 100
+        sharpe = (annual_return / 100 - 0.05) / (volatility / 100) if volatility > 0 else 0
+
+        results[ticker] = {
+            "total_return_pct": round(total_return, 2),
+            "annual_return_pct": round(annual_return, 2),
+            "volatility_pct": round(volatility, 2),
+            "sharpe_ratio": round(sharpe, 3)
+        }
+
+        if ticker.upper() == benchmark_ticker.upper():
+            benchmark_returns = returns
+
+    # Calculate beta if benchmark available
+    if benchmark_returns is not None:
+        for ticker, prices in portfolio_prices.items():
+            if ticker.upper() == benchmark_ticker.upper():
+                continue
+            if len(prices) < 20:
+                continue
+
+            prices_arr = np.array(prices)
+            returns = np.diff(prices_arr) / prices_arr[:-1]
+
+            # Align lengths
+            min_len = min(len(returns), len(benchmark_returns))
+            asset_ret = returns[-min_len:]
+            bench_ret = benchmark_returns[-min_len:]
+
+            # Beta calculation
+            covariance = np.cov(asset_ret, bench_ret)[0, 1]
+            benchmark_var = np.var(bench_ret)
+            beta = covariance / benchmark_var if benchmark_var > 0 else 1
+
+            # Correlation
+            correlation = np.corrcoef(asset_ret, bench_ret)[0, 1]
+
+            results[ticker]["beta"] = round(beta, 3)
+            results[ticker]["correlation_to_benchmark"] = round(correlation, 3)
+
+    # Rank by performance
+    rankings = {
+        "by_return": sorted(
+            [(t, r["total_return_pct"]) for t, r in results.items() if "error" not in r],
+            key=lambda x: x[1], reverse=True
+        ),
+        "by_sharpe": sorted(
+            [(t, r["sharpe_ratio"]) for t, r in results.items() if "error" not in r],
+            key=lambda x: x[1], reverse=True
+        )
+    }
+
+    return {
+        "performance": results,
+        "rankings": rankings,
+        "benchmark": benchmark_ticker
+    }
+```
+
+## Code Interpreter Integration
+
+For complex custom calculations and visualizations:
+
+```python
+# tools/code_interpreter.py
+from bedrock_agentcore.tools import code_interpreter
+
+# The code_interpreter tool is provided by AgentCore
+# It executes Python code in a sandboxed environment
+
+# Example usage in agent:
+# The agent can write and execute Python code like:
+#
+# import matplotlib.pyplot as plt
+# import numpy as np
+#
+# prices = [100, 102, 98, 105, 103, 108, 112]
+# plt.figure(figsize=(10, 6))
+# plt.plot(prices, marker='o')
+# plt.title('Stock Price History')
+# plt.xlabel('Day')
+# plt.ylabel('Price ($)')
+# plt.grid(True)
+# plt.savefig('/tmp/price_chart.png')
+```
+
+<Callout type="warning" title="Code Interpreter Limits">
+  Remember the guardrails from Day 4: Code Interpreter should have
+  restricted imports and execution limits in production.
+</Callout>
+
+## Advanced Analysis with Code Interpreter
+
+For sophisticated financial analysis, the agent can use Code Interpreter to run custom calculations:
+
+### Monte Carlo VaR Simulation
+
+```python
+# Agent prompt that triggers Code Interpreter usage:
+"""
+Use Code Interpreter to run a Monte Carlo simulation for Value at Risk.
+Simulate 10,000 portfolio scenarios over 252 trading days.
+"""
+
+# Code Interpreter executes:
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Historical returns from extracted data
+prices = np.array([170.0, 172.5, 175.0, 173.0, 176.0, 178.5, 175.5,
+                   177.0, 179.5, 180.0, 178.0, 176.5, 179.0, 181.0])
+returns = np.diff(prices) / prices[:-1]
+
+# Monte Carlo simulation
+np.random.seed(42)
+num_simulations = 10000
+num_days = 252
+
+# Simulate future returns
+simulated_returns = np.random.choice(returns, size=(num_simulations, num_days), replace=True)
+portfolio_values = 10000 * np.cumprod(1 + simulated_returns, axis=1)
+final_values = portfolio_values[:, -1]
+
+# Calculate VaR at different confidence levels
+var_95 = np.percentile(final_values, 5)
+var_99 = np.percentile(final_values, 1)
+expected_value = np.mean(final_values)
+
+# Generate visualization
+plt.figure(figsize=(12, 6))
+plt.hist(final_values, bins=50, edgecolor='black', alpha=0.7)
+plt.axvline(var_95, color='orange', linewidth=2, label=f'95% VaR: ${var_95:,.0f}')
+plt.axvline(var_99, color='red', linewidth=2, label=f'99% VaR: ${var_99:,.0f}')
+plt.axvline(expected_value, color='green', linewidth=2, linestyle='--', label=f'Expected: ${expected_value:,.0f}')
+plt.xlabel('Portfolio Value ($)')
+plt.ylabel('Frequency')
+plt.title('Monte Carlo VaR Simulation - 10,000 Scenarios')
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.savefig('/tmp/monte_carlo_var.png', dpi=150, bbox_inches='tight')
+
+print(f"Starting Portfolio: $10,000")
+print(f"Expected Value (1Y): ${expected_value:,.2f}")
+print(f"95% VaR: ${10000 - var_95:,.2f} potential loss")
+print(f"99% VaR: ${10000 - var_99:,.2f} potential loss")
+```
+
+### Correlation Matrix Analysis
+
+```python
+# For multi-asset analysis
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Returns for multiple assets (from Extract Agent)
+assets = ['AAPL', 'MSFT', 'GOOGL', 'AMZN']
+returns_data = np.random.randn(252, 4) * 0.02  # Simulated daily returns
+
+# Calculate correlation matrix
+correlation_matrix = np.corrcoef(returns_data.T)
+
+# Visualization
+plt.figure(figsize=(8, 6))
+sns.heatmap(correlation_matrix, annot=True, fmt='.2f',
+            xticklabels=assets, yticklabels=assets,
+            cmap='RdYlGn', center=0, vmin=-1, vmax=1)
+plt.title('Asset Correlation Matrix')
+plt.savefig('/tmp/correlation_matrix.png', dpi=150, bbox_inches='tight')
+
+# Identify diversification opportunities
+for i in range(len(assets)):
+    for j in range(i+1, len(assets)):
+        if correlation_matrix[i,j] < 0.3:
+            print(f"Low correlation: {assets[i]} & {assets[j]} ({correlation_matrix[i,j]:.2f})")
+```
+
+<Callout type="warning" title="Code Interpreter Guardrails (Day 4)">
+  Remember to apply guardrails from Day 4:
+  - **Restricted imports**: Only numpy, pandas, matplotlib, scipy
+  - **Execution timeout**: 30 seconds maximum
+  - **No network access**: Code cannot fetch external data
+  - **File output restrictions**: Only /tmp directory
+</Callout>
+
+<Callout type="tip" title="From Day 3">
+  Code Interpreter was introduced in Day 3. Review that module for
+  sandbox configuration and security best practices.
+</Callout>
+
+## Building the Transform Agent
+
+```python
+# agents/transform_agent.py
+from strands import Agent
+from strands.models import BedrockModel
+from bedrock_agentcore.runtime import BedrockAgentCoreApp
+from bedrock_agentcore.tools import code_interpreter
+
+# Import tools
+from tools.risk_metrics import calculate_risk_metrics, calculate_moving_averages, compare_performance
+
+app = BedrockAgentCoreApp()
+
+TRANSFORM_SYSTEM_PROMPT = """You are a Financial Analysis Agent.
+
+Your role is to analyze raw financial data and produce insights:
+1. **Risk Assessment**: Calculate VaR, volatility, Sharpe ratio, drawdown
+2. **Technical Analysis**: Moving averages, trends, signals
+3. **Comparative Analysis**: Performance vs benchmarks, correlations
+4. **Custom Calculations**: Use Code Interpreter for complex analysis
+
+## Input Format
+
+You receive data from the Extract Agent in this format:
+```json
+{
+  "request_type": "stock_data | sec_filing | comparison",
+  "tickers": ["AAPL"],
+  "data": { ... }
+}
+```
+
+## Tool Selection
+
+- `calculate_risk_metrics`: For VaR, Sharpe, volatility, drawdown
+- `calculate_moving_averages`: For trend analysis and signals
+- `compare_performance`: For multi-asset comparison
+- `code_interpreter`: For custom calculations or visualizations
+
+## Output Format
+
+Return analysis results in structured format:
+```json
+{
+  "analysis_type": "risk | technical | comparison | custom",
+  "tickers": ["AAPL"],
+  "results": {
+    "metrics": { ... },
+    "interpretation": { ... },
+    "signals": { ... }
+  },
+  "visualizations": ["list of generated charts if any"],
+  "recommendations": ["actionable insights"]
+}
+```
+
+## Guidelines
+
+1. **Always interpret metrics** - Don't just return numbers, explain what they mean
+2. **Provide context** - Compare to benchmarks or historical norms
+3. **Be specific about risk** - High volatility means X, low Sharpe means Y
+4. **Use Code Interpreter sparingly** - Only for complex custom analysis
+
+## Do NOT:
+- Make investment recommendations beyond risk characterization
+- Generate reports (Report Agent does that)
+- Fetch new data (Extract Agent does that)
+- Hallucinate metrics - only calculate from provided data
+"""
+
+model = BedrockModel(
+    model_id="anthropic.claude-sonnet-4-20250514-v1:0",
+    region_name="us-west-2"
+)
+
+transform_agent = Agent(
+    model=model,
+    tools=[
+        calculate_risk_metrics,
+        calculate_moving_averages,
+        compare_performance,
+        code_interpreter
+    ],
+    system_prompt=TRANSFORM_SYSTEM_PROMPT
+)
+
+
+@app.entrypoint
+def analyze_financial_data(payload: dict) -> dict:
+    """Entry point for the Transform Agent.
+
+    Args:
+        payload: Dictionary with 'data', 'analysis_type', and optional 'prompt'
+
+    Returns:
+        Analysis results with metrics and interpretations
+    """
+    data = payload.get("data", "")
+    analysis_type = payload.get("analysis_type", "full")
+    custom_prompt = payload.get("prompt", "")
+
+    # Construct analysis request
+    prompt = "Analyze the following financial data:\n\n"
+    prompt += data + "\n\n"
+    prompt += "Analysis type requested: " + analysis_type
+
+    if custom_prompt:
+        prompt += "\nSpecific request: " + custom_prompt
+
+    response = transform_agent(prompt)
+
+    return dict(
+        analysis=response.message["content"][0]["text"],
+        agent="transform",
+        status="success"
+    )
+
+
+if __name__ == "__main__":
+    app.run()
+```
+
+## Testing the Transform Agent
+
+```python
+# test_transform_agent.py
+from agents.transform_agent import transform_agent
+import json
+
+# Simulated data from Extract Agent
+sample_extract_data = {
+    "request_type": "stock_data",
+    "tickers": ["AAPL"],
+    "data": {
+        "ticker": "AAPL",
+        "current_price": 175.50,
+        "price_history": {
+            "dates": ["2024-01-01", "2024-01-02", "2024-01-03"],
+            "prices": [170.0, 172.5, 175.0, 173.0, 176.0, 178.5, 175.5,
+                      177.0, 179.5, 180.0, 178.0, 176.5, 179.0, 181.0,
+                      183.5, 182.0, 180.5, 179.0, 177.5, 175.5]
+        }
+    }
+}
+
+# Test risk analysis
+print("="*60)
+print("Test 1: Risk Analysis")
+print("="*60)
+
+risk_prompt = f"""
+Analyze the following financial data and calculate risk metrics:
+
+{json.dumps(sample_extract_data, indent=2)}
+
+Focus on: VaR, volatility, Sharpe ratio
+"""
+
+response = transform_agent(risk_prompt)
+print(response.message["content"][0]["text"])
+
+# Test technical analysis
+print("\n" + "="*60)
+print("Test 2: Technical Analysis")
+print("="*60)
+
+technical_prompt = f"""
+Analyze the following data for technical signals:
+
+{json.dumps(sample_extract_data, indent=2)}
+
+Focus on: Moving averages, trend signals
+"""
+
+response = transform_agent(technical_prompt)
+print(response.message["content"][0]["text"])
+```
+
+## Deployment
+
+```bash
+# Deploy the Transform Agent
+agentcore deploy \
+  --name transform-agent \
+  --entry agents/transform_agent.py \
+  --requirements requirements.txt \
+  --region us-west-2 \
+  --profile claude
+```
+
+## Pipeline Integration Test
+
+Test Extract → Transform flow:
+
+```python
+# test_pipeline.py
+from agents.extract_agent import extract_financial_data
+from agents.transform_agent import analyze_financial_data
+
+# Step 1: Extract data
+print("Extracting data...")
+extract_result = extract_financial_data({
+    "prompt": "Get historical prices for Apple over the last year"
+})
+
+print("Extract result:")
+print(extract_result["data"])
+
+# Step 2: Transform/Analyze data
+print("\nAnalyzing data...")
+transform_result = analyze_financial_data({
+    "data": extract_result["data"],
+    "analysis_type": "risk",
+    "prompt": "Calculate comprehensive risk metrics"
+})
+
+print("Analysis result:")
+print(transform_result["analysis"])
+```
+
+## Checkpoint
+
+You've now built:
+
+- ✅ Risk calculation tools (VaR, Sharpe, volatility, drawdown)
+- ✅ Technical analysis tools (moving averages, signals)
+- ✅ Performance comparison tools
+- ✅ Code Interpreter integration for custom analysis
+- ✅ Focused Transform Agent with clear responsibilities
+
+**Next, we'll build the Report Agent that synthesizes analysis into professional reports.**
+
+<div class="nav-buttons">
+  <a href="/days/5/extract-agent" class="nav-button nav-button--prev">
+    ← Extract Agent
+  </a>
+  <a href="/days/5/report-agent" class="nav-button nav-button--next">
+    Next: Report Agent →
+  </a>
+</div>
+
+<style>
+{`
+  .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+    gap: 1rem;
+  }
+
+  .nav-button {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+  }
+
+  .nav-button--prev {
+    color: var(--color-text-secondary);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .nav-button--prev:hover {
+    background: var(--color-bg-secondary);
+  }
+
+  .nav-button--next {
+    color: white;
+    background: var(--color-day-5);
+  }
+
+  .nav-button--next:hover {
+    opacity: 0.9;
+  }
+`}
+</style>

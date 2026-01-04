@@ -1,0 +1,245 @@
+---
+dayNumber: 4
+title: "Day 4: Endgame"
+avengersTitle: "Endgame"
+focus: "Guardrails + Observability"
+description: "Make your agent production-ready with comprehensive safety controls and monitoring"
+estimatedTime: "4 hours"
+objectives:
+  - "Implement content guardrails for input and output filtering"
+  - "Configure tool-specific safety controls"
+  - "Set up comprehensive observability with traces and metrics"
+  - "Build dashboards for monitoring agent behavior"
+order: 0
+published: true
+---
+
+import Callout from '@/components/content/Callout.astro';
+
+# Day 4: Endgame
+
+<div class="day-header">
+  <div class="day-theme">
+    <span class="avengers-title">Avengers: Endgame</span>
+    <p class="theme-description">The final battle. Your agent is powerful but uncontrolled. Time to add the safety systems and monitoring that make it production-ready.</p>
+  </div>
+</div>
+
+## The Reality Check
+
+Day 3 gave your agent memory and powerful tools. But you also saw what happens without proper controls:
+
+```
+Agent with Tools, No Guardrails:
+- Executes infinite loops
+- Browses malicious sites
+- Leaks sensitive data
+- Runs unaudited, unknown behaviors
+
+Agent with Tools + Guardrails + Observability:
+- Safe execution boundaries
+- Validated inputs/outputs
+- Full audit trail
+- Real-time monitoring
+```
+
+Today you build the production-grade safety layer.
+
+## Day 4 Architecture
+
+![Agent Architecture](/images/day-4/eval-agent-architecture.png)
+
+A production agent integrates three critical layers:
+- **Observability**: Traces, metrics, and logs for complete visibility
+- **Evaluations**: Continuous quality measurement with built-in evaluators
+- **Guardrails**: Safety controls and content filtering for protection
+
+## What You'll Build Today
+
+### 1. Content Guardrails
+
+Protect against malicious inputs and sensitive outputs:
+
+```python
+guardrails = {
+    'inputFilters': [
+        'PROMPT_INJECTION',
+        'TOXIC_CONTENT',
+        'PII'
+    ],
+    'outputFilters': [
+        'SENSITIVE_DATA',
+        'TOXIC_CONTENT'
+    ],
+    'topicPolicy': 'DENY_TOPICS',
+    'deniedTopics': ['violence', 'illegal_activity']
+}
+```
+
+### 2. Tool Guardrails
+
+Constrain tool capabilities to safe boundaries:
+
+```python
+code_guardrails = {
+    'allowedImports': ['pandas', 'numpy', 'matplotlib'],
+    'blockedPatterns': ['os.system', 'subprocess', '__import__'],
+    'maxExecutionTime': 60,
+    'maxMemoryMB': 512,
+    'networkAccess': False
+}
+
+browser_guardrails = {
+    'allowedDomains': ['*.wikipedia.org', '*.github.com'],
+    'blockedDomains': ['localhost', '127.0.0.1', '*.internal'],
+    'maxNavigations': 10,
+    'timeout': 30
+}
+```
+
+### 3. Comprehensive Observability
+
+See everything your agent does:
+
+```python
+# Every interaction generates traces
+{
+    'traceId': 'trace-abc123',
+    'timestamp': '2025-01-03T21:00:00Z',
+    'userId': 'user-456',
+    'sessionId': 'sess-789',
+    'request': '...',
+    'response': '...',
+    'toolCalls': [
+        {'tool': 'execute_python', 'duration': 1.2, 'success': True},
+        {'tool': 'browse_website', 'duration': 3.5, 'success': True}
+    ],
+    'latencyMs': 4700,
+    'tokensUsed': 2340,
+    'cost': 0.0234
+}
+```
+
+## Why This Matters
+
+Without guardrails and observability, you have:
+
+| Risk | Impact | Mitigation (Day 4) |
+|------|--------|-------------------|
+| **Prompt Injection** | Unauthorized actions | Input guardrails |
+| **Data Leakage** | PII/secrets exposed | Output guardrails |
+| **Resource Abuse** | Cost explosion | Tool constraints |
+| **Malicious Access** | Internal systems exposed | URL allowlisting |
+| **Unknown Behavior** | No audit trail | Traces + logging |
+| **Cost Overruns** | Budget exceeded | Metrics + alerts |
+
+<Callout type="info" title="Production Requirement">
+  Guardrails and observability aren't optional for production.
+  They're the difference between a demo and a deployable system.
+</Callout>
+
+## Learning Path
+
+```
+1. Observability (60 min)
+   └─ Traces, metrics, logging with OpenTelemetry
+
+2. Evaluations (45 min)
+   └─ Built-in evaluators, on-demand and online evaluation
+
+3. Guardrails Basics (45 min)
+   └─ Input/output filtering, content policies
+
+4. Tool Guardrails (45 min)
+   └─ Code Interpreter + Browser restrictions
+
+5. Controlled Disasters (30 min)
+   └─ "The Invisible Failure" - what happens without monitoring
+
+6. Challenge (60 min)
+   └─ Build a fully protected, monitored agent
+```
+
+## Today's Disaster Preview
+
+**The Invisible Failure**: An agent quietly leaks customer data through a series of small, unmonitored actions. By the time it's discovered, 10,000 records have been exfiltrated. Observability would have caught it in real-time.
+
+## Prerequisites
+
+Before starting Day 4:
+- ✅ Completed Day 3 (Memory + Tools)
+- ✅ Agent has Code Interpreter and/or Browser
+- ✅ Basic understanding of security concepts
+- ✅ Comfortable with CloudWatch (helpful but not required)
+
+## Ready?
+
+Let's make your agent production-ready.
+
+<div class="nav-buttons">
+  <a href="/days/3/challenge" class="nav-button nav-button--prev">
+    ← Day 3 Challenge
+  </a>
+  <a href="/days/4/observability" class="nav-button nav-button--next">
+    Begin Day 4 →
+  </a>
+</div>
+
+<style>
+{`
+  .day-header {
+    margin: 2rem 0 3rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, var(--color-day-4) 0%, var(--color-day-4-dark, #8b0000) 100%);
+    border-radius: var(--radius-lg);
+    color: white;
+  }
+
+  .avengers-title {
+    font-size: 2rem;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .theme-description {
+    font-size: 1.1rem;
+    opacity: 0.95;
+    line-height: 1.6;
+  }
+
+  .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+    gap: 1rem;
+  }
+
+  .nav-button {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+  }
+
+  .nav-button--prev {
+    color: var(--color-text-secondary);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .nav-button--prev:hover {
+    background: var(--color-bg-secondary);
+  }
+
+  .nav-button--next {
+    color: white;
+    background: var(--color-day-4);
+  }
+
+  .nav-button--next:hover {
+    opacity: 0.9;
+  }
+`}
+</style>

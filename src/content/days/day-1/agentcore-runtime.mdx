@@ -1,0 +1,445 @@
+---
+title: "AgentCore Runtime"
+dayNumber: 1
+avengersTitle: "The First Avenger"
+focus: "Foundation - Strands Agent + AgentCore Runtime"
+description: "Deploy your Strands agent to AWS AgentCore Runtime for production-ready hosting."
+estimatedTime: "60 minutes"
+objectives:
+  - "Understand AgentCore Runtime architecture"
+  - "Use the AgentCore Starter Toolkit for deployment"
+  - "Deploy your agent to AWS"
+  - "Invoke your deployed agent"
+order: 3
+published: true
+---
+
+import Callout from '@/components/content/Callout.astro';
+
+# AgentCore Runtime
+
+Your agent works locally. Now let's deploy it to **Amazon Bedrock AgentCore Runtime** - a serverless, secure hosting environment designed specifically for agentic workloads.
+
+## Why AgentCore Runtime?
+
+| Feature | Local Development | AgentCore Runtime |
+|---------|------------------|-------------------|
+| Session Isolation | ❌ Single process | ✅ Per-request isolation |
+| Execution Time | Limited by local resources | Extended timeouts for complex tasks |
+| Scaling | Manual | ✅ Automatic serverless scaling |
+| Security | Your responsibility | ✅ Enterprise-grade sandboxing |
+| Pricing | Always running | ✅ Consumption-based (pay per use) |
+
+<Callout type="info" title="Production-Ready">
+  AgentCore Runtime handles the infrastructure complexity so you can focus on building agent capabilities.
+</Callout>
+
+## Deployment Architecture
+
+The deployment process follows three main stages: configure, launch, and invoke.
+
+### Configuration Stage
+
+![AgentCore Configuration Workflow](/images/day-1/configure.png)
+
+The configuration process takes your agent code (models, framework, and AgentCore Runtime decorator) and generates a Docker file for containerization.
+
+### Launch Stage
+
+![AgentCore Launch Process](/images/day-1/launch.png)
+
+During launch:
+1. **AWS CodeBuild** builds your Docker container
+2. Container image is pushed to **Amazon ECR Repository**
+3. **AgentCore Runtime** creates the runtime environment with:
+   - **Runtime Agent**: Your containerized agent code
+   - **Runtime Endpoint**: HTTP endpoint for invocations
+
+### Invocation Stage
+
+![AgentCore Invocation Flow](/images/day-1/invoke.png)
+
+The user's application invokes the Runtime Endpoint, which routes requests to your Runtime Agent for processing.
+
+## Step 1: Prepare Your Agent for Deployment
+
+The AgentCore Starter Toolkit requires your agent to follow a specific structure. Let's update our code:
+
+```python
+# agent.py - Updated for AgentCore deployment
+from strands import Agent, tool
+from strands_tools import calculator
+from bedrock_agentcore.runtime import BedrockAgentCoreApp
+from strands.models import BedrockModel
+from datetime import datetime
+
+app = BedrockAgentCoreApp()
+
+@tool
+def get_weather() -> str:
+    """Get the current weather."""
+    return "sunny"
+
+@tool
+def get_current_time() -> str:
+    """Get the current date and time."""
+    return datetime.now().isoformat()
+
+model = BedrockModel(
+    model_id="anthropic.claude-sonnet-4-20250514-v1:0",
+)
+
+agent = Agent(
+    model=model,
+    tools=[calculator, get_weather, get_current_time],
+    system_prompt="You're a helpful assistant. You can do simple math calculations, tell the weather, and get the current time."
+)
+
+@app.entrypoint
+def handle_request(payload):
+    """Handle incoming requests from AgentCore Runtime."""
+    user_input = payload.get("prompt")
+    print(f"User input: {user_input}")
+    response = agent(user_input)
+    return response.message['content'][0]['text']
+
+if __name__ == "__main__":
+    app.run()
+```
+
+<Callout type="info" title="What BedrockAgentCoreApp Does">
+When you use `BedrockAgentCoreApp`, it automatically:
+
+- Creates an HTTP server listening on port 8080
+- Implements the required `/invocations` endpoint for processing requests
+- Implements the `/ping` endpoint for health checks
+- Handles proper content types and response formats
+- Manages error handling according to AWS standards
+
+The `@app.entrypoint` decorator marks your function as the entry point for all agent invocations.
+</Callout>
+
+## Step 2: Create AgentCore Project
+
+Use the AgentCore CLI to scaffold your project:
+
+```bash
+agentcore create
+```
+
+This launches an interactive wizard:
+
+```
+🤖 AgentCore activated. Let's build your agent.
+
+Where should we create your new agent?
+./myfirstagent
+
+How would you like to start?
+A basic starter project (recommended)
+
+What agent framework should we use?
+Strands Agents SDK
+
+Which model provider will power your agent?
+Amazon Bedrock
+
+What kind of memory should your agent have?
+None
+
+Initialize a new git repository?
+No
+
+Agent initializing...
+    • Template copied.
+    • Venv created and installed.
+✓ Agent initialized.
+```
+
+Navigate to your project:
+
+```bash
+cd myfirstagent
+```
+
+This creates the following structure:
+
+```
+myfirstagent/
+├── .venv/                        # Python virtual environment
+├── src/
+│   ├── mcp_client/               # MCP client utilities
+│   ├── model/                    # Model configuration
+│   ├── myfirstagent.egg-info/    # Package metadata
+│   └── main.py                   # Your agent entry point
+├── test/                         # Test files
+├── .bedrock_agentcore.yaml       # AgentCore configuration
+├── .gitignore
+├── pyproject.toml                # Python project configuration
+├── README.md
+└── uv.lock                       # Dependency lock file
+```
+
+## Step 3: Configure AgentCore
+
+The `.bedrock_agentcore.yaml` file is auto-generated with your agent configuration:
+
+```yaml
+# .bedrock_agentcore.yaml
+default_agent: myfirstagent_Agent
+agents:
+  myfirstagent_Agent:
+    name: myfirstagent_Agent
+    entrypoint: src/main.py
+    deployment_type: direct_code_deploy
+    runtime_type: PYTHON_3_10
+    platform: linux/amd64
+
+    aws:
+      execution_role: null              # Auto-created if null
+      execution_role_auto_create: true
+      region: null                      # Uses default AWS region
+      network_configuration:
+        network_mode: PUBLIC
+      protocol_configuration:
+        server_protocol: HTTP
+      observability:
+        enabled: true
+
+    memory:
+      mode: NO_MEMORY                   # We'll add memory in Day 3
+
+    identity:
+      credential_providers: []          # We'll configure in Day 2
+```
+
+<Callout type="info" title="Key Configuration Options">
+- **deployment_type**: `direct_code_deploy` uploads your code directly (vs container deployment)
+- **execution_role_auto_create**: Automatically creates IAM role with required permissions
+- **observability.enabled**: Enables CloudWatch logging and tracing
+- **memory.mode**: Set to `NO_MEMORY` for now - we'll add session memory in Day 3
+</Callout>
+
+## Step 4: Test Locally with Dev Server
+
+Before deploying, test with the local development server:
+
+```bash
+# Start the dev server
+agentcore dev
+
+# Server starts at http://localhost:8080
+```
+
+Test with curl:
+
+```bash
+curl -X POST http://localhost:8080/invocations \
+  -H "Content-Type: application/json" \
+  -d '{"prompt": "What is 25 * 4 and what time is it?"}'
+```
+
+<Callout type="tip" title="Fast Iteration">
+  The dev server enables quick iteration without deploying to AWS.
+  Use it for all your development and testing.
+</Callout>
+
+## Step 5: Enable Observability (Optional but Recommended)
+
+Enable CloudWatch Transaction Search before deploying:
+
+This provides:
+- Request/response tracing
+- Tool invocation logs
+- Latency metrics
+- Error tracking
+
+## Step 6: Deploy to AWS
+
+Deploy your agent to AgentCore Runtime:
+
+```bash
+# Deploy the agent
+agentcore launch
+
+# This will:
+# 1. Build a container image
+# 2. Push to Amazon ECR
+# 3. Create AgentCore Runtime resources
+# 4. Deploy your agent
+```
+
+Expected output:
+
+```
+Building agent container...
+Pushing to ECR...
+Creating AgentCore Runtime...
+
+✅ Agent deployed successfully!
+
+Agent ARN: arn:aws:bedrock-agentcore:us-east-1:123456789012:runtime/my-first-agent
+Logs: https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#logsV2:log-groups/log-group/$252Faws$252Fbedrock-agentcore$252Fmy-first-agent
+```
+
+<Callout type="warning" title="Deployment Time">
+  First deployment takes 3-5 minutes as it builds the container.
+  Subsequent deployments are faster due to caching.
+</Callout>
+
+## Step 7: Invoke Your Deployed Agent
+
+### Using the CLI
+
+```bash
+# Invoke with the starter toolkit
+agentcore invoke --message "Hello! Calculate 15% of 85 please."
+```
+
+### Using boto3 SDK
+
+```python
+# invoke_agent.py
+import boto3
+import json
+
+client = boto3.client('bedrock-agentcore', region_name='us-east-1')
+
+response = client.invoke_agent_runtime(
+    agentRuntimeArn='arn:aws:bedrock-agentcore:us-east-1:123456789012:runtime/my-first-agent',
+    qualifier='DEFAULT',
+    payload=json.dumps({"prompt": "What is 2+2?"})  # Note: 'prompt' not 'message'
+)
+
+# Parse the response
+result = json.loads(response['response'][0])
+print(f"Agent response: {result}")
+```
+
+### Using AWS CLI
+
+```bash
+aws bedrock-agentcore invoke-agent-runtime \
+  --agent-runtime-arn "arn:aws:bedrock-agentcore:us-east-1:123456789012:runtime/my-first-agent" \
+  --input-text "Greet me enthusiastically as Alex" \
+  --session-id "cli-test-001"
+```
+
+## Understanding the Invocation Flow
+
+Once deployed, your agent follows this invocation pattern:
+
+![AgentCore Invocation Architecture](/images/day-1/invoke.png)
+
+The complete flow:
+
+1. **User Application** sends an invoke request with a payload to the **Runtime Endpoint**
+2. **Runtime Endpoint** authenticates and routes the request to your **Runtime Agent**
+3. **Runtime Agent** executes your agent code with the `@app.entrypoint` function
+4. Agent invokes **Amazon Bedrock LLMs** for reasoning and decision-making
+5. Agent executes tools locally within the runtime container
+6. **Runtime Agent** formats and returns the response through the **Runtime Endpoint**
+7. **User Application** receives the final response
+
+This architecture provides:
+- **Isolation**: Each invocation runs in a secure, isolated container
+- **Scalability**: AgentCore automatically scales based on demand
+- **Security**: IAM-based authentication with VPC support
+- **Observability**: Built-in CloudWatch Logs integration
+
+## Monitoring Your Agent
+
+### CloudWatch Logs
+
+View agent logs in the AWS Console or CLI:
+
+```bash
+# View recent logs
+aws logs tail /aws/bedrock-agentcore/my-first-agent --follow
+```
+
+### Metrics to Watch
+
+- **Invocation count**: How many times your agent is called
+- **Latency**: Time to process requests
+- **Error rate**: Failed invocations
+- **Tool usage**: Which tools are being called
+
+## Cleanup
+
+When you're done, clean up AWS resources:
+
+```bash
+# Destroy the deployed agent
+agentcore destroy
+
+# This removes:
+# - AgentCore Runtime
+# - ECR repository
+# - CloudWatch log groups
+```
+
+<Callout type="danger" title="Don't Forget to Cleanup">
+  AgentCore charges for running agents. Always destroy unused agents
+  to avoid unexpected charges.
+</Callout>
+
+## Checkpoint: What You've Achieved
+
+- ✅ Understood AgentCore Runtime architecture
+- ✅ Prepared your agent for deployment
+- ✅ Tested locally with the dev server
+- ✅ Deployed to AgentCore Runtime
+- ✅ Invoked your production agent
+- ✅ Learned to monitor and cleanup
+
+**Your agent is now running in production!** But there's a problem you'll discover in the next section...
+
+## Next Steps
+
+<div class="nav-buttons">
+  <a href="/days/1/strands-basics" class="nav-button nav-button--prev">
+    ← Strands Basics
+  </a>
+  <a href="/days/1/controlled-disasters" class="nav-button nav-button--next">
+    Next: Controlled Disasters →
+  </a>
+</div>
+
+<style>
+{`
+  .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+    gap: 1rem;
+  }
+
+  .nav-button {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+  }
+
+  .nav-button--prev {
+    color: var(--color-text-secondary);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .nav-button--prev:hover {
+    background: var(--color-bg-secondary);
+  }
+
+  .nav-button--next {
+    color: white;
+    background: var(--color-day-1);
+  }
+
+  .nav-button--next:hover {
+    opacity: 0.9;
+  }
+`}
+</style>

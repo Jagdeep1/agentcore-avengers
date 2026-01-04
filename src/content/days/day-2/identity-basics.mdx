@@ -1,0 +1,609 @@
+---
+title: "Identity Basics"
+dayNumber: 2
+avengersTitle: "Age of Ultron"
+focus: "Identity + AgentCore Gateway"
+description: "Configure AgentCore Identity for secure authentication of users and agents."
+estimatedTime: "45 minutes"
+objectives:
+  - "Understand the dual authentication model (inbound and outbound)"
+  - "Create workload identities for your agents"
+  - "Configure JWT authorizers for inbound requests"
+  - "Set up credential providers for third-party access"
+order: 1
+published: true
+---
+
+import Callout from '@/components/content/Callout.astro';
+
+# Identity Basics
+
+AgentCore Identity solves a fundamental challenge: **How do you authenticate non-human identities?**
+
+Traditional authentication is designed for users clicking login buttons. Agents need something different - they need to authenticate themselves *and* access resources on behalf of users.
+
+## AgentCore Identity Architecture
+
+AgentCore Identity provides two types of authentication:
+
+### Inbound Authentication
+
+![Inbound Authentication Flow](/images/day-2/inbound-auth-flow.png)
+
+**Inbound Authentication** validates who or what is invoking your agent:
+- User authentication via JWT tokens from Amazon Cognito
+- Application authentication via IAM credentials
+- API authentication via API keys
+
+### Outbound Authentication
+
+![Outbound Authentication Flow](/images/day-2/outbound-auth-flow.png)
+
+**Outbound Authentication** enables your agent to securely call external services:
+- OAuth 2.0 flows (2-legged and 3-legged)
+- API Key management
+- JWT token handling
+
+<Callout type="info" title="Why Both?">
+  Inbound auth protects your agent from unauthorized access.
+  Outbound auth enables your agent to securely access resources.
+  Both are essential for production deployments.
+</Callout>
+
+## Core Components
+
+### 1. Workload Identity
+
+A workload identity represents your agent in the identity system:
+
+```python
+import boto3
+
+identity_client = boto3.client('bedrock-agentcore-identity', region_name='us-east-1')
+
+# Create a workload identity for your agent
+response = identity_client.create_workload_identity(
+    name='my-agent-identity',
+    description='Identity for Day 2 agent',
+    tags={
+        'project': 'agentcore-initiative',
+        'day': '2'
+    }
+)
+
+workload_identity_id = response['workloadIdentityId']
+print(f"Created workload identity: {workload_identity_id}")
+```
+
+### 2. JWT Authorizer
+
+Configure inbound authentication using JWT tokens:
+
+```python
+# Create a JWT authorizer for inbound requests
+authorizer_response = identity_client.create_jwt_authorizer(
+    workloadIdentityId=workload_identity_id,
+    name='my-agent-authorizer',
+    issuer='https://your-identity-provider.com',
+    audience='your-agent-audience',
+    jwksUri='https://your-identity-provider.com/.well-known/jwks.json'
+)
+
+print(f"Created JWT authorizer: {authorizer_response['authorizerId']}")
+```
+
+<Callout type="tip" title="Identity Providers">
+  AgentCore Identity works with any OAuth 2.0 / OIDC compliant provider:
+  - Amazon Cognito
+  - Auth0
+  - Okta
+  - Azure AD
+  - Google Identity
+</Callout>
+
+### 3. Credential Provider
+
+Set up outbound authentication for external services:
+
+```python
+# Create a credential provider for GitHub access
+credential_response = identity_client.create_credential_provider(
+    workloadIdentityId=workload_identity_id,
+    name='github-provider',
+    providerType='OAUTH2',
+    oauth2Config={
+        'authorizationEndpoint': 'https://github.com/login/oauth/authorize',
+        'tokenEndpoint': 'https://github.com/login/oauth/access_token',
+        'clientId': 'your-github-client-id',
+        'clientSecret': 'your-github-client-secret',
+        'scopes': ['repo', 'read:user']
+    }
+)
+
+print(f"Created credential provider: {credential_response['credentialProviderId']}")
+```
+
+## Setting Up Amazon Cognito
+
+AgentCore Identity integrates with Amazon Cognito for user authentication. Here's the complete setup:
+
+![Cognito Integration Architecture](/images/day-2/inbound-auth-cognito.png)
+
+### Step 1: Create Cognito User Pool
+
+```python
+# cognito_setup.py
+import boto3
+
+cognito = boto3.client('cognito-idp', region_name='us-east-1')
+
+# Create User Pool
+user_pool = cognito.create_user_pool(
+    PoolName='agentcore-day2-users',
+    Policies={
+        'PasswordPolicy': {
+            'MinimumLength': 8,
+            'RequireUppercase': True,
+            'RequireLowercase': True,
+            'RequireNumbers': True,
+            'RequireSymbols': False
+        }
+    },
+    AutoVerifiedAttributes=['email'],
+    UsernameAttributes=['email'],
+    Schema=[
+        {
+            'Name': 'email',
+            'AttributeDataType': 'String',
+            'Required': True,
+            'Mutable': True
+        }
+    ]
+)
+
+user_pool_id = user_pool['UserPool']['Id']
+print(f"User Pool ID: {user_pool_id}")
+
+# Create User Pool Client
+client_response = cognito.create_user_pool_client(
+    UserPoolId=user_pool_id,
+    ClientName='agentcore-day2-client',
+    GenerateSecret=False,
+    ExplicitAuthFlows=[
+        'ALLOW_USER_PASSWORD_AUTH',
+        'ALLOW_REFRESH_TOKEN_AUTH'
+    ],
+    TokenValidityUnits={
+        'AccessToken': 'hours',
+        'IdToken': 'hours',
+        'RefreshToken': 'days'
+    },
+    AccessTokenValidity=1,
+    IdTokenValidity=1,
+    RefreshTokenValidity=30
+)
+
+client_id = client_response['UserPoolClient']['ClientId']
+print(f"Client ID: {client_id}")
+
+# Get User Pool details
+pool_details = cognito.describe_user_pool(UserPoolId=user_pool_id)
+issuer = f"https://cognito-idp.us-east-1.amazonaws.com/{user_pool_id}"
+jwks_uri = f"{issuer}/.well-known/jwks.json"
+
+print(f"Issuer: {issuer}")
+print(f"JWKS URI: {jwks_uri}")
+```
+
+### Step 2: Create Test User
+
+```python
+# Create a test user
+cognito.admin_create_user(
+    UserPoolId=user_pool_id,
+    Username='testuser@example.com',
+    TemporaryPassword='TempPass123!',
+    MessageAction='SUPPRESS',
+    UserAttributes=[
+        {'Name': 'email', 'Value': 'testuser@example.com'},
+        {'Name': 'email_verified', 'Value': 'true'}
+    ]
+)
+
+# Set permanent password
+cognito.admin_set_user_password(
+    UserPoolId=user_pool_id,
+    Username='testuser@example.com',
+    Password='SecurePass123!',
+    Permanent=True
+)
+
+print("Test user created: testuser@example.com")
+```
+
+### Step 3: Get Authentication Token
+
+```python
+# authenticate_user.py
+import boto3
+
+cognito = boto3.client('cognito-idp', region_name='us-east-1')
+
+# Authenticate and get tokens
+response = cognito.initiate_auth(
+    ClientId=client_id,
+    AuthFlow='USER_PASSWORD_AUTH',
+    AuthParameters={
+        'USERNAME': 'testuser@example.com',
+        'PASSWORD': 'SecurePass123!'
+    }
+)
+
+id_token = response['AuthenticationResult']['IdToken']
+access_token = response['AuthenticationResult']['AccessToken']
+refresh_token = response['AuthenticationResult']['RefreshToken']
+
+print(f"ID Token: {id_token[:50]}...")
+print(f"Access Token: {access_token[:50]}...")
+```
+
+<Callout type="info" title="JWT Token Structure">
+The ID token contains user identity claims (sub, email, etc.) that your agent can use for personalization and authorization decisions.
+</Callout>
+
+## Deploying with Identity Configuration
+
+The Identity deployment process follows three stages, similar to Day 1 but with authentication:
+
+### Configuration Stage
+
+![Identity Configuration Workflow](/images/day-2/identity-configure.png)
+
+Configure your agent with Identity settings using the IdentityClient:
+
+```python
+# identity_config.py
+from bedrock_agentcore.services.identity import IdentityClient
+
+identity_client = IdentityClient(region='us-east-1')
+
+# Create workload identity
+workload = identity_client.create_workload_identity(
+    name='day2-secure-agent',
+    description='Agent with Cognito authentication'
+)
+
+workload_id = workload['workloadIdentityId']
+
+# Create JWT authorizer with Cognito details
+authorizer = identity_client.create_jwt_authorizer(
+    workloadIdentityId=workload_id,
+    name='cognito-authorizer',
+    issuer=issuer,  # From Step 1
+    audience=client_id,  # From Step 1
+    jwksUri=jwks_uri  # From Step 1
+)
+
+print(f"Workload Identity: {workload_id}")
+print(f"Authorizer: {authorizer['authorizerId']}")
+```
+
+### Launch Stage
+
+![Identity Launch Process](/images/day-2/identity-launch.png)
+
+Deploy your agent with Identity configuration:
+
+```bash
+# Build and launch with Identity
+agentcore deploy \
+  --agent-name day2-secure-agent \
+  --workload-identity-id $WORKLOAD_ID \
+  --authorizer-id $AUTHORIZER_ID
+```
+
+### Invocation Stage
+
+![Identity Invocation Flow](/images/day-2/identity-invoke.png)
+
+Invoke with authentication token:
+
+```python
+# invoke_with_auth.py
+import boto3
+import json
+
+client = boto3.client('bedrock-agentcore', region_name='us-east-1')
+
+# Include JWT token in request
+response = client.invoke_agent_runtime(
+    agentRuntimeArn='arn:aws:bedrock-agentcore:us-east-1:123456789012:runtime/day2-secure-agent',
+    qualifier='DEFAULT',
+    payload=json.dumps({
+        "prompt": "What is my user ID?",
+        "authToken": id_token  # JWT from Cognito
+    })
+)
+
+result = json.loads(response['response'][0])
+print(f"Agent response: {result}")
+```
+
+## Update Your Agent with Authentication
+
+Modify your agent to use Identity:
+
+```python
+# agent.py - Day 2 with Identity
+from strands import Agent, tool
+from strands_tools import calculator
+from bedrock_agentcore.runtime import BedrockAgentCoreApp
+from strands.models import BedrockModel
+from datetime import datetime
+
+app = BedrockAgentCoreApp()
+
+@tool
+def get_current_time() -> str:
+    """Get the current date and time."""
+    return datetime.now().isoformat()
+
+@tool
+def get_user_info(user_id: str) -> dict:
+    """Get information about the authenticated user.
+
+    Args:
+        user_id: The user's unique identifier from JWT
+
+    Returns:
+        dict: User information
+    """
+    # In production, query user database
+    return {
+        "user_id": user_id,
+        "account_type": "premium",
+        "preferences": {"timezone": "UTC"}
+    }
+
+model = BedrockModel(
+    model_id="anthropic.claude-sonnet-4-20250514-v1:0",
+)
+
+agent = Agent(
+    model=model,
+    tools=[calculator, get_current_time, get_user_info],
+    system_prompt="""You are a personalized assistant with access to user context.
+
+    When responding, consider the user's identity and preferences.
+    Always greet the user by their ID if available."""
+)
+
+@app.entrypoint
+def handle_request(payload):
+    """Handle authenticated requests with user context."""
+
+    # Extract user context from JWT claims
+    user_context = payload.get('userContext', {})
+    user_id = user_context.get('sub')  # JWT subject claim
+    user_email = user_context.get('email')
+
+    # Validate authentication
+    if not user_id:
+        return {
+            "error": "Unauthorized",
+            "message": "Valid authentication required"
+        }
+
+    # Get user prompt
+    prompt = payload.get("prompt", "")
+
+    # Enrich prompt with user context
+    enriched_prompt = f"[User: {user_id} ({user_email})] {prompt}"
+
+    # Invoke agent
+    response = agent(enriched_prompt)
+
+    return {
+        "response": response.message['content'][0]['text'],
+        "authenticated_user": user_id,
+        "user_email": user_email
+    }
+
+if __name__ == "__main__":
+    app.run()
+```
+
+## Outbound Authentication: API Key Provider
+
+Enable your agent to call external APIs securely:
+
+![API Key Credential Provider](/images/day-2/outbound-auth-api.png)
+
+### Step 1: Create API Key Credential Provider
+
+```python
+# credential_provider.py
+from bedrock_agentcore.services.identity import IdentityClient
+
+identity_client = IdentityClient(region='us-east-1')
+
+# Create credential provider for external API
+api_key_provider = identity_client.create_api_key_credential_provider(
+    workloadIdentityId=workload_id,
+    name='weather-api-credentials',
+    description='API key for OpenWeather API',
+    apiKey='your-api-key-here'  # Store securely
+)
+
+provider_id = api_key_provider['credentialProviderId']
+print(f"Credential Provider ID: {provider_id}")
+```
+
+### Step 2: Use Credentials in Agent
+
+```python
+# tools_with_auth.py
+from strands import tool
+import requests
+import os
+
+@tool
+def get_real_weather(city: str) -> dict:
+    """Get real weather data for a city.
+
+    Args:
+        city: City name (e.g., 'London', 'New York')
+
+    Returns:
+        dict: Weather data including temperature and conditions
+    """
+    # Credential provider automatically injects API key
+    # via environment variable or context
+    api_key = os.environ.get('WEATHER_API_KEY')
+
+    try:
+        response = requests.get(
+            'https://api.openweathermap.org/data/2.5/weather',
+            params={'q': city, 'appid': api_key, 'units': 'metric'},
+            timeout=10
+        )
+        response.raise_for_status()
+        data = response.json()
+
+        return {
+            "city": city,
+            "temperature": data['main']['temp'],
+            "conditions": data['weather'][0]['description'],
+            "humidity": data['main']['humidity']
+        }
+    except requests.RequestException as e:
+        return {"error": f"Failed to fetch weather: {str(e)}"}
+```
+
+<Callout type="tip" title="Credential Security">
+AgentCore Identity automatically manages credential rotation and secure storage. Your agent code never needs to hardcode sensitive credentials.
+</Callout>
+
+## Token Vault: Secure Credential Storage
+
+AgentCore Identity includes a Token Vault for securely storing OAuth tokens:
+
+```python
+# Store an OAuth token
+identity_client.store_token(
+    workloadIdentityId=workload_id,
+    credentialProviderId=credential_provider_id,
+    tokenType='OAUTH2',
+    accessToken='gho_xxxxxxxxxxxx',
+    refreshToken='ghr_xxxxxxxxxxxx',
+    expiresAt='2025-01-03T12:00:00Z'
+)
+
+# Retrieve a token (automatic refresh if expired)
+token = identity_client.get_token(
+    workloadIdentityId=workload_id,
+    credentialProviderId=credential_provider_id
+)
+
+print(f"Access token: {token['accessToken'][:20]}...")
+```
+
+<Callout type="success" title="Automatic Refresh">
+  Token Vault automatically refreshes expired OAuth tokens using stored refresh tokens.
+  Your agent code doesn't need to handle token lifecycle.
+</Callout>
+
+## Best Practices
+
+### 1. Principle of Least Privilege
+
+Only request the scopes your agent needs:
+
+```python
+# Good: Minimal scopes
+scopes = ['repo:read', 'user:email']
+
+# Bad: Over-permissioned
+scopes = ['repo', 'admin:org', 'delete_repo']
+```
+
+### 2. Use Short-Lived Tokens
+
+Configure token expiration appropriately:
+
+```python
+# Recommended: Short access tokens, longer refresh tokens
+oauth_config = {
+    'accessTokenLifetime': 3600,      # 1 hour
+    'refreshTokenLifetime': 2592000,  # 30 days
+}
+```
+
+### 3. Audit Everything
+
+Enable CloudTrail logging for identity operations:
+
+```python
+# All identity operations are automatically logged to CloudTrail
+# Access logs via:
+aws cloudtrail lookup-events \
+  --lookup-attributes AttributeKey=EventSource,AttributeValue=bedrock-agentcore-identity.amazonaws.com
+```
+
+## Checkpoint
+
+At this point, you have:
+
+- ✅ Understood the dual authentication model
+- ✅ Created a workload identity
+- ✅ Configured a JWT authorizer
+- ✅ Updated your agent to use Identity
+
+**Next, we'll connect your agent to external tools using Gateway.**
+
+<div class="nav-buttons">
+  <a href="/days/2" class="nav-button nav-button--prev">
+    ← Back to Overview
+  </a>
+  <a href="/days/2/agentcore-gateway" class="nav-button nav-button--next">
+    Next: AgentCore Gateway →
+  </a>
+</div>
+
+<style>
+{`
+  .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+    gap: 1rem;
+  }
+
+  .nav-button {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+  }
+
+  .nav-button--prev {
+    color: var(--color-text-secondary);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .nav-button--prev:hover {
+    background: var(--color-bg-secondary);
+  }
+
+  .nav-button--next {
+    color: white;
+    background: var(--color-day-2);
+  }
+
+  .nav-button--next:hover {
+    opacity: 0.9;
+  }
+`}
+</style>

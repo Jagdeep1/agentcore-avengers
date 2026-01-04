@@ -1,0 +1,391 @@
+---
+/**
+ * DayLayout - Layout for course day content pages
+ * Includes sidebar navigation, ToC, and progress tracking
+ */
+
+import BaseLayout from './BaseLayout.astro';
+import Header from '@/components/navigation/Header.astro';
+import Footer from '@/components/navigation/Footer.astro';
+import { DAY_COLORS, DAY_TITLES } from '@/types/content';
+
+interface Props {
+  title: string;
+  dayNumber: number;
+  sections?: { slug: string; title: string; order: number }[];
+  currentSection?: string;
+  headings?: { depth: number; slug: string; text: string }[];
+}
+
+const { title, dayNumber, sections = [], currentSection, headings = [] } = Astro.props;
+const base = import.meta.env.BASE_URL;
+
+const dayInfo = DAY_TITLES[dayNumber];
+const accentColor = DAY_COLORS[dayNumber];
+
+// Filter headings for ToC (h2 and h3 only)
+const tocHeadings = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
+---
+
+<BaseLayout title={title} description={`Day ${dayNumber}: ${dayInfo.avengers} - ${dayInfo.focus}`}>
+  <Header />
+
+  <div class="day-layout" style={`--day-accent: ${accentColor}`}>
+    <!-- Sidebar -->
+    <aside class="day-layout__sidebar hide-mobile">
+      <div class="day-layout__sidebar-content">
+        <!-- Day Header -->
+        <div class="day-layout__day-header">
+          <span class="day-layout__day-number">Day {dayNumber}</span>
+          <h2 class="day-layout__day-title">{dayInfo.avengers}</h2>
+          <p class="day-layout__day-focus">{dayInfo.focus}</p>
+        </div>
+
+        <!-- Section Navigation -->
+        <nav class="day-layout__nav" aria-label="Day sections">
+          <ul class="day-layout__nav-list">
+            {
+              sections.map((section) => (
+                <li>
+                  <a
+                    href={`${base}days/${dayNumber}/${section.slug}`}
+                    class:list={[
+                      'day-layout__nav-link',
+                      { 'day-layout__nav-link--active': section.slug === currentSection },
+                    ]}
+                    data-section={section.slug}
+                  >
+                    <span class="day-layout__nav-check" aria-hidden="true">
+                      <svg viewBox="0 0 16 16" fill="none">
+                        <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" />
+                        <path
+                          class="check-mark"
+                          d="M5 8l2 2 4-4"
+                          stroke="currentColor"
+                          stroke-width="1.5"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </span>
+                    {section.title}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+
+        <!-- Challenge Link -->
+        <a href={`${base}days/${dayNumber}/challenge`} class="day-layout__challenge-link">
+          <span class="day-layout__challenge-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+            </svg>
+          </span>
+          Daily Challenge
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="day-layout__main">
+      <article class="day-layout__content prose">
+        <slot />
+      </article>
+
+      <!-- Navigation Footer -->
+      <nav class="day-layout__pagination" aria-label="Page navigation">
+        <slot name="pagination" />
+      </nav>
+    </main>
+
+    <!-- Table of Contents -->
+    {
+      tocHeadings.length > 0 && (
+        <aside class="day-layout__toc hide-mobile">
+          <div class="day-layout__toc-content">
+            <h3 class="day-layout__toc-title">On this page</h3>
+            <nav aria-label="Table of contents">
+              <ul class="day-layout__toc-list">
+                {tocHeadings.map((heading) => (
+                  <li>
+                    <a
+                      href={`#${heading.slug}`}
+                      class:list={[
+                        'day-layout__toc-link',
+                        { 'day-layout__toc-link--nested': heading.depth === 3 },
+                      ]}
+                    >
+                      {heading.text}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
+        </aside>
+      )
+    }
+  </div>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .day-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    max-width: 90rem;
+    margin: 0 auto;
+    min-height: calc(100vh - 4rem);
+  }
+
+  @media (min-width: 1280px) {
+    .day-layout {
+      grid-template-columns: 280px 1fr 220px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .day-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Sidebar */
+  .day-layout__sidebar {
+    border-right: var(--border-subtle);
+    background-color: var(--color-bg-secondary);
+  }
+
+  .day-layout__sidebar-content {
+    position: sticky;
+    top: 4rem;
+    padding: 2rem 1.5rem;
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+  }
+
+  .day-layout__day-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: var(--border-subtle);
+  }
+
+  .day-layout__day-number {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--day-accent);
+    background-color: color-mix(in srgb, var(--day-accent) 15%, transparent);
+    border-radius: var(--radius-md);
+  }
+
+  .day-layout__day-title {
+    margin-top: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+  }
+
+  .day-layout__day-focus {
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+  }
+
+  /* Section Navigation */
+  .day-layout__nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .day-layout__nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.75rem;
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition:
+      background-color var(--transition-fast),
+      color var(--transition-fast);
+  }
+
+  .day-layout__nav-link:hover {
+    background-color: var(--color-bg-elevated);
+    color: var(--color-text-primary);
+  }
+
+  .day-layout__nav-link--active {
+    background-color: color-mix(in srgb, var(--day-accent) 15%, transparent);
+    color: var(--day-accent);
+  }
+
+  .day-layout__nav-check {
+    flex-shrink: 0;
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--color-text-muted);
+  }
+
+  .day-layout__nav-check .check-mark {
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+  }
+
+  .day-layout__nav-link[data-completed='true'] .day-layout__nav-check {
+    color: var(--color-accent-success);
+  }
+
+  .day-layout__nav-link[data-completed='true'] .check-mark {
+    opacity: 1;
+  }
+
+  /* Challenge Link */
+  .day-layout__challenge-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 2rem;
+    padding: 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-tier-gold);
+    background-color: color-mix(in srgb, var(--color-tier-gold) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-tier-gold) 30%, transparent);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition:
+      background-color var(--transition-fast),
+      border-color var(--transition-fast);
+  }
+
+  .day-layout__challenge-link:hover {
+    background-color: color-mix(in srgb, var(--color-tier-gold) 20%, transparent);
+    border-color: color-mix(in srgb, var(--color-tier-gold) 50%, transparent);
+  }
+
+  .day-layout__challenge-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  /* Main Content */
+  .day-layout__main {
+    padding: 2rem var(--space-content);
+    min-width: 0; /* Prevent overflow */
+  }
+
+  .day-layout__content {
+    max-width: 48rem;
+  }
+
+  .day-layout__pagination {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: var(--border-subtle);
+  }
+
+  /* Table of Contents */
+  .day-layout__toc {
+    border-left: var(--border-subtle);
+  }
+
+  .day-layout__toc-content {
+    position: sticky;
+    top: 4rem;
+    padding: 2rem 1rem;
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+  }
+
+  .day-layout__toc-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    margin-bottom: 1rem;
+  }
+
+  .day-layout__toc-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .day-layout__toc-link {
+    display: block;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .day-layout__toc-link:hover {
+    color: var(--color-text-primary);
+  }
+
+  .day-layout__toc-link--nested {
+    padding-left: 1rem;
+    font-size: 0.75rem;
+  }
+
+  .day-layout__toc-link--active {
+    color: var(--day-accent);
+  }
+</style>
+
+<script>
+  // Update section completion status from localStorage
+  import { getSectionsCompleted } from '@/lib/progress';
+
+  const dayNumber = parseInt(
+    document.querySelector('.day-layout__day-number')?.textContent?.replace('Day ', '') || '1'
+  );
+  const completedSections = getSectionsCompleted(dayNumber);
+
+  document.querySelectorAll('.day-layout__nav-link').forEach((link) => {
+    const section = link.getAttribute('data-section');
+    if (section && completedSections.includes(section)) {
+      link.setAttribute('data-completed', 'true');
+    }
+  });
+
+  // ToC scroll spy
+  const tocLinks = document.querySelectorAll('.day-layout__toc-link');
+  const headings = document.querySelectorAll('h2[id], h3[id]');
+
+  if (tocLinks.length > 0 && headings.length > 0) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            tocLinks.forEach((link) => link.classList.remove('day-layout__toc-link--active'));
+            const activeLink = document.querySelector(
+              `.day-layout__toc-link[href="#${entry.target.id}"]`
+            );
+            activeLink?.classList.add('day-layout__toc-link--active');
+          }
+        });
+      },
+      { rootMargin: '-80px 0px -80% 0px' }
+    );
+
+    headings.forEach((heading) => observer.observe(heading));
+  }
+</script>

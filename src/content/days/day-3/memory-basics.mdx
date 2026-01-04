@@ -1,0 +1,436 @@
+---
+title: "Memory Basics"
+dayNumber: 3
+avengersTitle: "Infinity War"
+focus: "Memory + Tools (Browser, Code Interpreter)"
+description: "Implement AgentCore Memory for persistent conversation context and user knowledge."
+estimatedTime: "45 minutes"
+objectives:
+  - "Understand short-term vs long-term memory"
+  - "Create and configure a memory resource"
+  - "Integrate memory with your Strands agent"
+  - "Test memory persistence across sessions"
+order: 1
+published: true
+---
+
+import Callout from '@/components/content/Callout.astro';
+
+# Memory Basics
+
+Remember Day 1? Your agent forgot everything between requests. That's because AI models are inherently stateless - each request starts fresh with no knowledge of previous interactions.
+
+**AgentCore Memory** solves this by providing managed memory services that persist context across interactions.
+
+## AgentCore Memory Architecture
+
+![Memory Overview](/images/day-3/memory-overview.png)
+
+AgentCore Memory provides two complementary memory systems:
+- **Short-term memory**: Raw conversation events for immediate context
+- **Long-term memory**: Semantic extraction and consolidation for persistent knowledge
+
+### Short-term Memory Architecture
+
+![Short-term Memory Architecture](/images/day-3/short-term-memory-architecture.png)
+
+Short-term memory stores raw conversation events:
+- Recent message retrieval with `get_last_k_turns()`
+- Event creation with `create_event()`
+- Session-based conversation tracking
+
+| Feature | Short-term Memory | Long-term Memory |
+|---------|-------------------|------------------|
+| **Scope** | Single session | Across all sessions |
+| **Duration** | Session lifetime | Persistent |
+| **Content** | Raw conversation turns | Extracted insights |
+
+<Callout type="info" title="When to Use Each">
+  **Short-term**: For immediate context like "what did I just ask?"
+  **Long-term**: For persistent knowledge like "what are my preferences?"
+</Callout>
+
+## Creating a Memory Resource
+
+### Step 1: Create Memory via SDK
+
+```python
+from bedrock_agentcore.memory import MemoryClient
+
+# Initialize the memory client
+memory_client = MemoryClient(region_name='us-west-2')
+
+# Create a memory resource with short-term and long-term strategies
+response = memory_client.create_memory(
+    name='day3-agent-memory',
+    description='Memory for Day 3 agent with conversation persistence',
+    strategies=[
+        {
+            "shortTermMemory": {
+                "name": "ConversationHistory",
+                "maxTurns": 50
+            }
+        },
+        {
+            "semanticMemory": {
+                "name": "UserPreferences",
+                "namespaces": ["/users/{actorId}/preferences"]
+            }
+        }
+    ]
+)
+
+memory_id = response['memoryId']
+print(f"Created memory: {memory_id}")
+```
+
+### Step 2: Create a Memory Session
+
+```python
+from bedrock_agentcore.memory import MemorySessionManager
+
+# Create a session manager for easier session handling
+session_manager = MemorySessionManager(
+    memory_id=memory_id,
+    region_name='us-west-2'
+)
+
+# Get or create a session for a user
+session = session_manager.get_or_create_session(
+    actor_id='user-123',
+    session_id='session-001'
+)
+
+print(f"Session created: {session.session_id}")
+```
+
+## Integrating Memory with Strands
+
+The recommended approach is to use Strands **hooks** to integrate memory. Hooks allow you to intercept agent lifecycle events and automatically load/save memory.
+
+### Hook-Based Memory Integration
+
+```python
+# agent_with_memory.py
+from bedrock_agentcore.memory import MemoryClient
+from bedrock_agentcore.runtime import BedrockAgentCoreApp
+from strands import Agent
+from strands.hooks import AgentInitializedEvent, HookProvider, HookRegistry, MessageAddedEvent
+from strands.models import BedrockModel
+
+app = BedrockAgentCoreApp()
+
+class ShortTermMemoryHook(HookProvider):
+    """Hook provider for short-term memory integration."""
+
+    def __init__(self, memory_id: str, region_name: str = "us-west-2"):
+        self.memory_client = MemoryClient(region_name=region_name)
+        self.memory_id = memory_id
+        self.actor_id = None
+        self.session_id = None
+
+    def register_hooks(self, registry: HookRegistry):
+        registry.add_callback(AgentInitializedEvent, self.on_agent_initialized)
+        registry.add_callback(MessageAddedEvent, self.on_message_added)
+
+    def on_agent_initialized(self, event: AgentInitializedEvent):
+        """Load recent conversation history when agent starts."""
+        if not self.actor_id or not self.session_id:
+            return
+
+        # Retrieve last 5 turns of conversation
+        recent_turns = self.memory_client.get_last_k_turns(
+            memory_id=self.memory_id,
+            actor_id=self.actor_id,
+            session_id=self.session_id,
+            k=5
+        )
+
+        # Inject into agent's message history
+        if recent_turns:
+            event.agent.messages.extend(recent_turns)
+
+    def on_message_added(self, event: MessageAddedEvent):
+        """Store new messages in memory."""
+        messages = event.agent.messages
+        if not messages:
+            return
+
+        latest_message = messages[-1]
+        self.memory_client.create_event(
+            memory_id=self.memory_id,
+            actor_id=self.actor_id,
+            session_id=self.session_id,
+            messages=[(latest_message["content"][0]["text"], latest_message["role"])]
+        )
+
+# Create memory hook
+memory_hook = ShortTermMemoryHook(
+    memory_id="your-memory-id",
+    region_name="us-west-2"
+)
+
+model = BedrockModel(model_id="anthropic.claude-sonnet-4-20250514-v1:0")
+
+# Create agent with memory hook
+agent = Agent(
+    model=model,
+    tools=[],
+    system_prompt="""You are a helpful assistant with memory.
+You remember previous conversations and user preferences.""",
+    hooks=[memory_hook]
+)
+
+@app.entrypoint
+def handle_request(payload):
+    """Handle requests with memory context."""
+    user_id = payload.get("user_id", "default-user")
+    session_id = payload.get("session_id", "default-session")
+    prompt = payload.get("prompt", "")
+
+    # Set memory context before invoking
+    memory_hook.actor_id = user_id
+    memory_hook.session_id = session_id
+
+    # Invoke agent (memory loaded/saved via hooks)
+    response = agent(prompt)
+
+    return {"response": response.message["content"][0]["text"]}
+
+if __name__ == "__main__":
+    app.run()
+```
+
+<Callout type="tip" title="Why Use Hooks?">
+Hooks provide a clean separation of concerns. Your agent code stays focused on responses while the hook automatically handles memory loading and saving.
+</Callout>
+
+### Understanding the Hook Lifecycle
+
+The hooks intercept two key events:
+
+1. **AgentInitializedEvent**: Fired when the agent starts - perfect for loading conversation history
+2. **MessageAddedEvent**: Fired when a new message is added - perfect for persisting to memory
+
+```python
+# Hook lifecycle flow
+# 1. User sends request
+# 2. Agent initializes → on_agent_initialized loads history
+# 3. Agent processes request
+# 4. Agent adds response → on_message_added saves to memory
+# 5. Response returned to user
+```
+
+## Testing Memory Persistence
+
+### Test Short-Term Memory
+
+```python
+# test_short_term.py
+def test_short_term_memory():
+    """Test that agent remembers within a session."""
+
+    session_id = "test-session-001"
+
+    # Turn 1: Introduce yourself
+    response1 = invoke_agent(
+        message="Hi, my name is Alex and I'm working on a data pipeline.",
+        session_id=session_id
+    )
+    print(f"Turn 1: {response1}")
+
+    # Turn 2: Reference previous context
+    response2 = invoke_agent(
+        message="What was I working on again?",
+        session_id=session_id
+    )
+    print(f"Turn 2: {response2}")
+    # Expected: "You mentioned you're working on a data pipeline."
+
+    # Turn 3: Continue the conversation
+    response3 = invoke_agent(
+        message="Can you help me with that?",
+        session_id=session_id
+    )
+    print(f"Turn 3: {response3}")
+    # Agent should remember the data pipeline context
+
+test_short_term_memory()
+```
+
+### Test Long-Term Memory
+
+```python
+# test_long_term.py
+def test_long_term_memory():
+    """Test that agent remembers across sessions."""
+
+    user_id = "user-123"
+
+    # Session 1: Establish preferences
+    session1 = "session-001"
+    invoke_agent(
+        message="I always prefer TypeScript over JavaScript.",
+        session_id=session1,
+        user_id=user_id
+    )
+    invoke_agent(
+        message="My favorite color is blue.",
+        session_id=session1,
+        user_id=user_id
+    )
+
+    # End session 1 (triggers memory consolidation)
+    end_session(session1)
+
+    # Session 2: New session, same user
+    session2 = "session-002"
+    response = invoke_agent(
+        message="If I'm starting a new project, what language should I use?",
+        session_id=session2,
+        user_id=user_id
+    )
+    print(f"Session 2: {response}")
+    # Expected: Mentions TypeScript based on remembered preference
+
+test_long_term_memory()
+```
+
+<Callout type="success" title="Memory Working!">
+  If your agent remembers the user's preference from a previous session,
+  your long-term memory is correctly configured!
+</Callout>
+
+## Memory API Reference
+
+### Core Operations
+
+```python
+from bedrock_agentcore.memory import MemoryClient
+from bedrock_agentcore.memory.constants import ConversationalMessage, MessageRole
+
+memory_client = MemoryClient(region_name='us-west-2')
+
+# Get recent conversation turns
+recent_turns = memory_client.get_last_k_turns(
+    memory_id='mem-xxxx',
+    actor_id='user-123',
+    session_id='session-456',
+    k=10  # Last 10 turns
+)
+
+# Create a conversation event
+memory_client.create_event(
+    memory_id='mem-xxxx',
+    actor_id='user-123',
+    session_id='session-456',
+    messages=[
+        ("Hello, I need help with Python", "user"),
+        ("I'd be happy to help! What do you need?", "assistant")
+    ]
+)
+
+# Retrieve memories (semantic search)
+memories = memory_client.retrieve_memories(
+    memory_id='mem-xxxx',
+    actor_id='user-123',
+    query='What are my preferences?',
+    max_results=5
+)
+
+# Delete a memory
+memory_client.delete_memory(memory_id='mem-xxxx')
+```
+
+### Session Management
+
+```python
+from bedrock_agentcore.memory import MemorySessionManager
+
+session_manager = MemorySessionManager(
+    memory_id='mem-xxxx',
+    region_name='us-west-2'
+)
+
+# Get or create a session
+session = session_manager.get_or_create_session(
+    actor_id='user-123',
+    session_id='session-456'
+)
+
+# Add conversation turns to session
+session.add_turns(
+    messages=[
+        ConversationalMessage("What's the weather?", MessageRole.USER),
+        ConversationalMessage("I don't have weather access.", MessageRole.ASSISTANT)
+    ]
+)
+
+# Get recent turns from session
+recent = session.get_last_k_turns(k=5)
+for turn in recent:
+    print(f"{turn.role}: {turn.content}")
+
+# List branches (for memory branching)
+branches = session.list_branches()
+for branch in branches:
+    print(f"Branch: {branch.name}")
+```
+
+## Checkpoint
+
+At this point, you have:
+
+- ✅ Understood short-term vs long-term memory
+- ✅ Created a memory resource
+- ✅ Integrated memory with your agent
+- ✅ Tested memory persistence
+
+**Next, we'll explore advanced memory strategies.**
+
+<div class="nav-buttons">
+  <a href="/days/3" class="nav-button nav-button--prev">
+    ← Back to Overview
+  </a>
+  <a href="/days/3/memory-strategies" class="nav-button nav-button--next">
+    Next: Memory Strategies →
+  </a>
+</div>
+
+<style>
+{`
+  .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+    gap: 1rem;
+  }
+
+  .nav-button {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+  }
+
+  .nav-button--prev {
+    color: var(--color-text-secondary);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .nav-button--prev:hover {
+    background: var(--color-bg-secondary);
+  }
+
+  .nav-button--next {
+    color: white;
+    background: var(--color-day-3);
+  }
+
+  .nav-button--next:hover {
+    opacity: 0.9;
+  }
+`}
+</style>

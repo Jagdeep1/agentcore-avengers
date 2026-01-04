@@ -1,0 +1,539 @@
+---
+title: "Memory Strategies"
+dayNumber: 3
+avengersTitle: "Infinity War"
+focus: "Memory + Tools (Browser, Code Interpreter)"
+description: "Configure advanced memory extraction strategies for intelligent long-term knowledge retention."
+estimatedTime: "45 minutes"
+objectives:
+  - "Understand the three built-in memory strategies"
+  - "Configure strategy-specific extraction"
+  - "Implement custom memory strategies"
+  - "Handle memory consolidation and conflicts"
+order: 2
+published: true
+---
+
+import Callout from '@/components/content/Callout.astro';
+
+# Memory Strategies
+
+Raw conversation history is useful, but extracting meaningful insights is more powerful. **Memory strategies** determine what information gets extracted from conversations and how it's stored for long-term retrieval.
+
+## Long-term Memory Architecture
+
+![Long-term Memory Architecture](/images/day-3/long-term-memory-architecture.png)
+
+Long-term memory extracts semantic meaning from conversations:
+- **Extraction**: AI analyzes conversations to identify key information
+- **Storage**: Extracted memories stored with vector embeddings
+- **Retrieval**: Semantic search finds relevant memories
+
+## Built-in Strategies
+
+AgentCore Memory provides built-in extraction strategies that automatically extract insights from conversations:
+
+### 1. USER_PREFERENCE Strategy
+
+Extracts user preferences and settings:
+
+```python
+# Configuration
+memory_client.update_memory(
+    memoryId=memory_id,
+    memoryConfig={
+        'longTermMemory': {
+            'strategies': [{
+                'type': 'USER_PREFERENCE',
+                'config': {
+                    'categories': [
+                        'programming_languages',
+                        'tools',
+                        'communication_style',
+                        'work_hours'
+                    ],
+                    'confidenceThreshold': 0.8
+                }
+            }]
+        }
+    }
+)
+```
+
+**What it extracts:**
+- Language preferences: "I prefer Python"
+- Tool preferences: "I use VS Code"
+- Style preferences: "Keep explanations brief"
+- Time preferences: "I'm in PST timezone"
+
+### 2. SEMANTIC Strategy
+
+Extracts facts and entities:
+
+```python
+# Configuration
+{
+    'type': 'SEMANTIC',
+    'config': {
+        'entityTypes': [
+            'person',
+            'organization',
+            'project',
+            'technology'
+        ],
+        'relationshipTypes': [
+            'works_at',
+            'works_on',
+            'uses',
+            'manages'
+        ]
+    }
+}
+```
+
+**What it extracts:**
+- Facts: "Alex is a data engineer"
+- Relationships: "Alex works at Acme Corp"
+- Context: "Alex is working on Project Phoenix"
+
+### 3. SUMMARY Strategy
+
+Creates session summaries:
+
+```python
+# Configuration
+{
+    'type': 'SUMMARY',
+    'config': {
+        'maxLength': 500,
+        'includeTopics': True,
+        'includeOutcomes': True,
+        'frequencyDrivenAnnotations': True
+    }
+}
+```
+
+**What it extracts:**
+- Session topics: "Query optimization, PySpark"
+- Key outcomes: "Identified partitioning issue"
+- Action items: "User will test new partition strategy"
+
+<Callout type="tip" title="Combine Strategies">
+  Use all three strategies together for comprehensive memory.
+  They complement each other and serve different retrieval needs.
+</Callout>
+
+## Memory Consolidation
+
+When multiple memories relate to the same topic, AgentCore consolidates them intelligently. For example:
+
+1. **Session 1**: User says "I prefer Python"
+2. **Session 2**: User says "I also use TypeScript for frontend"
+3. **Consolidation**: Memory updates to "Prefers Python, also uses TypeScript"
+
+The system maintains an audit trail of previous values for transparency.
+
+### Consolidation Actions
+
+| Action | When Used |
+|--------|-----------|
+| **ADD** | New information, no existing related memory |
+| **UPDATE** | New info refines/extends existing memory |
+| **NO-OP** | Duplicate or less specific than existing |
+
+```python
+# The consolidation process is automatic, but you can configure it:
+{
+    'consolidation': {
+        'enabled': True,
+        'interval': 'END_OF_SESSION',  # or 'REAL_TIME'
+        'conflictResolution': 'MOST_RECENT',  # or 'HIGHEST_CONFIDENCE'
+        'auditTrail': True  # Keep history of changes
+    }
+}
+```
+
+## Custom Memory Strategies
+
+For specialized use cases, configure custom extraction with `StrategyType.CUSTOM`:
+
+```python
+from bedrock_agentcore.memory import MemoryClient
+from bedrock_agentcore.memory.constants import StrategyType
+
+CUSTOM_EXTRACTION_PROMPT = """
+Extract key information from this conversation:
+- User preferences and requirements
+- Important facts mentioned
+- Action items or decisions made
+- Project names and deadlines
+
+Format as structured JSON with clear categories.
+"""
+
+memory_client = MemoryClient(region_name='us-west-2')
+
+# Create memory with custom extraction strategy
+strategies = [{
+    StrategyType.CUSTOM.value: {
+        "name": "ProjectContextMemory",
+        "namespaces": ["/projects/{actorId}/context"],
+        "configuration": {
+            "semanticOverride": {
+                "extraction": {
+                    "modelId": "anthropic.claude-haiku-4-5-20251001-v1:0",
+                    "appendToPrompt": CUSTOM_EXTRACTION_PROMPT
+                }
+            }
+        }
+    }
+}]
+
+memory_response = memory_client.create_memory(
+    name="project-context-memory",
+    strategies=strategies
+)
+
+memory_id = memory_response["memoryId"]
+print(f"Created custom memory: {memory_id}")
+```
+
+<Callout type="info" title="Custom Extraction Models">
+Use a smaller, faster model like Claude Haiku for extraction to reduce costs while maintaining quality.
+</Callout>
+
+## Memory Retrieval Patterns
+
+### Semantic Search
+
+```python
+# Find memories relevant to a query
+memories = memory.search_memories(
+    userId='user-123',
+    query='What programming languages does the user know?',
+    maxResults=5,
+    filters={
+        'types': ['USER_PREFERENCE', 'SEMANTIC']
+    }
+)
+
+for mem in memories:
+    print(f"[{mem['type']}] {mem['content']} (score: {mem['relevanceScore']})")
+```
+
+### Recency-Based Retrieval
+
+```python
+# Get most recent memories
+recent = memory.get_recent_memories(
+    userId='user-123',
+    limit=10,
+    since='2025-01-01'
+)
+```
+
+### Type-Based Retrieval
+
+```python
+# Get all preferences
+preferences = memory.get_memories_by_type(
+    userId='user-123',
+    memoryType='USER_PREFERENCE'
+)
+
+# Get all facts
+facts = memory.get_memories_by_type(
+    userId='user-123',
+    memoryType='SEMANTIC'
+)
+```
+
+## Memory Branching
+
+Memory branching enables parallel conversation exploration - perfect for multi-agent scenarios where different specialists explore different paths.
+
+### Branching Architecture
+
+![Memory Branching Architecture](/images/day-3/memory-branching-architecture.png)
+
+### When to Use Memory Branching
+
+- **Multi-agent systems**: Different agents explore specialized topics
+- **What-if scenarios**: Explore multiple options without losing context
+- **Parallel planning**: Research, booking, and logistics agents work simultaneously
+- **A/B testing conversations**: Test different approaches without affecting the main flow
+
+### Implementing Memory Branching
+
+```python
+from bedrock_agentcore.memory import MemoryClient, MemorySessionManager
+from bedrock_agentcore.memory.constants import ConversationalMessage, MessageRole
+from strands.hooks import AgentInitializedEvent, HookProvider, HookRegistry, MessageAddedEvent
+
+class BranchableMemoryHook(HookProvider):
+    """Hook provider with memory branching support."""
+
+    def __init__(self, memory_id: str, region_name: str = "us-west-2", branch_name: str = "main"):
+        self.memory_manager = MemorySessionManager(
+            memory_id=memory_id,
+            region_name=region_name
+        )
+        self.branch_name = branch_name
+        self.actor_id = None
+        self.session_id = None
+        self.memory_session = None
+
+    def register_hooks(self, registry: HookRegistry):
+        registry.add_callback(AgentInitializedEvent, self.on_agent_initialized)
+        registry.add_callback(MessageAddedEvent, self.on_message_added)
+
+    def _get_or_create_session(self, actor_id: str, session_id: str):
+        """Get existing session or create new one."""
+        return self.memory_manager.get_or_create_session(
+            actor_id=actor_id,
+            session_id=session_id
+        )
+
+    def _initialize_branch(self, actor_id: str, session_id: str):
+        """Initialize a branch if it doesn't exist."""
+        self.memory_session = self._get_or_create_session(actor_id, session_id)
+
+        # Check if branch already exists
+        branches = self.memory_session.list_branches()
+        if self.branch_name not in [b.name for b in branches]:
+            # Get the last event from main branch to fork from
+            main_events = self.memory_session.get_events(branch_name="main")
+            if main_events:
+                last_event = main_events[-1]
+                # Fork conversation from main branch
+                self.memory_session.fork_conversation(
+                    root_event_id=last_event.eventId,
+                    branch_name=self.branch_name,
+                    messages=[ConversationalMessage(
+                        f"Starting {self.branch_name} branch",
+                        MessageRole.ASSISTANT
+                    )]
+                )
+
+    def on_agent_initialized(self, event: AgentInitializedEvent):
+        """Load branch-specific conversation history."""
+        if not self.actor_id or not self.session_id:
+            return
+
+        # Initialize branch if needed
+        self._initialize_branch(self.actor_id, self.session_id)
+
+        # Load history from this branch
+        recent_turns = self.memory_session.get_last_k_turns(
+            k=5,
+            branch_name=self.branch_name
+        )
+
+        if recent_turns:
+            event.agent.messages.extend(recent_turns)
+
+    def on_message_added(self, event: MessageAddedEvent):
+        """Store new messages in the branch."""
+        if not self.memory_session:
+            return
+
+        messages = event.agent.messages
+        if not messages:
+            return
+
+        latest_message = messages[-1]
+        self.memory_session.add_turns(
+            messages=[ConversationalMessage(
+                latest_message["content"][0]["text"],
+                MessageRole(latest_message["role"])
+            )],
+            branch_name=self.branch_name
+        )
+```
+
+### Multi-Agent with Branching Example
+
+Create specialized agents that each work on their own conversation branch:
+
+```python
+from strands import Agent
+from strands.models import BedrockModel
+
+# Shared memory ID for all agents
+MEMORY_ID = "travel-planning-memory"
+
+# Create specialized agents with different branches
+research_hook = BranchableMemoryHook(
+    memory_id=MEMORY_ID,
+    branch_name="research"
+)
+
+booking_hook = BranchableMemoryHook(
+    memory_id=MEMORY_ID,
+    branch_name="booking"
+)
+
+logistics_hook = BranchableMemoryHook(
+    memory_id=MEMORY_ID,
+    branch_name="logistics"
+)
+
+model = BedrockModel(model_id="anthropic.claude-sonnet-4-20250514-v1:0")
+
+# Research agent explores destinations
+research_agent = Agent(
+    model=model,
+    system_prompt="""You are a travel research specialist.
+Research destinations, attractions, and reviews.""",
+    hooks=[research_hook]
+)
+
+# Booking agent handles reservations
+booking_agent = Agent(
+    model=model,
+    system_prompt="""You are a booking specialist.
+Handle flight, hotel, and activity reservations.""",
+    hooks=[booking_hook]
+)
+
+# Logistics agent plans transportation
+logistics_agent = Agent(
+    model=model,
+    system_prompt="""You are a logistics planner.
+Plan ground transportation, schedules, and transfers.""",
+    hooks=[logistics_hook]
+)
+```
+
+### Using Branched Agents
+
+```python
+# Each agent operates on its own branch
+# but shares context from the main conversation
+
+# User starts on main branch
+main_agent("I want to plan a trip to Tokyo for next month")
+
+# Research agent explores on its branch
+research_agent("What are the best neighborhoods to stay in Tokyo?")
+
+# Booking agent works on its branch
+booking_agent("Find flights from SFO to Tokyo in March")
+
+# Logistics agent works on its branch
+logistics_agent("Plan airport transfers and local transportation")
+
+# All branches can be merged back to main when ready
+```
+
+<Callout type="tip" title="Branch Merging">
+While agents work on separate branches, the main branch retains the original conversation context. You can merge insights from branches back to main when ready, or keep them separate for different use cases.
+</Callout>
+
+## Best Practices
+
+### 1. Choose Appropriate Strategies
+
+```python
+# Customer support agent: Focus on preferences and summaries
+strategies = ['USER_PREFERENCE', 'SUMMARY']
+
+# Research assistant: Focus on facts and entities
+strategies = ['SEMANTIC', 'SUMMARY']
+
+# Personal assistant: Use all strategies
+strategies = ['USER_PREFERENCE', 'SEMANTIC', 'SUMMARY']
+```
+
+### 2. Set Confidence Thresholds
+
+```python
+# Higher threshold = fewer but more reliable memories
+{
+    'type': 'USER_PREFERENCE',
+    'config': {
+        'confidenceThreshold': 0.9  # Only very confident extractions
+    }
+}
+```
+
+### 3. Handle Memory Updates Gracefully
+
+```python
+# When preferences change
+def handle_preference_change(old_memory, new_content):
+    """Handle conflicting preferences gracefully."""
+
+    # Don't abruptly replace - acknowledge the change
+    return {
+        'content': new_content,
+        'metadata': {
+            'previous_preference': old_memory['content'],
+            'change_reason': 'User explicitly updated preference'
+        }
+    }
+```
+
+<Callout type="warning" title="Memory Costs">
+  More strategies = more extraction calls = higher costs.
+  Start with essential strategies and add more as needed.
+</Callout>
+
+## Checkpoint
+
+You've now learned:
+
+- ✅ Three built-in memory strategies (USER_PREFERENCE, SEMANTIC, SUMMARY)
+- ✅ How memory consolidation works
+- ✅ Implementing custom strategies with `StrategyType.CUSTOM`
+- ✅ Memory retrieval patterns
+- ✅ **Memory branching** for multi-agent scenarios
+
+**Next, we'll add powerful tools: Code Interpreter and Browser.**
+
+<div class="nav-buttons">
+  <a href="/days/3/memory-basics" class="nav-button nav-button--prev">
+    ← Memory Basics
+  </a>
+  <a href="/days/3/tools" class="nav-button nav-button--next">
+    Next: Code Interpreter & Browser →
+  </a>
+</div>
+
+<style>
+{`
+  .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+    gap: 1rem;
+  }
+
+  .nav-button {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+  }
+
+  .nav-button--prev {
+    color: var(--color-text-secondary);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .nav-button--prev:hover {
+    background: var(--color-bg-secondary);
+  }
+
+  .nav-button--next {
+    color: white;
+    background: var(--color-day-3);
+  }
+
+  .nav-button--next:hover {
+    opacity: 0.9;
+  }
+`}
+</style>

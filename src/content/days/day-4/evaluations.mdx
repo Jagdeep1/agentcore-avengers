@@ -1,0 +1,244 @@
+---
+title: "Agent Evaluations"
+dayNumber: 4
+avengersTitle: "Endgame"
+focus: "Guardrails + Observability"
+description: "Measure and improve agent performance with built-in and custom evaluators"
+estimatedTime: "45 minutes"
+objectives:
+  - "Run on-demand evaluations with built-in evaluators"
+  - "Enable online evaluations for continuous monitoring"
+  - "Create custom evaluators for domain-specific criteria"
+  - "Correlate evaluation results with observability traces"
+order: 2
+published: true
+---
+
+import Callout from '@/components/content/Callout.astro';
+
+# Agent Evaluations
+
+AgentCore Evaluations provides systematic measurement of agent performance through built-in and custom evaluators.
+
+## Evaluation Architecture
+
+![AgentCore Interfaces](/images/day-4/eval-agentcore-interfaces.png)
+
+AgentCore evaluations integrate with the observability system to analyze agent traces and provide actionable metrics.
+
+## Metrics Per Level
+
+![Metrics Per Level](/images/day-4/eval-metrics-per-level.png)
+
+Evaluations operate at three levels:
+- **Session level**: Overall conversation success
+- **Trace level**: Individual request performance
+- **Span level**: Tool and component execution
+
+## Built-in Evaluators
+
+AgentCore provides four built-in evaluators:
+
+| Evaluator | Purpose |
+|-----------|---------|
+| `Builtin.GoalSuccessRate` | Did the agent achieve the user's goal? |
+| `Builtin.Correctness` | Was the response factually accurate? |
+| `Builtin.ToolSelectionAccuracy` | Did the agent choose the right tools? |
+| `Builtin.ToolParameterAccuracy` | Were tool parameters correct? |
+
+## On-Demand Evaluations
+
+![On-Demand Evaluations](/images/day-4/eval-on-demand.png)
+
+On-demand evaluations run after agent execution for batch analysis:
+
+```python
+from bedrock_agentcore_starter_toolkit import Evaluation
+
+eval_client = Evaluation(region="us-west-2")
+
+# Run goal success evaluation
+goal_results = eval_client.run(
+    agent_id=agent_id,
+    session_id=session_id,
+    evaluators=["Builtin.GoalSuccessRate"]
+)
+
+print(f"Goal Success: {goal_results}")
+
+# Run correctness evaluation
+correctness_results = eval_client.run(
+    agent_id=agent_id,
+    session_id=session_id,
+    evaluators=["Builtin.Correctness"]
+)
+
+# Run tool evaluations
+tool_results = eval_client.run(
+    agent_id=agent_id,
+    session_id=session_id,
+    evaluators=[
+        "Builtin.ToolSelectionAccuracy",
+        "Builtin.ToolParameterAccuracy"
+    ]
+)
+```
+
+<Callout type="tip" title="Batch Evaluation">
+On-demand evaluations are ideal for analyzing completed sessions, regression testing, and batch quality assessment.
+</Callout>
+
+## Online Evaluations
+
+![Online Evaluations](/images/day-4/eval-online.png)
+
+Online evaluations run in real-time as agents execute:
+
+```python
+from bedrock_agentcore_starter_toolkit import Evaluation
+
+eval_client = Evaluation(region="us-west-2")
+
+# Enable online evaluation for an agent
+eval_client.enable_online_evaluation(
+    agent_id=agent_id,
+    evaluators=["Builtin.GoalSuccessRate", "Builtin.Correctness"]
+)
+```
+
+### Online Evaluation Dashboard
+
+![Online Evaluation Dashboard](/images/day-4/eval-online-dashboard.png)
+
+The CloudWatch dashboard provides real-time visibility into:
+- Success rate trends
+- Tool accuracy metrics
+- Error patterns
+- Performance over time
+
+## Connecting Evaluations to Traces
+
+![Observability Traces](/images/day-4/eval-observability-traces.png)
+
+Evaluations leverage the observability traces captured during agent execution:
+
+```python
+from bedrock_agentcore_starter_toolkit import Observability
+
+obs_client = Observability(region="us-west-2")
+
+# Get traces for a session
+traces = obs_client.get_traces(
+    agent_id=agent_id,
+    session_id=session_id
+)
+
+# Traces contain the data evaluators analyze
+for trace in traces:
+    print(f"Trace ID: {trace.trace_id}")
+    print(f"Spans: {len(trace.spans)}")
+```
+
+## Creating Custom Evaluators
+
+For domain-specific evaluation criteria:
+
+```python
+from bedrock_agentcore_starter_toolkit import Evaluation
+
+eval_client = Evaluation(region="us-west-2")
+
+# Create a custom evaluator
+custom_evaluator = eval_client.create_evaluator(
+    name="DomainAccuracyEvaluator",
+    description="Evaluates domain-specific accuracy",
+    evaluation_prompt="""
+    Evaluate if the agent response is accurate for financial queries.
+    Consider:
+    - Numerical accuracy
+    - Regulatory compliance mentions
+    - Risk disclosure presence
+
+    Score from 0-100.
+    """,
+    model_id="anthropic.claude-sonnet-4-20250514-v1:0"
+)
+
+# Use custom evaluator
+results = eval_client.run(
+    agent_id=agent_id,
+    session_id=session_id,
+    evaluators=[custom_evaluator.evaluator_id]
+)
+```
+
+<Callout type="warning" title="Custom Evaluator Models">
+Custom evaluators use LLM-as-judge patterns. Choose appropriate models based on evaluation complexity and cost requirements.
+</Callout>
+
+## Evaluation Best Practices
+
+1. **Start with built-in evaluators** - They cover common quality dimensions
+2. **Add custom evaluators for domain logic** - Financial accuracy, compliance, etc.
+3. **Use on-demand for development** - Fast iteration on agent improvements
+4. **Enable online for production** - Continuous monitoring and alerting
+5. **Correlate with traces** - Use trace data to debug low scores
+
+## Checkpoint
+
+You've now learned:
+
+- ✅ Built-in evaluators for common quality dimensions
+- ✅ On-demand evaluations for batch analysis
+- ✅ Online evaluations for real-time monitoring
+- ✅ Creating custom evaluators for domain-specific criteria
+- ✅ Connecting evaluations to observability traces
+
+**Next, we'll implement guardrails to protect your agent.**
+
+<div class="nav-buttons">
+  <a href="/days/4/observability" class="nav-button nav-button--prev">
+    ← Observability
+  </a>
+  <a href="/days/4/guardrails-basics" class="nav-button nav-button--next">
+    Next: Guardrails Basics →
+  </a>
+</div>
+
+<style>
+{`
+  .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+    gap: 1rem;
+  }
+
+  .nav-button {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+  }
+
+  .nav-button--prev {
+    color: var(--color-text-secondary);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .nav-button--prev:hover {
+    background: var(--color-bg-secondary);
+  }
+
+  .nav-button--next {
+    color: white;
+    background: var(--color-day-4);
+  }
+
+  .nav-button--next:hover {
+    opacity: 0.9;
+  }
+`}
+</style>

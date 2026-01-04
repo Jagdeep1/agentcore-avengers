@@ -1,0 +1,171 @@
+---
+title: "Overview"
+dayNumber: 2
+avengersTitle: "Age of Ultron"
+focus: "Identity + AgentCore Gateway"
+description: "Secure your agent with proper authentication, connect to external tools via Gateway, and implement multi-tenant access control."
+estimatedTime: "3-4 hours"
+objectives:
+  - "Understand AgentCore Identity for agent and user authentication"
+  - "Configure AgentCore Gateway to connect tools securely"
+  - "Implement OAuth flows for third-party service access"
+  - "Set up multi-tenant isolation with Gateway interceptors"
+  - "Experience the 'Open Door' controlled disaster"
+controlledDisasters:
+  - name: "The Open Door"
+    symptom: "Any user can invoke your agent and access all tools without authentication"
+    cause: "No identity verification or authorization controls configured"
+    motivation: "Why Identity and Gateway security aren't optional in production"
+starterTemplate: "https://github.com/awslabs/amazon-bedrock-agentcore-samples/tree/main/day-2-starter"
+order: 0
+published: true
+---
+
+import Callout from '@/components/content/Callout.astro';
+import DisasterScenario from '@/components/course/DisasterScenario.astro';
+
+# Day 2: Age of Ultron
+
+In the Avengers story, Ultron was created without proper safeguards - and it went terribly wrong. Today we add the safeguards your agent needs: **Identity** and **Gateway**.
+
+Yesterday you deployed a working agent. But that agent has a critical vulnerability: **anyone can access it, and it can't securely connect to external services**.
+
+## What You'll Build
+
+Today we're adding security layers to your agent:
+
+- **AgentCore Identity**: Authenticate users and agents
+- **AgentCore Gateway**: Securely connect to external tools and APIs
+- **Multi-tenant isolation**: Ensure users can only access their own data
+
+<Callout type="warning" title="Security First">
+  In production, unsecured agents are liability. Identity and Gateway transform
+  your agent from a demo into an enterprise-ready system.
+</Callout>
+
+## Day 2 Architecture
+
+Today we add Identity and Gateway to enable secure, authenticated agent interactions:
+
+### Local Development with Identity
+
+![Local Identity Development](/images/day-2/identity-architecture-local.png)
+
+During local development:
+- Test authentication flows with Cognito
+- Validate JWT token handling
+- Verify user context extraction
+
+### Production Deployment with Identity + Gateway
+
+![Runtime Identity Architecture](/images/day-2/identity-architecture-runtime.png)
+
+In production:
+- **AgentCore Identity** validates inbound authentication (users calling agent)
+- **Credential Providers** manage outbound authentication (agent calling APIs)
+- **AgentCore Gateway** transforms APIs into MCP tools
+- **Runtime Agent** accesses authenticated tools securely
+
+The complete authentication flow:
+1. User authenticates with Cognito and gets JWT token
+2. User invokes agent with JWT token
+3. AgentCore Identity validates token and extracts user context
+4. Agent receives user context in payload
+5. Agent calls external APIs via Gateway
+6. Credential providers inject authentication (API keys, OAuth tokens)
+7. External APIs validate credentials and return data
+
+## Learning Path
+
+| Section | Topic | Time |
+|---------|-------|------|
+| 1 | [Identity Basics](/days/2/identity-basics) | 45 min |
+| 2 | [AgentCore Gateway](/days/2/agentcore-gateway) | 60 min |
+| 3 | [Multi-Tenancy](/days/2/multi-tenancy) | 45 min |
+| 4 | [Controlled Disasters](/days/2/controlled-disasters) | 30 min |
+
+## Key Concepts
+
+### AgentCore Identity
+
+**Purpose**: Manage authentication and authorization for agents and users.
+
+Components:
+- **Agent Identity Directory**: Create and manage agent identities
+- **JWT Authorizer**: Validate incoming requests
+- **Token Vault**: Securely store OAuth tokens
+- **Credential Provider**: Connect to third-party services
+
+### AgentCore Gateway
+
+**Purpose**: Unified interface for connecting agents to tools and APIs.
+
+Features:
+- **MCP Support**: Native Model Context Protocol compatibility
+- **API Translation**: Convert REST APIs to agent-compatible tools
+- **Semantic Search**: Intelligent tool discovery
+- **Built-in Auth**: OAuth and API key management
+
+## Prerequisites Check
+
+Before proceeding, ensure you have:
+
+- [ ] Completed Day 1 (agent deployed to Runtime)
+- [ ] OAuth application credentials (we'll create these)
+- [ ] Understanding of OAuth 2.0 basics
+- [ ] GitHub account (for tool integration example)
+
+<Callout type="info" title="OAuth Knowledge">
+  If you're unfamiliar with OAuth 2.0, we'll cover the essentials.
+  The key concepts are: authorization codes, access tokens, and scopes.
+</Callout>
+
+## Today's Controlled Disaster
+
+<DisasterScenario
+  title="The Open Door"
+  symptom="Anyone on the internet can invoke your agent without authentication. Your agent accesses third-party APIs with hardcoded credentials visible in logs."
+  cause="No Identity configuration for inbound auth, no Gateway for secure outbound connections."
+  solution="AgentCore Identity validates who can invoke your agent. Gateway manages credentials securely."
+  dayReference={2}
+/>
+
+This disaster demonstrates why security can't be an afterthought. By the end of today, your agent will have enterprise-grade authentication and secure tool access.
+
+## Ready?
+
+Let's start by understanding how AgentCore Identity secures your agent.
+
+<div class="cta-section">
+  <a href="/days/2/identity-basics" class="cta-button">
+    Start Section 1: Identity Basics →
+  </a>
+</div>
+
+<style>
+{`
+  .cta-section {
+    margin-top: 3rem;
+    text-align: center;
+  }
+
+  .cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, var(--color-day-2) 0%, #dc2626 100%);
+    color: white;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: var(--radius-lg);
+    transition: all 0.3s ease;
+  }
+
+  .cta-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(239, 68, 68, 0.4);
+  }
+`}
+</style>

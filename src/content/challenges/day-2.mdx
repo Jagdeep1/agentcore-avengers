@@ -1,0 +1,249 @@
+---
+dayNumber: 2
+title: "The Security Challenge"
+description: "Secure your agent with AgentCore Identity and Gateway, implementing authentication and multi-tenant isolation"
+requirements:
+  - id: "req-1"
+    text: "Create a workload identity for your agent"
+    tier: "required"
+    hints:
+      - "Use create_workload_identity API"
+      - "Add meaningful tags for organization"
+  - id: "req-2"
+    text: "Configure a JWT authorizer for inbound authentication"
+    tier: "required"
+    hints:
+      - "Connect to Cognito or another OIDC provider"
+      - "Set correct issuer and audience"
+  - id: "req-3"
+    text: "Create an AgentCore Gateway with at least one target"
+    tier: "required"
+    hints:
+      - "Start with a simple OpenAPI or Lambda target"
+      - "Use IAM authentication for simplicity"
+  - id: "req-4"
+    text: "Update your agent to require authentication"
+    tier: "required"
+    hints:
+      - "Use @require_auth decorator"
+      - "Extract user context from event"
+  - id: "req-5"
+    text: "Connect your agent to Gateway tools"
+    tier: "required"
+    hints:
+      - "Use MCPClient to connect to Gateway"
+      - "List and use tools dynamically"
+  - id: "bronze-1"
+    text: "Add a credential provider for a third-party service"
+    tier: "bronze"
+    hints:
+      - "GitHub, Slack, or another OAuth service"
+      - "Configure OAuth2 flow correctly"
+  - id: "bronze-2"
+    text: "Implement request logging with user context"
+    tier: "bronze"
+    hints:
+      - "Log user_id, tenant_id, and action"
+      - "Never log credentials or tokens"
+  - id: "silver-1"
+    text: "Create a request interceptor for tenant isolation"
+    tier: "silver"
+    hints:
+      - "Deploy a Lambda function"
+      - "Inject tenant context into requests"
+  - id: "silver-2"
+    text: "Implement tool filtering based on user role"
+    tier: "silver"
+    hints:
+      - "Define role-to-tool mappings"
+      - "Filter tools in interceptor"
+  - id: "gold-1"
+    text: "Create a response interceptor that redacts sensitive data"
+    tier: "gold"
+    hints:
+      - "Identify sensitive field patterns"
+      - "Replace with [REDACTED]"
+  - id: "gold-2"
+    text: "Write tests verifying tenant isolation works correctly"
+    tier: "gold"
+    hints:
+      - "Test that User A cannot see User B's data"
+      - "Test that tool filtering works"
+resources:
+  - title: "AgentCore Identity Documentation"
+    url: "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/identity.html"
+  - title: "AgentCore Gateway Documentation"
+    url: "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway.html"
+  - title: "Gateway Interceptors Blog"
+    url: "https://aws.amazon.com/blogs/machine-learning/apply-fine-grained-access-control-with-bedrock-agentcore-gateway-interceptors/"
+  - title: "Securing AI Agents Blog"
+    url: "https://aws.amazon.com/blogs/security/securing-ai-agents-with-amazon-bedrock-agentcore-identity/"
+---
+
+import Callout from '@/components/content/Callout.astro';
+
+# Day 2 Challenge: The Security Challenge
+
+You've learned Identity and Gateway. Now prove you can secure an agent properly.
+
+## Your Mission
+
+Transform your Day 1 agent from an open, vulnerable system into a secure, production-ready deployment with:
+
+- **Authentication**: Only authorized users can invoke
+- **Secure Tool Access**: Credentials managed by Gateway
+- **Tenant Isolation**: Users only see their own data
+
+## Architecture Goal
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Secure Agent Architecture                 │
+│                                                              │
+│  User Request + JWT Token                                    │
+│         │                                                    │
+│         ▼                                                    │
+│  ┌─────────────────────┐                                    │
+│  │  AgentCore Identity │ ← Validates JWT                     │
+│  │  (JWT Authorizer)   │                                    │
+│  └─────────────────────┘                                    │
+│         │                                                    │
+│         ▼ Authenticated                                      │
+│  ┌─────────────────────┐                                    │
+│  │  AgentCore Runtime  │                                    │
+│  │  (Your Agent)       │                                    │
+│  └─────────────────────┘                                    │
+│         │                                                    │
+│         ▼ Tool Request                                       │
+│  ┌─────────────────────┐                                    │
+│  │  AgentCore Gateway  │                                    │
+│  │  ┌───────────────┐  │                                    │
+│  │  │  Interceptor  │  │ ← Tenant isolation                  │
+│  │  └───────────────┘  │                                    │
+│  └─────────────────────┘                                    │
+│         │                                                    │
+│         ▼ Secure Request                                     │
+│  ┌─────────────────────┐                                    │
+│  │  External Services  │ ← Credentials injected by Gateway   │
+│  └─────────────────────┘                                    │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## Requirements Breakdown
+
+### Required (Must Complete)
+
+1. **Workload Identity**: Your agent needs an identity in the system
+2. **JWT Authorization**: Validate incoming requests
+3. **Gateway Setup**: Centralized tool management
+4. **Authenticated Handler**: Reject unauthorized requests
+5. **Gateway Integration**: Use Gateway for tool access
+
+<Callout type="info" title="Start Simple">
+  For the required items, you can use IAM authentication for Gateway targets.
+  OAuth integration is a stretch goal.
+</Callout>
+
+### Bronze Tier
+
+Add real OAuth integration:
+- Connect to GitHub, Slack, or another service
+- Implement proper logging without credential exposure
+
+### Silver Tier
+
+Implement multi-tenant controls:
+- Request interceptor with tenant injection
+- Dynamic tool filtering by user role
+
+### Gold Tier
+
+Complete security implementation:
+- Response filtering and data redaction
+- Automated tests proving isolation works
+
+## Validation Steps
+
+### Test Authentication
+
+```bash
+# Without token - should fail
+curl -X POST https://your-agent/invoke \
+  -d '{"message": "Hello"}'
+# Expected: 401 Unauthorized
+
+# With valid token - should succeed
+curl -X POST https://your-agent/invoke \
+  -H "Authorization: Bearer <valid-jwt>" \
+  -d '{"message": "Hello"}'
+# Expected: 200 OK with response
+```
+
+### Test Tenant Isolation
+
+```bash
+# As User A
+curl -X POST https://your-agent/invoke \
+  -H "Authorization: Bearer <user-a-token>" \
+  -d '{"message": "List my items"}'
+# Returns User A's items only
+
+# As User B
+curl -X POST https://your-agent/invoke \
+  -H "Authorization: Bearer <user-b-token>" \
+  -d '{"message": "List my items"}'
+# Returns User B's items only (different set)
+```
+
+### Verify No Credential Exposure
+
+```bash
+# Check CloudWatch logs
+aws logs filter-log-events \
+  --log-group-name /aws/bedrock-agentcore/your-agent \
+  --filter-pattern "token OR secret OR password OR key"
+
+# Should return 0 results (no credentials in logs)
+```
+
+## Security Checklist
+
+Before marking complete, verify:
+
+- [ ] Unauthenticated requests are rejected (401)
+- [ ] User context is available in handler
+- [ ] Gateway tools work without credentials in code
+- [ ] Logs don't contain sensitive data
+- [ ] (Bronze+) OAuth token retrieval works
+- [ ] (Silver+) Tenant context flows to tools
+- [ ] (Gold+) Tests prove isolation
+
+## Common Pitfalls
+
+<Callout type="warning" title="Watch Out For">
+
+1. **Hardcoded credentials**: Use Gateway or Secrets Manager
+2. **Missing audience validation**: Always verify JWT audience
+3. **Logging tokens**: Never log Authorization headers
+4. **Trusting client claims**: Validate tenant_id server-side
+
+</Callout>
+
+## Getting Help
+
+If stuck:
+
+1. **Review the sections** - Especially Identity Basics and Gateway
+2. **Check AWS docs** - Linked in Resources section
+3. **Start minimal** - Get auth working before adding features
+4. **Test incrementally** - Verify each layer works
+
+## Completing Day 2
+
+Once you've completed the required items and any stretch goals:
+
+1. Mark your completed items in the checklist below
+2. Day 3 will unlock when all required items are checked
+3. Your tier achievement is tracked automatically
+
+**Remember**: Security isn't about checking boxes - it's about understanding why each protection matters. Take time to experiment with what happens when protections are missing.

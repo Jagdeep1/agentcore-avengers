@@ -1,0 +1,182 @@
+---
+/**
+ * Footer - Site footer
+ */
+
+const currentYear = new Date().getFullYear();
+const base = import.meta.env.BASE_URL;
+---
+
+<footer class="footer">
+  <div class="footer__container">
+    <div class="footer__content">
+      <div class="footer__brand">
+        <span class="footer__logo">AgentCore Initiative</span>
+        <p class="footer__tagline">
+          Build production-ready AI agents with AWS AgentCore
+        </p>
+      </div>
+
+      <nav class="footer__nav" aria-label="Footer navigation">
+        <div class="footer__nav-section">
+          <h4 class="footer__nav-title">Course</h4>
+          <ul class="footer__nav-list">
+            <li><a href={`${base}days/1`}>Day 1: The First Avenger</a></li>
+            <li><a href={`${base}days/2`}>Day 2: Age of Ultron</a></li>
+            <li><a href={`${base}days/3`}>Day 3: Infinity War</a></li>
+            <li><a href={`${base}days/4`}>Day 4: Endgame</a></li>
+            <li><a href={`${base}days/5`}>Day 5: Assemble</a></li>
+          </ul>
+        </div>
+
+        <div class="footer__nav-section">
+          <h4 class="footer__nav-title">Resources</h4>
+          <ul class="footer__nav-list">
+            <li><a href={`${base}troubleshooting`}>Troubleshooting</a></li>
+            <li><a href={`${base}reference/costs`}>Cost Guide</a></li>
+            <li><a href={`${base}reference/cleanup`}>Cleanup</a></li>
+          </ul>
+        </div>
+
+        <div class="footer__nav-section">
+          <h4 class="footer__nav-title">Links</h4>
+          <ul class="footer__nav-list">
+            <li>
+              <a
+                href="https://docs.aws.amazon.com/bedrock-agentcore/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                AWS AgentCore Docs
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://github.com/awslabs/amazon-bedrock-agentcore-samples"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                AgentCore Samples
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://strandsagents.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Strands Agents
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+
+    <div class="footer__bottom">
+      <p class="footer__copyright">
+        &copy; {currentYear} The AgentCore Initiative. Built with Astro.
+      </p>
+      <p class="footer__disclaimer">
+        This is an educational resource. AWS and Amazon Bedrock are trademarks of Amazon.com, Inc.
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background-color: var(--color-bg-secondary);
+    border-top: var(--border-subtle);
+    padding: var(--space-section) 0 2rem;
+    margin-top: auto;
+  }
+
+  .footer__container {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 0 var(--space-content);
+  }
+
+  .footer__content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  @media (min-width: 768px) {
+    .footer__content {
+      grid-template-columns: 1.5fr 2fr;
+    }
+  }
+
+  .footer__brand {
+    max-width: 20rem;
+  }
+
+  .footer__logo {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+  }
+
+  .footer__tagline {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+  }
+
+  .footer__nav {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 2rem;
+  }
+
+  .footer__nav-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    margin-bottom: 1rem;
+  }
+
+  .footer__nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .footer__nav-list a {
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .footer__nav-list a:hover {
+    color: var(--color-text-primary);
+  }
+
+  .footer__bottom {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: var(--border-subtle);
+    text-align: center;
+  }
+
+  .footer__copyright {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+  }
+
+  .footer__disclaimer {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    margin-top: 0.5rem;
+  }
+</style>

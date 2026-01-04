@@ -1,0 +1,164 @@
+---
+title: "Overview"
+dayNumber: 3
+avengersTitle: "Infinity War"
+focus: "Memory + Tools (Browser, Code Interpreter)"
+description: "Give your agent persistent memory and powerful capabilities with AgentCore Memory, Browser, and Code Interpreter."
+estimatedTime: "3-4 hours"
+objectives:
+  - "Implement short-term memory for conversation context"
+  - "Configure long-term memory with extraction strategies"
+  - "Use Code Interpreter for dynamic computation"
+  - "Leverage Browser tool for web automation"
+  - "Experience the 'Runaway Agent' controlled disaster"
+controlledDisasters:
+  - name: "The Runaway Agent"
+    symptom: "Agent executes dangerous code or navigates to harmful sites without limits"
+    cause: "Unrestricted tool access without proper safeguards"
+    motivation: "Why tool controls and guardrails (Day 4) are essential"
+starterTemplate: "https://github.com/awslabs/amazon-bedrock-agentcore-samples/tree/main/day-3-starter"
+order: 0
+published: true
+---
+
+import Callout from '@/components/content/Callout.astro';
+import DisasterScenario from '@/components/course/DisasterScenario.astro';
+
+# Day 3: Infinity War
+
+In Infinity War, the heroes needed to gather the Infinity Stones - powerful artifacts that together grant ultimate capability. Today, we gather the capabilities that make your agent truly powerful: **Memory** and **Tools**.
+
+Remember Day 1's disaster? Your agent forgot everything between requests. Today, we fix that - and add powerful new abilities.
+
+## What You'll Build
+
+Today your agent gains:
+
+- **Persistent Memory**: Remember conversations and learn from interactions
+- **Code Interpreter**: Execute Python code for analysis and computation
+- **Browser Tool**: Navigate websites and automate web tasks
+
+<Callout type="info" title="The Power Combination">
+  Memory + Tools transforms your agent from a simple chatbot into a capable
+  assistant that can remember context, execute code, browse the web, and
+  accomplish complex multi-step tasks.
+</Callout>
+
+## Day 3 Architecture
+
+![Memory Overview](/images/day-3/memory-overview.png)
+
+Today we add Memory and Tools to give your agent persistence and real-world capabilities:
+
+**AgentCore Memory** provides:
+- **Short-term memory**: Recent conversation context within a session
+- **Long-term memory**: Semantic extraction and retrieval across sessions
+- **Memory branching**: Parallel conversation exploration for multi-agent systems
+
+**AgentCore Tools** provide:
+- **Code Interpreter**: Secure Python execution for data analysis
+- **Browser Tool**: Web automation and research capabilities
+
+## Learning Path
+
+| Section | Topic | Time |
+|---------|-------|------|
+| 1 | [Memory Basics](/days/3/memory-basics) | 45 min |
+| 2 | [Memory Strategies](/days/3/memory-strategies) | 45 min |
+| 3 | [Code Interpreter & Browser](/days/3/tools) | 60 min |
+| 4 | [Controlled Disasters](/days/3/controlled-disasters) | 30 min |
+
+## Key Concepts
+
+### AgentCore Memory
+
+**Short-Term Memory**: Captures turn-by-turn interactions within a session
+- Maintains immediate conversation context
+- Users don't need to repeat information
+- Integrated via Strands hooks (`HookProvider`)
+
+**Long-Term Memory**: Extracts and stores insights across sessions
+- User preferences and facts via extraction strategies
+- Custom extraction with `StrategyType.CUSTOM`
+- Semantic retrieval of relevant context
+
+**Memory Branching**: Enables parallel conversation exploration
+- Different agents explore specialized topics on separate branches
+- Perfect for multi-agent systems
+- Fork and merge conversations via `MemorySessionManager`
+
+### Built-in Tools
+
+**Code Interpreter**: Secure Python execution environment
+- Data analysis and visualization
+- Complex calculations
+- File processing
+
+**Browser Tool**: Web automation capabilities
+- Navigate to URLs
+- Interact with web elements
+- Capture screenshots
+
+## Prerequisites Check
+
+Before proceeding, ensure you have:
+
+- [ ] Completed Day 2 (Identity + Gateway configured)
+- [ ] Agent deployed to AgentCore Runtime
+- [ ] Understanding of session management
+- [ ] Sample data for testing (CSV, JSON files)
+
+<Callout type="warning" title="Tool Safety">
+  Code Interpreter and Browser are powerful tools. Today we'll use them freely
+  to understand their capabilities. Day 4 adds the guardrails for safe production use.
+</Callout>
+
+## Today's Controlled Disaster
+
+<DisasterScenario
+  title="The Runaway Agent"
+  symptom="Your agent executes rm -rf commands, infinite loops, or navigates to malicious websites without any restrictions."
+  cause="Unrestricted tool access - the agent can execute any code or visit any site."
+  solution="Day 4 introduces Guardrails to constrain agent behavior and prevent dangerous actions."
+  dayReference={4}
+/>
+
+This disaster demonstrates why powerful tools require guardrails. By the end of Day 4, your agent will have both power AND safety.
+
+## Ready?
+
+Let's start by giving your agent memory.
+
+<div class="cta-section">
+  <a href="/days/3/memory-basics" class="cta-button">
+    Start Section 1: Memory Basics →
+  </a>
+</div>
+
+<style>
+{`
+  .cta-section {
+    margin-top: 3rem;
+    text-align: center;
+  }
+
+  .cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, var(--color-day-3) 0%, #7c3aed 100%);
+    color: white;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: var(--radius-lg);
+    transition: all 0.3s ease;
+  }
+
+  .cta-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(139, 92, 246, 0.4);
+  }
+`}
+</style>

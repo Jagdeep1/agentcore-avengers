@@ -1,0 +1,349 @@
+---
+/**
+ * DayCard - Course day selection card with glow effects
+ */
+
+interface Props {
+  dayNumber: number;
+  title: string;
+  avengersTitle: string;
+  focus: string;
+  isLocked?: boolean;
+  completionPercentage?: number;
+}
+
+const { dayNumber, title, avengersTitle, focus, isLocked = false, completionPercentage = 0 } = Astro.props;
+const base = import.meta.env.BASE_URL;
+
+// Day accent colors
+const colors: Record<number, string> = {
+  1: '#3b82f6',
+  2: '#ef4444',
+  3: '#8b5cf6',
+  4: '#10b981',
+  5: '#f59e0b',
+};
+
+const accentColor = colors[dayNumber] || colors[1];
+---
+
+<a
+  href={isLocked ? '#' : `${base}days/${dayNumber}`}
+  class:list={['day-card', { 'day-card--locked': isLocked }]}
+  style={`--accent: ${accentColor}`}
+  data-day={dayNumber}
+  aria-disabled={isLocked}
+>
+  <!-- Glow effect layers -->
+  <div class="day-card__glow"></div>
+  <div class="day-card__glow-inner"></div>
+
+  <!-- Content -->
+  <div class="day-card__content">
+    <!-- Status indicator -->
+    <div class="day-card__status">
+      <span class="day-card__status-dot"></span>
+      <span class="day-card__status-text">
+        {isLocked ? 'LOCKED' : completionPercentage > 0 ? `${completionPercentage}% COMPLETE` : 'READY'}
+      </span>
+    </div>
+
+    <!-- Day number badge -->
+    <div class="day-card__badge">
+      <span class="day-card__badge-number">{dayNumber.toString().padStart(2, '0')}</span>
+    </div>
+
+    <!-- Title section -->
+    <div class="day-card__titles">
+      <h3 class="day-card__avengers-title">{avengersTitle}</h3>
+      <p class="day-card__focus">{focus}</p>
+    </div>
+
+    <!-- Progress bar -->
+    {completionPercentage > 0 && (
+      <div class="day-card__progress">
+        <div class="day-card__progress-bar" style={`width: ${completionPercentage}%`}></div>
+      </div>
+    )}
+
+    <!-- Lock overlay -->
+    {isLocked && (
+      <div class="day-card__lock">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+        </svg>
+        <span>Complete Day {dayNumber - 1} to unlock</span>
+      </div>
+    )}
+
+    <!-- Arrow indicator -->
+    <div class="day-card__arrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M5 12h14M12 5l7 7-7 7" />
+      </svg>
+    </div>
+  </div>
+
+  <!-- Animated border -->
+  <div class="day-card__border"></div>
+</a>
+
+<style>
+  .day-card {
+    position: relative;
+    display: block;
+    padding: 1.5rem;
+    background: linear-gradient(
+      135deg,
+      rgba(17, 24, 39, 0.8) 0%,
+      rgba(10, 15, 26, 0.95) 100%
+    );
+    border-radius: var(--radius-xl);
+    text-decoration: none;
+    overflow: hidden;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .day-card:hover {
+    transform: translateY(-4px) scale(1.02);
+  }
+
+  .day-card--locked {
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  .day-card--locked:hover {
+    transform: none;
+  }
+
+  /* Glow effects */
+  .day-card__glow {
+    position: absolute;
+    inset: -2px;
+    background: conic-gradient(
+      from 180deg at 50% 50%,
+      transparent 0deg,
+      var(--accent) 60deg,
+      transparent 120deg,
+      var(--accent) 240deg,
+      transparent 300deg
+    );
+    border-radius: inherit;
+    opacity: 0;
+    filter: blur(20px);
+    transition: opacity 0.5s ease;
+    z-index: -1;
+  }
+
+  .day-card:hover .day-card__glow {
+    opacity: 0.4;
+    animation: rotate-glow 4s linear infinite;
+  }
+
+  @keyframes rotate-glow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .day-card__glow-inner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 60%;
+    height: 60%;
+    background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    filter: blur(40px);
+    transition: opacity 0.5s ease;
+    z-index: -1;
+  }
+
+  .day-card:hover .day-card__glow-inner {
+    opacity: 0.15;
+  }
+
+  /* Animated border */
+  .day-card__border {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--accent) 40%, transparent) 0%,
+      transparent 50%,
+      color-mix(in srgb, var(--accent) 20%, transparent) 100%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* Content */
+  .day-card__content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 180px;
+  }
+
+  /* Status indicator */
+  .day-card__status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.625rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-muted);
+    margin-bottom: 1rem;
+  }
+
+  .day-card__status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  .day-card--locked .day-card__status-dot {
+    background-color: var(--color-text-muted);
+    box-shadow: none;
+    animation: none;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  /* Day badge */
+  .day-card__badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--accent) 20%, transparent) 0%,
+      color-mix(in srgb, var(--accent) 5%, transparent) 100%
+    );
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    border-radius: var(--radius-lg);
+  }
+
+  .day-card__badge-number {
+    font-family: var(--font-mono);
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-shadow: 0 0 20px var(--accent);
+  }
+
+  /* Titles */
+  .day-card__titles {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .day-card__avengers-title {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .day-card__focus {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.4;
+  }
+
+  /* Progress bar */
+  .day-card__progress {
+    height: 3px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 1rem;
+  }
+
+  .day-card__progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 60%, white));
+    border-radius: inherit;
+    box-shadow: 0 0 10px var(--accent);
+    transition: width 0.5s ease;
+  }
+
+  /* Lock overlay */
+  .day-card__lock {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    background: rgba(10, 15, 26, 0.8);
+    border-radius: inherit;
+  }
+
+  .day-card__lock svg {
+    width: 2rem;
+    height: 2rem;
+    color: var(--color-text-muted);
+  }
+
+  .day-card__lock span {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+
+  /* Arrow */
+  .day-card__arrow {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: all 0.3s ease;
+  }
+
+  .day-card__arrow svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--accent);
+  }
+
+  .day-card:hover .day-card__arrow {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .day-card--locked .day-card__arrow {
+    display: none;
+  }
+</style>

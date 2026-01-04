@@ -1,0 +1,801 @@
+---
+title: "Observability"
+dayNumber: 4
+avengersTitle: "Endgame"
+focus: "Guardrails + Observability"
+description: "Implement comprehensive tracing, metrics, and logging to understand and monitor agent behavior."
+estimatedTime: "60 minutes"
+objectives:
+  - "Configure AgentCore traces with CloudWatch integration"
+  - "Set up custom metrics for agent performance"
+  - "Implement structured logging for debugging"
+  - "Build a CloudWatch dashboard for monitoring"
+order: 1
+published: true
+---
+
+import Callout from '@/components/content/Callout.astro';
+
+# Observability
+
+Guardrails prevent problems. **Observability** lets you see when they happen, understand why, and fix them before users notice.
+
+## Observability Architecture
+
+### Local Development
+
+![Local Observability](/images/day-4/observability-local.png)
+
+During local development, observability data flows to CloudWatch through the OpenTelemetry collector.
+
+### Runtime Deployment
+
+![Runtime Observability](/images/day-4/observability-runtime.png)
+
+In AgentCore Runtime, observability is automatically configured with managed infrastructure.
+
+## The Three Pillars
+
+**Traces** answer "What happened in this specific request?"
+- Request → Auth → Memory Fetch → Tool Call → Response
+- Timing breakdown: 2ms → 15ms → 120ms → 3400ms → 50ms
+
+**Metrics** answer "How is the system performing overall?"
+- Latency: p50=1.2s, p99=5.3s
+- Requests/min: 145
+- Error rate: 0.3%
+
+**Logs** provide "Details and context"
+- `[ERROR] Tool execution failed: timeout after 60s`
+- `Context: {userId: 'u-123', tool: 'execute_python', ...}`
+
+## AgentCore Traces
+
+AgentCore automatically generates traces for every request, showing the complete execution flow.
+
+### BedrockAgentCoreApp with Automatic Tracing
+
+The `BedrockAgentCoreApp` provides automatic OpenTelemetry instrumentation:
+
+```python
+from strands import Agent, tool
+from strands_tools import calculator
+from bedrock_agentcore.runtime import BedrockAgentCoreApp
+from strands.models import BedrockModel
+
+# Initialize AgentCore app with automatic OpenTelemetry
+app = BedrockAgentCoreApp()
+
+@tool
+def weather():
+    """Get current weather conditions."""
+    return "sunny, 72°F"
+
+model = BedrockModel(model_id="anthropic.claude-sonnet-4-20250514-v1:0")
+
+agent = Agent(
+    model=model,
+    tools=[calculator, weather],
+    system_prompt="You're a helpful assistant with math and weather capabilities."
+)
+
+@app.entrypoint
+def handle_request(payload):
+    """Agent entrypoint with automatic tracing."""
+    user_input = payload.get("prompt")
+    response = agent(user_input)
+    return response.message['content'][0]['text']
+
+if __name__ == "__main__":
+    app.run()
+```
+
+### OpenTelemetry Configuration
+
+![Configure Observability](/images/day-4/observability-configure.png)
+
+The `BedrockAgentCoreApp` automatically:
+- Initializes OpenTelemetry exporters
+- Creates trace contexts for each request
+- Captures tool invocations as spans
+- Exports metrics to CloudWatch
+
+Install the AWS OpenTelemetry distribution:
+
+```bash
+pip install aws-opentelemetry-distro
+```
+
+### Launch and Invoke Flow
+
+![Launch Agent](/images/day-4/observability-launch.png)
+
+![Invoke Agent](/images/day-4/observability-invoke.png)
+
+<Callout type="tip" title="Automatic Instrumentation">
+When using `BedrockAgentCoreApp`, traces are automatically created. No manual span creation required for standard agent operations.
+</Callout>
+
+### Legacy Trace Retrieval
+
+For direct trace access via boto3:
+
+```python
+import boto3
+
+# Enable traces when creating an agent session
+agentcore = boto3.client('bedrock-agentcore-runtime', region_name='us-east-1')
+
+response = agentcore.invoke_agent(
+    agentId='agent-xxxx',
+    sessionId='session-123',
+    inputText='User message here',
+    enableTrace=True,  # Enable detailed tracing
+    traceLevel='DETAILED'  # or 'BASIC'
+)
+
+# Trace is included in response
+trace = response.get('trace', {})
+```
+
+### Trace Structure
+
+Each trace contains:
+
+```python
+trace = {
+    'traceId': 'trace-abc123',
+    'agentId': 'agent-xxxx',
+    'sessionId': 'session-123',
+    'timestamp': '2025-01-03T21:00:00Z',
+
+    # Input processing
+    'input': {
+        'text': 'User message',
+        'guardrailsApplied': True,
+        'guardrailDecision': 'ALLOWED'
+    },
+
+    # Orchestration steps
+    'orchestration': [
+        {
+            'step': 'memory_retrieval',
+            'startTime': '2025-01-03T21:00:00.100Z',
+            'endTime': '2025-01-03T21:00:00.220Z',
+            'durationMs': 120,
+            'memoriesRetrieved': 3
+        },
+        {
+            'step': 'tool_invocation',
+            'startTime': '2025-01-03T21:00:00.220Z',
+            'endTime': '2025-01-03T21:00:03.620Z',
+            'durationMs': 3400,
+            'tool': 'execute_python',
+            'toolInput': 'import pandas as pd; ...',
+            'toolOutput': 'Result: 42'
+        },
+        {
+            'step': 'model_invocation',
+            'startTime': '2025-01-03T21:00:03.620Z',
+            'endTime': '2025-01-03T21:00:04.820Z',
+            'durationMs': 1200,
+            'modelId': 'anthropic.claude-sonnet-4-20250514-v1:0',
+            'inputTokens': 1500,
+            'outputTokens': 340
+        }
+    ],
+
+    # Output
+    'output': {
+        'text': 'Agent response',
+        'guardrailsApplied': True,
+        'guardrailDecision': 'ALLOWED'
+    },
+
+    # Summary
+    'totalDurationMs': 4720,
+    'status': 'SUCCESS'
+}
+```
+
+### Trace Analysis
+
+Extract insights from traces:
+
+```python
+def analyze_trace(trace: dict) -> dict:
+    """Analyze a trace for performance and errors."""
+
+    total_duration = trace['totalDurationMs']
+    steps = trace['orchestration']
+
+    # Find slowest step
+    slowest = max(steps, key=lambda s: s['durationMs'])
+
+    # Calculate token usage and cost
+    model_steps = [s for s in steps if s['step'] == 'model_invocation']
+    total_tokens = sum(s['inputTokens'] + s['outputTokens'] for s in model_steps)
+
+    # Estimate cost (example rates)
+    input_tokens = sum(s['inputTokens'] for s in model_steps)
+    output_tokens = sum(s['outputTokens'] for s in model_steps)
+    cost = (input_tokens * 0.000003) + (output_tokens * 0.000015)
+
+    return {
+        'total_duration_ms': total_duration,
+        'slowest_step': {
+            'name': slowest['step'],
+            'duration_ms': slowest['durationMs'],
+            'percentage': (slowest['durationMs'] / total_duration) * 100
+        },
+        'tool_calls': len([s for s in steps if s['step'] == 'tool_invocation']),
+        'total_tokens': total_tokens,
+        'estimated_cost_usd': cost,
+        'status': trace['status']
+    }
+
+# Example usage
+analysis = analyze_trace(trace)
+print(f"Request took {analysis['total_duration_ms']}ms")
+print(f"Slowest step: {analysis['slowest_step']['name']} ({analysis['slowest_step']['duration_ms']}ms)")
+print(f"Cost: ${analysis['estimated_cost_usd']:.4f}")
+```
+
+## CloudWatch Integration
+
+Send traces, metrics, and logs to CloudWatch for centralized monitoring.
+
+### Automatic Trace Publishing
+
+```python
+import boto3
+
+# AgentCore automatically sends traces to CloudWatch
+# Configure log group for traces
+logs = boto3.client('logs', region_name='us-east-1')
+
+logs.create_log_group(
+    logGroupName='/aws/bedrock/agentcore/traces'
+)
+
+# Traces appear as log events
+# Query them with CloudWatch Insights
+```
+
+### Custom Metrics
+
+Publish agent-specific metrics:
+
+```python
+import boto3
+from datetime import datetime
+
+cloudwatch = boto3.client('cloudwatch', region_name='us-east-1')
+
+def publish_agent_metrics(trace_analysis: dict):
+    """Publish custom metrics from trace analysis."""
+
+    metrics = [
+        {
+            'MetricName': 'RequestLatency',
+            'Value': trace_analysis['total_duration_ms'],
+            'Unit': 'Milliseconds',
+            'Timestamp': datetime.now()
+        },
+        {
+            'MetricName': 'TokensUsed',
+            'Value': trace_analysis['total_tokens'],
+            'Unit': 'Count',
+            'Timestamp': datetime.now()
+        },
+        {
+            'MetricName': 'RequestCost',
+            'Value': trace_analysis['estimated_cost_usd'],
+            'Unit': 'None',
+            'Timestamp': datetime.now()
+        },
+        {
+            'MetricName': 'ToolCalls',
+            'Value': trace_analysis['tool_calls'],
+            'Unit': 'Count',
+            'Timestamp': datetime.now()
+        }
+    ]
+
+    cloudwatch.put_metric_data(
+        Namespace='AgentCore/Agent',
+        MetricData=metrics
+    )
+
+# After each request
+analysis = analyze_trace(trace)
+publish_agent_metrics(analysis)
+```
+
+### Metric Dimensions
+
+Add dimensions for filtering:
+
+```python
+def publish_metrics_with_dimensions(trace: dict, analysis: dict):
+    """Publish metrics with dimensions for filtering."""
+
+    dimensions = [
+        {'Name': 'AgentId', 'Value': trace['agentId']},
+        {'Name': 'Environment', 'Value': 'production'},
+        {'Name': 'Status', 'Value': trace['status']}
+    ]
+
+    cloudwatch.put_metric_data(
+        Namespace='AgentCore/Agent',
+        MetricData=[{
+            'MetricName': 'RequestLatency',
+            'Value': analysis['total_duration_ms'],
+            'Unit': 'Milliseconds',
+            'Dimensions': dimensions,
+            'Timestamp': datetime.now()
+        }]
+    )
+
+# Query metrics by dimension
+# Example: "Latency for production environment only"
+```
+
+## Structured Logging
+
+Use structured logging for better searchability:
+
+```python
+import logging
+import json
+from datetime import datetime
+
+# Configure structured logger
+logger = logging.getLogger('agentcore')
+logger.setLevel(logging.INFO)
+
+handler = logging.StreamHandler()
+handler.setFormatter(logging.Formatter('%(message)s'))
+logger.addHandler(handler)
+
+def log_structured(level: str, message: str, **kwargs):
+    """Log with structured fields."""
+    log_entry = {
+        'timestamp': datetime.now().isoformat(),
+        'level': level,
+        'message': message,
+        **kwargs
+    }
+    logger.info(json.dumps(log_entry))
+
+# Usage
+log_structured('INFO', 'Agent request started',
+    userId='user-123',
+    sessionId='session-456',
+    agentId='agent-xxxx'
+)
+
+log_structured('ERROR', 'Tool execution failed',
+    userId='user-123',
+    tool='execute_python',
+    error='Timeout after 60s',
+    code_length=450
+)
+```
+
+### Request Logging Middleware
+
+Add logging to all agent requests:
+
+```python
+from functools import wraps
+import time
+
+def log_agent_request(func):
+    """Decorator to log agent requests."""
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+        request_id = generate_request_id()
+
+        log_structured('INFO', 'Agent request started',
+            request_id=request_id,
+            function=func.__name__,
+            args_length=len(str(args))
+        )
+
+        try:
+            result = func(*args, **kwargs)
+
+            duration_ms = (time.time() - start_time) * 1000
+
+            log_structured('INFO', 'Agent request completed',
+                request_id=request_id,
+                duration_ms=duration_ms,
+                status='success'
+            )
+
+            return result
+
+        except Exception as e:
+            duration_ms = (time.time() - start_time) * 1000
+
+            log_structured('ERROR', 'Agent request failed',
+                request_id=request_id,
+                duration_ms=duration_ms,
+                error=str(e),
+                status='error'
+            )
+
+            raise
+
+    return wrapper
+
+@log_agent_request
+def invoke_agent(agent_id: str, session_id: str, message: str):
+    # Agent invocation logic
+    pass
+```
+
+## CloudWatch Dashboards
+
+Visualize agent performance with dashboards:
+
+```python
+import boto3
+
+cloudwatch = boto3.client('cloudwatch', region_name='us-east-1')
+
+# Create dashboard
+dashboard_body = {
+    "widgets": [
+        {
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    ["AgentCore/Agent", "RequestLatency", {"stat": "Average"}],
+                    [".", ".", {"stat": "p99"}]
+                ],
+                "period": 300,
+                "stat": "Average",
+                "region": "us-east-1",
+                "title": "Request Latency"
+            }
+        },
+        {
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    ["AgentCore/Agent", "TokensUsed", {"stat": "Sum"}]
+                ],
+                "period": 300,
+                "stat": "Sum",
+                "region": "us-east-1",
+                "title": "Token Usage (5 min)"
+            }
+        },
+        {
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    ["AgentCore/Agent", "RequestCost", {"stat": "Sum"}]
+                ],
+                "period": 3600,
+                "stat": "Sum",
+                "region": "us-east-1",
+                "title": "Cost per Hour"
+            }
+        },
+        {
+            "type": "log",
+            "properties": {
+                "query": """
+                    SOURCE '/aws/bedrock/agentcore/traces'
+                    | fields @timestamp, message
+                    | filter level = "ERROR"
+                    | sort @timestamp desc
+                    | limit 20
+                """,
+                "region": "us-east-1",
+                "title": "Recent Errors"
+            }
+        }
+    ]
+}
+
+cloudwatch.put_dashboard(
+    DashboardName='AgentCore-Production',
+    DashboardBody=json.dumps(dashboard_body)
+)
+```
+
+<Callout type="tip" title="Dashboard Best Practices">
+  Include:
+  - Latency (p50, p95, p99)
+  - Error rate
+  - Request volume
+  - Token usage and cost
+  - Guardrail block rate
+  - Tool usage breakdown
+</Callout>
+
+## CloudWatch Insights Queries
+
+Analyze logs with CloudWatch Insights:
+
+```sql
+-- Find slowest requests
+fields @timestamp, trace.totalDurationMs, trace.agentId
+| filter trace.totalDurationMs > 5000
+| sort trace.totalDurationMs desc
+| limit 20
+
+-- Error rate by agent
+fields trace.agentId, trace.status
+| stats count() as total,
+        sum(trace.status = 'ERROR') as errors
+  by trace.agentId
+| fields trace.agentId, errors / total * 100 as error_rate
+
+-- Most expensive requests
+fields @timestamp, trace.traceId, trace.totalDurationMs
+| filter ispresent(trace.orchestration)
+| fields @timestamp,
+         trace.traceId,
+         sum(trace.orchestration[*].inputTokens) as input_tokens,
+         sum(trace.orchestration[*].outputTokens) as output_tokens,
+         (input_tokens * 0.000003 + output_tokens * 0.000015) as cost
+| sort cost desc
+| limit 20
+
+-- Tool usage breakdown
+fields trace.orchestration[*].tool as tools
+| filter ispresent(tools)
+| stats count() by tools
+
+-- Guardrail block rate
+fields trace.input.guardrailDecision
+| stats count() as total,
+        sum(trace.input.guardrailDecision = 'BLOCKED') as blocked
+| fields blocked / total * 100 as block_rate
+```
+
+## Alerts
+
+Set up CloudWatch alarms:
+
+```python
+# High latency alarm
+cloudwatch.put_metric_alarm(
+    AlarmName='AgentCore-HighLatency',
+    ComparisonOperator='GreaterThanThreshold',
+    EvaluationPeriods=2,
+    MetricName='RequestLatency',
+    Namespace='AgentCore/Agent',
+    Period=300,
+    Statistic='Average',
+    Threshold=5000,  # 5 seconds
+    ActionsEnabled=True,
+    AlarmActions=['arn:aws:sns:us-east-1:123456789:agent-alerts'],
+    AlarmDescription='Alert when request latency exceeds 5s'
+)
+
+# High error rate alarm
+cloudwatch.put_metric_alarm(
+    AlarmName='AgentCore-HighErrorRate',
+    ComparisonOperator='GreaterThanThreshold',
+    EvaluationPeriods=2,
+    Metrics=[
+        {
+            'Id': 'error_rate',
+            'Expression': 'errors / requests * 100',
+            'Label': 'Error Rate %'
+        },
+        {
+            'Id': 'errors',
+            'MetricStat': {
+                'Metric': {
+                    'Namespace': 'AgentCore/Agent',
+                    'MetricName': 'Errors',
+                    'Dimensions': [{'Name': 'Status', 'Value': 'ERROR'}]
+                },
+                'Period': 300,
+                'Stat': 'Sum'
+            }
+        },
+        {
+            'Id': 'requests',
+            'MetricStat': {
+                'Metric': {
+                    'Namespace': 'AgentCore/Agent',
+                    'MetricName': 'Requests'
+                },
+                'Period': 300,
+                'Stat': 'Sum'
+            }
+        }
+    ],
+    Threshold=5,  # 5% error rate
+    ActionsEnabled=True,
+    AlarmActions=['arn:aws:sns:us-east-1:123456789:agent-alerts']
+)
+
+# Cost alarm
+cloudwatch.put_metric_alarm(
+    AlarmName='AgentCore-HighCost',
+    ComparisonOperator='GreaterThanThreshold',
+    EvaluationPeriods=1,
+    MetricName='RequestCost',
+    Namespace='AgentCore/Agent',
+    Period=3600,
+    Statistic='Sum',
+    Threshold=10.0,  # $10/hour
+    ActionsEnabled=True,
+    AlarmActions=['arn:aws:sns:us-east-1:123456789:cost-alerts']
+)
+```
+
+## Complete Observability Stack
+
+Put it all together:
+
+```python
+# agent_with_observability.py
+import boto3
+import logging
+import json
+from datetime import datetime
+from strands import Agent
+from strands.models import BedrockModel
+
+class ObservableAgent:
+    """Agent with full observability."""
+
+    def __init__(self, agent_id: str):
+        self.agent_id = agent_id
+        self.model = BedrockModel(
+            model_id="anthropic.claude-sonnet-4-20250514-v1:0"
+        )
+        self.agent = Agent(model=self.model)
+        self.cloudwatch = boto3.client('cloudwatch')
+        self.logger = self.setup_logger()
+
+    def setup_logger(self):
+        logger = logging.getLogger(f'agent-{self.agent_id}')
+        logger.setLevel(logging.INFO)
+        handler = logging.StreamHandler()
+        handler.setFormatter(logging.Formatter('%(message)s'))
+        logger.addHandler(handler)
+        return logger
+
+    def log(self, level: str, message: str, **kwargs):
+        log_entry = {
+            'timestamp': datetime.now().isoformat(),
+            'level': level,
+            'agent_id': self.agent_id,
+            'message': message,
+            **kwargs
+        }
+        self.logger.info(json.dumps(log_entry))
+
+    def publish_metrics(self, metrics: dict):
+        metric_data = []
+        for name, value in metrics.items():
+            metric_data.append({
+                'MetricName': name,
+                'Value': value,
+                'Unit': 'None',
+                'Timestamp': datetime.now(),
+                'Dimensions': [
+                    {'Name': 'AgentId', 'Value': self.agent_id}
+                ]
+            })
+
+        self.cloudwatch.put_metric_data(
+            Namespace='AgentCore/Agent',
+            MetricData=metric_data
+        )
+
+    def invoke(self, session_id: str, message: str) -> str:
+        import time
+        start_time = time.time()
+
+        self.log('INFO', 'Request started',
+            session_id=session_id,
+            message_length=len(message)
+        )
+
+        try:
+            response = self.agent(message)
+            duration_ms = (time.time() - start_time) * 1000
+
+            self.log('INFO', 'Request completed',
+                session_id=session_id,
+                duration_ms=duration_ms,
+                response_length=len(response)
+            )
+
+            self.publish_metrics({
+                'Requests': 1,
+                'RequestLatency': duration_ms,
+                'Successes': 1
+            })
+
+            return response
+
+        except Exception as e:
+            duration_ms = (time.time() - start_time) * 1000
+
+            self.log('ERROR', 'Request failed',
+                session_id=session_id,
+                duration_ms=duration_ms,
+                error=str(e)
+            )
+
+            self.publish_metrics({
+                'Requests': 1,
+                'RequestLatency': duration_ms,
+                'Errors': 1
+            })
+
+            raise
+```
+
+## Checkpoint
+
+You've now learned:
+
+- ✅ AgentCore traces and trace analysis
+- ✅ CloudWatch integration for metrics and logs
+- ✅ Structured logging patterns
+- ✅ Building dashboards and alerts
+- ✅ Complete observability implementation
+
+**Next, we'll learn how to evaluate agent performance.**
+
+<div class="nav-buttons">
+  <a href="/days/4" class="nav-button nav-button--prev">
+    ← Day 4 Overview
+  </a>
+  <a href="/days/4/evaluations" class="nav-button nav-button--next">
+    Next: Evaluations →
+  </a>
+</div>
+
+<style>
+{`
+  .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+    gap: 1rem;
+  }
+
+  .nav-button {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+  }
+
+  .nav-button--prev {
+    color: var(--color-text-secondary);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .nav-button--prev:hover {
+    background: var(--color-bg-secondary);
+  }
+
+  .nav-button--next {
+    color: white;
+    background: var(--color-day-4);
+  }
+
+  .nav-button--next:hover {
+    opacity: 0.9;
+  }
+`}
+</style>

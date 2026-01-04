@@ -1,0 +1,13 @@
+---
+interface Props {
+  src: string;
+  alt: string;
+  class?: string;
+}
+
+const { src, alt, class: className } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const imageSrc = src.startsWith('/') ? `${base}${src.slice(1)}` : src;
+---
+
+<img src={imageSrc} alt={alt} class={className} />

@@ -1,0 +1,315 @@
+---
+title: "Controlled Disasters"
+dayNumber: 1
+avengersTitle: "The First Avenger"
+focus: "Foundation - Strands Agent + AgentCore Runtime"
+description: "Experience the limitations of a basic agent to understand why enterprise features matter."
+estimatedTime: "30 minutes"
+objectives:
+  - "Experience the 'Vanishing Context' disaster firsthand"
+  - "Understand why memory persistence is essential"
+  - "Preview Day 3's solution with AgentCore Memory"
+order: 4
+published: true
+---
+
+import Callout from '@/components/content/Callout.astro';
+import DisasterScenario from '@/components/course/DisasterScenario.astro';
+
+# Controlled Disasters
+
+Congratulations! You have a working agent deployed to production. But production isn't just about "working" - it's about **working correctly under real-world conditions**.
+
+This section introduces a controlled disaster: an intentional failure that reveals why enterprise features aren't optional.
+
+## The Vanishing Context
+
+<DisasterScenario
+  title="The Vanishing Context"
+  symptom="Your agent forgets the entire conversation after each request"
+  cause="No memory persistence - each invocation is completely stateless"
+  solution="AgentCore Memory provides persistent conversation history"
+  dayReference={3}
+/>
+
+### Experience It Yourself
+
+Let's reproduce this disaster with your deployed agent:
+
+```bash
+# Conversation 1: Tell the agent your name
+agentcore invoke --message "Hi! My name is Sarah."
+
+# Response: "Hello Sarah! Nice to meet you. How can I help you today?"
+
+# Conversation 2: Ask if it remembers
+agentcore invoke --message "What's my name?"
+
+# Response: "I don't have any information about your name.
+#           Could you please tell me your name?"
+```
+
+**The agent forgot!** Each invocation starts with zero context about previous conversations.
+
+### Why Does This Happen?
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Request 1                                 │
+│  ┌────────────────────────────────────────────────────────┐ │
+│  │  User: "My name is Sarah"                               │ │
+│  │  Agent: "Hello Sarah!"                                  │ │
+│  │                                                         │ │
+│  │  Context: ████████████ (exists during request)         │ │
+│  └────────────────────────────────────────────────────────┘ │
+│                         │                                    │
+│                         ▼                                    │
+│                   Request ends                               │
+│              Context is DESTROYED ❌                         │
+└─────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│                    Request 2                                 │
+│  ┌────────────────────────────────────────────────────────┐ │
+│  │  User: "What's my name?"                                │ │
+│  │  Agent: "I don't know your name"                        │ │
+│  │                                                         │ │
+│  │  Context: ░░░░░░░░░░░░ (empty - fresh start)           │ │
+│  └────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+```
+
+<Callout type="warning" title="This is By Design">
+  AgentCore Runtime provides **session isolation** for security.
+  Each request runs in a fresh environment - previous state is not automatically preserved.
+</Callout>
+
+### Real-World Impact
+
+In production, this limitation causes:
+
+| Scenario | Impact |
+|----------|--------|
+| Customer support | Agent forgets customer history, requiring repetitive explanations |
+| Multi-step tasks | Agent can't track progress across conversation turns |
+| Personalization | Cannot remember user preferences or context |
+| Complex workflows | Unable to maintain state through multi-turn interactions |
+
+## The Deeper Problem: Tool Context
+
+It's not just conversation history. Watch what happens with tools:
+
+```bash
+# Request 1: Ask for a calculation
+agentcore invoke --message "Calculate 15% of $200 and remember this as my monthly savings target"
+
+# Response: "15% of $200 is $30. I'll remember this as your monthly savings target."
+
+# Request 2: Reference the previous calculation
+agentcore invoke --message "How much was my savings target again?"
+
+# Response: "I don't have any information about a savings target.
+#           Would you like me to help you calculate one?"
+```
+
+The agent "said" it would remember, but it can't actually persist anything.
+
+## Why Not Just Store It?
+
+You might think: "I'll just save the conversation to a database!"
+
+Let's try a naive implementation:
+
+```python
+# agent.py - Naive approach (DON'T DO THIS)
+import json
+from pathlib import Path
+
+MEMORY_FILE = Path("/tmp/conversation_history.json")
+
+def load_history():
+    if MEMORY_FILE.exists():
+        return json.loads(MEMORY_FILE.read_text())
+    return []
+
+def save_history(history):
+    MEMORY_FILE.write_text(json.dumps(history))
+
+@runtime_handler
+def handler(event, context):
+    # Load previous conversation
+    history = load_history()
+
+    # Add new message
+    history.append({"role": "user", "content": event["message"]})
+
+    # Get response with history
+    response = agent_with_history(history)
+
+    # Save updated history
+    history.append({"role": "assistant", "content": response})
+    save_history(history)
+
+    return {"response": response}
+```
+
+<Callout type="danger" title="Problems with This Approach">
+
+**1. Session Isolation**: AgentCore Runtime containers are ephemeral. The filesystem isn't shared between invocations.
+
+**2. Concurrency**: Multiple requests could corrupt the shared state.
+
+**3. Multi-tenancy**: All users would share the same conversation history!
+
+**4. Scaling**: File-based storage doesn't scale across multiple container instances.
+
+**5. Security**: Sensitive conversation data stored insecurely.
+
+</Callout>
+
+## The Right Solution: AgentCore Memory
+
+This is why AgentCore provides a dedicated **Memory** component:
+
+```python
+# Preview of Day 3 solution
+from bedrock_agentcore.memory import MemoryClient
+
+memory = MemoryClient()
+
+@runtime_handler
+def handler(event, context):
+    session_id = event["session_id"]
+
+    # Load conversation history from AgentCore Memory
+    history = memory.get_session(session_id)
+
+    # Get response with full context
+    response = agent(event["message"], history=history)
+
+    # Save to persistent memory
+    memory.add_message(session_id, "user", event["message"])
+    memory.add_message(session_id, "assistant", response)
+
+    return {"response": response}
+```
+
+AgentCore Memory provides:
+
+- ✅ **Persistent storage** across invocations
+- ✅ **Session-based isolation** (each user/session is separate)
+- ✅ **Automatic scaling** (managed service)
+- ✅ **Security** (encrypted, access-controlled)
+- ✅ **Memory strategies** (summarization, fact extraction)
+
+<Callout type="info" title="Day 3 Preview">
+  In Day 3, you'll implement full memory integration with multiple strategies:
+  - **Short-term memory**: Recent conversation turns
+  - **Long-term memory**: Facts, preferences, summaries
+  - **Semantic retrieval**: Find relevant past context
+</Callout>
+
+## Exercise: Document the Disaster
+
+Before moving to the challenge, document what you observed:
+
+### Reflection Questions
+
+1. **What happened** when you asked the agent about information from a previous request?
+
+2. **Why** does AgentCore Runtime behave this way? (Hint: Security)
+
+3. **What types of applications** would be severely impacted by this limitation?
+
+4. **What's the difference** between session isolation and memory persistence?
+
+### Record Your Findings
+
+Create a file `disaster-notes.md` in your project:
+
+```markdown
+# Day 1 Disaster Notes
+
+## Observed Behavior
+- [Your observations]
+
+## Root Cause
+- [Your understanding]
+
+## Business Impact
+- [Real-world consequences]
+
+## Solution (Preview)
+- AgentCore Memory (Day 3)
+```
+
+## Looking Ahead
+
+Today's disaster reveals the first major gap between "demo agent" and "production agent":
+
+| Day | Disaster | Missing Component |
+|-----|----------|-------------------|
+| **Day 1** | **Vanishing Context** | **Memory** |
+| Day 2 | The Open Door | Identity + Gateway |
+| Day 3 | The Runaway Agent | Tool Controls |
+| Day 4 | Flying Blind | Observability |
+
+Each disaster motivates the next day's enterprise feature.
+
+## Summary
+
+You've now experienced firsthand why enterprise features matter:
+
+- ✅ Built and deployed a working agent
+- ✅ Discovered its memory limitation
+- ✅ Understood why naive solutions don't work
+- ✅ Previewed the proper solution
+
+**Time for the Day 1 Challenge!**
+
+<div class="nav-buttons">
+  <a href="/days/1/agentcore-runtime" class="nav-button nav-button--prev">
+    ← AgentCore Runtime
+  </a>
+  <a href="/days/1/challenge" class="nav-button nav-button--next">
+    Day 1 Challenge →
+  </a>
+</div>
+
+<style>
+{`
+  .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+    gap: 1rem;
+  }
+
+  .nav-button {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+  }
+
+  .nav-button--prev {
+    color: var(--color-text-secondary);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .nav-button--prev:hover {
+    background: var(--color-bg-secondary);
+  }
+
+  .nav-button--next {
+    color: white;
+    background: var(--color-tier-gold);
+  }
+
+  .nav-button--next:hover {
+    opacity: 0.9;
+  }
+`}
+</style>

@@ -1,0 +1,33 @@
+---
+/**
+ * HomeLayout - Layout for the landing page
+ */
+
+import BaseLayout from './BaseLayout.astro';
+import Header from '@/components/navigation/Header.astro';
+import Footer from '@/components/navigation/Footer.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'The AgentCore Initiative',
+  description = 'A 5-day hands-on course on AWS AgentCore. Build production-ready AI agents with AWS Strands Agent SDK.',
+} = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+  <Header variant="transparent" />
+  <main>
+    <slot />
+  </main>
+  <Footer />
+</BaseLayout>
+
+<style>
+  main {
+    min-height: 100vh;
+  }
+</style>

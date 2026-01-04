@@ -1,0 +1,617 @@
+---
+title: "AgentCore Gateway"
+dayNumber: 2
+avengersTitle: "Age of Ultron"
+focus: "Identity + AgentCore Gateway"
+description: "Connect your agent to external tools and APIs using AgentCore Gateway's unified MCP interface."
+estimatedTime: "60 minutes"
+objectives:
+  - "Understand Gateway's role as a unified tool interface"
+  - "Create a gateway and connect API targets"
+  - "Use semantic search for tool discovery"
+  - "Integrate Gateway tools with your Strands agent"
+order: 2
+published: true
+---
+
+import Callout from '@/components/content/Callout.astro';
+
+# AgentCore Gateway
+
+Your agent is authenticated. Now it needs to **do things** - access APIs, retrieve data, trigger actions. AgentCore Gateway provides a unified, secure interface for connecting your agent to the tools and services it needs.
+
+## Why Gateway?
+
+Without Gateway, connecting agents to tools is painful:
+
+```
+❌ Without Gateway:
+- Each API requires custom integration code
+- Credential management spread across your codebase
+- No standard protocol for tool discovery
+- Security is your responsibility
+```
+
+Gateway transforms this:
+
+```
+✅ With Gateway:
+- Unified MCP interface for all tools
+- Centralized, secure credential management
+- Semantic search for intelligent tool discovery
+- Built-in authentication and authorization
+```
+
+<Callout type="info" title="MCP: Model Context Protocol">
+  Gateway speaks MCP - an open protocol designed for LLM-tool communication.
+  This means your agent can discover and use tools without custom integration code.
+</Callout>
+
+## AgentCore Gateway Architecture
+
+AgentCore Gateway transforms external APIs into Model Context Protocol (MCP) tools that your agent can use.
+
+### Gateway with API Key Authentication
+
+![Gateway with API Key Architecture](/images/day-2/gateway-architecture-apikey.png)
+
+For APIs that use API keys:
+- **Runtime Agent** has access to MCP tools via Gateway
+- **AgentCore Gateway** routes tool calls to external APIs
+- **Credential Provider** securely injects API keys
+- **External API** validates requests and returns data
+
+### Gateway with OAuth Authentication
+
+![Gateway with OAuth Architecture](/images/day-2/gateway-architecture-oauth.png)
+
+For APIs that use OAuth (GitHub, Slack, etc.):
+- **User** grants consent for agent to access their data
+- **Credential Provider** manages OAuth tokens and refresh
+- **Gateway** handles token exchange and API calls
+- **External API** validates OAuth token and returns user data
+
+## Creating Your First Gateway
+
+### Step 1: Create a Gateway
+
+```python
+# create_gateway.py
+from bedrock_agentcore.services.gateway import GatewayClient
+from bedrock_agentcore.services.identity import IdentityClient
+
+gateway_client = GatewayClient(region='us-east-1')
+identity_client = IdentityClient(region='us-east-1')
+
+# Create Gateway with Cognito authorization
+gateway = gateway_client.create_gateway(
+    name='day2-api-gateway',
+    description='Gateway for transforming OpenAPI specs to MCP tools',
+    workloadIdentityId=workload_id,  # From Identity setup
+    authorizerId=authorizer_id  # Cognito JWT authorizer
+)
+
+gateway_id = gateway['gatewayId']
+print(f"Gateway ID: {gateway_id}")
+```
+
+## Creating OpenAPI Gateway Targets
+
+Transform OpenAPI specifications into MCP tools:
+
+### Step 1: Create API Key Credential Provider
+
+```python
+# Create credential provider for target API
+weather_credentials = identity_client.create_api_key_credential_provider(
+    workloadIdentityId=workload_id,
+    name='openweather-credentials',
+    description='API key for OpenWeather API',
+    apiKey='your-openweather-api-key'
+)
+
+credential_provider_id = weather_credentials['credentialProviderId']
+```
+
+### Step 2: Create OpenAPI Gateway Target
+
+```python
+# create_openapi_target.py
+from bedrock_agentcore.services.gateway import GatewayClient
+
+gateway_client = GatewayClient(region='us-east-1')
+
+# Define OpenAPI spec (can also reference external URL)
+openapi_spec = {
+    "openapi": "3.0.0",
+    "info": {
+        "title": "OpenWeather API",
+        "version": "2.5"
+    },
+    "servers": [
+        {"url": "https://api.openweathermap.org/data/2.5"}
+    ],
+    "paths": {
+        "/weather": {
+            "get": {
+                "operationId": "getCurrentWeather",
+                "summary": "Get current weather for a city",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "required": True,
+                        "schema": {"type": "string"},
+                        "description": "City name"
+                    },
+                    {
+                        "name": "units",
+                        "in": "query",
+                        "schema": {"type": "string", "default": "metric"}
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Weather data",
+                        "content": {
+                            "application/json": {
+                                "schema": {"type": "object"}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "in": "query",
+                "name": "appid"
+            }
+        }
+    },
+    "security": [{"ApiKeyAuth": []}]
+}
+
+# Create Gateway target
+target = gateway_client.create_openapi_target(
+    gatewayId=gateway_id,
+    name='weather-api',
+    description='OpenWeather API as MCP tools',
+    openApiSpec=openapi_spec,
+    credentialProviderId=credential_provider_id
+)
+
+target_id = target['targetId']
+print(f"OpenAPI Target ID: {target_id}")
+```
+
+### Step 3: Use OpenAPI Tools in Agent
+
+```python
+# agent_with_gateway.py
+from bedrock_agentcore.runtime import BedrockAgentCoreApp
+from bedrock_agentcore.services.gateway import MCPClient
+from strands import Agent
+from strands.models import BedrockModel
+
+app = BedrockAgentCoreApp()
+
+# Initialize MCP client to access Gateway tools
+mcp_client = MCPClient(
+    gateway_id=gateway_id,
+    region='us-east-1'
+)
+
+# Get MCP tools from Gateway
+gateway_tools = mcp_client.get_tools()
+
+model = BedrockModel(
+    model_id="anthropic.claude-sonnet-4-20250514-v1:0",
+)
+
+# Create agent with Gateway tools
+agent = Agent(
+    model=model,
+    tools=gateway_tools,  # Tools from OpenAPI spec
+    system_prompt="""You are a weather assistant with access to real-time weather data.
+
+    Use the getCurrentWeather tool to fetch actual weather conditions for any city."""
+)
+
+@app.entrypoint
+def handle_request(payload):
+    """Handle requests with Gateway tools."""
+    prompt = payload.get("prompt", "")
+    response = agent(prompt)
+    return response.message['content'][0]['text']
+
+if __name__ == "__main__":
+    app.run()
+```
+
+<Callout type="success" title="Automatic Tool Generation">
+AgentCore Gateway automatically converts OpenAPI operations into MCP tools. Your agent can discover and use them without manual tool definition!
+</Callout>
+
+## OAuth Gateway Targets
+
+Enable your agent to access user data from OAuth-protected services:
+
+### Step 1: Create OAuth Credential Provider (3-Legged)
+
+```python
+# oauth_credentials.py
+from bedrock_agentcore.services.identity import IdentityClient
+
+identity_client = IdentityClient(region='us-east-1')
+
+# Create OAuth 2.0 credential provider for GitHub
+github_oauth = identity_client.create_oauth_credential_provider(
+    workloadIdentityId=workload_id,
+    name='github-oauth',
+    description='OAuth for GitHub API',
+    oauth_flow='authorization_code',  # 3-legged OAuth
+    client_id='your-github-client-id',
+    client_secret='your-github-client-secret',
+    authorization_url='https://github.com/login/oauth/authorize',
+    token_url='https://github.com/login/oauth/access_token',
+    scopes=['read:user', 'repo']
+)
+
+oauth_provider_id = github_oauth['credentialProviderId']
+```
+
+### Step 2: Create OAuth Gateway Target
+
+```python
+# Create GitHub API target with OAuth
+github_target = gateway_client.create_openapi_target(
+    gatewayId=gateway_id,
+    name='github-api',
+    description='GitHub API as MCP tools',
+    openApiSpecUrl='https://raw.githubusercontent.com/github/rest-api-description/main/descriptions/api.github.com/api.github.com.json',
+    credentialProviderId=oauth_provider_id
+)
+
+print(f"GitHub Target ID: {github_target['targetId']}")
+```
+
+### Step 3: Handle OAuth User Consent
+
+```python
+# oauth_flow.py
+import boto3
+
+identity_client = boto3.client('bedrock-agentcore-identity', region_name='us-east-1')
+
+# Generate authorization URL for user
+auth_response = identity_client.get_authorization_url(
+    credentialProviderId=oauth_provider_id,
+    redirectUri='https://your-app.com/oauth/callback',
+    state='random-state-string'
+)
+
+authorization_url = auth_response['authorizationUrl']
+print(f"Direct user to: {authorization_url}")
+
+# After user authorizes, exchange code for token
+token_response = identity_client.exchange_authorization_code(
+    credentialProviderId=oauth_provider_id,
+    code='authorization-code-from-callback',
+    redirectUri='https://your-app.com/oauth/callback'
+)
+
+print("OAuth tokens stored securely by AgentCore")
+```
+
+<Callout type="info" title="OAuth Token Management">
+AgentCore Identity automatically handles OAuth token refresh, expiration, and secure storage. Your agent always has valid credentials.
+</Callout>
+
+### Step 3: Add a Lambda Target
+
+Connect your own Lambda functions:
+
+```python
+# Add a Lambda function as a target
+lambda_target = gateway_client.create_gateway_target(
+    gatewayId=gateway_id,
+    name='custom-tools',
+    targetType='LAMBDA',
+    lambdaConfig={
+        'functionArn': 'arn:aws:lambda:us-east-1:123456789012:function:agent-tools',
+        'tools': [
+            {
+                'name': 'search_database',
+                'description': 'Search the product database',
+                'inputSchema': {
+                    'type': 'object',
+                    'properties': {
+                        'query': {'type': 'string', 'description': 'Search query'},
+                        'limit': {'type': 'integer', 'description': 'Max results'}
+                    },
+                    'required': ['query']
+                }
+            },
+            {
+                'name': 'create_ticket',
+                'description': 'Create a support ticket',
+                'inputSchema': {
+                    'type': 'object',
+                    'properties': {
+                        'title': {'type': 'string'},
+                        'description': {'type': 'string'},
+                        'priority': {'type': 'string', 'enum': ['low', 'medium', 'high']}
+                    },
+                    'required': ['title', 'description']
+                }
+            }
+        ]
+    },
+    authentication={
+        'type': 'IAM'
+    }
+)
+```
+
+### Step 4: Add Pre-built Integrations
+
+Gateway provides 1-click integrations with popular services:
+
+```python
+# Add Slack integration
+slack_target = gateway_client.create_gateway_target(
+    gatewayId=gateway_id,
+    name='slack-integration',
+    targetType='INTEGRATION',
+    integrationConfig={
+        'provider': 'SLACK',
+        'scopes': ['chat:write', 'channels:read']
+    },
+    authentication={
+        'type': 'OAUTH2',
+        'oauth2Config': {
+            'credentialProviderId': 'your-slack-credential-provider-id'
+        }
+    }
+)
+```
+
+<Callout type="tip" title="Supported Integrations">
+  Gateway includes pre-built integrations for:
+  - **Collaboration**: Slack, Microsoft Teams
+  - **Project Management**: Jira, Asana, Linear
+  - **CRM**: Salesforce, HubSpot
+  - **Developer Tools**: GitHub, GitLab
+  - **Support**: Zendesk, Intercom
+</Callout>
+
+## Using Gateway in Your Agent
+
+### With Strands Agents
+
+```python
+# agent_with_gateway.py
+from strands import Agent
+from strands.models import BedrockModel
+from strands.tools.mcp import MCPClient
+from bedrock_agentcore.runtime import runtime_handler
+
+# Initialize the model
+model = BedrockModel(
+    model_id="anthropic.claude-sonnet-4-20250514-v1:0",
+)
+
+# Connect to Gateway as an MCP client
+gateway_mcp = MCPClient(
+    endpoint="https://gateway.bedrock-agentcore.us-east-1.amazonaws.com/gw-xxxx",
+    # Authentication is handled automatically with IAM
+)
+
+# Discover available tools
+available_tools = gateway_mcp.list_tools()
+print(f"Available tools: {[t.name for t in available_tools]}")
+
+# Create agent with Gateway tools
+agent = Agent(
+    model=model,
+    tools=available_tools,  # Tools from Gateway
+    system_prompt="""You are an assistant with access to multiple tools via Gateway.
+Use the available tools to help users with their requests.
+Always check what tools are available before responding."""
+)
+
+@runtime_handler
+def handler(event, context):
+    message = event.get("message", "")
+
+    # Agent automatically uses Gateway tools
+    response = agent(message)
+
+    return {"response": str(response)}
+```
+
+### Semantic Tool Search
+
+Gateway enables intelligent tool discovery:
+
+```python
+# Search for relevant tools
+search_results = gateway_client.search_tools(
+    gatewayId=gateway_id,
+    query="send a message to a Slack channel",
+    maxResults=5
+)
+
+for tool in search_results['tools']:
+    print(f"Tool: {tool['name']}")
+    print(f"  Description: {tool['description']}")
+    print(f"  Relevance: {tool['relevanceScore']}")
+```
+
+Your agent can use semantic search dynamically:
+
+```python
+@tool
+def find_and_use_tool(task_description: str) -> str:
+    """Find and execute the most appropriate tool for a task.
+
+    Args:
+        task_description: What the user wants to accomplish
+
+    Returns:
+        Result of the tool execution
+    """
+    # Search for relevant tools
+    results = gateway_mcp.search_tools(task_description)
+
+    if not results:
+        return "No suitable tool found for this task"
+
+    best_tool = results[0]
+
+    # Let the LLM determine parameters
+    # This is handled by the agent loop automatically
+    return f"Found tool: {best_tool.name} - {best_tool.description}"
+```
+
+## Gateway Security
+
+### Inbound Authorization
+
+Protect your gateway with OAuth:
+
+```python
+# Configure gateway authorization
+gateway_client.update_gateway(
+    gatewayId=gateway_id,
+    authorization={
+        'type': 'OAUTH2',
+        'oauth2Config': {
+            'issuer': 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_xxx',
+            'audience': 'your-client-id'
+        }
+    }
+)
+```
+
+### Outbound Credentials
+
+Gateway handles credentials for each target:
+
+```python
+# Credentials are managed per-target
+# API keys stored in Secrets Manager
+# OAuth tokens stored in Identity Token Vault
+# IAM roles for AWS services
+
+# Your agent code never sees raw credentials!
+```
+
+<Callout type="success" title="Zero Credential Exposure">
+  Gateway manages all credentials internally. Your agent code never handles
+  raw API keys or OAuth tokens - they're injected at the Gateway level.
+</Callout>
+
+## Monitoring and Debugging
+
+### CloudWatch Metrics
+
+Gateway provides detailed metrics:
+
+```bash
+# View Gateway metrics
+aws cloudwatch get-metric-statistics \
+  --namespace AWS/BedrockAgentCoreGateway \
+  --metric-name ToolInvocations \
+  --dimensions Name=GatewayId,Value=gw-xxxx \
+  --start-time 2025-01-03T00:00:00Z \
+  --end-time 2025-01-03T23:59:59Z \
+  --period 3600 \
+  --statistics Sum
+```
+
+Key metrics:
+- `ToolInvocations`: Total tool calls
+- `ToolLatency`: Response time
+- `ToolErrors`: Failed invocations
+- `AuthorizationFailures`: Auth issues
+
+### Request Tracing
+
+Enable tracing for debugging:
+
+```python
+# Invoke with tracing
+response = gateway_mcp.invoke_tool(
+    tool_name='search_database',
+    arguments={'query': 'laptop'},
+    trace=True
+)
+
+print(f"Trace ID: {response.trace_id}")
+# View in CloudWatch: /aws/bedrock-agentcore-gateway/traces
+```
+
+## Checkpoint
+
+You've now learned:
+
+- ✅ What Gateway provides and why it matters
+- ✅ How to create a gateway and add targets
+- ✅ Connecting OpenAPI, Lambda, and pre-built integrations
+- ✅ Using Gateway tools in your Strands agent
+- ✅ Semantic tool discovery
+- ✅ Gateway security model
+
+**Next, we'll implement multi-tenant isolation.**
+
+<div class="nav-buttons">
+  <a href="/days/2/identity-basics" class="nav-button nav-button--prev">
+    ← Identity Basics
+  </a>
+  <a href="/days/2/multi-tenancy" class="nav-button nav-button--next">
+    Next: Multi-Tenancy →
+  </a>
+</div>
+
+<style>
+{`
+  .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+    gap: 1rem;
+  }
+
+  .nav-button {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+  }
+
+  .nav-button--prev {
+    color: var(--color-text-secondary);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .nav-button--prev:hover {
+    background: var(--color-bg-secondary);
+  }
+
+  .nav-button--next {
+    color: white;
+    background: var(--color-day-2);
+  }
+
+  .nav-button--next:hover {
+    opacity: 0.9;
+  }
+`}
+</style>

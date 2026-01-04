@@ -1,0 +1,268 @@
+---
+dayNumber: 5
+title: "Day 5: Assemble"
+avengersTitle: "Assemble"
+focus: "Multi-Agent Capstone"
+description: "Build a production multi-agent financial analytics pipeline with Knowledge Bases and dynamic orchestration"
+estimatedTime: "5-6 hours"
+objectives:
+  - "Set up Bedrock Knowledge Bases with SEC filings"
+  - "Build specialized Extract, Transform, and Report agents"
+  - "Implement dynamic LLM-based orchestration"
+  - "Deploy the complete pipeline to AgentCore Runtime"
+order: 0
+published: true
+---
+
+import Callout from '@/components/content/Callout.astro';
+
+# Day 5: Assemble
+
+<div class="day-header">
+  <div class="day-theme">
+    <span class="avengers-title">Avengers: Assemble</span>
+    <p class="theme-description">The ultimate test. Bring together everything you've learned to build a production-grade multi-agent system. Like the Avengers assembling for the final battle, your agents will work as a coordinated team.</p>
+  </div>
+</div>
+
+## The Capstone Challenge
+
+Days 1-4 prepared you:
+- **Day 1**: Agent foundations and runtime deployment
+- **Day 2**: Identity, security, and the Gateway
+- **Day 3**: Memory and powerful tools
+- **Day 4**: Guardrails and observability
+
+Now it's time to **assemble** your agents into a coordinated team that solves real business problems.
+
+## Day 5 Architecture
+
+![Multi-Agent Architecture](/images/day-5/multi-agent-architecture.png)
+
+Your financial analytics pipeline consists of four specialized agents:
+
+```
+User Query
+    │
+    ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    ORCHESTRATOR AGENT                        │
+│                                                              │
+│  Routes requests to specialized agents based on intent       │
+│  Uses dynamic LLM-based decision making                      │
+└─────────────────────────────────────────────────────────────┘
+    │                    │                    │
+    ▼                    ▼                    ▼
+┌─────────────┐   ┌─────────────┐   ┌─────────────┐
+│   EXTRACT   │   │  TRANSFORM  │   │   REPORT    │
+│    AGENT    │──▶│    AGENT    │──▶│    AGENT    │
+│             │   │             │   │             │
+│ Yahoo Fin.  │   │ Risk Calc   │   │ Markdown    │
+│ SEC Filings │   │ Statistics  │   │ Generation  │
+│ KB Queries  │   │ Code Interp │   │             │
+└─────────────┘   └─────────────┘   └─────────────┘
+```
+
+## What You'll Build
+
+A complete financial analytics system that:
+
+1. **Queries SEC filings** via Bedrock Knowledge Base
+2. **Fetches real-time market data** from Yahoo Finance
+3. **Calculates risk metrics** (VaR, Sharpe ratio, volatility)
+4. **Produces professional investment reports** in Markdown
+
+### Sample Interactions
+
+```python
+# Simple query - routes to Extract Agent only
+"What is AAPL's current stock price?"
+
+# Analysis query - Extract → Transform
+"Calculate the risk metrics for Tesla over the last year"
+
+# Full report - Extract → Transform → Report
+"Generate a comprehensive analysis report for Microsoft"
+
+# Knowledge base query - Extract (KB)
+"What were Amazon's revenue figures in their last 10-K?"
+```
+
+## Key Concepts Introduced
+
+### 1. Bedrock Knowledge Bases
+
+RAG (Retrieval-Augmented Generation) for your agents:
+
+```python
+# Query SEC filings from Knowledge Base
+response = bedrock_agent.retrieve_and_generate(
+    input={"text": "What are Apple's risk factors?"},
+    retrieveAndGenerateConfiguration={
+        "type": "KNOWLEDGE_BASE",
+        "knowledgeBaseConfiguration": {
+            "knowledgeBaseId": KB_ID,
+            "modelArn": MODEL_ARN
+        }
+    }
+)
+```
+
+### 2. Agent-as-Tool Pattern
+
+Invoke deployed agents as tools from the orchestrator:
+
+```python
+@tool
+def extract_financial_data(query: str) -> str:
+    """Extract financial data for the specified query."""
+    return invoke_agent(EXTRACT_AGENT_ARN, {"prompt": query})
+```
+
+### 3. Dynamic LLM Routing
+
+The orchestrator decides which agents to invoke:
+
+```python
+ORCHESTRATOR_SYSTEM_PROMPT = """You coordinate three specialized agents:
+
+1. **Extract Agent** - Fetches data from APIs and Knowledge Base
+2. **Transform Agent** - Calculates risk metrics and statistics
+3. **Report Agent** - Generates professional Markdown reports
+
+For each request, determine the best workflow:
+- Data Request: Extract only
+- Analysis Request: Extract → Transform
+- Report Request: Extract → Transform → Report
+"""
+```
+
+## Learning Path
+
+```
+1. Knowledge Bases (60 min)
+   └─ Set up Bedrock KB with EDGAR SEC filings
+
+2. Extract Agent (45 min)
+   └─ Yahoo Finance + KB query tools
+
+3. Transform Agent (45 min)
+   └─ Risk metrics + Code Interpreter
+
+4. Report Agent (45 min)
+   └─ Professional Markdown generation
+
+5. Orchestration + Deployment (90 min)
+   └─ Dynamic routing + full production deployment
+```
+
+## Why Multi-Agent?
+
+| Single Agent | Multi-Agent |
+|-------------|-------------|
+| One prompt handles everything | Specialized prompts per domain |
+| Complex, overloaded system prompt | Focused, testable components |
+| Hard to scale or modify | Independent scaling/updates |
+| Unpredictable routing | Explicit orchestration logic |
+| Difficult to evaluate | Per-agent evaluation |
+
+## Integrating Everything You've Learned
+
+Day 5 brings together **ALL** concepts from the course. This isn't just a multi-agent tutorial—it's a capstone that requires integrating every skill you've built:
+
+| Day | Feature | How It's Used in Day 5 |
+|-----|---------|------------------------|
+| Day 1 | Strands Agent + AgentCore Runtime | All 4 agents use Strands, deployed to Runtime |
+| Day 2 | AgentCore Gateway | API access with JWT authentication |
+| Day 3 | Memory | Orchestrator remembers conversation history |
+| Day 3 | Browser Tool | Extract Agent fetches financial news |
+| Day 3 | Code Interpreter | Transform Agent runs risk calculations |
+| Day 4 | Guardrails | All agents have content filters |
+| Day 4 | Observability | Distributed tracing across pipeline |
+| Day 4 | Evaluations | Report quality scoring |
+
+<Callout type="warning" title="True Capstone">
+  Unlike typical tutorials, Day 5 **requires** integrating Days 1-4 features.
+  Memory, Guardrails, Observability, and Evaluations are **not optional**—they're
+  part of the Required tier in the challenge.
+</Callout>
+
+## Prerequisites
+
+Before starting Day 5:
+- ✅ Completed Days 1-4
+- ✅ Understanding of REST APIs
+- ✅ Basic understanding of financial concepts (helpful but not required)
+- ✅ AWS account with Bedrock access
+
+## Ready?
+
+Let's assemble your multi-agent team.
+
+<div class="nav-buttons">
+  <a href="/days/4/challenge" class="nav-button nav-button--prev">
+    ← Day 4 Challenge
+  </a>
+  <a href="/days/5/knowledge-bases" class="nav-button nav-button--next">
+    Begin Day 5 →
+  </a>
+</div>
+
+<style>
+{`
+  .day-header {
+    margin: 2rem 0 3rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, var(--color-day-5) 0%, var(--color-day-5-dark, #1a1a2e) 100%);
+    border-radius: var(--radius-lg);
+    color: white;
+  }
+
+  .avengers-title {
+    font-size: 2rem;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .theme-description {
+    font-size: 1.1rem;
+    opacity: 0.95;
+    line-height: 1.6;
+  }
+
+  .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+    gap: 1rem;
+  }
+
+  .nav-button {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+  }
+
+  .nav-button--prev {
+    color: var(--color-text-secondary);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .nav-button--prev:hover {
+    background: var(--color-bg-secondary);
+  }
+
+  .nav-button--next {
+    color: white;
+    background: var(--color-day-5);
+  }
+
+  .nav-button--next:hover {
+    opacity: 0.9;
+  }
+`}
+</style>

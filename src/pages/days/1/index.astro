@@ -1,0 +1,33 @@
+---
+/**
+ * Day 1 Overview Page - The First Avenger
+ * Foundation: Strands Agent + AgentCore Runtime
+ */
+
+import DayLayout from '@/layouts/DayLayout.astro';
+import { getDayOverview, getSectionsInfo } from '@/lib/content';
+
+const dayNumber = 1;
+const overview = await getDayOverview(dayNumber);
+const sections = await getSectionsInfo(dayNumber);
+
+// Filter out overview (order: 0) from sidebar sections
+const sidebarSections = sections
+  .filter((s) => s.order > 0)
+  .map((s) => ({ slug: s.slug, title: s.title, order: s.order }));
+
+if (!overview) {
+  return Astro.redirect('/');
+}
+
+const { Content, headings } = await overview.render();
+---
+
+<DayLayout
+  title={`Day ${dayNumber}: ${overview.data.avengersTitle}`}
+  dayNumber={dayNumber}
+  sections={sidebarSections}
+  headings={headings}
+>
+  <Content />
+</DayLayout>

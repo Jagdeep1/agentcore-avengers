@@ -1,0 +1,511 @@
+---
+dayNumber: 5
+title: "The Capstone Challenge"
+description: "Build and deploy a complete multi-agent financial analytics pipeline"
+requirements:
+  - id: "req-1"
+    text: "Create and populate a Knowledge Base with at least 3 SEC filings"
+    tier: "required"
+    hints:
+      - "Use S3 as data source"
+      - "Include 10-K filings from different companies"
+      - "Add metadata for ticker filtering"
+  - id: "req-2"
+    text: "Build and deploy Extract Agent with market data and KB tools"
+    tier: "required"
+    hints:
+      - "Integrate Yahoo Finance for real-time data"
+      - "Add KB retrieval tool from Module 1"
+      - "Deploy to AgentCore Runtime"
+  - id: "req-3"
+    text: "Build and deploy Transform Agent with risk metrics"
+    tier: "required"
+    hints:
+      - "Implement VaR, Sharpe ratio, volatility"
+      - "Include moving average calculations"
+      - "Deploy to AgentCore Runtime"
+  - id: "req-4"
+    text: "Build and deploy Report Agent for markdown generation"
+    tier: "required"
+    hints:
+      - "Support multiple report types"
+      - "Include proper formatting and tables"
+      - "Deploy to AgentCore Runtime"
+  - id: "req-5"
+    text: "Build Orchestrator with dynamic LLM routing"
+    tier: "required"
+    hints:
+      - "Agent-as-tool pattern for sub-agents"
+      - "Routing decision based on user intent"
+      - "Deploy to AgentCore Runtime"
+  - id: "req-6"
+    text: "Complete end-to-end pipeline handles all sample queries"
+    tier: "required"
+    hints:
+      - "Stock price query → Extract only"
+      - "Risk analysis → Extract + Transform"
+      - "Full report → Extract + Transform + Report"
+  - id: "req-7"
+    text: "Configure AgentCore Gateway with authentication (Day 2)"
+    tier: "required"
+    hints:
+      - "JWT authentication enabled"
+      - "Rate limiting configured"
+      - "API endpoint accessible"
+  - id: "req-8"
+    text: "Add memory integration to orchestrator (Day 3)"
+    tier: "required"
+    hints:
+      - "Session-based conversation memory"
+      - "Reference previous queries in context"
+      - "Session ID passed in requests"
+  - id: "req-9"
+    text: "Include Browser Tool in Extract Agent (Day 3)"
+    tier: "required"
+    hints:
+      - "Fetch financial news capability"
+      - "Browser tool integrated"
+      - "At least one news-related tool"
+  - id: "req-10"
+    text: "Apply guardrails to all agents (Day 4)"
+    tier: "required"
+    hints:
+      - "Financial-specific topic restrictions"
+      - "PII protection enabled"
+      - "All 4 agents have guardrails"
+  - id: "req-11"
+    text: "Configure distributed observability (Day 4)"
+    tier: "required"
+    hints:
+      - "Enable traces for all agents"
+      - "Propagate trace context across agents"
+      - "Publish metrics to CloudWatch"
+  - id: "req-12"
+    text: "Create at least one pipeline evaluation (Day 4)"
+    tier: "required"
+    hints:
+      - "Evaluate report completeness"
+      - "Test passes for sample queries"
+      - "Use evaluation patterns from Day 4"
+  - id: "silver-1"
+    text: "Add comprehensive error handling"
+    tier: "silver"
+    hints:
+      - "Handle Yahoo Finance rate limits"
+      - "Handle KB retrieval failures"
+      - "Graceful degradation with informative errors"
+  - id: "silver-2"
+    text: "Implement multi-tenancy via Gateway"
+    tier: "silver"
+    hints:
+      - "Tenant isolation configured"
+      - "Tenant ID extracted from JWT"
+      - "Per-tenant data separation"
+  - id: "silver-3"
+    text: "Add long-term memory for user preferences"
+    tier: "silver"
+    hints:
+      - "Extract user preferences automatically"
+      - "Remember report format preferences"
+      - "Track watched tickers"
+  - id: "silver-4"
+    text: "Create CloudWatch dashboard for pipeline"
+    tier: "silver"
+    hints:
+      - "Latency by agent"
+      - "Error rates"
+      - "Token usage metrics"
+  - id: "gold-1"
+    text: "Implement memory branching for scenario analysis"
+    tier: "gold"
+    hints:
+      - "Fork conversations for what-if analysis"
+      - "Compare different scenarios"
+      - "Merge insights back"
+  - id: "gold-2"
+    text: "Add browser guardrails restricting to financial sites"
+    tier: "gold"
+    hints:
+      - "Whitelist approved financial news sites"
+      - "Block non-financial URLs"
+      - "Log attempted violations"
+  - id: "gold-3"
+    text: "Create custom evaluator for financial accuracy"
+    tier: "gold"
+    hints:
+      - "Verify calculations match input data"
+      - "Check metric correctness"
+      - "Automated accuracy scoring"
+  - id: "gold-4"
+    text: "Optimize costs with model selection per agent"
+    tier: "gold"
+    hints:
+      - "Use Haiku for simple Extract queries"
+      - "Use Sonnet for Transform analysis"
+      - "Dynamic model selection based on query complexity"
+resources:
+  - title: "Bedrock Knowledge Bases Documentation"
+    url: "https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-bases.html"
+  - title: "RetrieveAndGenerate API"
+    url: "https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent-runtime_RetrieveAndGenerate.html"
+  - title: "AgentCore Runtime Documentation"
+    url: "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime.html"
+  - title: "SEC EDGAR System"
+    url: "https://www.sec.gov/edgar/"
+---
+
+import Callout from '@/components/content/Callout.astro';
+
+# Day 5 Challenge: The Capstone Challenge
+
+This is it. Build a complete production multi-agent system that demonstrates everything you've learned.
+
+## Your Mission
+
+Build a **Financial Analytics Pipeline** with four specialized agents:
+
+1. **Extract Agent**: Gather data from Yahoo Finance and SEC filings
+2. **Transform Agent**: Calculate risk metrics and statistical analysis
+3. **Report Agent**: Generate professional markdown reports
+4. **Orchestrator**: Coordinate agents with dynamic LLM routing
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                      FINANCIAL ANALYTICS PIPELINE                            │
+│                                                                              │
+│  "Generate a risk report for Apple"                                         │
+│                                                                              │
+│  ┌──────────────────────────────────────────────────────────────────────┐   │
+│  │                       ORCHESTRATOR AGENT                              │   │
+│  │                                                                        │   │
+│  │   Routing Decision: Extract → Transform → Report                      │   │
+│  └──────────────────────────────────────────────────────────────────────┘   │
+│      │                       │                       │                       │
+│      ▼                       ▼                       ▼                       │
+│  ┌──────────┐          ┌──────────┐          ┌──────────┐                  │
+│  │ EXTRACT  │────────▶│TRANSFORM │────────▶│  REPORT  │                  │
+│  │  AGENT   │          │  AGENT   │          │  AGENT   │                  │
+│  │          │          │          │          │          │                  │
+│  │ Yahoo    │          │ VaR      │          │ Markdown │                  │
+│  │ Finance  │          │ Sharpe   │          │ Tables   │                  │
+│  │ KB Query │          │ Volatility│         │ Sections │                  │
+│  └──────────┘          └──────────┘          └──────────┘                  │
+│                                                                              │
+│  Output: Professional Risk Assessment Report                                │
+│                                                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+## Sample Test Queries
+
+Your pipeline must handle these queries correctly:
+
+### 1. Simple Data Query
+```
+"What is Apple's current stock price?"
+```
+**Expected**: Extract Agent returns current price from Yahoo Finance
+
+### 2. SEC Filing Query
+```
+"What are Tesla's main risk factors from their 10-K?"
+```
+**Expected**: Extract Agent queries Knowledge Base and returns risk factors
+
+### 3. Analysis Query
+```
+"Calculate the risk metrics for Microsoft over the last year"
+```
+**Expected**: Extract → Transform pipeline returns VaR, Sharpe, volatility
+
+### 4. Comparison Query
+```
+"Compare the performance of AAPL and MSFT"
+```
+**Expected**: Extract → Transform with comparison metrics
+
+### 5. Full Report Query
+```
+"Generate a comprehensive risk report for Amazon"
+```
+**Expected**: Full Extract → Transform → Report pipeline
+
+## Requirements Breakdown
+
+### Required (Must Complete)
+
+1. **Knowledge Base Setup**
+   - S3 bucket with SEC filings
+   - Metadata for ticker filtering
+   - At least 3 company filings indexed
+
+2. **Extract Agent**
+   - Yahoo Finance tool for market data
+   - KB retrieval tool for SEC filings
+   - Deployed to AgentCore Runtime
+
+3. **Transform Agent**
+   - Risk metrics (VaR, Sharpe, volatility, drawdown)
+   - Moving average calculations
+   - Deployed to AgentCore Runtime
+
+4. **Report Agent**
+   - Markdown report generation
+   - Multiple report types (quick, brief, risk, full)
+   - Deployed to AgentCore Runtime
+
+5. **Orchestrator**
+   - Agent-as-tool pattern
+   - Dynamic LLM routing
+   - Deployed to AgentCore Runtime
+
+6. **End-to-End Testing**
+   - All sample queries handled correctly
+   - Appropriate agent routing per query type
+
+<Callout type="info" title="Start with Knowledge Base">
+  Set up the Knowledge Base first. Other agents depend on it.
+  Test KB queries before building the Extract Agent.
+</Callout>
+
+### Silver Tier (Production Quality)
+
+Add production-grade features:
+- Error handling for API failures
+- Observability integration
+- KB query caching
+- Metadata filtering
+
+### Gold Tier (Excellence)
+
+Demonstrate mastery with:
+- Memory integration across agents
+- Guardrails on all agents
+- Custom report quality evaluators
+- Cost optimization with model selection
+
+## Validation Checklist
+
+### Knowledge Base
+```bash
+# Test KB is accessible
+aws bedrock-agent list-knowledge-bases --profile claude
+
+# Test KB query
+aws bedrock-agent-runtime retrieve-and-generate \
+  --knowledge-base-id YOUR_KB_ID \
+  --model-arn "arn:aws:bedrock:us-west-2::foundation-model/anthropic.claude-sonnet-4-20250514-v1:0" \
+  --input '{"text": "What are Apple risk factors?"}' \
+  --profile claude
+```
+
+### Agent Deployments
+```bash
+# List deployed agents
+agentcore list --profile claude
+
+# Expected: 4 agents
+# - extract-agent
+# - transform-agent
+# - report-agent
+# - orchestrator-agent
+```
+
+### End-to-End Test
+```python
+# test_capstone.py
+import boto3
+import json
+
+agentcore = boto3.client('bedrock-agentcore', region_name='us-west-2')
+ORCHESTRATOR_ARN = "your-orchestrator-arn"
+
+test_queries = [
+    # Data only
+    ("What is Apple's current stock price?", ["price", "AAPL"]),
+
+    # KB query
+    ("What are Tesla's risk factors?", ["risk", "factor"]),
+
+    # Analysis
+    ("Calculate risk metrics for Microsoft", ["VaR", "Sharpe", "volatility"]),
+
+    # Full report
+    ("Generate a risk report for Amazon", ["Risk Assessment", "Volatility", "Recommendation"])
+]
+
+def invoke(query):
+    response = agentcore.invoke_agent_runtime(
+        agentRuntimeArn=ORCHESTRATOR_ARN,
+        qualifier="DEFAULT",
+        payload=json.dumps({"prompt": query})
+    )
+    result = ""
+    for line in response["response"].iter_lines():
+        if line:
+            result += line.decode("utf-8")
+    return result
+
+# Run tests
+for query, expected_terms in test_queries:
+    print(f"\nQuery: {query}")
+    result = invoke(query)
+
+    missing = [term for term in expected_terms if term.lower() not in result.lower()]
+    if missing:
+        print(f"❌ Missing: {missing}")
+    else:
+        print("✓ All expected terms found")
+```
+
+## Example: Complete Pipeline Response
+
+**Query**: "Generate a comprehensive risk report for Apple"
+
+**Expected Output**:
+```markdown
+# Apple Inc. (AAPL) - Comprehensive Risk Assessment
+
+**Report Date:** January 4, 2025
+**Analysis Period:** 1 Year
+**Data Sources:** Yahoo Finance, SEC 10-K Filing
+
+---
+
+## Executive Summary
+
+Apple demonstrates a moderate risk profile with strong risk-adjusted
+returns. The Sharpe ratio of 1.32 indicates returns well above what
+volatility would suggest. Key risks include supply chain concentration
+and regulatory challenges in key markets.
+
+## Key Metrics
+
+| Metric | Value | Assessment |
+|:-------|------:|:-----------|
+| Current Price | $175.50 | Near 52-week high |
+| Annual Return | 22.4% | Above market |
+| Sharpe Ratio | 1.32 | Good |
+| Annual Volatility | 24.3% | Medium-High |
+| VaR (95%, Daily) | -2.15% | Moderate |
+| Max Drawdown | -18.5% | Within normal |
+
+## Risk Factors (from 10-K)
+
+### Market Risk
+- Dependence on iPhone revenue (~50% of sales)
+- Competition in smartphone and services markets
+
+### Operational Risk
+- Supply chain concentration in Asia
+- Reliance on key suppliers for components
+
+### Regulatory Risk
+- EU Digital Markets Act compliance
+- App Store practices under scrutiny
+
+## Technical Analysis
+
+- **Trend**: Bullish (Golden Cross on Dec 15)
+- **20-day SMA**: $172.30 (Price above)
+- **50-day SMA**: $168.50 (Price above)
+
+## Recommendations
+
+1. Monitor iPhone sales trends in quarterly reports
+2. Watch for regulatory developments in EU and US
+3. Consider position sizing given medium-high volatility
+
+---
+
+*This report is for informational purposes only and does not
+constitute investment advice.*
+
+*Generated by AgentCore Financial Analytics Pipeline*
+```
+
+## Common Issues
+
+<Callout type="warning" title="Watch Out For">
+
+1. **KB Ingestion Delays**: Wait for ingestion job to complete before testing
+2. **Agent ARN Configuration**: Store ARNs in Parameter Store, not hardcoded
+3. **Timeout Handling**: Long reports may need extended timeouts
+4. **Memory Limits**: Large KB chunks can exceed context windows
+5. **Rate Limits**: Yahoo Finance has informal rate limits
+
+</Callout>
+
+## Production Checklist
+
+Before submitting your capstone:
+
+```markdown
+## Knowledge Base
+- [ ] S3 bucket created with SEC filings
+- [ ] Metadata JSON files for each document
+- [ ] KB created and ingestion complete
+- [ ] KB queries return relevant results
+
+## Agents
+- [ ] Extract Agent deployed and responding
+- [ ] Transform Agent deployed and responding
+- [ ] Report Agent deployed and responding
+- [ ] Orchestrator Agent deployed and responding
+
+## Integration
+- [ ] Agent ARNs stored in Parameter Store
+- [ ] Agent-as-tool pattern working
+- [ ] Dynamic routing correct for all query types
+
+## Testing
+- [ ] Stock price query works
+- [ ] SEC filing query works
+- [ ] Risk analysis works
+- [ ] Full report generation works
+- [ ] Comparison query works
+
+## Silver Tier (Optional)
+- [ ] Error handling implemented
+- [ ] Observability enabled
+- [ ] KB caching working
+- [ ] Metadata filtering working
+
+## Gold Tier (Optional)
+- [ ] Memory integration complete
+- [ ] Guardrails applied
+- [ ] Custom evaluators created
+- [ ] Cost optimization implemented
+```
+
+## Completing the Course
+
+Congratulations on reaching the capstone! Once complete:
+
+1. **Verify all required items** pass the validation tests
+2. **Document your architecture** decisions
+3. **Note any enhancements** you'd make with more time
+
+<Callout type="success" title="Course Complete!">
+  You've built a production-grade multi-agent system that demonstrates:
+
+  - **Day 1**: Agent foundations and runtime deployment
+  - **Day 2**: Identity, security, and Gateway integration
+  - **Day 3**: Memory and tool integration
+  - **Day 4**: Guardrails and observability
+  - **Day 5**: Multi-agent orchestration and Knowledge Bases
+
+  You now have the skills to build, deploy, and operate production AI agents on AWS!
+</Callout>
+
+## What's Next?
+
+Ideas for extending your financial analytics pipeline:
+
+1. **Add more data sources**: News APIs, earnings call transcripts
+2. **Portfolio analysis**: Multi-stock portfolio optimization
+3. **Alerting**: Price alerts and risk threshold notifications
+4. **UI**: Build a web interface with Streamlit or React
+5. **Automation**: Scheduled reports and analysis jobs
+
+**The foundation you've built is production-ready. Now make it your own!**

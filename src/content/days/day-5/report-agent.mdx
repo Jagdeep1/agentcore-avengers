@@ -1,0 +1,624 @@
+---
+title: "Report Agent"
+dayNumber: 5
+avengersTitle: "Assemble"
+focus: "Multi-Agent Capstone"
+description: "Build the report generation agent that produces professional markdown reports"
+estimatedTime: "45 minutes"
+objectives:
+  - "Design effective report templates"
+  - "Build a focused Report Agent for synthesis"
+  - "Handle multiple report formats and depths"
+  - "Deploy the final specialized agent"
+order: 4
+published: true
+---
+
+import Callout from '@/components/content/Callout.astro';
+
+# Report Agent
+
+The Report Agent is the storyteller. It takes analysis from the Transform Agent and synthesizes it into clear, professional reports that humans can act on.
+
+## Report Agent Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        REPORT AGENT                                      │
+│                                                                          │
+│  Input: Analysis results from Transform Agent                           │
+│                                                                          │
+│  System Prompt: Expert financial writer with domain knowledge           │
+│                                                                          │
+│  ┌─────────────────────────────────────────────────────────────────┐    │
+│  │                      REPORT TEMPLATES                            │    │
+│  │                                                                   │    │
+│  │  ┌───────────┐  ┌───────────┐  ┌───────────┐  ┌───────────┐    │    │
+│  │  │ Executive │  │   Risk    │  │  Full     │  │  Quick    │    │    │
+│  │  │  Summary  │  │  Report   │  │  Analysis │  │  Brief    │    │    │
+│  │  └───────────┘  └───────────┘  └───────────┘  └───────────┘    │    │
+│  └─────────────────────────────────────────────────────────────────┘    │
+│                                                                          │
+│  Output: Professional Markdown report                                    │
+│                                                                          │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+## Report Templates
+
+### Executive Summary Template
+
+```
+# [Company] Investment Analysis
+
+**Report Date:** [date]
+**Analyst:** AgentCore Financial Analytics
+
+## Executive Summary
+
+[2-3 sentence overview of key findings]
+
+### Key Metrics at a Glance
+
+| Metric | Value | Assessment |
+|--------|-------|------------|
+| Current Price | $[price] | - |
+| Annual Return | [return]% | [Good/Poor] |
+| Sharpe Ratio | [sharpe] | [rating] |
+| Risk Level | [risk] | - |
+
+### Recommendation
+
+[1-2 sentence actionable insight]
+```
+
+### Risk Report Template
+
+```
+# [Company] Risk Assessment
+
+**Report Date:** [date]
+**Analysis Period:** [period]
+
+## Risk Summary
+
+**Overall Risk Level:** [High/Medium/Low]
+
+[Brief explanation of risk profile]
+
+## Detailed Metrics
+
+### Value at Risk (VaR)
+- **Daily VaR (95%):** [var]%
+- **Interpretation:** [explanation]
+
+### Volatility Analysis
+- **Annualized Volatility:** [vol]%
+- **Compared to S&P 500:** [comparison]
+
+### Maximum Drawdown
+- **Worst Decline:** [drawdown]%
+- **Recovery Period:** [if available]
+
+## Risk Factors
+
+[From SEC filings if available]
+
+1. [Risk factor 1]
+2. [Risk factor 2]
+3. [Risk factor 3]
+
+## Recommendations
+
+[Risk-appropriate investment considerations]
+```
+
+### Full Analysis Template
+
+```
+# Comprehensive Analysis: [Company]
+
+**Report Date:** [date]
+**Stock Symbol:** [ticker]
+**Sector:** [sector]
+
+---
+
+## Table of Contents
+1. Executive Summary
+2. Company Overview
+3. Financial Performance
+4. Technical Analysis
+5. Risk Assessment
+6. Investment Considerations
+
+---
+
+## 1. Executive Summary
+
+[Comprehensive 3-4 sentence summary]
+
+## 2. Company Overview
+
+[From SEC filings]
+
+**Business Description:**
+[Brief description]
+
+**Key Products/Services:**
+- [Product 1]
+- [Product 2]
+
+## 3. Financial Performance
+
+### Current Valuation
+| Metric | Value | Industry Avg |
+|--------|-------|--------------|
+| P/E Ratio | [pe] | [industry] |
+| Market Cap | $[mcap] | - |
+| Revenue | $[revenue] | - |
+
+### Price Performance
+[Historical return analysis]
+
+## 4. Technical Analysis
+
+### Trend Analysis
+[Moving average signals and interpretation]
+
+### Support/Resistance
+[Key price levels if identified]
+
+## 5. Risk Assessment
+
+[Detailed risk metrics with interpretation]
+
+## 6. Investment Considerations
+
+### Strengths
+- [Strength 1]
+- [Strength 2]
+
+### Concerns
+- [Concern 1]
+- [Concern 2]
+
+---
+
+*This report is for informational purposes only and does not constitute investment advice.*
+```
+
+## Building the Report Agent
+
+```python
+# agents/report_agent.py
+from strands import Agent
+from strands.models import BedrockModel
+from bedrock_agentcore.runtime import BedrockAgentCoreApp
+from datetime import datetime
+
+app = BedrockAgentCoreApp()
+
+REPORT_SYSTEM_PROMPT = """You are a Financial Report Generation Agent.
+
+Your role is to synthesize analysis results into professional, well-structured reports.
+You are an expert financial writer who:
+- Uses clear, concise language
+- Presents complex data accessibly
+- Provides actionable insights
+- Maintains professional tone
+
+## Input Format
+
+You receive analysis from the Transform Agent in JSON format containing
+analysis_type, tickers, results, and recommendations fields.
+
+## Report Types
+
+Generate reports based on the requested format:
+
+### 1. Executive Summary (brief)
+- 1 page max
+- Key metrics table
+- 2-3 sentence recommendation
+- For: Quick decision support
+
+### 2. Risk Report (risk)
+- Focus on risk metrics
+- VaR, volatility, drawdown analysis
+- SEC risk factors if available
+- For: Risk management review
+
+### 3. Full Analysis (full)
+- Comprehensive multi-section report
+- All available data and analysis
+- Detailed recommendations
+- For: In-depth investment review
+
+### 4. Quick Brief (quick)
+- 3-5 bullet points
+- Current price and key signal
+- For: Fast market updates
+
+## Formatting Guidelines
+
+1. **Use Markdown** - Headers, tables, lists, bold for emphasis
+2. **Tables for metrics** - Clean, aligned, with assessment column
+3. **Clear sections** - Logical flow from summary to detail
+4. **Cite sources** - Note data sources (Yahoo Finance, SEC filings)
+5. **Timestamp** - Always include report generation date
+6. **Disclaimer** - Include standard investment disclaimer
+
+## Tone
+
+- Professional but accessible
+- Confident but not overpromising
+- Data-driven conclusions
+- Balanced presentation of risks and opportunities
+
+## Do NOT:
+- Make specific buy/sell recommendations
+- Promise returns or guarantees
+- Include data you weren't provided
+- Fetch new data (Extract Agent does that)
+- Calculate new metrics (Transform Agent does that)
+"""
+
+model = BedrockModel(
+    model_id="anthropic.claude-sonnet-4-20250514-v1:0",
+    region_name="us-west-2"
+)
+
+report_agent = Agent(
+    model=model,
+    tools=[],  # Report Agent doesn't need tools - pure synthesis
+    system_prompt=REPORT_SYSTEM_PROMPT
+)
+
+
+@app.entrypoint
+def generate_report(payload: dict) -> dict:
+    """Entry point for the Report Agent.
+
+    Args:
+        payload: Dictionary with analysis, company, report_type, custom_sections
+
+    Returns:
+        Generated report in Markdown format
+    """
+    analysis = payload.get("analysis", "")
+    company = payload.get("company", "Unknown Company")
+    report_type = payload.get("report_type", "full")
+    custom_sections = payload.get("custom_sections", [])
+
+    # Build report request using string formatting
+    prompt = "Generate a " + report_type + " report for " + company + ".\n\n"
+    prompt += "## Analysis Data:\n\n" + analysis + "\n\n"
+    prompt += "## Report Requirements:\n"
+    prompt += "- Report type: " + report_type + "\n"
+    prompt += "- Company: " + company + "\n"
+    prompt += "- Date: " + datetime.now().strftime('%Y-%m-%d') + "\n"
+
+    if custom_sections:
+        prompt += "- Include these specific sections: " + ', '.join(custom_sections)
+
+    prompt += "\n\nGenerate a professional Markdown report following the templates."
+
+    response = report_agent(prompt)
+
+    report_content = response.message["content"][0]["text"]
+
+    return dict(
+        report=report_content,
+        metadata=dict(
+            company=company,
+            report_type=report_type,
+            generated_at=datetime.now().isoformat(),
+            agent="report"
+        ),
+        status="success"
+    )
+
+
+if __name__ == "__main__":
+    app.run()
+```
+
+## Report Quality Guidelines
+
+### Effective Tables
+
+```markdown
+<!-- Good: Clear headers, aligned, with interpretation -->
+| Metric | Value | Assessment |
+|:-------|------:|:-----------|
+| Sharpe Ratio | 1.45 | Good risk-adjusted returns |
+| Annual Volatility | 24.3% | Higher than market average |
+| Max Drawdown | -18.5% | Within normal range |
+
+<!-- Bad: Missing context -->
+| Metric | Value |
+|--------|-------|
+| Sharpe | 1.45 |
+| Vol | 24.3 |
+```
+
+### Effective Summaries
+
+```markdown
+<!-- Good: Specific, actionable -->
+Apple shows **strong risk-adjusted returns** (Sharpe 1.45) despite
+elevated volatility. The stock trades near its 52-week high with
+bullish technical signals. Key risk: Heavy dependence on iPhone revenue.
+
+<!-- Bad: Vague, no insights -->
+Apple is a good company with okay returns and some risk.
+```
+
+### Conditional Sections
+
+Handle missing data gracefully:
+
+```python
+def build_report_sections(data: dict) -> str:
+    sections = []
+
+    # Always include
+    sections.append(build_summary(data))
+
+    # Include if available
+    if data.get("risk_metrics"):
+        sections.append(build_risk_section(data["risk_metrics"]))
+
+    if data.get("technical_analysis"):
+        sections.append(build_technical_section(data["technical_analysis"]))
+
+    if data.get("sec_filings"):
+        sections.append(build_fundamental_section(data["sec_filings"]))
+
+    # Always include disclaimer
+    sections.append(build_disclaimer())
+
+    return "\n\n---\n\n".join(sections)
+```
+
+## Testing the Report Agent
+
+```python
+# test_report_agent.py
+from agents.report_agent import generate_report
+import json
+
+# Sample analysis from Transform Agent
+sample_analysis = """
+{
+  "analysis_type": "risk",
+  "tickers": ["AAPL"],
+  "results": {
+    "metrics": {
+      "var_95_daily": -2.15,
+      "volatility_annual": 24.3,
+      "sharpe_ratio": 1.45,
+      "max_drawdown": -18.5,
+      "annual_return": 22.4
+    },
+    "interpretation": {
+      "risk_level": "Medium",
+      "sharpe_quality": "Good",
+      "var_interpretation": "With 95% confidence, daily loss will not exceed 2.15%"
+    }
+  },
+  "technical": {
+    "sma_trend": "Bullish",
+    "price_vs_sma": "Above",
+    "crossover": "Golden Cross detected"
+  },
+  "company_info": {
+    "name": "Apple Inc.",
+    "sector": "Technology",
+    "current_price": 175.50,
+    "pe_ratio": 28.5
+  }
+}
+"""
+
+# Test different report types
+report_types = ["quick", "brief", "risk", "full"]
+
+for report_type in report_types:
+    print(f"\n{'='*60}")
+    print(f"Report Type: {report_type.upper()}")
+    print(f"{'='*60}\n")
+
+    result = generate_report({
+        "analysis": sample_analysis,
+        "company": "Apple Inc.",
+        "report_type": report_type
+    })
+
+    print(result["report"])
+    print(f"\n[Generated at: {result['metadata']['generated_at']}]")
+```
+
+## Example Output
+
+### Quick Brief Example
+
+```markdown
+# AAPL Quick Brief
+
+**As of:** 2025-01-04
+
+- **Current Price:** $175.50 (Bullish trend, above 20-day SMA)
+- **Risk Level:** Medium (24.3% annual volatility)
+- **Sharpe Ratio:** 1.45 - Good risk-adjusted returns
+- **Signal:** Golden Cross detected - bullish momentum
+- **Watch:** -18.5% max drawdown during pullbacks
+
+*Data: Yahoo Finance, SEC Filings*
+```
+
+### Executive Summary Example
+
+```markdown
+# Apple Inc. (AAPL) - Executive Summary
+
+**Report Date:** January 4, 2025
+**Analyst:** AgentCore Financial Analytics
+
+## Overview
+
+Apple demonstrates strong risk-adjusted performance with a Sharpe ratio of 1.45,
+indicating returns well above what the volatility would suggest. Technical
+indicators show bullish momentum with a recent Golden Cross formation.
+
+### Key Metrics
+
+| Metric | Value | Assessment |
+|:-------|------:|:-----------|
+| Current Price | $175.50 | Near 52-week high |
+| Annual Return | 22.4% | Above market |
+| Sharpe Ratio | 1.45 | Good |
+| Volatility | 24.3% | Medium-High |
+| Max Drawdown | -18.5% | Acceptable |
+| P/E Ratio | 28.5 | Premium valuation |
+
+### Risk Profile
+
+**Overall: Medium Risk**
+
+The 95% daily VaR of -2.15% suggests potential for meaningful daily swings.
+Historical maximum drawdown of -18.5% indicates vulnerability to market corrections.
+
+### Conclusion
+
+Apple shows favorable risk-return characteristics with bullish technical setup.
+Premium valuation justified by consistent execution but limits upside potential.
+
+---
+
+*This report is for informational purposes only and does not constitute investment advice.*
+```
+
+## Deployment
+
+```bash
+# Deploy the Report Agent
+agentcore deploy \
+  --name report-agent \
+  --entry agents/report_agent.py \
+  --requirements requirements.txt \
+  --region us-west-2 \
+  --profile claude
+```
+
+## Full Pipeline Test
+
+Test the complete Extract → Transform → Report pipeline:
+
+```python
+# test_full_pipeline.py
+from agents.extract_agent import extract_financial_data
+from agents.transform_agent import analyze_financial_data
+from agents.report_agent import generate_report
+
+def run_pipeline(ticker: str, report_type: str = "full"):
+    """Run the complete financial analysis pipeline."""
+
+    print(f"Starting pipeline for {ticker}...")
+
+    # Step 1: Extract
+    print("\n[1/3] Extracting data...")
+    extract_result = extract_financial_data({
+        "prompt": f"Get comprehensive financial data for {ticker} including historical prices and SEC filings"
+    })
+
+    # Step 2: Transform
+    print("[2/3] Analyzing data...")
+    transform_result = analyze_financial_data({
+        "data": extract_result["data"],
+        "analysis_type": "full"
+    })
+
+    # Step 3: Report
+    print("[3/3] Generating report...")
+    report_result = generate_report({
+        "analysis": transform_result["analysis"],
+        "company": ticker,
+        "report_type": report_type
+    })
+
+    print("\n" + "="*60)
+    print("FINAL REPORT")
+    print("="*60 + "\n")
+    print(report_result["report"])
+
+    return report_result
+
+# Run pipeline
+report = run_pipeline("AAPL", report_type="full")
+```
+
+<Callout type="tip" title="Report Customization">
+  Users can request specific sections or focus areas. The Report Agent
+  adapts its output while maintaining professional standards.
+</Callout>
+
+## Checkpoint
+
+You've now built:
+
+- ✅ Professional report templates for different use cases
+- ✅ Focused Report Agent for synthesis
+- ✅ Multiple report formats (quick, brief, risk, full)
+- ✅ Quality guidelines and conditional sections
+- ✅ Full pipeline integration test
+
+**Next, we'll build the Orchestrator that coordinates all three agents dynamically.**
+
+<div class="nav-buttons">
+  <a href="/days/5/transform-agent" class="nav-button nav-button--prev">
+    ← Transform Agent
+  </a>
+  <a href="/days/5/orchestration" class="nav-button nav-button--next">
+    Next: Orchestration →
+  </a>
+</div>
+
+<style>
+{`
+  .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+    gap: 1rem;
+  }
+
+  .nav-button {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+  }
+
+  .nav-button--prev {
+    color: var(--color-text-secondary);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .nav-button--prev:hover {
+    background: var(--color-bg-secondary);
+  }
+
+  .nav-button--next {
+    color: white;
+    background: var(--color-day-5);
+  }
+
+  .nav-button--next:hover {
+    opacity: 0.9;
+  }
+`}
+</style>

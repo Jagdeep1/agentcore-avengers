@@ -1,0 +1,667 @@
+---
+title: "Knowledge Bases"
+dayNumber: 5
+avengersTitle: "Assemble"
+focus: "Multi-Agent Capstone"
+description: "Set up Bedrock Knowledge Bases with SEC filings for RAG-powered financial queries"
+estimatedTime: "60 minutes"
+objectives:
+  - "Understand RAG and when to use Knowledge Bases"
+  - "Create a Bedrock Knowledge Base with S3 data source"
+  - "Load and index SEC filings from EDGAR"
+  - "Query the Knowledge Base with RetrieveAndGenerate API"
+  - "Build a Strands tool for KB retrieval"
+order: 1
+published: true
+---
+
+import Callout from '@/components/content/Callout.astro';
+
+# Knowledge Bases
+
+Knowledge Bases turn your agents from models that make things up into agents that reference **your data**. This is Retrieval-Augmented Generation (RAG).
+
+## What is RAG?
+
+```
+Traditional LLM:
+  User: "What were Apple's risk factors in 2024?"
+  LLM: *Generates plausible-sounding but potentially inaccurate response*
+
+RAG-Powered Agent:
+  User: "What were Apple's risk factors in 2024?"
+  Agent: 1. Searches Knowledge Base for relevant documents
+         2. Retrieves actual excerpts from Apple's 10-K filing
+         3. Generates response grounded in retrieved facts
+         4. Includes citations to source documents
+```
+
+## RAG Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                     RAG Pipeline                                         │
+│                                                                          │
+│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐              │
+│  │   Documents   │    │   Chunking   │    │  Embeddings  │              │
+│  │   (S3/EDGAR)  │───▶│   Strategy   │───▶│   (Titan)    │              │
+│  └──────────────┘    └──────────────┘    └──────────────┘              │
+│                                                  │                       │
+│                                                  ▼                       │
+│                                          ┌──────────────┐               │
+│                                          │ Vector Store │               │
+│                                          │ (OpenSearch) │               │
+│                                          └──────────────┘               │
+│                                                  │                       │
+│  ┌──────────────┐    ┌──────────────┐          │                       │
+│  │   Response   │◀───│   Generate   │◀─────────┘                       │
+│  │  (+ Citations)│    │   (Claude)   │                                  │
+│  └──────────────┘    └──────────────┘                                  │
+│                            ▲                                            │
+│                            │                                            │
+│                      ┌──────────────┐                                   │
+│                      │    Query     │                                   │
+│                      │  (User Input)│                                   │
+│                      └──────────────┘                                   │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+## When to Use Knowledge Bases
+
+| Use Case | Knowledge Base | Alternative |
+|----------|---------------|-------------|
+| Company documents | ✅ Yes | - |
+| SEC filings | ✅ Yes | - |
+| Product manuals | ✅ Yes | - |
+| Real-time stock prices | ❌ No | API calls |
+| Static reference data | ✅ Yes | - |
+| Frequently changing data | ❌ No | API/database |
+| Private customer data | ⚠️ With care | Secure retrieval |
+
+<Callout type="info" title="KB vs Fine-tuning">
+  Knowledge Bases are for **facts and reference data**. Fine-tuning changes model **behavior**.
+  Most production systems use Knowledge Bases, not fine-tuning.
+</Callout>
+
+## Setting Up Your Knowledge Base
+
+### Prerequisites
+
+1. **S3 Bucket** for documents
+2. **IAM Role** with appropriate permissions
+3. **Embedding Model** access (Titan Embeddings)
+
+### Step 1: Create S3 Bucket and Upload Documents
+
+```bash
+# Create bucket for SEC filings
+aws s3 mb s3://agentcore-sec-filings-${AWS_ACCOUNT_ID} --profile claude
+
+# Create folder structure
+aws s3api put-object \
+  --bucket agentcore-sec-filings-${AWS_ACCOUNT_ID} \
+  --key filings/ \
+  --profile claude
+```
+
+### Step 2: Download SEC Filings from EDGAR
+
+SEC's EDGAR (Electronic Data Gathering, Analysis, and Retrieval) system provides free access to company filings:
+
+```python
+# download_sec_filings.py
+import requests
+import os
+
+# SEC requires User-Agent header
+HEADERS = {
+    'User-Agent': 'AgentCore Course contact@example.com'
+}
+
+# Sample 10-K filings (annual reports)
+FILINGS = [
+    {
+        'company': 'Apple',
+        'ticker': 'AAPL',
+        'cik': '0000320193',
+        'accession': '0000320193-24-000123',  # 2024 10-K
+        'form': '10-K'
+    },
+    {
+        'company': 'Microsoft',
+        'ticker': 'MSFT',
+        'cik': '0000789019',
+        'accession': '0000789019-24-000123',
+        'form': '10-K'
+    },
+    {
+        'company': 'Amazon',
+        'ticker': 'AMZN',
+        'cik': '0001018724',
+        'accession': '0001018724-24-000123',
+        'form': '10-K'
+    }
+]
+
+def download_filing(filing: dict, output_dir: str = './filings'):
+    """Download SEC filing from EDGAR."""
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Construct EDGAR URL
+    cik = filing['cik'].lstrip('0')
+    accession_no_dashes = filing['accession'].replace('-', '')
+
+    url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{accession_no_dashes}/{filing['accession']}.txt"
+
+    response = requests.get(url, headers=HEADERS)
+
+    if response.status_code == 200:
+        filename = f"{filing['ticker']}_{filing['form']}.txt"
+        filepath = os.path.join(output_dir, filename)
+
+        with open(filepath, 'w') as f:
+            f.write(response.text)
+
+        print(f"Downloaded: {filename}")
+        return filepath
+    else:
+        print(f"Failed to download {filing['ticker']}: {response.status_code}")
+        return None
+
+# Download all filings
+for filing in FILINGS:
+    download_filing(filing)
+```
+
+<Callout type="tip" title="EDGAR Rate Limits">
+  SEC limits requests to 10 per second. Add delays between downloads in production.
+</Callout>
+
+### Step 3: Add Metadata for Filtering
+
+Create metadata files for KB filtering:
+
+```python
+# create_metadata.py
+import json
+import os
+
+FILINGS_DIR = './filings'
+
+def create_metadata(ticker: str, company: str, form: str, year: int):
+    """Create metadata JSON for a filing."""
+    metadata = {
+        'metadataAttributes': {
+            'ticker': ticker,
+            'company': company,
+            'form': form,
+            'year': year,
+            'source': 'SEC EDGAR'
+        }
+    }
+
+    filename = f"{ticker}_{form}.txt.metadata.json"
+    filepath = os.path.join(FILINGS_DIR, filename)
+
+    with open(filepath, 'w') as f:
+        json.dump(metadata, f, indent=2)
+
+    print(f"Created metadata: {filename}")
+
+# Create metadata for each filing
+create_metadata('AAPL', 'Apple Inc.', '10-K', 2024)
+create_metadata('MSFT', 'Microsoft Corporation', '10-K', 2024)
+create_metadata('AMZN', 'Amazon.com Inc.', '10-K', 2024)
+```
+
+### Step 4: Upload to S3
+
+```bash
+# Upload filings with metadata
+aws s3 sync ./filings s3://agentcore-sec-filings-${AWS_ACCOUNT_ID}/filings/ \
+  --profile claude
+
+# Verify uploads
+aws s3 ls s3://agentcore-sec-filings-${AWS_ACCOUNT_ID}/filings/ --profile claude
+```
+
+### Step 5: Create Knowledge Base (Console)
+
+1. Navigate to **Amazon Bedrock** > **Knowledge bases**
+2. Click **Create knowledge base**
+3. Configure:
+   - **Name**: `sec-filings-kb`
+   - **Description**: `SEC EDGAR filings for financial analysis`
+   - **IAM role**: Create new or use existing
+4. **Data source**:
+   - **Type**: Amazon S3
+   - **S3 URI**: `s3://agentcore-sec-filings-${AWS_ACCOUNT_ID}/filings/`
+5. **Embeddings**:
+   - **Model**: Amazon Titan Embeddings G1 - Text
+6. **Vector store**:
+   - **Quick create**: Amazon OpenSearch Serverless
+7. Click **Create knowledge base**
+
+### Step 5 (Alternative): Create via boto3
+
+```python
+# create_knowledge_base.py
+import boto3
+import json
+import time
+
+bedrock_agent = boto3.client('bedrock-agent', region_name='us-west-2')
+ACCOUNT_ID = boto3.client('sts').get_caller_identity()['Account']
+
+# Create Knowledge Base
+kb_response = bedrock_agent.create_knowledge_base(
+    name='sec-filings-kb',
+    description='SEC EDGAR filings for financial analysis',
+    roleArn=f'arn:aws:iam::{ACCOUNT_ID}:role/AmazonBedrockKnowledgeBaseRole',
+    knowledgeBaseConfiguration={
+        'type': 'VECTOR',
+        'vectorKnowledgeBaseConfiguration': {
+            'embeddingModelArn': f'arn:aws:bedrock:us-west-2::foundation-model/amazon.titan-embed-text-v1'
+        }
+    },
+    storageConfiguration={
+        'type': 'OPENSEARCH_SERVERLESS',
+        'opensearchServerlessConfiguration': {
+            'collectionArn': 'arn:aws:aoss:us-west-2:{ACCOUNT_ID}:collection/xxxxx',
+            'vectorIndexName': 'sec-filings-index',
+            'fieldMapping': {
+                'vectorField': 'embedding',
+                'textField': 'text',
+                'metadataField': 'metadata'
+            }
+        }
+    }
+)
+
+KB_ID = kb_response['knowledgeBase']['knowledgeBaseId']
+print(f"Knowledge Base ID: {KB_ID}")
+
+# Create Data Source
+ds_response = bedrock_agent.create_data_source(
+    knowledgeBaseId=KB_ID,
+    name='sec-filings-s3',
+    description='SEC filings from S3',
+    dataSourceConfiguration={
+        'type': 'S3',
+        's3Configuration': {
+            'bucketArn': f'arn:aws:s3:::agentcore-sec-filings-{ACCOUNT_ID}',
+            'inclusionPrefixes': ['filings/']
+        }
+    },
+    vectorIngestionConfiguration={
+        'chunkingConfiguration': {
+            'chunkingStrategy': 'FIXED_SIZE',
+            'fixedSizeChunkingConfiguration': {
+                'maxTokens': 512,
+                'overlapPercentage': 20
+            }
+        }
+    }
+)
+
+DATA_SOURCE_ID = ds_response['dataSource']['dataSourceId']
+print(f"Data Source ID: {DATA_SOURCE_ID}")
+```
+
+### Step 6: Sync Data Source
+
+```python
+# Trigger ingestion job
+ingestion_response = bedrock_agent.start_ingestion_job(
+    knowledgeBaseId=KB_ID,
+    dataSourceId=DATA_SOURCE_ID
+)
+
+job_id = ingestion_response['ingestionJob']['ingestionJobId']
+print(f"Ingestion Job ID: {job_id}")
+
+# Wait for completion
+while True:
+    status = bedrock_agent.get_ingestion_job(
+        knowledgeBaseId=KB_ID,
+        dataSourceId=DATA_SOURCE_ID,
+        ingestionJobId=job_id
+    )['ingestionJob']['status']
+
+    print(f"Status: {status}")
+
+    if status in ['COMPLETE', 'FAILED']:
+        break
+
+    time.sleep(10)
+```
+
+## Querying the Knowledge Base
+
+### RetrieveAndGenerate API
+
+The simplest way - retrieves relevant chunks AND generates a response:
+
+```python
+import boto3
+
+bedrock_agent_runtime = boto3.client('bedrock-agent-runtime', region_name='us-west-2')
+
+KB_ID = 'your-knowledge-base-id'
+MODEL_ARN = 'arn:aws:bedrock:us-west-2::foundation-model/anthropic.claude-sonnet-4-20250514-v1:0'
+
+def query_knowledge_base(query: str, ticker: str = None) -> dict:
+    """Query KB with RetrieveAndGenerate."""
+
+    config = {
+        'type': 'KNOWLEDGE_BASE',
+        'knowledgeBaseConfiguration': {
+            'knowledgeBaseId': KB_ID,
+            'modelArn': MODEL_ARN,
+            'retrievalConfiguration': {
+                'vectorSearchConfiguration': {
+                    'numberOfResults': 5
+                }
+            }
+        }
+    }
+
+    # Add metadata filter if ticker provided
+    if ticker:
+        config['knowledgeBaseConfiguration']['retrievalConfiguration']['vectorSearchConfiguration']['filter'] = {
+            'equals': {
+                'key': 'ticker',
+                'value': ticker
+            }
+        }
+
+    response = bedrock_agent_runtime.retrieve_and_generate(
+        input={'text': query},
+        retrieveAndGenerateConfiguration=config
+    )
+
+    return {
+        'response': response['output']['text'],
+        'citations': response.get('citations', [])
+    }
+
+# Example usage
+result = query_knowledge_base(
+    "What are Apple's main risk factors?",
+    ticker='AAPL'
+)
+
+print("Response:", result['response'])
+print("\nCitations:")
+for citation in result['citations']:
+    for ref in citation.get('retrievedReferences', []):
+        print(f"  - {ref['location']['s3Location']['uri']}")
+```
+
+### Retrieve-Only API
+
+When you need more control over response generation:
+
+```python
+def retrieve_only(query: str, ticker: str = None, top_k: int = 5) -> list:
+    """Retrieve chunks without generating a response."""
+
+    retrieval_config = {
+        'vectorSearchConfiguration': {
+            'numberOfResults': top_k
+        }
+    }
+
+    if ticker:
+        retrieval_config['vectorSearchConfiguration']['filter'] = {
+            'equals': {'key': 'ticker', 'value': ticker}
+        }
+
+    response = bedrock_agent_runtime.retrieve(
+        knowledgeBaseId=KB_ID,
+        retrievalQuery={'text': query},
+        retrievalConfiguration=retrieval_config
+    )
+
+    chunks = []
+    for result in response['retrievalResults']:
+        chunks.append({
+            'text': result['content']['text'],
+            'score': result['score'],
+            'location': result['location']['s3Location']['uri'],
+            'metadata': result.get('metadata', {})
+        })
+
+    return chunks
+
+# Example: Get raw chunks for custom processing
+chunks = retrieve_only("revenue growth", ticker='MSFT', top_k=3)
+for chunk in chunks:
+    print(f"Score: {chunk['score']:.3f}")
+    print(f"Text: {chunk['text'][:200]}...")
+    print()
+```
+
+## Building the KB Retrieval Tool
+
+Create a Strands tool for the Extract Agent:
+
+```python
+# kb_tool.py
+import boto3
+from strands.tools import tool
+
+bedrock_agent_runtime = boto3.client('bedrock-agent-runtime', region_name='us-west-2')
+
+KB_ID = 'your-knowledge-base-id'
+MODEL_ARN = 'arn:aws:bedrock:us-west-2::foundation-model/anthropic.claude-sonnet-4-20250514-v1:0'
+
+@tool
+def query_sec_filings(query: str, ticker: str = None) -> str:
+    """Query SEC filings from the Knowledge Base for financial information.
+
+    Use this tool to find information from company SEC filings including:
+    - 10-K annual reports (financials, risk factors, business description)
+    - 10-Q quarterly reports
+    - Revenue, earnings, and other financial metrics
+    - Risk factors and management discussion
+
+    Args:
+        query: The question to answer from SEC filings
+        ticker: Optional stock ticker to filter results (e.g., 'AAPL', 'MSFT')
+
+    Returns:
+        Answer generated from SEC filings with citations
+    """
+    config = {
+        'type': 'KNOWLEDGE_BASE',
+        'knowledgeBaseConfiguration': {
+            'knowledgeBaseId': KB_ID,
+            'modelArn': MODEL_ARN,
+            'retrievalConfiguration': {
+                'vectorSearchConfiguration': {
+                    'numberOfResults': 5
+                }
+            }
+        }
+    }
+
+    if ticker:
+        config['knowledgeBaseConfiguration']['retrievalConfiguration']['vectorSearchConfiguration']['filter'] = {
+            'equals': {'key': 'ticker', 'value': ticker.upper()}
+        }
+
+    try:
+        response = bedrock_agent_runtime.retrieve_and_generate(
+            input={'text': query},
+            retrieveAndGenerateConfiguration=config
+        )
+
+        answer = response['output']['text']
+
+        # Add citation info
+        citations = []
+        for citation in response.get('citations', []):
+            for ref in citation.get('retrievedReferences', []):
+                uri = ref['location']['s3Location']['uri']
+                citations.append(uri.split('/')[-1])
+
+        if citations:
+            answer += f"\n\nSources: {', '.join(set(citations))}"
+
+        return answer
+
+    except Exception as e:
+        return f"Error querying SEC filings: {str(e)}"
+```
+
+## Testing Your Knowledge Base
+
+### Console Testing
+
+1. Navigate to your Knowledge Base in Bedrock console
+2. Click **Test knowledge base**
+3. Enable **Generate responses**
+4. Enter queries like:
+   - "What are Apple's risk factors?"
+   - "Summarize Microsoft's revenue for 2024"
+   - "Compare Amazon and Apple's business segments"
+
+### Python Testing
+
+```python
+# test_kb.py
+test_queries = [
+    ("What are Apple's main risk factors?", "AAPL"),
+    ("What was Microsoft's revenue in fiscal 2024?", "MSFT"),
+    ("Describe Amazon's business segments", "AMZN"),
+    ("Compare the risk factors across tech companies", None)
+]
+
+for query, ticker in test_queries:
+    print(f"\n{'='*60}")
+    print(f"Query: {query}")
+    print(f"Ticker: {ticker}")
+    print(f"{'='*60}")
+
+    result = query_sec_filings(query, ticker)
+    print(result)
+```
+
+## Best Practices
+
+### 1. Chunking Strategy
+
+Choose based on document type:
+
+```python
+# For SEC filings (structured documents)
+chunking_config = {
+    'chunkingStrategy': 'SEMANTIC',  # Better for structured docs
+    'semanticChunkingConfiguration': {
+        'maxTokens': 512,
+        'bufferSize': 0,
+        'breakpointPercentileThreshold': 95
+    }
+}
+
+# For unstructured documents
+chunking_config = {
+    'chunkingStrategy': 'FIXED_SIZE',
+    'fixedSizeChunkingConfiguration': {
+        'maxTokens': 300,
+        'overlapPercentage': 20  # 20% overlap for context
+    }
+}
+```
+
+### 2. Metadata Filtering
+
+Always use metadata for better retrieval:
+
+```python
+# Filter by multiple attributes
+filter_config = {
+    'andAll': [
+        {'equals': {'key': 'ticker', 'value': 'AAPL'}},
+        {'equals': {'key': 'form', 'value': '10-K'}},
+        {'greaterThan': {'key': 'year', 'value': 2022}}
+    ]
+}
+```
+
+### 3. Retrieval Tuning
+
+```python
+# Adjust number of results based on query type
+retrieval_config = {
+    'vectorSearchConfiguration': {
+        'numberOfResults': 10,  # More for broad queries
+        'overrideSearchType': 'HYBRID'  # Combine semantic + keyword
+    }
+}
+```
+
+<Callout type="warning" title="KB Sync">
+  Remember to re-sync your data source whenever you add or update documents.
+  Ingestion jobs can take several minutes for large document sets.
+</Callout>
+
+## Checkpoint
+
+You've now learned:
+
+- ✅ What RAG is and when to use Knowledge Bases
+- ✅ How to create a Knowledge Base with S3 data source
+- ✅ Loading SEC filings from EDGAR
+- ✅ Querying with RetrieveAndGenerate and Retrieve APIs
+- ✅ Building a Strands tool for KB retrieval
+
+**Next, we'll build the Extract Agent that uses this KB tool alongside live market data.**
+
+<div class="nav-buttons">
+  <a href="/days/5" class="nav-button nav-button--prev">
+    ← Day 5 Overview
+  </a>
+  <a href="/days/5/extract-agent" class="nav-button nav-button--next">
+    Next: Extract Agent →
+  </a>
+</div>
+
+<style>
+{`
+  .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+    gap: 1rem;
+  }
+
+  .nav-button {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+  }
+
+  .nav-button--prev {
+    color: var(--color-text-secondary);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .nav-button--prev:hover {
+    background: var(--color-bg-secondary);
+  }
+
+  .nav-button--next {
+    color: white;
+    background: var(--color-day-5);
+  }
+
+  .nav-button--next:hover {
+    opacity: 0.9;
+  }
+`}
+</style>

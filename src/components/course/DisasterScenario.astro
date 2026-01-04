@@ -1,0 +1,212 @@
+---
+/**
+ * DisasterScenario - Controlled disaster scenario display
+ * Shows the intentional failure that motivates the day's lesson
+ */
+
+interface Props {
+  title: string;
+  symptom: string;
+  cause: string;
+  solution: string;
+  dayReference?: number;
+}
+
+const { title, symptom, cause, solution, dayReference } = Astro.props;
+---
+
+<div class="disaster">
+  <div class="disaster__header">
+    <div class="disaster__icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+        <path d="M12 9v4" />
+        <path d="M12 17h.01" />
+      </svg>
+    </div>
+    <div class="disaster__badge">CONTROLLED DISASTER</div>
+  </div>
+
+  <h4 class="disaster__title">{title}</h4>
+
+  <div class="disaster__sections">
+    <div class="disaster__section">
+      <span class="disaster__label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 8v4" />
+          <path d="M12 16h.01" />
+        </svg>
+        Symptom
+      </span>
+      <p class="disaster__text">{symptom}</p>
+    </div>
+
+    <div class="disaster__section">
+      <span class="disaster__label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10" />
+          <path d="m15 9-6 6" />
+          <path d="m9 9 6 6" />
+        </svg>
+        Root Cause
+      </span>
+      <p class="disaster__text">{cause}</p>
+    </div>
+
+    <div class="disaster__section disaster__section--solution">
+      <span class="disaster__label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10" />
+          <path d="m9 12 2 2 4-4" />
+        </svg>
+        The Fix
+      </span>
+      <p class="disaster__text">{solution}</p>
+      {dayReference && (
+        <a href={`/days/${dayReference}`} class="disaster__link">
+          Learn more in Day {dayReference} →
+        </a>
+      )}
+    </div>
+  </div>
+</div>
+
+<style>
+  .disaster {
+    position: relative;
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: linear-gradient(
+      135deg,
+      rgba(239, 68, 68, 0.05) 0%,
+      rgba(239, 68, 68, 0.02) 100%
+    );
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+  }
+
+  .disaster::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(
+      90deg,
+      var(--color-accent-danger),
+      rgba(239, 68, 68, 0.3)
+    );
+  }
+
+  .disaster__header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .disaster__icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--color-accent-danger);
+    animation: pulse-icon 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-icon {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .disaster__badge {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--color-accent-danger);
+    padding: 0.25rem 0.625rem;
+    background: rgba(239, 68, 68, 0.15);
+    border-radius: var(--radius-sm);
+  }
+
+  .disaster__title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 0 0 1.25rem;
+  }
+
+  .disaster__sections {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .disaster__section {
+    padding: 1rem;
+    background: var(--color-bg-primary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .disaster__section--solution {
+    border-color: rgba(16, 185, 129, 0.3);
+    background: linear-gradient(
+      135deg,
+      rgba(16, 185, 129, 0.05) 0%,
+      var(--color-bg-primary) 100%
+    );
+  }
+
+  .disaster__label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .disaster__label svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .disaster__section:nth-child(1) .disaster__label svg {
+    color: var(--color-accent-warning);
+  }
+
+  .disaster__section:nth-child(2) .disaster__label svg {
+    color: var(--color-accent-danger);
+  }
+
+  .disaster__section--solution .disaster__label svg {
+    color: var(--color-accent-success);
+  }
+
+  .disaster__text {
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .disaster__link {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-accent-success);
+    text-decoration: none;
+  }
+
+  .disaster__link:hover {
+    text-decoration: underline;
+  }
+</style>

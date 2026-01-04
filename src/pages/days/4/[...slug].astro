@@ -1,0 +1,118 @@
+---
+/**
+ * Day 4 Section Pages - Dynamic Route
+ */
+
+import DayLayout from '@/layouts/DayLayout.astro';
+import { getCollection } from 'astro:content';
+import { getSectionsInfo, getAdjacentSections } from '@/lib/content';
+
+const dayNumber = 4;
+
+export async function getStaticPaths() {
+  const allSections = await getCollection('days');
+  const day4Sections = allSections.filter(
+    (entry) => entry.data.dayNumber === 4 && entry.data.order > 0 && entry.data.published
+  );
+
+  return day4Sections.map((section) => {
+    const slug = section.slug.includes('/')
+      ? section.slug.split('/').slice(1).join('/')
+      : section.slug;
+
+    return {
+      params: { slug },
+      props: { section },
+    };
+  });
+}
+
+const { section } = Astro.props;
+const { slug } = Astro.params;
+const base = import.meta.env.BASE_URL;
+
+const sections = await getSectionsInfo(dayNumber);
+const sidebarSections = sections
+  .filter((s) => s.order > 0)
+  .map((s) => ({ slug: s.slug, title: s.title, order: s.order }));
+
+const { prev, next } = await getAdjacentSections(dayNumber, slug as string);
+const { Content, headings } = await section.render();
+---
+
+<DayLayout
+  title={`${section.data.title} - Day ${dayNumber}`}
+  dayNumber={dayNumber}
+  sections={sidebarSections}
+  currentSection={slug as string}
+  headings={headings}
+>
+  <Content />
+
+  <Fragment slot="pagination">
+    <div class="pagination">
+      {prev && (
+        <a href={`${base}days/${dayNumber}/${prev.slug.split('/').pop()}`} class="pagination__link pagination__link--prev">
+          <span class="pagination__label">Previous</span>
+          <span class="pagination__title">{prev.data.title}</span>
+        </a>
+      )}
+      {next && (
+        <a href={`${base}days/${dayNumber}/${next.slug.split('/').pop()}`} class="pagination__link pagination__link--next">
+          <span class="pagination__label">Next</span>
+          <span class="pagination__title">{next.data.title}</span>
+        </a>
+      )}
+    </div>
+  </Fragment>
+</DayLayout>
+
+<style>
+  .pagination {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .pagination__link {
+    flex: 1;
+    max-width: 50%;
+    padding: 1rem 1.25rem;
+    background: var(--color-bg-elevated);
+    border: var(--border-subtle);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+  }
+
+  .pagination__link:hover {
+    background: var(--color-bg-secondary);
+    border-color: var(--border-default);
+  }
+
+  .pagination__link--prev {
+    text-align: left;
+  }
+
+  .pagination__link--next {
+    text-align: right;
+    margin-left: auto;
+  }
+
+  .pagination__label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    margin-bottom: 0.25rem;
+  }
+
+  .pagination__title {
+    display: block;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+</style>

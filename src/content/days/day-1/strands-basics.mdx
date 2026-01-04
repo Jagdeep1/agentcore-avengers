@@ -1,0 +1,315 @@
+---
+title: "Strands Basics"
+dayNumber: 1
+avengersTitle: "The First Avenger"
+focus: "Foundation - Strands Agent + AgentCore Runtime"
+description: "Build your first AI agent using the Strands Agents SDK with tools and custom prompts."
+estimatedTime: "60 minutes"
+objectives:
+  - "Understand the model-driven agent architecture"
+  - "Create an agent with custom system prompts"
+  - "Build and integrate custom tools"
+  - "Test agent behavior locally"
+order: 2
+published: true
+---
+
+import Callout from '@/components/content/Callout.astro';
+
+# Strands Basics
+
+Strands Agents is an open-source SDK that simplifies AI agent development using a **model-driven approach**. Instead of manually orchestrating steps, you let the LLM decide how to accomplish tasks.
+
+## Your First Agent
+
+Let's build a real agent step by step.
+
+### Step 1: Basic Agent Structure
+
+Create `agent.py`:
+
+```python
+# agent.py
+from strands import Agent
+from strands.models import BedrockModel
+
+# Initialize the model
+model = BedrockModel(
+    model_id="anthropic.claude-sonnet-4-20250514-v1:0",
+    region_name="us-east-1"
+)
+
+# Create the agent
+agent = Agent(
+    model=model,
+    system_prompt="""You are AgentOne, a helpful AI assistant.
+
+You have access to tools that help you accomplish tasks.
+Always explain your reasoning before taking actions.
+Be concise but thorough in your responses."""
+)
+
+# Test the agent
+if __name__ == "__main__":
+    response = agent("Hello! What can you help me with?")
+    print(response)
+```
+
+Run it:
+
+```bash
+python agent.py
+```
+
+### Step 2: Adding Custom Tools
+
+Tools extend your agent's capabilities. Let's create a `tools.py` file:
+
+```python
+# tools.py
+from strands import tool
+from strands_tools import calculator  # Built-in calculator from Strands
+from datetime import datetime
+
+@tool
+def get_current_time() -> str:
+    """Get the current date and time.
+
+    Returns:
+        str: Current date and time in ISO format
+    """
+    return datetime.now().isoformat()
+
+@tool
+def get_weather() -> str:
+    """Get the current weather.
+
+    Returns:
+        str: Current weather conditions
+    """
+    # Dummy implementation for learning purposes
+    # In production, you'd call a real weather API
+    return "sunny"
+```
+
+### Step 3: Integrate Tools with Agent
+
+Update `agent.py` to use the tools:
+
+```python
+# agent.py
+from strands import Agent
+from strands.models import BedrockModel
+from strands_tools import calculator
+from tools import get_current_time, get_weather
+
+# Initialize the model
+model = BedrockModel(
+    model_id="anthropic.claude-sonnet-4-20250514-v1:0",
+    region_name="us-east-1"
+)
+
+# Create the agent with tools
+agent = Agent(
+    model=model,
+    tools=[calculator, get_current_time, get_weather],
+    system_prompt="You're a helpful assistant. You can do simple math calculations, tell the weather, and get the current time."
+)
+
+# Interactive chat loop
+def chat():
+    print("AgentOne is ready! Type 'quit' to exit.\n")
+
+    while True:
+        user_input = input("You: ").strip()
+
+        if user_input.lower() in ['quit', 'exit', 'q']:
+            print("Goodbye!")
+            break
+
+        if not user_input:
+            continue
+
+        response = agent(user_input)
+        print(f"\nAgentOne: {response}\n")
+
+if __name__ == "__main__":
+    chat()
+```
+
+### Step 4: Test Your Agent
+
+Run the agent and try these prompts:
+
+```bash
+python agent.py
+```
+
+**Test prompts:**
+
+```
+You: What time is it?
+You: What's the weather like?
+You: Calculate 15% tip on a $67.50 bill
+You: What's the square root of 144, and what time is it right now?
+You: How's the weather and what's 20% of 150?
+```
+
+<Callout type="tip" title="Observe the Agent">
+  Watch how the agent decides which tools to call. For multi-part prompts,
+  it should automatically use multiple tools (`calculator`, `get_current_time`, `get_weather`).
+</Callout>
+
+## Understanding the Agent Loop
+
+Here's what happens when you send a message to your local agent:
+
+![Local Agent Development Architecture](/images/day-1/architecture_local.png)
+
+The agent follows this flow:
+
+1. **User Input**: You send a message (e.g., "What's 15% tip on $67.50 and what time is it?")
+
+2. **Agent Receives Task**: The Strands agent running in your local environment processes the request
+
+3. **Tool Access**: The agent has access to tools registered with it:
+   - `calculator()` - For mathematical operations
+   - `get_weather()` - For weather information
+   - `get_current_time()` - For time queries
+
+4. **LLM Reasoning**: The agent invokes the Amazon Bedrock LLM (Claude) to:
+   - Understand the user's intent
+   - Decide which tools are needed
+   - Determine the order of operations
+
+5. **Tool Execution**: The agent executes tools based on the LLM's plan:
+   - `calculator("67.50 * 0.15")` → "10.125"
+   - `get_current_time()` → "2025-01-03T14:30:00"
+
+6. **Response Synthesis**: The LLM receives tool outputs and generates a coherent response: "The 15% tip on $67.50 is $10.13, and the current time is 2:30 PM"
+
+7. **Return to User**: The formatted response is returned to you
+
+<Callout type="tip" title="Local vs Runtime">
+This same agent loop works identically when deployed to AgentCore Runtime - the only difference is the execution environment. Local development uses your laptop, while production uses AgentCore's serverless infrastructure.
+</Callout>
+
+## Advanced: Tool Documentation
+
+The `@tool` decorator automatically extracts documentation from your functions. Good documentation helps the model understand when to use each tool:
+
+```python
+@tool
+def search_database(
+    query: str,
+    limit: int = 10,
+    category: str | None = None
+) -> list[dict]:
+    """Search the internal database for matching records.
+
+    Use this tool when the user asks about stored data, inventory,
+    or historical records. Do NOT use for real-time information.
+
+    Args:
+        query: Search terms to look for
+        limit: Maximum number of results to return (default: 10)
+        category: Optional category filter (e.g., 'products', 'users')
+
+    Returns:
+        list[dict]: List of matching records with id, name, and details
+
+    Example:
+        search_database("laptop", limit=5, category="products")
+    """
+    # Implementation here
+    pass
+```
+
+<Callout type="info" title="Docstrings Matter">
+  The LLM reads your docstrings to decide when to use tools.
+  Clear, detailed documentation leads to better tool selection.
+</Callout>
+
+## Handling Errors Gracefully
+
+Tools should handle errors without crashing the agent:
+
+```python
+@tool
+def fetch_data(url: str) -> str:
+    """Fetch data from a URL.
+
+    Args:
+        url: The URL to fetch data from
+
+    Returns:
+        str: The fetched content or an error message
+    """
+    try:
+        import requests
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        return response.text[:1000]  # Limit response size
+    except requests.RequestException as e:
+        return f"Failed to fetch URL: {str(e)}"
+```
+
+## Checkpoint: What You've Built
+
+At this point, you have:
+
+- ✅ A working Strands agent with a custom system prompt
+- ✅ Three custom tools integrated with the agent
+- ✅ An interactive chat interface for testing
+- ✅ Understanding of the model-driven agent loop
+
+**Your agent runs locally.** In the next section, we'll deploy it to AgentCore Runtime for production use.
+
+## Next Steps
+
+<div class="nav-buttons">
+  <a href="/days/1/setup" class="nav-button nav-button--prev">
+    ← Environment Setup
+  </a>
+  <a href="/days/1/agentcore-runtime" class="nav-button nav-button--next">
+    Next: AgentCore Runtime →
+  </a>
+</div>
+
+<style>
+{`
+  .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+    gap: 1rem;
+  }
+
+  .nav-button {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+  }
+
+  .nav-button--prev {
+    color: var(--color-text-secondary);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .nav-button--prev:hover {
+    background: var(--color-bg-secondary);
+  }
+
+  .nav-button--next {
+    color: white;
+    background: var(--color-day-1);
+  }
+
+  .nav-button--next:hover {
+    opacity: 0.9;
+  }
+`}
+</style>
