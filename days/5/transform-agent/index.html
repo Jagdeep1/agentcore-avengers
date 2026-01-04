@@ -1,0 +1,683 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="canonical" href="https://jagdeep1.github.io/agentcore-avengers/days/5/transform-agent/"><!-- Favicon --><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><!-- Primary Meta Tags --><title>Transform Agent - Day 5 | The AgentCore Initiative</title><meta name="title" content="Transform Agent - Day 5 | The AgentCore Initiative"><meta name="description" content="Day 5: Assemble - Multi-agent Capstone"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://jagdeep1.github.io/agentcore-avengers/days/5/transform-agent/"><meta property="og:title" content="Transform Agent - Day 5 | The AgentCore Initiative"><meta property="og:description" content="Day 5: Assemble - Multi-agent Capstone"><meta property="og:image" content="https://jagdeep1.github.io/images/og/default.png"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://jagdeep1.github.io/agentcore-avengers/days/5/transform-agent/"><meta name="twitter:title" content="Transform Agent - Day 5 | The AgentCore Initiative"><meta name="twitter:description" content="Day 5: Assemble - Multi-agent Capstone"><meta name="twitter:image" content="https://jagdeep1.github.io/images/og/default.png"><!-- Fonts - Plus Jakarta Sans & Geist Mono --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"><!-- Theme initialization (prevents flash) --><script>
+      (function () {
+        const stored = localStorage.getItem('agentcore-initiative-progress');
+        let theme = 'dark';
+        if (stored) {
+          try {
+            const progress = JSON.parse(stored);
+            theme = progress.theme || 'dark';
+          } catch (e) {}
+        }
+        if (theme === 'system') {
+          theme = window.matchMedia('(prefers-color-scheme: light)').matches
+            ? 'light'
+            : 'dark';
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script><link rel="stylesheet" href="/agentcore-avengers/_astro/_slug_.C6jciWkZ.css">
+<style>.pagination[data-astro-cid-gvwdafc4]{display:flex;justify-content:space-between;gap:1rem}.pagination__link[data-astro-cid-gvwdafc4]{flex:1;max-width:50%;padding:1rem 1.25rem;background:var(--color-bg-elevated);border:var(--border-subtle);border-radius:var(--radius-lg);text-decoration:none;transition:all var(--transition-fast)}.pagination__link[data-astro-cid-gvwdafc4]:hover{background:var(--color-bg-secondary);border-color:var(--border-default)}.pagination__link--prev[data-astro-cid-gvwdafc4]{text-align:left}.pagination__link--next[data-astro-cid-gvwdafc4]{text-align:right;margin-left:auto}.pagination__label[data-astro-cid-gvwdafc4]{display:block;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-muted);margin-bottom:.25rem}.pagination__title[data-astro-cid-gvwdafc4]{display:block;font-size:.9375rem;font-weight:500;color:var(--color-text-primary)}
+</style>
+<link rel="stylesheet" href="/agentcore-avengers/_astro/_slug_.CP5296fy.css"><style>.callout[data-astro-cid-wi7smz4x]{display:flex;gap:1rem;padding:1rem 1.25rem;border-radius:var(--radius-lg);margin:1.5rem 0;border-left:4px solid}.callout--info[data-astro-cid-wi7smz4x]{background:#3b82f614;border-left-color:var(--color-accent-primary)}.callout--info[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-primary)}.callout--warning[data-astro-cid-wi7smz4x]{background:#f59e0b14;border-left-color:var(--color-accent-warning)}.callout--warning[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-warning)}.callout--danger[data-astro-cid-wi7smz4x]{background:#ef444414;border-left-color:var(--color-accent-danger)}.callout--danger[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-danger)}.callout--success[data-astro-cid-wi7smz4x]{background:#10b98114;border-left-color:var(--color-accent-success)}.callout--success[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-success)}.callout--tip[data-astro-cid-wi7smz4x]{background:#8b5cf614;border-left-color:var(--color-accent-purple)}.callout--tip[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-purple)}.callout__icon[data-astro-cid-wi7smz4x]{flex-shrink:0;width:1.25rem;height:1.25rem;margin-top:.125rem}.callout__content[data-astro-cid-wi7smz4x]{flex:1;min-width:0}.callout__title[data-astro-cid-wi7smz4x]{font-weight:600;font-size:.9375rem;color:var(--color-text-primary);margin-bottom:.25rem}.callout__body[data-astro-cid-wi7smz4x]{font-size:.9375rem;color:var(--color-text-secondary);line-height:1.6}.callout__body[data-astro-cid-wi7smz4x] p{margin:0}.callout__body[data-astro-cid-wi7smz4x] p+p{margin-top:.5rem}.callout__body[data-astro-cid-wi7smz4x] code{font-size:.85em}.callout__body[data-astro-cid-wi7smz4x] a{font-weight:500}
+</style></head> <body>  <header class="header" data-astro-cid-mb6pvx4c> <div class="header__container" data-astro-cid-mb6pvx4c> <!-- Logo --> <a href="/agentcore-avengers/" class="header__logo" aria-label="Home" data-astro-cid-mb6pvx4c> <svg class="header__logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" data-astro-cid-mb6pvx4c> <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c></circle> <path d="M16 6 L22 12 L16 18 L10 12 Z" fill="currentColor" opacity="0.5" data-astro-cid-mb6pvx4c></path> <circle cx="16" cy="16" r="4" fill="currentColor" data-astro-cid-mb6pvx4c></circle> </svg> <span class="header__logo-text" data-astro-cid-mb6pvx4c>AgentCore Initiative</span> </a> <!-- Desktop Navigation --> <nav class="header__nav hide-mobile" aria-label="Main navigation" data-astro-cid-mb6pvx4c> <ul class="header__nav-list" data-astro-cid-mb6pvx4c> <li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/days" class="header__nav-link header__nav-link--active" data-astro-cid-mb6pvx4c> Course </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/troubleshooting" class="header__nav-link" data-astro-cid-mb6pvx4c> Troubleshooting </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/reference" class="header__nav-link" data-astro-cid-mb6pvx4c> Reference </a> </li> </ul> </nav> <!-- Actions --> <div class="header__actions" data-astro-cid-mb6pvx4c> <!-- Theme Toggle Button (placeholder - will be React component) --> <button id="theme-toggle" class="header__theme-toggle" aria-label="Toggle theme" type="button" data-astro-cid-mb6pvx4c> <svg class="header__theme-icon header__theme-icon--dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <circle cx="12" cy="12" r="5" data-astro-cid-mb6pvx4c></circle> <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" data-astro-cid-mb6pvx4c></path> </svg> <svg class="header__theme-icon header__theme-icon--light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-mb6pvx4c></path> </svg> </button> <!-- Mobile Menu Toggle --> <button id="mobile-menu-toggle" class="header__mobile-toggle hide-desktop" aria-label="Toggle menu" aria-expanded="false" type="button" data-astro-cid-mb6pvx4c> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <path class="menu-icon" d="M4 6h16M4 12h16M4 18h16" data-astro-cid-mb6pvx4c></path> <path class="close-icon" d="M6 6l12 12M6 18L18 6" style="display: none" data-astro-cid-mb6pvx4c></path> </svg> </button> </div> </div> <!-- Mobile Navigation --> <nav id="mobile-nav" class="header__mobile-nav hide-desktop" aria-label="Mobile navigation" hidden data-astro-cid-mb6pvx4c> <ul class="header__mobile-nav-list" data-astro-cid-mb6pvx4c> <li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/days" class="header__mobile-nav-link header__mobile-nav-link--active" data-astro-cid-mb6pvx4c> Course </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/troubleshooting" class="header__mobile-nav-link" data-astro-cid-mb6pvx4c> Troubleshooting </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/reference" class="header__mobile-nav-link" data-astro-cid-mb6pvx4c> Reference </a> </li> </ul> </nav> </header>  <script type="module">const r=document.getElementById("theme-toggle");r&&r.addEventListener("click",()=>{const e=document.documentElement,t=e.getAttribute("data-theme")==="dark"?"light":"dark";e.setAttribute("data-theme",t);const c=localStorage.getItem("agentcore-initiative-progress");let i={theme:t};if(c)try{i={...JSON.parse(c),theme:t}}catch{}localStorage.setItem("agentcore-initiative-progress",JSON.stringify(i))});const n=document.getElementById("mobile-menu-toggle"),l=document.getElementById("mobile-nav");n&&l&&n.addEventListener("click",()=>{const e=n.getAttribute("aria-expanded")==="true";n.setAttribute("aria-expanded",String(!e)),l.hidden=e;const o=n.querySelector(".menu-icon"),t=n.querySelector(".close-icon");o&&t&&(o.style.display=e?"block":"none",t.style.display=e?"none":"block")});</script> <div class="day-layout" style="--day-accent: #f59e0b" data-astro-cid-vfeiczyy> <!-- Sidebar --> <aside class="day-layout__sidebar hide-mobile" data-astro-cid-vfeiczyy> <div class="day-layout__sidebar-content" data-astro-cid-vfeiczyy> <!-- Day Header --> <div class="day-layout__day-header" data-astro-cid-vfeiczyy> <span class="day-layout__day-number" data-astro-cid-vfeiczyy>Day 5</span> <h2 class="day-layout__day-title" data-astro-cid-vfeiczyy>Assemble</h2> <p class="day-layout__day-focus" data-astro-cid-vfeiczyy>Multi-agent Capstone</p> </div> <!-- Section Navigation --> <nav class="day-layout__nav" aria-label="Day sections" data-astro-cid-vfeiczyy> <ul class="day-layout__nav-list" data-astro-cid-vfeiczyy> <li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/5/knowledge-bases" class="day-layout__nav-link" data-section="knowledge-bases" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Knowledge Bases </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/5/extract-agent" class="day-layout__nav-link" data-section="extract-agent" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Extract Agent </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/5/transform-agent" class="day-layout__nav-link day-layout__nav-link--active" data-section="transform-agent" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Transform Agent </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/5/report-agent" class="day-layout__nav-link" data-section="report-agent" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Report Agent </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/5/orchestration" class="day-layout__nav-link" data-section="orchestration" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Orchestration &amp; Deployment </a> </li> </ul> </nav> <!-- Challenge Link --> <a href="/agentcore-avengers/days/5/challenge" class="day-layout__challenge-link" data-astro-cid-vfeiczyy> <span class="day-layout__challenge-icon" data-astro-cid-vfeiczyy> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-vfeiczyy> <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" data-astro-cid-vfeiczyy></polygon> </svg> </span>
+Daily Challenge
+</a> </div> </aside> <!-- Main Content --> <main class="day-layout__main" data-astro-cid-vfeiczyy> <article class="day-layout__content prose" data-astro-cid-vfeiczyy>  <h1 id="transform-agent">Transform Agent</h1>
+<p>The Transform Agent is the analyst. It takes raw data from the Extract Agent and produces meaningful insights:</p>
+<ul>
+<li><strong>Risk metrics</strong>: VaR, Sharpe ratio, maximum drawdown</li>
+<li><strong>Statistical analysis</strong>: Moving averages, correlations, trends</li>
+<li><strong>Visualizations</strong>: Charts via Code Interpreter</li>
+</ul>
+<h2 id="transform-agent-architecture">Transform Agent Architecture</h2>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-b78vy5y4b" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext" id="code-b78vy5y4b"><code><span class="line"><span>┌─────────────────────────────────────────────────────────────────────────┐</span></span>
+<span class="line"><span>│                       TRANSFORM AGENT                                    │</span></span>
+<span class="line"><span>│                                                                          │</span></span>
+<span class="line"><span>│  Input: Raw financial data from Extract Agent                           │</span></span>
+<span class="line"><span>│                                                                          │</span></span>
+<span class="line"><span>│  ┌─────────────────────────────────────────────────────────────────┐    │</span></span>
+<span class="line"><span>│  │                         TOOLS                                    │    │</span></span>
+<span class="line"><span>│  │                                                                   │    │</span></span>
+<span class="line"><span>│  │  ┌─────────────────┐         ┌─────────────────┐                │    │</span></span>
+<span class="line"><span>│  │  │  calculate_     │         │  code_          │                │    │</span></span>
+<span class="line"><span>│  │  │  risk_metrics   │         │  interpreter    │                │    │</span></span>
+<span class="line"><span>│  │  │                 │         │                 │                │    │</span></span>
+<span class="line"><span>│  │  │  - VaR          │         │  - Custom calcs │                │    │</span></span>
+<span class="line"><span>│  │  │  - Sharpe       │         │  - Charts       │                │    │</span></span>
+<span class="line"><span>│  │  │  - Volatility   │         │  - Complex math │                │    │</span></span>
+<span class="line"><span>│  │  │  - Drawdown     │         │                 │                │    │</span></span>
+<span class="line"><span>│  │  └─────────────────┘         └─────────────────┘                │    │</span></span>
+<span class="line"><span>│  │                                                                   │    │</span></span>
+<span class="line"><span>│  │  ┌─────────────────┐         ┌─────────────────┐                │    │</span></span>
+<span class="line"><span>│  │  │  calculate_     │         │  compare_       │                │    │</span></span>
+<span class="line"><span>│  │  │  moving_avgs    │         │  performance    │                │    │</span></span>
+<span class="line"><span>│  │  └─────────────────┘         └─────────────────┘                │    │</span></span>
+<span class="line"><span>│  └─────────────────────────────────────────────────────────────────┘    │</span></span>
+<span class="line"><span>│                                                                          │</span></span>
+<span class="line"><span>│  Output: Analysis results with metrics and visualizations               │</span></span>
+<span class="line"><span>│                                                                          │</span></span>
+<span class="line"><span>└─────────────────────────────────────────────────────────────────────────┘</span></span></code></pre></div>
+<h2 id="risk-calculation-tools">Risk Calculation Tools</h2>
+<h3 id="core-risk-metrics-tool">Core Risk Metrics Tool</h3>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-cei0ei0ju" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-cei0ei0ju"><code><span class="line"><span style="color:#6A737D"># tools/risk_metrics.py</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> numpy </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> np</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands.tools </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> tool</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> typing </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Optional</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">@tool</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> calculate_risk_metrics</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    prices: list[</span><span style="color:#79B8FF">float</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">    confidence_level: </span><span style="color:#79B8FF">float</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 0.95</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    risk_free_rate: </span><span style="color:#79B8FF">float</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 0.05</span></span>
+<span class="line"><span style="color:#E1E4E8">) -&gt; </span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Calculate comprehensive risk metrics from price history.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Use this tool to assess investment risk including:</span></span>
+<span class="line"><span style="color:#9ECBFF">    - Value at Risk (VaR) - potential loss at given confidence</span></span>
+<span class="line"><span style="color:#9ECBFF">    - Sharpe Ratio - risk-adjusted returns</span></span>
+<span class="line"><span style="color:#9ECBFF">    - Volatility - price variability</span></span>
+<span class="line"><span style="color:#9ECBFF">    - Maximum Drawdown - largest peak-to-trough decline</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Args:</span></span>
+<span class="line"><span style="color:#9ECBFF">        prices: List of historical prices (oldest to newest)</span></span>
+<span class="line"><span style="color:#9ECBFF">        confidence_level: Confidence for VaR calculation (default 0.95 = 95%)</span></span>
+<span class="line"><span style="color:#9ECBFF">        risk_free_rate: Annual risk-free rate for Sharpe (default 0.05 = 5%)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Returns:</span></span>
+<span class="line"><span style="color:#9ECBFF">        Dictionary with risk metrics and interpretation</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#79B8FF"> len</span><span style="color:#E1E4E8">(prices) </span><span style="color:#F97583">&lt;</span><span style="color:#79B8FF"> 20</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> {</span><span style="color:#9ECBFF">&quot;error&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Insufficient data - need at least 20 price points&quot;</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    prices </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> np.array(prices)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Calculate daily returns</span></span>
+<span class="line"><span style="color:#E1E4E8">    returns </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> np.diff(prices) </span><span style="color:#F97583">/</span><span style="color:#E1E4E8"> prices[:</span><span style="color:#F97583">-</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Value at Risk (Historical VaR)</span></span>
+<span class="line"><span style="color:#E1E4E8">    var_daily </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> np.percentile(returns, (</span><span style="color:#79B8FF">1</span><span style="color:#F97583"> -</span><span style="color:#E1E4E8"> confidence_level) </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 100</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    var_annual </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> var_daily </span><span style="color:#F97583">*</span><span style="color:#E1E4E8"> np.sqrt(</span><span style="color:#79B8FF">252</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Volatility (Annualized Standard Deviation)</span></span>
+<span class="line"><span style="color:#E1E4E8">    daily_volatility </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> np.std(returns)</span></span>
+<span class="line"><span style="color:#E1E4E8">    annual_volatility </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> daily_volatility </span><span style="color:#F97583">*</span><span style="color:#E1E4E8"> np.sqrt(</span><span style="color:#79B8FF">252</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Sharpe Ratio</span></span>
+<span class="line"><span style="color:#E1E4E8">    annual_return </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> np.mean(returns) </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 252</span></span>
+<span class="line"><span style="color:#E1E4E8">    sharpe_ratio </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (annual_return </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> risk_free_rate) </span><span style="color:#F97583">/</span><span style="color:#E1E4E8"> annual_volatility </span><span style="color:#F97583">if</span><span style="color:#E1E4E8"> annual_volatility </span><span style="color:#F97583">&gt;</span><span style="color:#79B8FF"> 0</span><span style="color:#F97583"> else</span><span style="color:#79B8FF"> 0</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Maximum Drawdown</span></span>
+<span class="line"><span style="color:#E1E4E8">    cumulative_returns </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> np.cumprod(</span><span style="color:#79B8FF">1</span><span style="color:#F97583"> +</span><span style="color:#E1E4E8"> returns)</span></span>
+<span class="line"><span style="color:#E1E4E8">    running_max </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> np.maximum.accumulate(cumulative_returns)</span></span>
+<span class="line"><span style="color:#E1E4E8">    drawdowns </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (cumulative_returns </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> running_max) </span><span style="color:#F97583">/</span><span style="color:#E1E4E8"> running_max</span></span>
+<span class="line"><span style="color:#E1E4E8">    max_drawdown </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> np.min(drawdowns)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Sortino Ratio (downside deviation only)</span></span>
+<span class="line"><span style="color:#E1E4E8">    negative_returns </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> returns[returns </span><span style="color:#F97583">&lt;</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    downside_std </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> np.std(negative_returns) </span><span style="color:#F97583">*</span><span style="color:#E1E4E8"> np.sqrt(</span><span style="color:#79B8FF">252</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">if</span><span style="color:#79B8FF"> len</span><span style="color:#E1E4E8">(negative_returns) </span><span style="color:#F97583">&gt;</span><span style="color:#79B8FF"> 0</span><span style="color:#F97583"> else</span><span style="color:#E1E4E8"> annual_volatility</span></span>
+<span class="line"><span style="color:#E1E4E8">    sortino_ratio </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (annual_return </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> risk_free_rate) </span><span style="color:#F97583">/</span><span style="color:#E1E4E8"> downside_std </span><span style="color:#F97583">if</span><span style="color:#E1E4E8"> downside_std </span><span style="color:#F97583">&gt;</span><span style="color:#79B8FF"> 0</span><span style="color:#F97583"> else</span><span style="color:#79B8FF"> 0</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Interpret results</span></span>
+<span class="line"><span style="color:#E1E4E8">    risk_level </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> &quot;High&quot;</span><span style="color:#F97583"> if</span><span style="color:#E1E4E8"> annual_volatility </span><span style="color:#F97583">&gt;</span><span style="color:#79B8FF"> 0.30</span><span style="color:#F97583"> else</span><span style="color:#9ECBFF"> &quot;Medium&quot;</span><span style="color:#F97583"> if</span><span style="color:#E1E4E8"> annual_volatility </span><span style="color:#F97583">&gt;</span><span style="color:#79B8FF"> 0.15</span><span style="color:#F97583"> else</span><span style="color:#9ECBFF"> &quot;Low&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    sharpe_quality </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> &quot;Excellent&quot;</span><span style="color:#F97583"> if</span><span style="color:#E1E4E8"> sharpe_ratio </span><span style="color:#F97583">&gt;</span><span style="color:#79B8FF"> 1.5</span><span style="color:#F97583"> else</span><span style="color:#9ECBFF"> &quot;Good&quot;</span><span style="color:#F97583"> if</span><span style="color:#E1E4E8"> sharpe_ratio </span><span style="color:#F97583">&gt;</span><span style="color:#79B8FF"> 1</span><span style="color:#F97583"> else</span><span style="color:#9ECBFF"> &quot;Fair&quot;</span><span style="color:#F97583"> if</span><span style="color:#E1E4E8"> sharpe_ratio </span><span style="color:#F97583">&gt;</span><span style="color:#79B8FF"> 0.5</span><span style="color:#F97583"> else</span><span style="color:#9ECBFF"> &quot;Poor&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;metrics&quot;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;var_95_daily&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">round</span><span style="color:#E1E4E8">(var_daily </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 100</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;var_95_annual&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">round</span><span style="color:#E1E4E8">(var_annual </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 100</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;volatility_daily&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">round</span><span style="color:#E1E4E8">(daily_volatility </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 100</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;volatility_annual&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">round</span><span style="color:#E1E4E8">(annual_volatility </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 100</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;sharpe_ratio&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">round</span><span style="color:#E1E4E8">(sharpe_ratio, </span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;sortino_ratio&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">round</span><span style="color:#E1E4E8">(sortino_ratio, </span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;max_drawdown&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">round</span><span style="color:#E1E4E8">(max_drawdown </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 100</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;annual_return&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">round</span><span style="color:#E1E4E8">(annual_return </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 100</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;interpretation&quot;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;risk_level&quot;</span><span style="color:#E1E4E8">: risk_level,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;sharpe_quality&quot;</span><span style="color:#E1E4E8">: sharpe_quality,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;var_interpretation&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;With </span><span style="color:#79B8FF">{int</span><span style="color:#E1E4E8">(confidence_level</span><span style="color:#F97583">*</span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">)</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">% confidence, daily loss will not exceed </span><span style="color:#79B8FF">{abs</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">round</span><span style="color:#E1E4E8">(var_daily </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 100</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">))</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">%&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;drawdown_interpretation&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Worst historical decline was </span><span style="color:#79B8FF">{abs</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">round</span><span style="color:#E1E4E8">(max_drawdown </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 100</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">))</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">% from peak&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;parameters&quot;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;data_points&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">len</span><span style="color:#E1E4E8">(prices),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;confidence_level&quot;</span><span style="color:#E1E4E8">: confidence_level,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;risk_free_rate&quot;</span><span style="color:#E1E4E8">: risk_free_rate</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span></code></pre></div>
+<h3 id="moving-averages-tool">Moving Averages Tool</h3>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-jl2kjmule" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-jl2kjmule"><code><span class="line"><span style="color:#B392F0">@tool</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> calculate_moving_averages</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    prices: list[</span><span style="color:#79B8FF">float</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">    short_window: </span><span style="color:#79B8FF">int</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 20</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    long_window: </span><span style="color:#79B8FF">int</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 50</span></span>
+<span class="line"><span style="color:#E1E4E8">) -&gt; </span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Calculate moving averages and trend signals.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Use this for technical analysis and trend identification:</span></span>
+<span class="line"><span style="color:#9ECBFF">    - Simple Moving Average (SMA)</span></span>
+<span class="line"><span style="color:#9ECBFF">    - Exponential Moving Average (EMA)</span></span>
+<span class="line"><span style="color:#9ECBFF">    - Golden Cross / Death Cross signals</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Args:</span></span>
+<span class="line"><span style="color:#9ECBFF">        prices: List of historical prices</span></span>
+<span class="line"><span style="color:#9ECBFF">        short_window: Short MA period (default 20)</span></span>
+<span class="line"><span style="color:#9ECBFF">        long_window: Long MA period (default 50)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Returns:</span></span>
+<span class="line"><span style="color:#9ECBFF">        Moving averages and trend signals</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#79B8FF"> len</span><span style="color:#E1E4E8">(prices) </span><span style="color:#F97583">&lt;</span><span style="color:#E1E4E8"> long_window:</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> {</span><span style="color:#9ECBFF">&quot;error&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Need at least </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">long_window</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF"> price points&quot;</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    prices </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> np.array(prices)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Simple Moving Averages</span></span>
+<span class="line"><span style="color:#E1E4E8">    sma_short </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> np.convolve(prices, np.ones(short_window)</span><span style="color:#F97583">/</span><span style="color:#E1E4E8">short_window, </span><span style="color:#FFAB70">mode</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;valid&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    sma_long </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> np.convolve(prices, np.ones(long_window)</span><span style="color:#F97583">/</span><span style="color:#E1E4E8">long_window, </span><span style="color:#FFAB70">mode</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;valid&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Exponential Moving Averages</span></span>
+<span class="line"><span style="color:#F97583">    def</span><span style="color:#B392F0"> ema</span><span style="color:#E1E4E8">(data, span):</span></span>
+<span class="line"><span style="color:#E1E4E8">        alpha </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 2</span><span style="color:#F97583"> /</span><span style="color:#E1E4E8"> (span </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        ema_values </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [data[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">]]</span></span>
+<span class="line"><span style="color:#F97583">        for</span><span style="color:#E1E4E8"> price </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> data[</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">:]:</span></span>
+<span class="line"><span style="color:#E1E4E8">            ema_values.append(alpha </span><span style="color:#F97583">*</span><span style="color:#E1E4E8"> price </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">1</span><span style="color:#F97583"> -</span><span style="color:#E1E4E8"> alpha) </span><span style="color:#F97583">*</span><span style="color:#E1E4E8"> ema_values[</span><span style="color:#F97583">-</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> np.array(ema_values)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    ema_short </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> ema(prices, short_window)</span></span>
+<span class="line"><span style="color:#E1E4E8">    ema_long </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> ema(prices, long_window)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Current values</span></span>
+<span class="line"><span style="color:#E1E4E8">    current_price </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> prices[</span><span style="color:#F97583">-</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    current_sma_short </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> sma_short[</span><span style="color:#F97583">-</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    current_sma_long </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> sma_long[</span><span style="color:#F97583">-</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    current_ema_short </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> ema_short[</span><span style="color:#F97583">-</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    current_ema_long </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> ema_long[</span><span style="color:#F97583">-</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Trend signals</span></span>
+<span class="line"><span style="color:#E1E4E8">    sma_trend </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> &quot;Bullish&quot;</span><span style="color:#F97583"> if</span><span style="color:#E1E4E8"> current_sma_short </span><span style="color:#F97583">&gt;</span><span style="color:#E1E4E8"> current_sma_long </span><span style="color:#F97583">else</span><span style="color:#9ECBFF"> &quot;Bearish&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    ema_trend </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> &quot;Bullish&quot;</span><span style="color:#F97583"> if</span><span style="color:#E1E4E8"> current_ema_short </span><span style="color:#F97583">&gt;</span><span style="color:#E1E4E8"> current_ema_long </span><span style="color:#F97583">else</span><span style="color:#9ECBFF"> &quot;Bearish&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Price vs MA signals</span></span>
+<span class="line"><span style="color:#E1E4E8">    price_vs_sma </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> &quot;Above&quot;</span><span style="color:#F97583"> if</span><span style="color:#E1E4E8"> current_price </span><span style="color:#F97583">&gt;</span><span style="color:#E1E4E8"> current_sma_short </span><span style="color:#F97583">else</span><span style="color:#9ECBFF"> &quot;Below&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Detect crossovers (last 5 days)</span></span>
+<span class="line"><span style="color:#E1E4E8">    crossover_signal </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> None</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#79B8FF"> len</span><span style="color:#E1E4E8">(sma_short) </span><span style="color:#F97583">&gt;=</span><span style="color:#79B8FF"> 5</span><span style="color:#F97583"> and</span><span style="color:#79B8FF"> len</span><span style="color:#E1E4E8">(sma_long) </span><span style="color:#F97583">&gt;=</span><span style="color:#79B8FF"> 5</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        recent_short </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> sma_short[</span><span style="color:#F97583">-</span><span style="color:#79B8FF">5</span><span style="color:#E1E4E8">:]</span></span>
+<span class="line"><span style="color:#E1E4E8">        recent_long </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> sma_long[</span><span style="color:#F97583">-</span><span style="color:#79B8FF">5</span><span style="color:#E1E4E8">:][:</span><span style="color:#79B8FF">len</span><span style="color:#E1E4E8">(recent_short)]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        for</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">in</span><span style="color:#79B8FF"> range</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">len</span><span style="color:#E1E4E8">(recent_short)):</span></span>
+<span class="line"><span style="color:#F97583">            if</span><span style="color:#E1E4E8"> recent_short[i</span><span style="color:#F97583">-</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">&lt;</span><span style="color:#E1E4E8"> recent_long[i</span><span style="color:#F97583">-</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">and</span><span style="color:#E1E4E8"> recent_short[i] </span><span style="color:#F97583">&gt;</span><span style="color:#E1E4E8"> recent_long[i]:</span></span>
+<span class="line"><span style="color:#E1E4E8">                crossover_signal </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> &quot;Golden Cross (Bullish)&quot;</span></span>
+<span class="line"><span style="color:#F97583">                break</span></span>
+<span class="line"><span style="color:#F97583">            elif</span><span style="color:#E1E4E8"> recent_short[i</span><span style="color:#F97583">-</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">&gt;</span><span style="color:#E1E4E8"> recent_long[i</span><span style="color:#F97583">-</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">and</span><span style="color:#E1E4E8"> recent_short[i] </span><span style="color:#F97583">&lt;</span><span style="color:#E1E4E8"> recent_long[i]:</span></span>
+<span class="line"><span style="color:#E1E4E8">                crossover_signal </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> &quot;Death Cross (Bearish)&quot;</span></span>
+<span class="line"><span style="color:#F97583">                break</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;current_values&quot;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;price&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">round</span><span style="color:#E1E4E8">(current_price, </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#F97583">            f</span><span style="color:#9ECBFF">&quot;sma_</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">short_window</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">round</span><span style="color:#E1E4E8">(current_sma_short, </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#F97583">            f</span><span style="color:#9ECBFF">&quot;sma_</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">long_window</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">round</span><span style="color:#E1E4E8">(current_sma_long, </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#F97583">            f</span><span style="color:#9ECBFF">&quot;ema_</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">short_window</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">round</span><span style="color:#E1E4E8">(current_ema_short, </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#F97583">            f</span><span style="color:#9ECBFF">&quot;ema_</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">long_window</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">round</span><span style="color:#E1E4E8">(current_ema_long, </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;signals&quot;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;sma_trend&quot;</span><span style="color:#E1E4E8">: sma_trend,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;ema_trend&quot;</span><span style="color:#E1E4E8">: ema_trend,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;price_vs_short_sma&quot;</span><span style="color:#E1E4E8">: price_vs_sma,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;crossover&quot;</span><span style="color:#E1E4E8">: crossover_signal </span><span style="color:#F97583">or</span><span style="color:#9ECBFF"> &quot;None detected&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;analysis&quot;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;trend_alignment&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Strong&quot;</span><span style="color:#F97583"> if</span><span style="color:#E1E4E8"> sma_trend </span><span style="color:#F97583">==</span><span style="color:#E1E4E8"> ema_trend </span><span style="color:#F97583">else</span><span style="color:#9ECBFF"> &quot;Mixed&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;recommendation&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">sma_trend</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF"> bias based on MA analysis&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span></code></pre></div>
+<h3 id="performance-comparison-tool">Performance Comparison Tool</h3>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-15nxo9kub" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-15nxo9kub"><code><span class="line"><span style="color:#B392F0">@tool</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> compare_performance</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    portfolio_prices: dict[</span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, list[</span><span style="color:#79B8FF">float</span><span style="color:#E1E4E8">]],</span></span>
+<span class="line"><span style="color:#E1E4E8">    benchmark_ticker: </span><span style="color:#79B8FF">str</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;SPY&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">) -&gt; </span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Compare performance of multiple assets.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Use this to analyze relative performance across stocks:</span></span>
+<span class="line"><span style="color:#9ECBFF">    - Total returns comparison</span></span>
+<span class="line"><span style="color:#9ECBFF">    - Risk-adjusted returns</span></span>
+<span class="line"><span style="color:#9ECBFF">    - Correlation analysis</span></span>
+<span class="line"><span style="color:#9ECBFF">    - Beta calculation</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Args:</span></span>
+<span class="line"><span style="color:#9ECBFF">        portfolio_prices: Dictionary of ticker -&gt; price list</span></span>
+<span class="line"><span style="color:#9ECBFF">        benchmark_ticker: Benchmark for beta calculation (default SPY)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Returns:</span></span>
+<span class="line"><span style="color:#9ECBFF">        Comparative performance metrics</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    results </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {}</span></span>
+<span class="line"><span style="color:#E1E4E8">    benchmark_returns </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> None</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Calculate returns for each asset</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> ticker, prices </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> portfolio_prices.items():</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#79B8FF"> len</span><span style="color:#E1E4E8">(prices) </span><span style="color:#F97583">&lt;</span><span style="color:#79B8FF"> 20</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">            results[ticker] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span><span style="color:#9ECBFF">&quot;error&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Insufficient data&quot;</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#F97583">            continue</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">        prices_arr </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> np.array(prices)</span></span>
+<span class="line"><span style="color:#E1E4E8">        returns </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> np.diff(prices_arr) </span><span style="color:#F97583">/</span><span style="color:#E1E4E8"> prices_arr[:</span><span style="color:#F97583">-</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">        total_return </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (prices_arr[</span><span style="color:#F97583">-</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">/</span><span style="color:#E1E4E8"> prices_arr[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">-</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 100</span></span>
+<span class="line"><span style="color:#E1E4E8">        annual_return </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> np.mean(returns) </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 252</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 100</span></span>
+<span class="line"><span style="color:#E1E4E8">        volatility </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> np.std(returns) </span><span style="color:#F97583">*</span><span style="color:#E1E4E8"> np.sqrt(</span><span style="color:#79B8FF">252</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 100</span></span>
+<span class="line"><span style="color:#E1E4E8">        sharpe </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (annual_return </span><span style="color:#F97583">/</span><span style="color:#79B8FF"> 100</span><span style="color:#F97583"> -</span><span style="color:#79B8FF"> 0.05</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">/</span><span style="color:#E1E4E8"> (volatility </span><span style="color:#F97583">/</span><span style="color:#79B8FF"> 100</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">if</span><span style="color:#E1E4E8"> volatility </span><span style="color:#F97583">&gt;</span><span style="color:#79B8FF"> 0</span><span style="color:#F97583"> else</span><span style="color:#79B8FF"> 0</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">        results[ticker] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;total_return_pct&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">round</span><span style="color:#E1E4E8">(total_return, </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;annual_return_pct&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">round</span><span style="color:#E1E4E8">(annual_return, </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;volatility_pct&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">round</span><span style="color:#E1E4E8">(volatility, </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;sharpe_ratio&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">round</span><span style="color:#E1E4E8">(sharpe, </span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> ticker.upper() </span><span style="color:#F97583">==</span><span style="color:#E1E4E8"> benchmark_ticker.upper():</span></span>
+<span class="line"><span style="color:#E1E4E8">            benchmark_returns </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> returns</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Calculate beta if benchmark available</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> benchmark_returns </span><span style="color:#F97583">is</span><span style="color:#F97583"> not</span><span style="color:#79B8FF"> None</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">        for</span><span style="color:#E1E4E8"> ticker, prices </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> portfolio_prices.items():</span></span>
+<span class="line"><span style="color:#F97583">            if</span><span style="color:#E1E4E8"> ticker.upper() </span><span style="color:#F97583">==</span><span style="color:#E1E4E8"> benchmark_ticker.upper():</span></span>
+<span class="line"><span style="color:#F97583">                continue</span></span>
+<span class="line"><span style="color:#F97583">            if</span><span style="color:#79B8FF"> len</span><span style="color:#E1E4E8">(prices) </span><span style="color:#F97583">&lt;</span><span style="color:#79B8FF"> 20</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">                continue</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">            prices_arr </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> np.array(prices)</span></span>
+<span class="line"><span style="color:#E1E4E8">            returns </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> np.diff(prices_arr) </span><span style="color:#F97583">/</span><span style="color:#E1E4E8"> prices_arr[:</span><span style="color:#F97583">-</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">            # Align lengths</span></span>
+<span class="line"><span style="color:#E1E4E8">            min_len </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> min</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">len</span><span style="color:#E1E4E8">(returns), </span><span style="color:#79B8FF">len</span><span style="color:#E1E4E8">(benchmark_returns))</span></span>
+<span class="line"><span style="color:#E1E4E8">            asset_ret </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> returns[</span><span style="color:#F97583">-</span><span style="color:#E1E4E8">min_len:]</span></span>
+<span class="line"><span style="color:#E1E4E8">            bench_ret </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> benchmark_returns[</span><span style="color:#F97583">-</span><span style="color:#E1E4E8">min_len:]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">            # Beta calculation</span></span>
+<span class="line"><span style="color:#E1E4E8">            covariance </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> np.cov(asset_ret, bench_ret)[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">            benchmark_var </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> np.var(bench_ret)</span></span>
+<span class="line"><span style="color:#E1E4E8">            beta </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> covariance </span><span style="color:#F97583">/</span><span style="color:#E1E4E8"> benchmark_var </span><span style="color:#F97583">if</span><span style="color:#E1E4E8"> benchmark_var </span><span style="color:#F97583">&gt;</span><span style="color:#79B8FF"> 0</span><span style="color:#F97583"> else</span><span style="color:#79B8FF"> 1</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">            # Correlation</span></span>
+<span class="line"><span style="color:#E1E4E8">            correlation </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> np.corrcoef(asset_ret, bench_ret)[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">            results[ticker][</span><span style="color:#9ECBFF">&quot;beta&quot;</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> round</span><span style="color:#E1E4E8">(beta, </span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">            results[ticker][</span><span style="color:#9ECBFF">&quot;correlation_to_benchmark&quot;</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> round</span><span style="color:#E1E4E8">(correlation, </span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Rank by performance</span></span>
+<span class="line"><span style="color:#E1E4E8">    rankings </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;by_return&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">sorted</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">            [(t, r[</span><span style="color:#9ECBFF">&quot;total_return_pct&quot;</span><span style="color:#E1E4E8">]) </span><span style="color:#F97583">for</span><span style="color:#E1E4E8"> t, r </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> results.items() </span><span style="color:#F97583">if</span><span style="color:#9ECBFF"> &quot;error&quot;</span><span style="color:#F97583"> not</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> r],</span></span>
+<span class="line"><span style="color:#FFAB70">            key</span><span style="color:#F97583">=lambda</span><span style="color:#E1E4E8"> x: x[</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">], </span><span style="color:#FFAB70">reverse</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span></span>
+<span class="line"><span style="color:#E1E4E8">        ),</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;by_sharpe&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">sorted</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">            [(t, r[</span><span style="color:#9ECBFF">&quot;sharpe_ratio&quot;</span><span style="color:#E1E4E8">]) </span><span style="color:#F97583">for</span><span style="color:#E1E4E8"> t, r </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> results.items() </span><span style="color:#F97583">if</span><span style="color:#9ECBFF"> &quot;error&quot;</span><span style="color:#F97583"> not</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> r],</span></span>
+<span class="line"><span style="color:#FFAB70">            key</span><span style="color:#F97583">=lambda</span><span style="color:#E1E4E8"> x: x[</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">], </span><span style="color:#FFAB70">reverse</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;performance&quot;</span><span style="color:#E1E4E8">: results,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;rankings&quot;</span><span style="color:#E1E4E8">: rankings,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;benchmark&quot;</span><span style="color:#E1E4E8">: benchmark_ticker</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span></code></pre></div>
+<h2 id="code-interpreter-integration">Code Interpreter Integration</h2>
+<p>For complex custom calculations and visualizations:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-9r2nq9cuk" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-9r2nq9cuk"><code><span class="line"><span style="color:#6A737D"># tools/code_interpreter.py</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> bedrock_agentcore.tools </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> code_interpreter</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># The code_interpreter tool is provided by AgentCore</span></span>
+<span class="line"><span style="color:#6A737D"># It executes Python code in a sandboxed environment</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Example usage in agent:</span></span>
+<span class="line"><span style="color:#6A737D"># The agent can write and execute Python code like:</span></span>
+<span class="line"><span style="color:#6A737D">#</span></span>
+<span class="line"><span style="color:#6A737D"># import matplotlib.pyplot as plt</span></span>
+<span class="line"><span style="color:#6A737D"># import numpy as np</span></span>
+<span class="line"><span style="color:#6A737D">#</span></span>
+<span class="line"><span style="color:#6A737D"># prices = [100, 102, 98, 105, 103, 108, 112]</span></span>
+<span class="line"><span style="color:#6A737D"># plt.figure(figsize=(10, 6))</span></span>
+<span class="line"><span style="color:#6A737D"># plt.plot(prices, marker=&#39;o&#39;)</span></span>
+<span class="line"><span style="color:#6A737D"># plt.title(&#39;Stock Price History&#39;)</span></span>
+<span class="line"><span style="color:#6A737D"># plt.xlabel(&#39;Day&#39;)</span></span>
+<span class="line"><span style="color:#6A737D"># plt.ylabel(&#39;Price ($)&#39;)</span></span>
+<span class="line"><span style="color:#6A737D"># plt.grid(True)</span></span>
+<span class="line"><span style="color:#6A737D"># plt.savefig(&#39;/tmp/price_chart.png&#39;)</span></span></code></pre></div>
+<aside class="callout callout--warning" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Code Interpreter Limits</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>Remember the guardrails from Day 4: Code Interpreter should have
+restricted imports and execution limits in production.</p> </div> </div> </aside> 
+<h2 id="advanced-analysis-with-code-interpreter">Advanced Analysis with Code Interpreter</h2>
+<p>For sophisticated financial analysis, the agent can use Code Interpreter to run custom calculations:</p>
+<h3 id="monte-carlo-var-simulation">Monte Carlo VaR Simulation</h3>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-71oy4oba3" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-71oy4oba3"><code><span class="line"><span style="color:#6A737D"># Agent prompt that triggers Code Interpreter usage:</span></span>
+<span class="line"><span style="color:#9ECBFF">&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#9ECBFF">Use Code Interpreter to run a Monte Carlo simulation for Value at Risk.</span></span>
+<span class="line"><span style="color:#9ECBFF">Simulate 10,000 portfolio scenarios over 252 trading days.</span></span>
+<span class="line"><span style="color:#9ECBFF">&quot;&quot;&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Code Interpreter executes:</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> numpy </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> np</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> matplotlib.pyplot </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> plt</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Historical returns from extracted data</span></span>
+<span class="line"><span style="color:#E1E4E8">prices </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> np.array([</span><span style="color:#79B8FF">170.0</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">172.5</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">175.0</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">173.0</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">176.0</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">178.5</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">175.5</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">                   177.0</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">179.5</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">180.0</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">178.0</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">176.5</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">179.0</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">181.0</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#E1E4E8">returns </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> np.diff(prices) </span><span style="color:#F97583">/</span><span style="color:#E1E4E8"> prices[:</span><span style="color:#F97583">-</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Monte Carlo simulation</span></span>
+<span class="line"><span style="color:#E1E4E8">np.random.seed(</span><span style="color:#79B8FF">42</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">num_simulations </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 10000</span></span>
+<span class="line"><span style="color:#E1E4E8">num_days </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 252</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Simulate future returns</span></span>
+<span class="line"><span style="color:#E1E4E8">simulated_returns </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> np.random.choice(returns, </span><span style="color:#FFAB70">size</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">(num_simulations, num_days), </span><span style="color:#FFAB70">replace</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">portfolio_values </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 10000</span><span style="color:#F97583"> *</span><span style="color:#E1E4E8"> np.cumprod(</span><span style="color:#79B8FF">1</span><span style="color:#F97583"> +</span><span style="color:#E1E4E8"> simulated_returns, </span><span style="color:#FFAB70">axis</span><span style="color:#F97583">=</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">final_values </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> portfolio_values[:, </span><span style="color:#F97583">-</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Calculate VaR at different confidence levels</span></span>
+<span class="line"><span style="color:#E1E4E8">var_95 </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> np.percentile(final_values, </span><span style="color:#79B8FF">5</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">var_99 </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> np.percentile(final_values, </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">expected_value </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> np.mean(final_values)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Generate visualization</span></span>
+<span class="line"><span style="color:#E1E4E8">plt.figure(</span><span style="color:#FFAB70">figsize</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">12</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">6</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"><span style="color:#E1E4E8">plt.hist(final_values, </span><span style="color:#FFAB70">bins</span><span style="color:#F97583">=</span><span style="color:#79B8FF">50</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">edgecolor</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;black&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">alpha</span><span style="color:#F97583">=</span><span style="color:#79B8FF">0.7</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">plt.axvline(var_95, </span><span style="color:#FFAB70">color</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;orange&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">linewidth</span><span style="color:#F97583">=</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">label</span><span style="color:#F97583">=</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&#39;95% VaR: $</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">var_95</span><span style="color:#F97583">:,.0f</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">plt.axvline(var_99, </span><span style="color:#FFAB70">color</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;red&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">linewidth</span><span style="color:#F97583">=</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">label</span><span style="color:#F97583">=</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&#39;99% VaR: $</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">var_99</span><span style="color:#F97583">:,.0f</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">plt.axvline(expected_value, </span><span style="color:#FFAB70">color</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;green&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">linewidth</span><span style="color:#F97583">=</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">linestyle</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;--&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">label</span><span style="color:#F97583">=</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&#39;Expected: $</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">expected_value</span><span style="color:#F97583">:,.0f</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">plt.xlabel(</span><span style="color:#9ECBFF">&#39;Portfolio Value ($)&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">plt.ylabel(</span><span style="color:#9ECBFF">&#39;Frequency&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">plt.title(</span><span style="color:#9ECBFF">&#39;Monte Carlo VaR Simulation - 10,000 Scenarios&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">plt.legend()</span></span>
+<span class="line"><span style="color:#E1E4E8">plt.grid(</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">alpha</span><span style="color:#F97583">=</span><span style="color:#79B8FF">0.3</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">plt.savefig(</span><span style="color:#9ECBFF">&#39;/tmp/monte_carlo_var.png&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">dpi</span><span style="color:#F97583">=</span><span style="color:#79B8FF">150</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">bbox_inches</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;tight&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Starting Portfolio: $10,000&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Expected Value (1Y): $</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">expected_value</span><span style="color:#F97583">:,.2f</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;95% VaR: $</span><span style="color:#79B8FF">{10000</span><span style="color:#F97583"> -</span><span style="color:#E1E4E8"> var_95</span><span style="color:#F97583">:,.2f</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF"> potential loss&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;99% VaR: $</span><span style="color:#79B8FF">{10000</span><span style="color:#F97583"> -</span><span style="color:#E1E4E8"> var_99</span><span style="color:#F97583">:,.2f</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF"> potential loss&quot;</span><span style="color:#E1E4E8">)</span></span></code></pre></div>
+<h3 id="correlation-matrix-analysis">Correlation Matrix Analysis</h3>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-e4kcss6li" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-e4kcss6li"><code><span class="line"><span style="color:#6A737D"># For multi-asset analysis</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> numpy </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> np</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> matplotlib.pyplot </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> plt</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> seaborn </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> sns</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Returns for multiple assets (from Extract Agent)</span></span>
+<span class="line"><span style="color:#E1E4E8">assets </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">&#39;AAPL&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;MSFT&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;GOOGL&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;AMZN&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">returns_data </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> np.random.randn(</span><span style="color:#79B8FF">252</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">4</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 0.02</span><span style="color:#6A737D">  # Simulated daily returns</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Calculate correlation matrix</span></span>
+<span class="line"><span style="color:#E1E4E8">correlation_matrix </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> np.corrcoef(returns_data.T)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Visualization</span></span>
+<span class="line"><span style="color:#E1E4E8">plt.figure(</span><span style="color:#FFAB70">figsize</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">8</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">6</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"><span style="color:#E1E4E8">sns.heatmap(correlation_matrix, </span><span style="color:#FFAB70">annot</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">fmt</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;.2f&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">            xticklabels</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">assets, </span><span style="color:#FFAB70">yticklabels</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">assets,</span></span>
+<span class="line"><span style="color:#FFAB70">            cmap</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;RdYlGn&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">center</span><span style="color:#F97583">=</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">vmin</span><span style="color:#F97583">=-</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">vmax</span><span style="color:#F97583">=</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">plt.title(</span><span style="color:#9ECBFF">&#39;Asset Correlation Matrix&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">plt.savefig(</span><span style="color:#9ECBFF">&#39;/tmp/correlation_matrix.png&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">dpi</span><span style="color:#F97583">=</span><span style="color:#79B8FF">150</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">bbox_inches</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;tight&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Identify diversification opportunities</span></span>
+<span class="line"><span style="color:#F97583">for</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">in</span><span style="color:#79B8FF"> range</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">len</span><span style="color:#E1E4E8">(assets)):</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> j </span><span style="color:#F97583">in</span><span style="color:#79B8FF"> range</span><span style="color:#E1E4E8">(i</span><span style="color:#F97583">+</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">len</span><span style="color:#E1E4E8">(assets)):</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> correlation_matrix[i,j] </span><span style="color:#F97583">&lt;</span><span style="color:#79B8FF"> 0.3</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#79B8FF">            print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Low correlation: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">assets[i]</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF"> &amp; </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">assets[j]</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF"> (</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">correlation_matrix[i,j]</span><span style="color:#F97583">:.2f</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">)&quot;</span><span style="color:#E1E4E8">)</span></span></code></pre></div>
+<aside class="callout callout--warning" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Code Interpreter Guardrails (Day 4)</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>Remember to apply guardrails from Day 4:</p><ul>
+<li><strong>Restricted imports</strong>: Only numpy, pandas, matplotlib, scipy</li>
+<li><strong>Execution timeout</strong>: 30 seconds maximum</li>
+<li><strong>No network access</strong>: Code cannot fetch external data</li>
+<li><strong>File output restrictions</strong>: Only /tmp directory</li>
+</ul> </div> </div> </aside> 
+<aside class="callout callout--tip" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>From Day 3</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>Code Interpreter was introduced in Day 3. Review that module for
+sandbox configuration and security best practices.</p> </div> </div> </aside> 
+<h2 id="building-the-transform-agent">Building the Transform Agent</h2>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-5uukwk8d3" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-5uukwk8d3"><code><span class="line"><span style="color:#6A737D"># agents/transform_agent.py</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Agent</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands.models </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> BedrockModel</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> bedrock_agentcore.runtime </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> BedrockAgentCoreApp</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> bedrock_agentcore.tools </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> code_interpreter</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Import tools</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> tools.risk_metrics </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> calculate_risk_metrics, calculate_moving_averages, compare_performance</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">app </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> BedrockAgentCoreApp()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">TRANSFORM_SYSTEM_PROMPT</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;&quot;&quot;You are a Financial Analysis Agent.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">Your role is to analyze raw financial data and produce insights:</span></span>
+<span class="line"><span style="color:#9ECBFF">1. **Risk Assessment**: Calculate VaR, volatility, Sharpe ratio, drawdown</span></span>
+<span class="line"><span style="color:#9ECBFF">2. **Technical Analysis**: Moving averages, trends, signals</span></span>
+<span class="line"><span style="color:#9ECBFF">3. **Comparative Analysis**: Performance vs benchmarks, correlations</span></span>
+<span class="line"><span style="color:#9ECBFF">4. **Custom Calculations**: Use Code Interpreter for complex analysis</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">## Input Format</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">You receive data from the Extract Agent in this format:</span></span>
+<span class="line"><span style="color:#9ECBFF">```json</span></span>
+<span class="line"><span style="color:#9ECBFF">{</span></span>
+<span class="line"><span style="color:#9ECBFF">  &quot;request_type&quot;: &quot;stock_data | sec_filing | comparison&quot;,</span></span>
+<span class="line"><span style="color:#9ECBFF">  &quot;tickers&quot;: [&quot;AAPL&quot;],</span></span>
+<span class="line"><span style="color:#9ECBFF">  &quot;data&quot;: { ... }</span></span>
+<span class="line"><span style="color:#9ECBFF">}</span></span></code></pre></div>
+<h2 id="tool-selection">Tool Selection</h2>
+<ul>
+<li><code>calculate_risk_metrics</code>: For VaR, Sharpe, volatility, drawdown</li>
+<li><code>calculate_moving_averages</code>: For trend analysis and signals</li>
+<li><code>compare_performance</code>: For multi-asset comparison</li>
+<li><code>code_interpreter</code>: For custom calculations or visualizations</li>
+</ul>
+<h2 id="output-format">Output Format</h2>
+<p>Return analysis results in structured format:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-isg2jcgyh" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="json" id="code-isg2jcgyh"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  &quot;analysis_type&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;risk | technical | comparison | custom&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  &quot;tickers&quot;</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">&quot;AAPL&quot;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#79B8FF">  &quot;results&quot;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    &quot;metrics&quot;</span><span style="color:#E1E4E8">: { </span><span style="color:#FDAEB7;font-style:italic">...</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#79B8FF">    &quot;interpretation&quot;</span><span style="color:#E1E4E8">: { </span><span style="color:#FDAEB7;font-style:italic">...</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#79B8FF">    &quot;signals&quot;</span><span style="color:#E1E4E8">: { </span><span style="color:#FDAEB7;font-style:italic">...</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#79B8FF">  &quot;visualizations&quot;</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">&quot;list of generated charts if any&quot;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#79B8FF">  &quot;recommendations&quot;</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">&quot;actionable insights&quot;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre></div>
+<h2 id="guidelines">Guidelines</h2>
+<ol>
+<li><strong>Always interpret metrics</strong> - Don’t just return numbers, explain what they mean</li>
+<li><strong>Provide context</strong> - Compare to benchmarks or historical norms</li>
+<li><strong>Be specific about risk</strong> - High volatility means X, low Sharpe means Y</li>
+<li><strong>Use Code Interpreter sparingly</strong> - Only for complex custom analysis</li>
+</ol>
+<h2 id="do-not">Do NOT:</h2>
+<ul>
+<li>Make investment recommendations beyond risk characterization</li>
+<li>Generate reports (Report Agent does that)</li>
+<li>Fetch new data (Extract Agent does that)</li>
+<li>Hallucinate metrics - only calculate from provided data
+&quot;&quot;&quot;</li>
+</ul>
+<p>model = BedrockModel(
+model_id=“anthropic.claude-sonnet-4-20250514-v1:0”,
+region_name=“us-west-2”
+)</p>
+<p>transform_agent = Agent(
+model=model,
+tools=[
+calculate_risk_metrics,
+calculate_moving_averages,
+compare_performance,
+code_interpreter
+],
+system_prompt=TRANSFORM_SYSTEM_PROMPT
+)</p>
+<p>@app.entrypoint
+def analyze_financial_data(payload: dict) -&gt; dict:
+&quot;&quot;&quot;Entry point for the Transform Agent.</p>
+<p>Args:
+payload: Dictionary with ‘data’, ‘analysis_type’, and optional ‘prompt’</p>
+<p>Returns:
+Analysis results with metrics and interpretations
+&quot;&quot;&quot;
+data = payload.get(“data”, &quot;&quot;)
+analysis_type = payload.get(“analysis_type”, “full”)
+custom_prompt = payload.get(“prompt”, &quot;&quot;)</p>
+<h1 id="construct-analysis-request">Construct analysis request</h1>
+<p>prompt = “Analyze the following financial data:\n\n”
+prompt += data + “\n\n”
+prompt += “Analysis type requested: ” + analysis_type</p>
+<p>if custom_prompt:
+prompt += “\nSpecific request: ” + custom_prompt</p>
+<p>response = transform_agent(prompt)</p>
+<p>return dict(
+analysis=response.message[“content”][0][“text”],
+agent=“transform”,
+status=“success”
+)</p>
+<p>if <strong>name</strong> == “<strong>main</strong>”:
+app.run()</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-ia1c3v20e" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext" id="code-ia1c3v20e"><code><span class="line"><span></span></span>
+<span class="line"><span>## Testing the Transform Agent</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>```python</span></span>
+<span class="line"><span># test_transform_agent.py</span></span>
+<span class="line"><span>from agents.transform_agent import transform_agent</span></span>
+<span class="line"><span>import json</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Simulated data from Extract Agent</span></span>
+<span class="line"><span>sample_extract_data = {</span></span>
+<span class="line"><span>    &quot;request_type&quot;: &quot;stock_data&quot;,</span></span>
+<span class="line"><span>    &quot;tickers&quot;: [&quot;AAPL&quot;],</span></span>
+<span class="line"><span>    &quot;data&quot;: {</span></span>
+<span class="line"><span>        &quot;ticker&quot;: &quot;AAPL&quot;,</span></span>
+<span class="line"><span>        &quot;current_price&quot;: 175.50,</span></span>
+<span class="line"><span>        &quot;price_history&quot;: {</span></span>
+<span class="line"><span>            &quot;dates&quot;: [&quot;2024-01-01&quot;, &quot;2024-01-02&quot;, &quot;2024-01-03&quot;],</span></span>
+<span class="line"><span>            &quot;prices&quot;: [170.0, 172.5, 175.0, 173.0, 176.0, 178.5, 175.5,</span></span>
+<span class="line"><span>                      177.0, 179.5, 180.0, 178.0, 176.5, 179.0, 181.0,</span></span>
+<span class="line"><span>                      183.5, 182.0, 180.5, 179.0, 177.5, 175.5]</span></span>
+<span class="line"><span>        }</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Test risk analysis</span></span>
+<span class="line"><span>print(&quot;=&quot;*60)</span></span>
+<span class="line"><span>print(&quot;Test 1: Risk Analysis&quot;)</span></span>
+<span class="line"><span>print(&quot;=&quot;*60)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>risk_prompt = f&quot;&quot;&quot;</span></span>
+<span class="line"><span>Analyze the following financial data and calculate risk metrics:</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>{json.dumps(sample_extract_data, indent=2)}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Focus on: VaR, volatility, Sharpe ratio</span></span>
+<span class="line"><span>&quot;&quot;&quot;</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>response = transform_agent(risk_prompt)</span></span>
+<span class="line"><span>print(response.message[&quot;content&quot;][0][&quot;text&quot;])</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Test technical analysis</span></span>
+<span class="line"><span>print(&quot;\n&quot; + &quot;=&quot;*60)</span></span>
+<span class="line"><span>print(&quot;Test 2: Technical Analysis&quot;)</span></span>
+<span class="line"><span>print(&quot;=&quot;*60)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>technical_prompt = f&quot;&quot;&quot;</span></span>
+<span class="line"><span>Analyze the following data for technical signals:</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>{json.dumps(sample_extract_data, indent=2)}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Focus on: Moving averages, trend signals</span></span>
+<span class="line"><span>&quot;&quot;&quot;</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>response = transform_agent(technical_prompt)</span></span>
+<span class="line"><span>print(response.message[&quot;content&quot;][0][&quot;text&quot;])</span></span></code></pre></div>
+<h2 id="deployment">Deployment</h2>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-foyxbf6yg" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-foyxbf6yg"><code><span class="line"><span style="color:#6A737D"># Deploy the Transform Agent</span></span>
+<span class="line"><span style="color:#B392F0">agentcore</span><span style="color:#9ECBFF"> deploy</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --name</span><span style="color:#9ECBFF"> transform-agent</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --entry</span><span style="color:#9ECBFF"> agents/transform_agent.py</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --requirements</span><span style="color:#9ECBFF"> requirements.txt</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --region</span><span style="color:#9ECBFF"> us-west-2</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --profile</span><span style="color:#9ECBFF"> claude</span></span></code></pre></div>
+<h2 id="pipeline-integration-test">Pipeline Integration Test</h2>
+<p>Test Extract → Transform flow:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-ah8d51iyp" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-ah8d51iyp"><code><span class="line"><span style="color:#6A737D"># test_pipeline.py</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> agents.extract_agent </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> extract_financial_data</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> agents.transform_agent </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> analyze_financial_data</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Step 1: Extract data</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Extracting data...&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">extract_result </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> extract_financial_data({</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;prompt&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Get historical prices for Apple over the last year&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Extract result:&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(extract_result[</span><span style="color:#9ECBFF">&quot;data&quot;</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Step 2: Transform/Analyze data</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">Analyzing data...&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">transform_result </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> analyze_financial_data({</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;data&quot;</span><span style="color:#E1E4E8">: extract_result[</span><span style="color:#9ECBFF">&quot;data&quot;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;analysis_type&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;risk&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;prompt&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Calculate comprehensive risk metrics&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Analysis result:&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(transform_result[</span><span style="color:#9ECBFF">&quot;analysis&quot;</span><span style="color:#E1E4E8">])</span></span></code></pre></div>
+<h2 id="checkpoint">Checkpoint</h2>
+<p>You’ve now built:</p>
+<ul>
+<li>✅ Risk calculation tools (VaR, Sharpe, volatility, drawdown)</li>
+<li>✅ Technical analysis tools (moving averages, signals)</li>
+<li>✅ Performance comparison tools</li>
+<li>✅ Code Interpreter integration for custom analysis</li>
+<li>✅ Focused Transform Agent with clear responsibilities</li>
+</ul>
+<p><strong>Next, we’ll build the Report Agent that synthesizes analysis into professional reports.</strong></p>
+<div class="nav-buttons"><a href="/days/5/extract-agent" class="nav-button nav-button--prev"><p>← Extract Agent</p></a><a href="/days/5/report-agent" class="nav-button nav-button--next"><p>Next: Report Agent →</p></a></div>
+<style>
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 3rem;
+  gap: 1rem;
+}
+
+.nav-button {
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+}
+
+.nav-button--prev {
+  color: var(--color-text-secondary);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--border-subtle);
+}
+
+.nav-button--prev:hover {
+  background: var(--color-bg-secondary);
+}
+
+.nav-button--next {
+  color: white;
+  background: var(--color-day-5);
+}
+
+.nav-button--next:hover {
+  opacity: 0.9;
+}
+</style>   </article> <!-- Navigation Footer --> <nav class="day-layout__pagination" aria-label="Page navigation" data-astro-cid-vfeiczyy>  <div class="pagination" data-astro-cid-gvwdafc4> <a href="/agentcore-avengers/days/5/extract-agent" class="pagination__link pagination__link--prev" data-astro-cid-gvwdafc4> <span class="pagination__label" data-astro-cid-gvwdafc4>Previous</span> <span class="pagination__title" data-astro-cid-gvwdafc4>Extract Agent</span> </a> <a href="/agentcore-avengers/days/5/report-agent" class="pagination__link pagination__link--next" data-astro-cid-gvwdafc4> <span class="pagination__label" data-astro-cid-gvwdafc4>Next</span> <span class="pagination__title" data-astro-cid-gvwdafc4>Report Agent</span> </a> </div>  </nav> </main> <!-- Table of Contents --> <aside class="day-layout__toc hide-mobile" data-astro-cid-vfeiczyy> <div class="day-layout__toc-content" data-astro-cid-vfeiczyy> <h3 class="day-layout__toc-title" data-astro-cid-vfeiczyy>On this page</h3> <nav aria-label="Table of contents" data-astro-cid-vfeiczyy> <ul class="day-layout__toc-list" data-astro-cid-vfeiczyy> <li data-astro-cid-vfeiczyy> <a href="#transform-agent-architecture" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Transform Agent Architecture </a> </li><li data-astro-cid-vfeiczyy> <a href="#risk-calculation-tools" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Risk Calculation Tools </a> </li><li data-astro-cid-vfeiczyy> <a href="#core-risk-metrics-tool" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Core Risk Metrics Tool </a> </li><li data-astro-cid-vfeiczyy> <a href="#moving-averages-tool" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Moving Averages Tool </a> </li><li data-astro-cid-vfeiczyy> <a href="#performance-comparison-tool" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Performance Comparison Tool </a> </li><li data-astro-cid-vfeiczyy> <a href="#code-interpreter-integration" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Code Interpreter Integration </a> </li><li data-astro-cid-vfeiczyy> <a href="#advanced-analysis-with-code-interpreter" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Advanced Analysis with Code Interpreter </a> </li><li data-astro-cid-vfeiczyy> <a href="#monte-carlo-var-simulation" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Monte Carlo VaR Simulation </a> </li><li data-astro-cid-vfeiczyy> <a href="#correlation-matrix-analysis" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Correlation Matrix Analysis </a> </li><li data-astro-cid-vfeiczyy> <a href="#building-the-transform-agent" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Building the Transform Agent </a> </li><li data-astro-cid-vfeiczyy> <a href="#tool-selection" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Tool Selection </a> </li><li data-astro-cid-vfeiczyy> <a href="#output-format" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Output Format </a> </li><li data-astro-cid-vfeiczyy> <a href="#guidelines" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Guidelines </a> </li><li data-astro-cid-vfeiczyy> <a href="#do-not" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Do NOT: </a> </li><li data-astro-cid-vfeiczyy> <a href="#deployment" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Deployment </a> </li><li data-astro-cid-vfeiczyy> <a href="#pipeline-integration-test" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Pipeline Integration Test </a> </li><li data-astro-cid-vfeiczyy> <a href="#checkpoint" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Checkpoint </a> </li> </ul> </nav> </div> </aside> </div> <footer class="footer" data-astro-cid-b2avyow5> <div class="footer__container" data-astro-cid-b2avyow5> <div class="footer__content" data-astro-cid-b2avyow5> <div class="footer__brand" data-astro-cid-b2avyow5> <span class="footer__logo" data-astro-cid-b2avyow5>AgentCore Initiative</span> <p class="footer__tagline" data-astro-cid-b2avyow5>
+Build production-ready AI agents with AWS AgentCore
+</p> </div> <nav class="footer__nav" aria-label="Footer navigation" data-astro-cid-b2avyow5> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Course</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/1" data-astro-cid-b2avyow5>Day 1: The First Avenger</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/2" data-astro-cid-b2avyow5>Day 2: Age of Ultron</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/3" data-astro-cid-b2avyow5>Day 3: Infinity War</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/4" data-astro-cid-b2avyow5>Day 4: Endgame</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/5" data-astro-cid-b2avyow5>Day 5: Assemble</a></li> </ul> </div> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Resources</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/troubleshooting" data-astro-cid-b2avyow5>Troubleshooting</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/reference/costs" data-astro-cid-b2avyow5>Cost Guide</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/reference/cleanup" data-astro-cid-b2avyow5>Cleanup</a></li> </ul> </div> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Links</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5> <a href="https://docs.aws.amazon.com/bedrock-agentcore/" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+AWS AgentCore Docs
+</a> </li> <li data-astro-cid-b2avyow5> <a href="https://github.com/awslabs/amazon-bedrock-agentcore-samples" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+AgentCore Samples
+</a> </li> <li data-astro-cid-b2avyow5> <a href="https://strandsagents.com" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+Strands Agents
+</a> </li> </ul> </div> </nav> </div> <div class="footer__bottom" data-astro-cid-b2avyow5> <p class="footer__copyright" data-astro-cid-b2avyow5>
+&copy; 2026 The AgentCore Initiative. Built with Astro.
+</p> <p class="footer__disclaimer" data-astro-cid-b2avyow5>
+This is an educational resource. AWS and Amazon Bedrock are trademarks of Amazon.com, Inc.
+</p> </div> </div> </footer>   <!-- Global scripts --> <script type="module">function d(){document.querySelectorAll(".copy-button").forEach(c=>{const e=c.cloneNode(!0);c.parentNode?.replaceChild(e,c),e.addEventListener("click",async()=>{const i=e.getAttribute("data-code-id"),n=document.getElementById(i);if(!n)return;const s=n.textContent||"";try{await navigator.clipboard.writeText(s);const t=e.querySelector(".copy-icon"),o=e.querySelector(".check-icon");t&&t.classList.add("hidden"),o&&o.classList.remove("hidden"),e.classList.add("copied"),setTimeout(()=>{t&&t.classList.remove("hidden"),o&&o.classList.add("hidden"),e.classList.remove("copied")},2e3)}catch(t){console.error("Failed to copy code:",t)}})})}document.readyState==="loading"?document.addEventListener("DOMContentLoaded",d):d();document.addEventListener("astro:page-load",d);</script> <!-- Copy code functionality --> <script type="module" src="/agentcore-avengers/_astro/BaseLayout.astro_astro_type_script_index_1_lang.BwEjmFOO.js"></script> </body> </html>   <script type="module" src="/agentcore-avengers/_astro/DayLayout.astro_astro_type_script_index_0_lang.BT_UbId1.js"></script> 

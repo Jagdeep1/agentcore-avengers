@@ -1,0 +1,639 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="canonical" href="https://jagdeep1.github.io/agentcore-avengers/days/5/knowledge-bases/"><!-- Favicon --><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><!-- Primary Meta Tags --><title>Knowledge Bases - Day 5 | The AgentCore Initiative</title><meta name="title" content="Knowledge Bases - Day 5 | The AgentCore Initiative"><meta name="description" content="Day 5: Assemble - Multi-agent Capstone"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://jagdeep1.github.io/agentcore-avengers/days/5/knowledge-bases/"><meta property="og:title" content="Knowledge Bases - Day 5 | The AgentCore Initiative"><meta property="og:description" content="Day 5: Assemble - Multi-agent Capstone"><meta property="og:image" content="https://jagdeep1.github.io/images/og/default.png"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://jagdeep1.github.io/agentcore-avengers/days/5/knowledge-bases/"><meta name="twitter:title" content="Knowledge Bases - Day 5 | The AgentCore Initiative"><meta name="twitter:description" content="Day 5: Assemble - Multi-agent Capstone"><meta name="twitter:image" content="https://jagdeep1.github.io/images/og/default.png"><!-- Fonts - Plus Jakarta Sans & Geist Mono --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"><!-- Theme initialization (prevents flash) --><script>
+      (function () {
+        const stored = localStorage.getItem('agentcore-initiative-progress');
+        let theme = 'dark';
+        if (stored) {
+          try {
+            const progress = JSON.parse(stored);
+            theme = progress.theme || 'dark';
+          } catch (e) {}
+        }
+        if (theme === 'system') {
+          theme = window.matchMedia('(prefers-color-scheme: light)').matches
+            ? 'light'
+            : 'dark';
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script><link rel="stylesheet" href="/agentcore-avengers/_astro/_slug_.C6jciWkZ.css">
+<style>.pagination[data-astro-cid-gvwdafc4]{display:flex;justify-content:space-between;gap:1rem}.pagination__link[data-astro-cid-gvwdafc4]{flex:1;max-width:50%;padding:1rem 1.25rem;background:var(--color-bg-elevated);border:var(--border-subtle);border-radius:var(--radius-lg);text-decoration:none;transition:all var(--transition-fast)}.pagination__link[data-astro-cid-gvwdafc4]:hover{background:var(--color-bg-secondary);border-color:var(--border-default)}.pagination__link--prev[data-astro-cid-gvwdafc4]{text-align:left}.pagination__link--next[data-astro-cid-gvwdafc4]{text-align:right;margin-left:auto}.pagination__label[data-astro-cid-gvwdafc4]{display:block;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-muted);margin-bottom:.25rem}.pagination__title[data-astro-cid-gvwdafc4]{display:block;font-size:.9375rem;font-weight:500;color:var(--color-text-primary)}
+</style>
+<link rel="stylesheet" href="/agentcore-avengers/_astro/_slug_.CP5296fy.css"><style>.callout[data-astro-cid-wi7smz4x]{display:flex;gap:1rem;padding:1rem 1.25rem;border-radius:var(--radius-lg);margin:1.5rem 0;border-left:4px solid}.callout--info[data-astro-cid-wi7smz4x]{background:#3b82f614;border-left-color:var(--color-accent-primary)}.callout--info[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-primary)}.callout--warning[data-astro-cid-wi7smz4x]{background:#f59e0b14;border-left-color:var(--color-accent-warning)}.callout--warning[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-warning)}.callout--danger[data-astro-cid-wi7smz4x]{background:#ef444414;border-left-color:var(--color-accent-danger)}.callout--danger[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-danger)}.callout--success[data-astro-cid-wi7smz4x]{background:#10b98114;border-left-color:var(--color-accent-success)}.callout--success[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-success)}.callout--tip[data-astro-cid-wi7smz4x]{background:#8b5cf614;border-left-color:var(--color-accent-purple)}.callout--tip[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-purple)}.callout__icon[data-astro-cid-wi7smz4x]{flex-shrink:0;width:1.25rem;height:1.25rem;margin-top:.125rem}.callout__content[data-astro-cid-wi7smz4x]{flex:1;min-width:0}.callout__title[data-astro-cid-wi7smz4x]{font-weight:600;font-size:.9375rem;color:var(--color-text-primary);margin-bottom:.25rem}.callout__body[data-astro-cid-wi7smz4x]{font-size:.9375rem;color:var(--color-text-secondary);line-height:1.6}.callout__body[data-astro-cid-wi7smz4x] p{margin:0}.callout__body[data-astro-cid-wi7smz4x] p+p{margin-top:.5rem}.callout__body[data-astro-cid-wi7smz4x] code{font-size:.85em}.callout__body[data-astro-cid-wi7smz4x] a{font-weight:500}
+</style></head> <body>  <header class="header" data-astro-cid-mb6pvx4c> <div class="header__container" data-astro-cid-mb6pvx4c> <!-- Logo --> <a href="/agentcore-avengers/" class="header__logo" aria-label="Home" data-astro-cid-mb6pvx4c> <svg class="header__logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" data-astro-cid-mb6pvx4c> <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c></circle> <path d="M16 6 L22 12 L16 18 L10 12 Z" fill="currentColor" opacity="0.5" data-astro-cid-mb6pvx4c></path> <circle cx="16" cy="16" r="4" fill="currentColor" data-astro-cid-mb6pvx4c></circle> </svg> <span class="header__logo-text" data-astro-cid-mb6pvx4c>AgentCore Initiative</span> </a> <!-- Desktop Navigation --> <nav class="header__nav hide-mobile" aria-label="Main navigation" data-astro-cid-mb6pvx4c> <ul class="header__nav-list" data-astro-cid-mb6pvx4c> <li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/days" class="header__nav-link header__nav-link--active" data-astro-cid-mb6pvx4c> Course </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/troubleshooting" class="header__nav-link" data-astro-cid-mb6pvx4c> Troubleshooting </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/reference" class="header__nav-link" data-astro-cid-mb6pvx4c> Reference </a> </li> </ul> </nav> <!-- Actions --> <div class="header__actions" data-astro-cid-mb6pvx4c> <!-- Theme Toggle Button (placeholder - will be React component) --> <button id="theme-toggle" class="header__theme-toggle" aria-label="Toggle theme" type="button" data-astro-cid-mb6pvx4c> <svg class="header__theme-icon header__theme-icon--dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <circle cx="12" cy="12" r="5" data-astro-cid-mb6pvx4c></circle> <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" data-astro-cid-mb6pvx4c></path> </svg> <svg class="header__theme-icon header__theme-icon--light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-mb6pvx4c></path> </svg> </button> <!-- Mobile Menu Toggle --> <button id="mobile-menu-toggle" class="header__mobile-toggle hide-desktop" aria-label="Toggle menu" aria-expanded="false" type="button" data-astro-cid-mb6pvx4c> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <path class="menu-icon" d="M4 6h16M4 12h16M4 18h16" data-astro-cid-mb6pvx4c></path> <path class="close-icon" d="M6 6l12 12M6 18L18 6" style="display: none" data-astro-cid-mb6pvx4c></path> </svg> </button> </div> </div> <!-- Mobile Navigation --> <nav id="mobile-nav" class="header__mobile-nav hide-desktop" aria-label="Mobile navigation" hidden data-astro-cid-mb6pvx4c> <ul class="header__mobile-nav-list" data-astro-cid-mb6pvx4c> <li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/days" class="header__mobile-nav-link header__mobile-nav-link--active" data-astro-cid-mb6pvx4c> Course </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/troubleshooting" class="header__mobile-nav-link" data-astro-cid-mb6pvx4c> Troubleshooting </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/reference" class="header__mobile-nav-link" data-astro-cid-mb6pvx4c> Reference </a> </li> </ul> </nav> </header>  <script type="module">const r=document.getElementById("theme-toggle");r&&r.addEventListener("click",()=>{const e=document.documentElement,t=e.getAttribute("data-theme")==="dark"?"light":"dark";e.setAttribute("data-theme",t);const c=localStorage.getItem("agentcore-initiative-progress");let i={theme:t};if(c)try{i={...JSON.parse(c),theme:t}}catch{}localStorage.setItem("agentcore-initiative-progress",JSON.stringify(i))});const n=document.getElementById("mobile-menu-toggle"),l=document.getElementById("mobile-nav");n&&l&&n.addEventListener("click",()=>{const e=n.getAttribute("aria-expanded")==="true";n.setAttribute("aria-expanded",String(!e)),l.hidden=e;const o=n.querySelector(".menu-icon"),t=n.querySelector(".close-icon");o&&t&&(o.style.display=e?"block":"none",t.style.display=e?"none":"block")});</script> <div class="day-layout" style="--day-accent: #f59e0b" data-astro-cid-vfeiczyy> <!-- Sidebar --> <aside class="day-layout__sidebar hide-mobile" data-astro-cid-vfeiczyy> <div class="day-layout__sidebar-content" data-astro-cid-vfeiczyy> <!-- Day Header --> <div class="day-layout__day-header" data-astro-cid-vfeiczyy> <span class="day-layout__day-number" data-astro-cid-vfeiczyy>Day 5</span> <h2 class="day-layout__day-title" data-astro-cid-vfeiczyy>Assemble</h2> <p class="day-layout__day-focus" data-astro-cid-vfeiczyy>Multi-agent Capstone</p> </div> <!-- Section Navigation --> <nav class="day-layout__nav" aria-label="Day sections" data-astro-cid-vfeiczyy> <ul class="day-layout__nav-list" data-astro-cid-vfeiczyy> <li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/5/knowledge-bases" class="day-layout__nav-link day-layout__nav-link--active" data-section="knowledge-bases" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Knowledge Bases </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/5/extract-agent" class="day-layout__nav-link" data-section="extract-agent" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Extract Agent </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/5/transform-agent" class="day-layout__nav-link" data-section="transform-agent" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Transform Agent </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/5/report-agent" class="day-layout__nav-link" data-section="report-agent" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Report Agent </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/5/orchestration" class="day-layout__nav-link" data-section="orchestration" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Orchestration &amp; Deployment </a> </li> </ul> </nav> <!-- Challenge Link --> <a href="/agentcore-avengers/days/5/challenge" class="day-layout__challenge-link" data-astro-cid-vfeiczyy> <span class="day-layout__challenge-icon" data-astro-cid-vfeiczyy> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-vfeiczyy> <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" data-astro-cid-vfeiczyy></polygon> </svg> </span>
+Daily Challenge
+</a> </div> </aside> <!-- Main Content --> <main class="day-layout__main" data-astro-cid-vfeiczyy> <article class="day-layout__content prose" data-astro-cid-vfeiczyy>  <h1 id="knowledge-bases">Knowledge Bases</h1>
+<p>Knowledge Bases turn your agents from models that make things up into agents that reference <strong>your data</strong>. This is Retrieval-Augmented Generation (RAG).</p>
+<h2 id="what-is-rag">What is RAG?</h2>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-z9pn846c5" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext" id="code-z9pn846c5"><code><span class="line"><span>Traditional LLM:</span></span>
+<span class="line"><span>  User: &quot;What were Apple&#39;s risk factors in 2024?&quot;</span></span>
+<span class="line"><span>  LLM: *Generates plausible-sounding but potentially inaccurate response*</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>RAG-Powered Agent:</span></span>
+<span class="line"><span>  User: &quot;What were Apple&#39;s risk factors in 2024?&quot;</span></span>
+<span class="line"><span>  Agent: 1. Searches Knowledge Base for relevant documents</span></span>
+<span class="line"><span>         2. Retrieves actual excerpts from Apple&#39;s 10-K filing</span></span>
+<span class="line"><span>         3. Generates response grounded in retrieved facts</span></span>
+<span class="line"><span>         4. Includes citations to source documents</span></span></code></pre></div>
+<h2 id="rag-architecture">RAG Architecture</h2>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-1mmubzk9e" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext" id="code-1mmubzk9e"><code><span class="line"><span>┌─────────────────────────────────────────────────────────────────────────┐</span></span>
+<span class="line"><span>│                     RAG Pipeline                                         │</span></span>
+<span class="line"><span>│                                                                          │</span></span>
+<span class="line"><span>│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐              │</span></span>
+<span class="line"><span>│  │   Documents   │    │   Chunking   │    │  Embeddings  │              │</span></span>
+<span class="line"><span>│  │   (S3/EDGAR)  │───▶│   Strategy   │───▶│   (Titan)    │              │</span></span>
+<span class="line"><span>│  └──────────────┘    └──────────────┘    └──────────────┘              │</span></span>
+<span class="line"><span>│                                                  │                       │</span></span>
+<span class="line"><span>│                                                  ▼                       │</span></span>
+<span class="line"><span>│                                          ┌──────────────┐               │</span></span>
+<span class="line"><span>│                                          │ Vector Store │               │</span></span>
+<span class="line"><span>│                                          │ (OpenSearch) │               │</span></span>
+<span class="line"><span>│                                          └──────────────┘               │</span></span>
+<span class="line"><span>│                                                  │                       │</span></span>
+<span class="line"><span>│  ┌──────────────┐    ┌──────────────┐          │                       │</span></span>
+<span class="line"><span>│  │   Response   │◀───│   Generate   │◀─────────┘                       │</span></span>
+<span class="line"><span>│  │  (+ Citations)│    │   (Claude)   │                                  │</span></span>
+<span class="line"><span>│  └──────────────┘    └──────────────┘                                  │</span></span>
+<span class="line"><span>│                            ▲                                            │</span></span>
+<span class="line"><span>│                            │                                            │</span></span>
+<span class="line"><span>│                      ┌──────────────┐                                   │</span></span>
+<span class="line"><span>│                      │    Query     │                                   │</span></span>
+<span class="line"><span>│                      │  (User Input)│                                   │</span></span>
+<span class="line"><span>│                      └──────────────┘                                   │</span></span>
+<span class="line"><span>└─────────────────────────────────────────────────────────────────────────┘</span></span></code></pre></div>
+<h2 id="when-to-use-knowledge-bases">When to Use Knowledge Bases</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Use Case</th><th>Knowledge Base</th><th>Alternative</th></tr></thead><tbody><tr><td>Company documents</td><td>✅ Yes</td><td>-</td></tr><tr><td>SEC filings</td><td>✅ Yes</td><td>-</td></tr><tr><td>Product manuals</td><td>✅ Yes</td><td>-</td></tr><tr><td>Real-time stock prices</td><td>❌ No</td><td>API calls</td></tr><tr><td>Static reference data</td><td>✅ Yes</td><td>-</td></tr><tr><td>Frequently changing data</td><td>❌ No</td><td>API/database</td></tr><tr><td>Private customer data</td><td>⚠️ With care</td><td>Secure retrieval</td></tr></tbody></table>
+<aside class="callout callout--info" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>KB vs Fine-tuning</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>Knowledge Bases are for <strong>facts and reference data</strong>. Fine-tuning changes model <strong>behavior</strong>.
+Most production systems use Knowledge Bases, not fine-tuning.</p> </div> </div> </aside> 
+<h2 id="setting-up-your-knowledge-base">Setting Up Your Knowledge Base</h2>
+<h3 id="prerequisites">Prerequisites</h3>
+<ol>
+<li><strong>S3 Bucket</strong> for documents</li>
+<li><strong>IAM Role</strong> with appropriate permissions</li>
+<li><strong>Embedding Model</strong> access (Titan Embeddings)</li>
+</ol>
+<h3 id="step-1-create-s3-bucket-and-upload-documents">Step 1: Create S3 Bucket and Upload Documents</h3>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-n1onfs5db" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-n1onfs5db"><code><span class="line"><span style="color:#6A737D"># Create bucket for SEC filings</span></span>
+<span class="line"><span style="color:#B392F0">aws</span><span style="color:#9ECBFF"> s3</span><span style="color:#9ECBFF"> mb</span><span style="color:#9ECBFF"> s3://agentcore-sec-filings-</span><span style="color:#E1E4E8">${AWS_ACCOUNT_ID} </span><span style="color:#79B8FF">--profile</span><span style="color:#9ECBFF"> claude</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Create folder structure</span></span>
+<span class="line"><span style="color:#B392F0">aws</span><span style="color:#9ECBFF"> s3api</span><span style="color:#9ECBFF"> put-object</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --bucket</span><span style="color:#9ECBFF"> agentcore-sec-filings-</span><span style="color:#E1E4E8">${AWS_ACCOUNT_ID} </span><span style="color:#79B8FF">\</span></span>
+<span class="line"><span style="color:#79B8FF">  --key</span><span style="color:#9ECBFF"> filings/</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --profile</span><span style="color:#9ECBFF"> claude</span></span></code></pre></div>
+<h3 id="step-2-download-sec-filings-from-edgar">Step 2: Download SEC Filings from EDGAR</h3>
+<p>SEC’s EDGAR (Electronic Data Gathering, Analysis, and Retrieval) system provides free access to company filings:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-t0u65dey1" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-t0u65dey1"><code><span class="line"><span style="color:#6A737D"># download_sec_filings.py</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> requests</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> os</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># SEC requires User-Agent header</span></span>
+<span class="line"><span style="color:#79B8FF">HEADERS</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">    &#39;User-Agent&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;AgentCore Course contact@example.com&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Sample 10-K filings (annual reports)</span></span>
+<span class="line"><span style="color:#79B8FF">FILINGS</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;company&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;Apple&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;ticker&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;AAPL&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;cik&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;0000320193&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;accession&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;0000320193-24-000123&#39;</span><span style="color:#E1E4E8">,  </span><span style="color:#6A737D"># 2024 10-K</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;form&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;10-K&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;company&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;Microsoft&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;ticker&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;MSFT&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;cik&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;0000789019&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;accession&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;0000789019-24-000123&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;form&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;10-K&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;company&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;Amazon&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;ticker&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;AMZN&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;cik&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;0001018724&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;accession&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;0001018724-24-000123&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;form&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;10-K&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> download_filing</span><span style="color:#E1E4E8">(filing: </span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">, output_dir: </span><span style="color:#79B8FF">str</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &#39;./filings&#39;</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Download SEC filing from EDGAR.&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    os.makedirs(output_dir, </span><span style="color:#FFAB70">exist_ok</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Construct EDGAR URL</span></span>
+<span class="line"><span style="color:#E1E4E8">    cik </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> filing[</span><span style="color:#9ECBFF">&#39;cik&#39;</span><span style="color:#E1E4E8">].lstrip(</span><span style="color:#9ECBFF">&#39;0&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    accession_no_dashes </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> filing[</span><span style="color:#9ECBFF">&#39;accession&#39;</span><span style="color:#E1E4E8">].replace(</span><span style="color:#9ECBFF">&#39;-&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    url </span><span style="color:#F97583">=</span><span style="color:#F97583"> f</span><span style="color:#9ECBFF">&quot;https://www.sec.gov/Archives/edgar/data/</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">cik</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">/</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">accession_no_dashes</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">/</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">filing[</span><span style="color:#9ECBFF">&#39;accession&#39;</span><span style="color:#E1E4E8">]</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">.txt&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> requests.get(url, </span><span style="color:#FFAB70">headers</span><span style="color:#F97583">=</span><span style="color:#79B8FF">HEADERS</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> response.status_code </span><span style="color:#F97583">==</span><span style="color:#79B8FF"> 200</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        filename </span><span style="color:#F97583">=</span><span style="color:#F97583"> f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">filing[</span><span style="color:#9ECBFF">&#39;ticker&#39;</span><span style="color:#E1E4E8">]</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">_</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">filing[</span><span style="color:#9ECBFF">&#39;form&#39;</span><span style="color:#E1E4E8">]</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">.txt&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">        filepath </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> os.path.join(output_dir, filename)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        with</span><span style="color:#79B8FF"> open</span><span style="color:#E1E4E8">(filepath, </span><span style="color:#9ECBFF">&#39;w&#39;</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> f:</span></span>
+<span class="line"><span style="color:#E1E4E8">            f.write(response.text)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Downloaded: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">filename</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> filepath</span></span>
+<span class="line"><span style="color:#F97583">    else</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Failed to download </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">filing[</span><span style="color:#9ECBFF">&#39;ticker&#39;</span><span style="color:#E1E4E8">]</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">response.status_code</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#79B8FF"> None</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Download all filings</span></span>
+<span class="line"><span style="color:#F97583">for</span><span style="color:#E1E4E8"> filing </span><span style="color:#F97583">in</span><span style="color:#79B8FF"> FILINGS</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    download_filing(filing)</span></span></code></pre></div>
+<aside class="callout callout--tip" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>EDGAR Rate Limits</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>SEC limits requests to 10 per second. Add delays between downloads in production.</p> </div> </div> </aside> 
+<h3 id="step-3-add-metadata-for-filtering">Step 3: Add Metadata for Filtering</h3>
+<p>Create metadata files for KB filtering:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-as2thoboa" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-as2thoboa"><code><span class="line"><span style="color:#6A737D"># create_metadata.py</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> json</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> os</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">FILINGS_DIR</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &#39;./filings&#39;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> create_metadata</span><span style="color:#E1E4E8">(ticker: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, company: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, form: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, year: </span><span style="color:#79B8FF">int</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Create metadata JSON for a filing.&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    metadata </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;metadataAttributes&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;ticker&#39;</span><span style="color:#E1E4E8">: ticker,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;company&#39;</span><span style="color:#E1E4E8">: company,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;form&#39;</span><span style="color:#E1E4E8">: form,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;year&#39;</span><span style="color:#E1E4E8">: year,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;source&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;SEC EDGAR&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    filename </span><span style="color:#F97583">=</span><span style="color:#F97583"> f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">ticker</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">_</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">form</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">.txt.metadata.json&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    filepath </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> os.path.join(</span><span style="color:#79B8FF">FILINGS_DIR</span><span style="color:#E1E4E8">, filename)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    with</span><span style="color:#79B8FF"> open</span><span style="color:#E1E4E8">(filepath, </span><span style="color:#9ECBFF">&#39;w&#39;</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> f:</span></span>
+<span class="line"><span style="color:#E1E4E8">        json.dump(metadata, f, </span><span style="color:#FFAB70">indent</span><span style="color:#F97583">=</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Created metadata: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">filename</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Create metadata for each filing</span></span>
+<span class="line"><span style="color:#E1E4E8">create_metadata(</span><span style="color:#9ECBFF">&#39;AAPL&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;Apple Inc.&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;10-K&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">2024</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">create_metadata(</span><span style="color:#9ECBFF">&#39;MSFT&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;Microsoft Corporation&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;10-K&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">2024</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">create_metadata(</span><span style="color:#9ECBFF">&#39;AMZN&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;Amazon.com Inc.&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;10-K&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">2024</span><span style="color:#E1E4E8">)</span></span></code></pre></div>
+<h3 id="step-4-upload-to-s3">Step 4: Upload to S3</h3>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-yicthaxe6" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-yicthaxe6"><code><span class="line"><span style="color:#6A737D"># Upload filings with metadata</span></span>
+<span class="line"><span style="color:#B392F0">aws</span><span style="color:#9ECBFF"> s3</span><span style="color:#9ECBFF"> sync</span><span style="color:#9ECBFF"> ./filings</span><span style="color:#9ECBFF"> s3://agentcore-sec-filings-</span><span style="color:#E1E4E8">${AWS_ACCOUNT_ID}</span><span style="color:#9ECBFF">/filings/</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --profile</span><span style="color:#9ECBFF"> claude</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Verify uploads</span></span>
+<span class="line"><span style="color:#B392F0">aws</span><span style="color:#9ECBFF"> s3</span><span style="color:#9ECBFF"> ls</span><span style="color:#9ECBFF"> s3://agentcore-sec-filings-</span><span style="color:#E1E4E8">${AWS_ACCOUNT_ID}</span><span style="color:#9ECBFF">/filings/</span><span style="color:#79B8FF"> --profile</span><span style="color:#9ECBFF"> claude</span></span></code></pre></div>
+<h3 id="step-5-create-knowledge-base-console">Step 5: Create Knowledge Base (Console)</h3>
+<ol>
+<li>Navigate to <strong>Amazon Bedrock</strong> &gt; <strong>Knowledge bases</strong></li>
+<li>Click <strong>Create knowledge base</strong></li>
+<li>Configure:
+<ul>
+<li><strong>Name</strong>: <code>sec-filings-kb</code></li>
+<li><strong>Description</strong>: <code>SEC EDGAR filings for financial analysis</code></li>
+<li><strong>IAM role</strong>: Create new or use existing</li>
+</ul>
+</li>
+<li><strong>Data source</strong>:
+<ul>
+<li><strong>Type</strong>: Amazon S3</li>
+<li><strong>S3 URI</strong>: <code>s3://agentcore-sec-filings-${AWS_ACCOUNT_ID}/filings/</code></li>
+</ul>
+</li>
+<li><strong>Embeddings</strong>:
+<ul>
+<li><strong>Model</strong>: Amazon Titan Embeddings G1 - Text</li>
+</ul>
+</li>
+<li><strong>Vector store</strong>:
+<ul>
+<li><strong>Quick create</strong>: Amazon OpenSearch Serverless</li>
+</ul>
+</li>
+<li>Click <strong>Create knowledge base</strong></li>
+</ol>
+<h3 id="step-5-alternative-create-via-boto3">Step 5 (Alternative): Create via boto3</h3>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-yhdbelwfe" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-yhdbelwfe"><code><span class="line"><span style="color:#6A737D"># create_knowledge_base.py</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> boto3</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> json</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> time</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">bedrock_agent </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto3.client(</span><span style="color:#9ECBFF">&#39;bedrock-agent&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">region_name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;us-west-2&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">ACCOUNT_ID</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> boto3.client(</span><span style="color:#9ECBFF">&#39;sts&#39;</span><span style="color:#E1E4E8">).get_caller_identity()[</span><span style="color:#9ECBFF">&#39;Account&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Create Knowledge Base</span></span>
+<span class="line"><span style="color:#E1E4E8">kb_response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> bedrock_agent.create_knowledge_base(</span></span>
+<span class="line"><span style="color:#FFAB70">    name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;sec-filings-kb&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    description</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;SEC EDGAR filings for financial analysis&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    roleArn</span><span style="color:#F97583">=</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&#39;arn:aws:iam::</span><span style="color:#79B8FF">{ACCOUNT_ID}</span><span style="color:#9ECBFF">:role/AmazonBedrockKnowledgeBaseRole&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    knowledgeBaseConfiguration</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;type&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;VECTOR&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;vectorKnowledgeBaseConfiguration&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;embeddingModelArn&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&#39;arn:aws:bedrock:us-west-2::foundation-model/amazon.titan-embed-text-v1&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#FFAB70">    storageConfiguration</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;type&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;OPENSEARCH_SERVERLESS&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;opensearchServerlessConfiguration&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;collectionArn&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;arn:aws:aoss:us-west-2:</span><span style="color:#79B8FF">{ACCOUNT_ID}</span><span style="color:#9ECBFF">:collection/xxxxx&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;vectorIndexName&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;sec-filings-index&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;fieldMapping&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;vectorField&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;embedding&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;textField&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;text&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;metadataField&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;metadata&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">KB_ID</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> kb_response[</span><span style="color:#9ECBFF">&#39;knowledgeBase&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;knowledgeBaseId&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Knowledge Base ID: </span><span style="color:#79B8FF">{KB_ID}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Create Data Source</span></span>
+<span class="line"><span style="color:#E1E4E8">ds_response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> bedrock_agent.create_data_source(</span></span>
+<span class="line"><span style="color:#FFAB70">    knowledgeBaseId</span><span style="color:#F97583">=</span><span style="color:#79B8FF">KB_ID</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;sec-filings-s3&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    description</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;SEC filings from S3&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    dataSourceConfiguration</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;type&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;S3&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;s3Configuration&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;bucketArn&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&#39;arn:aws:s3:::agentcore-sec-filings-</span><span style="color:#79B8FF">{ACCOUNT_ID}</span><span style="color:#9ECBFF">&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;inclusionPrefixes&#39;</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">&#39;filings/&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#FFAB70">    vectorIngestionConfiguration</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;chunkingConfiguration&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;chunkingStrategy&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;FIXED_SIZE&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;fixedSizeChunkingConfiguration&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;maxTokens&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">512</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;overlapPercentage&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">20</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">DATA_SOURCE_ID</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> ds_response[</span><span style="color:#9ECBFF">&#39;dataSource&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;dataSourceId&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Data Source ID: </span><span style="color:#79B8FF">{DATA_SOURCE_ID}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span></code></pre></div>
+<h3 id="step-6-sync-data-source">Step 6: Sync Data Source</h3>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-3qx6u90vk" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-3qx6u90vk"><code><span class="line"><span style="color:#6A737D"># Trigger ingestion job</span></span>
+<span class="line"><span style="color:#E1E4E8">ingestion_response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> bedrock_agent.start_ingestion_job(</span></span>
+<span class="line"><span style="color:#FFAB70">    knowledgeBaseId</span><span style="color:#F97583">=</span><span style="color:#79B8FF">KB_ID</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    dataSourceId</span><span style="color:#F97583">=</span><span style="color:#79B8FF">DATA_SOURCE_ID</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">job_id </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> ingestion_response[</span><span style="color:#9ECBFF">&#39;ingestionJob&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;ingestionJobId&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Ingestion Job ID: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">job_id</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Wait for completion</span></span>
+<span class="line"><span style="color:#F97583">while</span><span style="color:#79B8FF"> True</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    status </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> bedrock_agent.get_ingestion_job(</span></span>
+<span class="line"><span style="color:#FFAB70">        knowledgeBaseId</span><span style="color:#F97583">=</span><span style="color:#79B8FF">KB_ID</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        dataSourceId</span><span style="color:#F97583">=</span><span style="color:#79B8FF">DATA_SOURCE_ID</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        ingestionJobId</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">job_id</span></span>
+<span class="line"><span style="color:#E1E4E8">    )[</span><span style="color:#9ECBFF">&#39;ingestionJob&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;status&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Status: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">status</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> status </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">&#39;COMPLETE&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;FAILED&#39;</span><span style="color:#E1E4E8">]:</span></span>
+<span class="line"><span style="color:#F97583">        break</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    time.sleep(</span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">)</span></span></code></pre></div>
+<h2 id="querying-the-knowledge-base">Querying the Knowledge Base</h2>
+<h3 id="retrieveandgenerate-api">RetrieveAndGenerate API</h3>
+<p>The simplest way - retrieves relevant chunks AND generates a response:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-x7dnit9jt" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-x7dnit9jt"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> boto3</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">bedrock_agent_runtime </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto3.client(</span><span style="color:#9ECBFF">&#39;bedrock-agent-runtime&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">region_name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;us-west-2&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">KB_ID</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &#39;your-knowledge-base-id&#39;</span></span>
+<span class="line"><span style="color:#79B8FF">MODEL_ARN</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &#39;arn:aws:bedrock:us-west-2::foundation-model/anthropic.claude-sonnet-4-20250514-v1:0&#39;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> query_knowledge_base</span><span style="color:#E1E4E8">(query: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, ticker: </span><span style="color:#79B8FF">str</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> None</span><span style="color:#E1E4E8">) -&gt; </span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Query KB with RetrieveAndGenerate.&quot;&quot;&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    config </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;type&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;KNOWLEDGE_BASE&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;knowledgeBaseConfiguration&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;knowledgeBaseId&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">KB_ID</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;modelArn&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">MODEL_ARN</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;retrievalConfiguration&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;vectorSearchConfiguration&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                    &#39;numberOfResults&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">5</span></span>
+<span class="line"><span style="color:#E1E4E8">                }</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Add metadata filter if ticker provided</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> ticker:</span></span>
+<span class="line"><span style="color:#E1E4E8">        config[</span><span style="color:#9ECBFF">&#39;knowledgeBaseConfiguration&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;retrievalConfiguration&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;vectorSearchConfiguration&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;filter&#39;</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;equals&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;key&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;ticker&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;value&#39;</span><span style="color:#E1E4E8">: ticker</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> bedrock_agent_runtime.retrieve_and_generate(</span></span>
+<span class="line"><span style="color:#FFAB70">        input</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span><span style="color:#9ECBFF">&#39;text&#39;</span><span style="color:#E1E4E8">: query},</span></span>
+<span class="line"><span style="color:#FFAB70">        retrieveAndGenerateConfiguration</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">config</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;response&#39;</span><span style="color:#E1E4E8">: response[</span><span style="color:#9ECBFF">&#39;output&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;text&#39;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;citations&#39;</span><span style="color:#E1E4E8">: response.get(</span><span style="color:#9ECBFF">&#39;citations&#39;</span><span style="color:#E1E4E8">, [])</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Example usage</span></span>
+<span class="line"><span style="color:#E1E4E8">result </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> query_knowledge_base(</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;What are Apple&#39;s main risk factors?&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    ticker</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;AAPL&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Response:&quot;</span><span style="color:#E1E4E8">, result[</span><span style="color:#9ECBFF">&#39;response&#39;</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">Citations:&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">for</span><span style="color:#E1E4E8"> citation </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> result[</span><span style="color:#9ECBFF">&#39;citations&#39;</span><span style="color:#E1E4E8">]:</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> ref </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> citation.get(</span><span style="color:#9ECBFF">&#39;retrievedReferences&#39;</span><span style="color:#E1E4E8">, []):</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;  - </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">ref[</span><span style="color:#9ECBFF">&#39;location&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;s3Location&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;uri&#39;</span><span style="color:#E1E4E8">]</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span></code></pre></div>
+<h3 id="retrieve-only-api">Retrieve-Only API</h3>
+<p>When you need more control over response generation:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-af14qozml" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-af14qozml"><code><span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> retrieve_only</span><span style="color:#E1E4E8">(query: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, ticker: </span><span style="color:#79B8FF">str</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> None</span><span style="color:#E1E4E8">, top_k: </span><span style="color:#79B8FF">int</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 5</span><span style="color:#E1E4E8">) -&gt; </span><span style="color:#79B8FF">list</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Retrieve chunks without generating a response.&quot;&quot;&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    retrieval_config </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;vectorSearchConfiguration&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;numberOfResults&#39;</span><span style="color:#E1E4E8">: top_k</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> ticker:</span></span>
+<span class="line"><span style="color:#E1E4E8">        retrieval_config[</span><span style="color:#9ECBFF">&#39;vectorSearchConfiguration&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;filter&#39;</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;equals&#39;</span><span style="color:#E1E4E8">: {</span><span style="color:#9ECBFF">&#39;key&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;ticker&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;value&#39;</span><span style="color:#E1E4E8">: ticker}</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> bedrock_agent_runtime.retrieve(</span></span>
+<span class="line"><span style="color:#FFAB70">        knowledgeBaseId</span><span style="color:#F97583">=</span><span style="color:#79B8FF">KB_ID</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        retrievalQuery</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span><span style="color:#9ECBFF">&#39;text&#39;</span><span style="color:#E1E4E8">: query},</span></span>
+<span class="line"><span style="color:#FFAB70">        retrievalConfiguration</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">retrieval_config</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    chunks </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> []</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> result </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> response[</span><span style="color:#9ECBFF">&#39;retrievalResults&#39;</span><span style="color:#E1E4E8">]:</span></span>
+<span class="line"><span style="color:#E1E4E8">        chunks.append({</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;text&#39;</span><span style="color:#E1E4E8">: result[</span><span style="color:#9ECBFF">&#39;content&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;text&#39;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;score&#39;</span><span style="color:#E1E4E8">: result[</span><span style="color:#9ECBFF">&#39;score&#39;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;location&#39;</span><span style="color:#E1E4E8">: result[</span><span style="color:#9ECBFF">&#39;location&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;s3Location&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;uri&#39;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;metadata&#39;</span><span style="color:#E1E4E8">: result.get(</span><span style="color:#9ECBFF">&#39;metadata&#39;</span><span style="color:#E1E4E8">, {})</span></span>
+<span class="line"><span style="color:#E1E4E8">        })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> chunks</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Example: Get raw chunks for custom processing</span></span>
+<span class="line"><span style="color:#E1E4E8">chunks </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> retrieve_only(</span><span style="color:#9ECBFF">&quot;revenue growth&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">ticker</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;MSFT&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">top_k</span><span style="color:#F97583">=</span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">for</span><span style="color:#E1E4E8"> chunk </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> chunks:</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Score: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">chunk[</span><span style="color:#9ECBFF">&#39;score&#39;</span><span style="color:#E1E4E8">]</span><span style="color:#F97583">:.3f</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Text: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">chunk[</span><span style="color:#9ECBFF">&#39;text&#39;</span><span style="color:#E1E4E8">][:</span><span style="color:#79B8FF">200</span><span style="color:#E1E4E8">]</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">...&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">()</span></span></code></pre></div>
+<h2 id="building-the-kb-retrieval-tool">Building the KB Retrieval Tool</h2>
+<p>Create a Strands tool for the Extract Agent:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-s9sfma8py" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-s9sfma8py"><code><span class="line"><span style="color:#6A737D"># kb_tool.py</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> boto3</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands.tools </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> tool</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">bedrock_agent_runtime </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto3.client(</span><span style="color:#9ECBFF">&#39;bedrock-agent-runtime&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">region_name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;us-west-2&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">KB_ID</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &#39;your-knowledge-base-id&#39;</span></span>
+<span class="line"><span style="color:#79B8FF">MODEL_ARN</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &#39;arn:aws:bedrock:us-west-2::foundation-model/anthropic.claude-sonnet-4-20250514-v1:0&#39;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">@tool</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> query_sec_filings</span><span style="color:#E1E4E8">(query: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, ticker: </span><span style="color:#79B8FF">str</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> None</span><span style="color:#E1E4E8">) -&gt; </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Query SEC filings from the Knowledge Base for financial information.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Use this tool to find information from company SEC filings including:</span></span>
+<span class="line"><span style="color:#9ECBFF">    - 10-K annual reports (financials, risk factors, business description)</span></span>
+<span class="line"><span style="color:#9ECBFF">    - 10-Q quarterly reports</span></span>
+<span class="line"><span style="color:#9ECBFF">    - Revenue, earnings, and other financial metrics</span></span>
+<span class="line"><span style="color:#9ECBFF">    - Risk factors and management discussion</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Args:</span></span>
+<span class="line"><span style="color:#9ECBFF">        query: The question to answer from SEC filings</span></span>
+<span class="line"><span style="color:#9ECBFF">        ticker: Optional stock ticker to filter results (e.g., &#39;AAPL&#39;, &#39;MSFT&#39;)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Returns:</span></span>
+<span class="line"><span style="color:#9ECBFF">        Answer generated from SEC filings with citations</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    config </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;type&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;KNOWLEDGE_BASE&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;knowledgeBaseConfiguration&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;knowledgeBaseId&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">KB_ID</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;modelArn&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">MODEL_ARN</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;retrievalConfiguration&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;vectorSearchConfiguration&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                    &#39;numberOfResults&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">5</span></span>
+<span class="line"><span style="color:#E1E4E8">                }</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> ticker:</span></span>
+<span class="line"><span style="color:#E1E4E8">        config[</span><span style="color:#9ECBFF">&#39;knowledgeBaseConfiguration&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;retrievalConfiguration&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;vectorSearchConfiguration&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;filter&#39;</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;equals&#39;</span><span style="color:#E1E4E8">: {</span><span style="color:#9ECBFF">&#39;key&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;ticker&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;value&#39;</span><span style="color:#E1E4E8">: ticker.upper()}</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> bedrock_agent_runtime.retrieve_and_generate(</span></span>
+<span class="line"><span style="color:#FFAB70">            input</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span><span style="color:#9ECBFF">&#39;text&#39;</span><span style="color:#E1E4E8">: query},</span></span>
+<span class="line"><span style="color:#FFAB70">            retrieveAndGenerateConfiguration</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">config</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">        answer </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> response[</span><span style="color:#9ECBFF">&#39;output&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;text&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Add citation info</span></span>
+<span class="line"><span style="color:#E1E4E8">        citations </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> []</span></span>
+<span class="line"><span style="color:#F97583">        for</span><span style="color:#E1E4E8"> citation </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> response.get(</span><span style="color:#9ECBFF">&#39;citations&#39;</span><span style="color:#E1E4E8">, []):</span></span>
+<span class="line"><span style="color:#F97583">            for</span><span style="color:#E1E4E8"> ref </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> citation.get(</span><span style="color:#9ECBFF">&#39;retrievedReferences&#39;</span><span style="color:#E1E4E8">, []):</span></span>
+<span class="line"><span style="color:#E1E4E8">                uri </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> ref[</span><span style="color:#9ECBFF">&#39;location&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;s3Location&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;uri&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">                citations.append(uri.split(</span><span style="color:#9ECBFF">&#39;/&#39;</span><span style="color:#E1E4E8">)[</span><span style="color:#F97583">-</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> citations:</span></span>
+<span class="line"><span style="color:#E1E4E8">            answer </span><span style="color:#F97583">+=</span><span style="color:#F97583"> f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n\n</span><span style="color:#9ECBFF">Sources: </span><span style="color:#79B8FF">{</span><span style="color:#9ECBFF">&#39;, &#39;</span><span style="color:#E1E4E8">.join(</span><span style="color:#79B8FF">set</span><span style="color:#E1E4E8">(citations))</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> answer</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    except</span><span style="color:#79B8FF"> Exception</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> e:</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#F97583"> f</span><span style="color:#9ECBFF">&quot;Error querying SEC filings: </span><span style="color:#79B8FF">{str</span><span style="color:#E1E4E8">(e)</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span></span></code></pre></div>
+<h2 id="testing-your-knowledge-base">Testing Your Knowledge Base</h2>
+<h3 id="console-testing">Console Testing</h3>
+<ol>
+<li>Navigate to your Knowledge Base in Bedrock console</li>
+<li>Click <strong>Test knowledge base</strong></li>
+<li>Enable <strong>Generate responses</strong></li>
+<li>Enter queries like:
+<ul>
+<li>“What are Apple’s risk factors?”</li>
+<li>“Summarize Microsoft’s revenue for 2024”</li>
+<li>“Compare Amazon and Apple’s business segments”</li>
+</ul>
+</li>
+</ol>
+<h3 id="python-testing">Python Testing</h3>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-gm9bvtmvk" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-gm9bvtmvk"><code><span class="line"><span style="color:#6A737D"># test_kb.py</span></span>
+<span class="line"><span style="color:#E1E4E8">test_queries </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#E1E4E8">    (</span><span style="color:#9ECBFF">&quot;What are Apple&#39;s main risk factors?&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;AAPL&quot;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    (</span><span style="color:#9ECBFF">&quot;What was Microsoft&#39;s revenue in fiscal 2024?&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;MSFT&quot;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    (</span><span style="color:#9ECBFF">&quot;Describe Amazon&#39;s business segments&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;AMZN&quot;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    (</span><span style="color:#9ECBFF">&quot;Compare the risk factors across tech companies&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">None</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">for</span><span style="color:#E1E4E8"> query, ticker </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> test_queries:</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n{</span><span style="color:#9ECBFF">&#39;=&#39;</span><span style="color:#F97583">*</span><span style="color:#79B8FF">60}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Query: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">query</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Ticker: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">ticker</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">{</span><span style="color:#9ECBFF">&#39;=&#39;</span><span style="color:#F97583">*</span><span style="color:#79B8FF">60}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    result </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> query_sec_filings(query, ticker)</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(result)</span></span></code></pre></div>
+<h2 id="best-practices">Best Practices</h2>
+<h3 id="1-chunking-strategy">1. Chunking Strategy</h3>
+<p>Choose based on document type:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-cvkxt4msp" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-cvkxt4msp"><code><span class="line"><span style="color:#6A737D"># For SEC filings (structured documents)</span></span>
+<span class="line"><span style="color:#E1E4E8">chunking_config </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">    &#39;chunkingStrategy&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;SEMANTIC&#39;</span><span style="color:#E1E4E8">,  </span><span style="color:#6A737D"># Better for structured docs</span></span>
+<span class="line"><span style="color:#9ECBFF">    &#39;semanticChunkingConfiguration&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;maxTokens&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">512</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;bufferSize&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;breakpointPercentileThreshold&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">95</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># For unstructured documents</span></span>
+<span class="line"><span style="color:#E1E4E8">chunking_config </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">    &#39;chunkingStrategy&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;FIXED_SIZE&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    &#39;fixedSizeChunkingConfiguration&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;maxTokens&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">300</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;overlapPercentage&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">20</span><span style="color:#6A737D">  # 20% overlap for context</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre></div>
+<h3 id="2-metadata-filtering">2. Metadata Filtering</h3>
+<p>Always use metadata for better retrieval:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-z3bpmf9rr" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-z3bpmf9rr"><code><span class="line"><span style="color:#6A737D"># Filter by multiple attributes</span></span>
+<span class="line"><span style="color:#E1E4E8">filter_config </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">    &#39;andAll&#39;</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span><span style="color:#9ECBFF">&#39;equals&#39;</span><span style="color:#E1E4E8">: {</span><span style="color:#9ECBFF">&#39;key&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;ticker&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;value&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;AAPL&#39;</span><span style="color:#E1E4E8">}},</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span><span style="color:#9ECBFF">&#39;equals&#39;</span><span style="color:#E1E4E8">: {</span><span style="color:#9ECBFF">&#39;key&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;form&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;value&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;10-K&#39;</span><span style="color:#E1E4E8">}},</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span><span style="color:#9ECBFF">&#39;greaterThan&#39;</span><span style="color:#E1E4E8">: {</span><span style="color:#9ECBFF">&#39;key&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;year&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;value&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">2022</span><span style="color:#E1E4E8">}}</span></span>
+<span class="line"><span style="color:#E1E4E8">    ]</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre></div>
+<h3 id="3-retrieval-tuning">3. Retrieval Tuning</h3>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-tms6aynau" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-tms6aynau"><code><span class="line"><span style="color:#6A737D"># Adjust number of results based on query type</span></span>
+<span class="line"><span style="color:#E1E4E8">retrieval_config </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">    &#39;vectorSearchConfiguration&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;numberOfResults&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">,  </span><span style="color:#6A737D"># More for broad queries</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;overrideSearchType&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;HYBRID&#39;</span><span style="color:#6A737D">  # Combine semantic + keyword</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre></div>
+<aside class="callout callout--warning" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>KB Sync</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>Remember to re-sync your data source whenever you add or update documents.
+Ingestion jobs can take several minutes for large document sets.</p> </div> </div> </aside> 
+<h2 id="checkpoint">Checkpoint</h2>
+<p>You’ve now learned:</p>
+<ul>
+<li>✅ What RAG is and when to use Knowledge Bases</li>
+<li>✅ How to create a Knowledge Base with S3 data source</li>
+<li>✅ Loading SEC filings from EDGAR</li>
+<li>✅ Querying with RetrieveAndGenerate and Retrieve APIs</li>
+<li>✅ Building a Strands tool for KB retrieval</li>
+</ul>
+<p><strong>Next, we’ll build the Extract Agent that uses this KB tool alongside live market data.</strong></p>
+<div class="nav-buttons"><a href="/days/5" class="nav-button nav-button--prev"><p>← Day 5 Overview</p></a><a href="/days/5/extract-agent" class="nav-button nav-button--next"><p>Next: Extract Agent →</p></a></div>
+<style>
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 3rem;
+  gap: 1rem;
+}
+
+.nav-button {
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+}
+
+.nav-button--prev {
+  color: var(--color-text-secondary);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--border-subtle);
+}
+
+.nav-button--prev:hover {
+  background: var(--color-bg-secondary);
+}
+
+.nav-button--next {
+  color: white;
+  background: var(--color-day-5);
+}
+
+.nav-button--next:hover {
+  opacity: 0.9;
+}
+</style>   </article> <!-- Navigation Footer --> <nav class="day-layout__pagination" aria-label="Page navigation" data-astro-cid-vfeiczyy>  <div class="pagination" data-astro-cid-gvwdafc4> <a href="/agentcore-avengers/days/5/day-5" class="pagination__link pagination__link--prev" data-astro-cid-gvwdafc4> <span class="pagination__label" data-astro-cid-gvwdafc4>Previous</span> <span class="pagination__title" data-astro-cid-gvwdafc4>Day 5: Assemble</span> </a> <a href="/agentcore-avengers/days/5/extract-agent" class="pagination__link pagination__link--next" data-astro-cid-gvwdafc4> <span class="pagination__label" data-astro-cid-gvwdafc4>Next</span> <span class="pagination__title" data-astro-cid-gvwdafc4>Extract Agent</span> </a> </div>  </nav> </main> <!-- Table of Contents --> <aside class="day-layout__toc hide-mobile" data-astro-cid-vfeiczyy> <div class="day-layout__toc-content" data-astro-cid-vfeiczyy> <h3 class="day-layout__toc-title" data-astro-cid-vfeiczyy>On this page</h3> <nav aria-label="Table of contents" data-astro-cid-vfeiczyy> <ul class="day-layout__toc-list" data-astro-cid-vfeiczyy> <li data-astro-cid-vfeiczyy> <a href="#what-is-rag" class="day-layout__toc-link" data-astro-cid-vfeiczyy> What is RAG? </a> </li><li data-astro-cid-vfeiczyy> <a href="#rag-architecture" class="day-layout__toc-link" data-astro-cid-vfeiczyy> RAG Architecture </a> </li><li data-astro-cid-vfeiczyy> <a href="#when-to-use-knowledge-bases" class="day-layout__toc-link" data-astro-cid-vfeiczyy> When to Use Knowledge Bases </a> </li><li data-astro-cid-vfeiczyy> <a href="#setting-up-your-knowledge-base" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Setting Up Your Knowledge Base </a> </li><li data-astro-cid-vfeiczyy> <a href="#prerequisites" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Prerequisites </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-1-create-s3-bucket-and-upload-documents" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Step 1: Create S3 Bucket and Upload Documents </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-2-download-sec-filings-from-edgar" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Step 2: Download SEC Filings from EDGAR </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-3-add-metadata-for-filtering" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Step 3: Add Metadata for Filtering </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-4-upload-to-s3" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Step 4: Upload to S3 </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-5-create-knowledge-base-console" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Step 5: Create Knowledge Base (Console) </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-5-alternative-create-via-boto3" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Step 5 (Alternative): Create via boto3 </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-6-sync-data-source" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Step 6: Sync Data Source </a> </li><li data-astro-cid-vfeiczyy> <a href="#querying-the-knowledge-base" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Querying the Knowledge Base </a> </li><li data-astro-cid-vfeiczyy> <a href="#retrieveandgenerate-api" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> RetrieveAndGenerate API </a> </li><li data-astro-cid-vfeiczyy> <a href="#retrieve-only-api" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Retrieve-Only API </a> </li><li data-astro-cid-vfeiczyy> <a href="#building-the-kb-retrieval-tool" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Building the KB Retrieval Tool </a> </li><li data-astro-cid-vfeiczyy> <a href="#testing-your-knowledge-base" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Testing Your Knowledge Base </a> </li><li data-astro-cid-vfeiczyy> <a href="#console-testing" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Console Testing </a> </li><li data-astro-cid-vfeiczyy> <a href="#python-testing" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Python Testing </a> </li><li data-astro-cid-vfeiczyy> <a href="#best-practices" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Best Practices </a> </li><li data-astro-cid-vfeiczyy> <a href="#1-chunking-strategy" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> 1. Chunking Strategy </a> </li><li data-astro-cid-vfeiczyy> <a href="#2-metadata-filtering" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> 2. Metadata Filtering </a> </li><li data-astro-cid-vfeiczyy> <a href="#3-retrieval-tuning" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> 3. Retrieval Tuning </a> </li><li data-astro-cid-vfeiczyy> <a href="#checkpoint" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Checkpoint </a> </li> </ul> </nav> </div> </aside> </div> <footer class="footer" data-astro-cid-b2avyow5> <div class="footer__container" data-astro-cid-b2avyow5> <div class="footer__content" data-astro-cid-b2avyow5> <div class="footer__brand" data-astro-cid-b2avyow5> <span class="footer__logo" data-astro-cid-b2avyow5>AgentCore Initiative</span> <p class="footer__tagline" data-astro-cid-b2avyow5>
+Build production-ready AI agents with AWS AgentCore
+</p> </div> <nav class="footer__nav" aria-label="Footer navigation" data-astro-cid-b2avyow5> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Course</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/1" data-astro-cid-b2avyow5>Day 1: The First Avenger</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/2" data-astro-cid-b2avyow5>Day 2: Age of Ultron</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/3" data-astro-cid-b2avyow5>Day 3: Infinity War</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/4" data-astro-cid-b2avyow5>Day 4: Endgame</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/5" data-astro-cid-b2avyow5>Day 5: Assemble</a></li> </ul> </div> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Resources</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/troubleshooting" data-astro-cid-b2avyow5>Troubleshooting</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/reference/costs" data-astro-cid-b2avyow5>Cost Guide</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/reference/cleanup" data-astro-cid-b2avyow5>Cleanup</a></li> </ul> </div> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Links</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5> <a href="https://docs.aws.amazon.com/bedrock-agentcore/" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+AWS AgentCore Docs
+</a> </li> <li data-astro-cid-b2avyow5> <a href="https://github.com/awslabs/amazon-bedrock-agentcore-samples" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+AgentCore Samples
+</a> </li> <li data-astro-cid-b2avyow5> <a href="https://strandsagents.com" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+Strands Agents
+</a> </li> </ul> </div> </nav> </div> <div class="footer__bottom" data-astro-cid-b2avyow5> <p class="footer__copyright" data-astro-cid-b2avyow5>
+&copy; 2026 The AgentCore Initiative. Built with Astro.
+</p> <p class="footer__disclaimer" data-astro-cid-b2avyow5>
+This is an educational resource. AWS and Amazon Bedrock are trademarks of Amazon.com, Inc.
+</p> </div> </div> </footer>   <!-- Global scripts --> <script type="module">function d(){document.querySelectorAll(".copy-button").forEach(c=>{const e=c.cloneNode(!0);c.parentNode?.replaceChild(e,c),e.addEventListener("click",async()=>{const i=e.getAttribute("data-code-id"),n=document.getElementById(i);if(!n)return;const s=n.textContent||"";try{await navigator.clipboard.writeText(s);const t=e.querySelector(".copy-icon"),o=e.querySelector(".check-icon");t&&t.classList.add("hidden"),o&&o.classList.remove("hidden"),e.classList.add("copied"),setTimeout(()=>{t&&t.classList.remove("hidden"),o&&o.classList.add("hidden"),e.classList.remove("copied")},2e3)}catch(t){console.error("Failed to copy code:",t)}})})}document.readyState==="loading"?document.addEventListener("DOMContentLoaded",d):d();document.addEventListener("astro:page-load",d);</script> <!-- Copy code functionality --> <script type="module" src="/agentcore-avengers/_astro/BaseLayout.astro_astro_type_script_index_1_lang.BwEjmFOO.js"></script> </body> </html>   <script type="module" src="/agentcore-avengers/_astro/DayLayout.astro_astro_type_script_index_0_lang.BT_UbId1.js"></script> 

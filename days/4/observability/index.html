@@ -1,0 +1,718 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="canonical" href="https://jagdeep1.github.io/agentcore-avengers/days/4/observability/"><!-- Favicon --><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><!-- Primary Meta Tags --><title>Observability - Day 4 | The AgentCore Initiative</title><meta name="title" content="Observability - Day 4 | The AgentCore Initiative"><meta name="description" content="Day 4: Endgame - Guardrails + Observability"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://jagdeep1.github.io/agentcore-avengers/days/4/observability/"><meta property="og:title" content="Observability - Day 4 | The AgentCore Initiative"><meta property="og:description" content="Day 4: Endgame - Guardrails + Observability"><meta property="og:image" content="https://jagdeep1.github.io/images/og/default.png"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://jagdeep1.github.io/agentcore-avengers/days/4/observability/"><meta name="twitter:title" content="Observability - Day 4 | The AgentCore Initiative"><meta name="twitter:description" content="Day 4: Endgame - Guardrails + Observability"><meta name="twitter:image" content="https://jagdeep1.github.io/images/og/default.png"><!-- Fonts - Plus Jakarta Sans & Geist Mono --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"><!-- Theme initialization (prevents flash) --><script>
+      (function () {
+        const stored = localStorage.getItem('agentcore-initiative-progress');
+        let theme = 'dark';
+        if (stored) {
+          try {
+            const progress = JSON.parse(stored);
+            theme = progress.theme || 'dark';
+          } catch (e) {}
+        }
+        if (theme === 'system') {
+          theme = window.matchMedia('(prefers-color-scheme: light)').matches
+            ? 'light'
+            : 'dark';
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script><link rel="stylesheet" href="/agentcore-avengers/_astro/_slug_.C6jciWkZ.css">
+<style>.pagination[data-astro-cid-gdqvm76k]{display:flex;justify-content:space-between;gap:1rem}.pagination__link[data-astro-cid-gdqvm76k]{flex:1;max-width:50%;padding:1rem 1.25rem;background:var(--color-bg-elevated);border:var(--border-subtle);border-radius:var(--radius-lg);text-decoration:none;transition:all var(--transition-fast)}.pagination__link[data-astro-cid-gdqvm76k]:hover{background:var(--color-bg-secondary);border-color:var(--border-default)}.pagination__link--prev[data-astro-cid-gdqvm76k]{text-align:left}.pagination__link--next[data-astro-cid-gdqvm76k]{text-align:right;margin-left:auto}.pagination__label[data-astro-cid-gdqvm76k]{display:block;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-muted);margin-bottom:.25rem}.pagination__title[data-astro-cid-gdqvm76k]{display:block;font-size:.9375rem;font-weight:500;color:var(--color-text-primary)}
+</style>
+<link rel="stylesheet" href="/agentcore-avengers/_astro/_slug_.CP5296fy.css"><style>.callout[data-astro-cid-wi7smz4x]{display:flex;gap:1rem;padding:1rem 1.25rem;border-radius:var(--radius-lg);margin:1.5rem 0;border-left:4px solid}.callout--info[data-astro-cid-wi7smz4x]{background:#3b82f614;border-left-color:var(--color-accent-primary)}.callout--info[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-primary)}.callout--warning[data-astro-cid-wi7smz4x]{background:#f59e0b14;border-left-color:var(--color-accent-warning)}.callout--warning[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-warning)}.callout--danger[data-astro-cid-wi7smz4x]{background:#ef444414;border-left-color:var(--color-accent-danger)}.callout--danger[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-danger)}.callout--success[data-astro-cid-wi7smz4x]{background:#10b98114;border-left-color:var(--color-accent-success)}.callout--success[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-success)}.callout--tip[data-astro-cid-wi7smz4x]{background:#8b5cf614;border-left-color:var(--color-accent-purple)}.callout--tip[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-purple)}.callout__icon[data-astro-cid-wi7smz4x]{flex-shrink:0;width:1.25rem;height:1.25rem;margin-top:.125rem}.callout__content[data-astro-cid-wi7smz4x]{flex:1;min-width:0}.callout__title[data-astro-cid-wi7smz4x]{font-weight:600;font-size:.9375rem;color:var(--color-text-primary);margin-bottom:.25rem}.callout__body[data-astro-cid-wi7smz4x]{font-size:.9375rem;color:var(--color-text-secondary);line-height:1.6}.callout__body[data-astro-cid-wi7smz4x] p{margin:0}.callout__body[data-astro-cid-wi7smz4x] p+p{margin-top:.5rem}.callout__body[data-astro-cid-wi7smz4x] code{font-size:.85em}.callout__body[data-astro-cid-wi7smz4x] a{font-weight:500}
+</style></head> <body>  <header class="header" data-astro-cid-mb6pvx4c> <div class="header__container" data-astro-cid-mb6pvx4c> <!-- Logo --> <a href="/agentcore-avengers/" class="header__logo" aria-label="Home" data-astro-cid-mb6pvx4c> <svg class="header__logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" data-astro-cid-mb6pvx4c> <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c></circle> <path d="M16 6 L22 12 L16 18 L10 12 Z" fill="currentColor" opacity="0.5" data-astro-cid-mb6pvx4c></path> <circle cx="16" cy="16" r="4" fill="currentColor" data-astro-cid-mb6pvx4c></circle> </svg> <span class="header__logo-text" data-astro-cid-mb6pvx4c>AgentCore Initiative</span> </a> <!-- Desktop Navigation --> <nav class="header__nav hide-mobile" aria-label="Main navigation" data-astro-cid-mb6pvx4c> <ul class="header__nav-list" data-astro-cid-mb6pvx4c> <li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/days" class="header__nav-link header__nav-link--active" data-astro-cid-mb6pvx4c> Course </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/troubleshooting" class="header__nav-link" data-astro-cid-mb6pvx4c> Troubleshooting </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/reference" class="header__nav-link" data-astro-cid-mb6pvx4c> Reference </a> </li> </ul> </nav> <!-- Actions --> <div class="header__actions" data-astro-cid-mb6pvx4c> <!-- Theme Toggle Button (placeholder - will be React component) --> <button id="theme-toggle" class="header__theme-toggle" aria-label="Toggle theme" type="button" data-astro-cid-mb6pvx4c> <svg class="header__theme-icon header__theme-icon--dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <circle cx="12" cy="12" r="5" data-astro-cid-mb6pvx4c></circle> <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" data-astro-cid-mb6pvx4c></path> </svg> <svg class="header__theme-icon header__theme-icon--light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-mb6pvx4c></path> </svg> </button> <!-- Mobile Menu Toggle --> <button id="mobile-menu-toggle" class="header__mobile-toggle hide-desktop" aria-label="Toggle menu" aria-expanded="false" type="button" data-astro-cid-mb6pvx4c> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <path class="menu-icon" d="M4 6h16M4 12h16M4 18h16" data-astro-cid-mb6pvx4c></path> <path class="close-icon" d="M6 6l12 12M6 18L18 6" style="display: none" data-astro-cid-mb6pvx4c></path> </svg> </button> </div> </div> <!-- Mobile Navigation --> <nav id="mobile-nav" class="header__mobile-nav hide-desktop" aria-label="Mobile navigation" hidden data-astro-cid-mb6pvx4c> <ul class="header__mobile-nav-list" data-astro-cid-mb6pvx4c> <li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/days" class="header__mobile-nav-link header__mobile-nav-link--active" data-astro-cid-mb6pvx4c> Course </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/troubleshooting" class="header__mobile-nav-link" data-astro-cid-mb6pvx4c> Troubleshooting </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/reference" class="header__mobile-nav-link" data-astro-cid-mb6pvx4c> Reference </a> </li> </ul> </nav> </header>  <script type="module">const r=document.getElementById("theme-toggle");r&&r.addEventListener("click",()=>{const e=document.documentElement,t=e.getAttribute("data-theme")==="dark"?"light":"dark";e.setAttribute("data-theme",t);const c=localStorage.getItem("agentcore-initiative-progress");let i={theme:t};if(c)try{i={...JSON.parse(c),theme:t}}catch{}localStorage.setItem("agentcore-initiative-progress",JSON.stringify(i))});const n=document.getElementById("mobile-menu-toggle"),l=document.getElementById("mobile-nav");n&&l&&n.addEventListener("click",()=>{const e=n.getAttribute("aria-expanded")==="true";n.setAttribute("aria-expanded",String(!e)),l.hidden=e;const o=n.querySelector(".menu-icon"),t=n.querySelector(".close-icon");o&&t&&(o.style.display=e?"block":"none",t.style.display=e?"none":"block")});</script> <div class="day-layout" style="--day-accent: #10b981" data-astro-cid-vfeiczyy> <!-- Sidebar --> <aside class="day-layout__sidebar hide-mobile" data-astro-cid-vfeiczyy> <div class="day-layout__sidebar-content" data-astro-cid-vfeiczyy> <!-- Day Header --> <div class="day-layout__day-header" data-astro-cid-vfeiczyy> <span class="day-layout__day-number" data-astro-cid-vfeiczyy>Day 4</span> <h2 class="day-layout__day-title" data-astro-cid-vfeiczyy>Endgame</h2> <p class="day-layout__day-focus" data-astro-cid-vfeiczyy>Guardrails + Observability</p> </div> <!-- Section Navigation --> <nav class="day-layout__nav" aria-label="Day sections" data-astro-cid-vfeiczyy> <ul class="day-layout__nav-list" data-astro-cid-vfeiczyy> <li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/4/observability" class="day-layout__nav-link day-layout__nav-link--active" data-section="observability" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Observability </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/4/evaluations" class="day-layout__nav-link" data-section="evaluations" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Agent Evaluations </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/4/guardrails-basics" class="day-layout__nav-link" data-section="guardrails-basics" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Guardrails Basics </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/4/tool-guardrails" class="day-layout__nav-link" data-section="tool-guardrails" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Tool Guardrails </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/4/controlled-disasters" class="day-layout__nav-link" data-section="controlled-disasters" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Controlled Disasters </a> </li> </ul> </nav> <!-- Challenge Link --> <a href="/agentcore-avengers/days/4/challenge" class="day-layout__challenge-link" data-astro-cid-vfeiczyy> <span class="day-layout__challenge-icon" data-astro-cid-vfeiczyy> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-vfeiczyy> <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" data-astro-cid-vfeiczyy></polygon> </svg> </span>
+Daily Challenge
+</a> </div> </aside> <!-- Main Content --> <main class="day-layout__main" data-astro-cid-vfeiczyy> <article class="day-layout__content prose" data-astro-cid-vfeiczyy>  <h1 id="observability">Observability</h1>
+<p>Guardrails prevent problems. <strong>Observability</strong> lets you see when they happen, understand why, and fix them before users notice.</p>
+<h2 id="observability-architecture">Observability Architecture</h2>
+<h3 id="local-development">Local Development</h3>
+<p><img src="/agentcore-avengers/images/day-4/observability-local.png" alt="Local Observability"/></p>
+<p>During local development, observability data flows to CloudWatch through the OpenTelemetry collector.</p>
+<h3 id="runtime-deployment">Runtime Deployment</h3>
+<p><img src="/agentcore-avengers/images/day-4/observability-runtime.png" alt="Runtime Observability"/></p>
+<p>In AgentCore Runtime, observability is automatically configured with managed infrastructure.</p>
+<h2 id="the-three-pillars">The Three Pillars</h2>
+<p><strong>Traces</strong> answer “What happened in this specific request?”</p>
+<ul>
+<li>Request → Auth → Memory Fetch → Tool Call → Response</li>
+<li>Timing breakdown: 2ms → 15ms → 120ms → 3400ms → 50ms</li>
+</ul>
+<p><strong>Metrics</strong> answer “How is the system performing overall?”</p>
+<ul>
+<li>Latency: p50=1.2s, p99=5.3s</li>
+<li>Requests/min: 145</li>
+<li>Error rate: 0.3%</li>
+</ul>
+<p><strong>Logs</strong> provide “Details and context”</p>
+<ul>
+<li><code>[ERROR] Tool execution failed: timeout after 60s</code></li>
+<li><code>Context: {userId: &#39;u-123&#39;, tool: &#39;execute_python&#39;, ...}</code></li>
+</ul>
+<h2 id="agentcore-traces">AgentCore Traces</h2>
+<p>AgentCore automatically generates traces for every request, showing the complete execution flow.</p>
+<h3 id="bedrockagentcoreapp-with-automatic-tracing">BedrockAgentCoreApp with Automatic Tracing</h3>
+<p>The <code>BedrockAgentCoreApp</code> provides automatic OpenTelemetry instrumentation:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-d4pmuoaqr" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-d4pmuoaqr"><code><span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Agent, tool</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands_tools </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> calculator</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> bedrock_agentcore.runtime </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> BedrockAgentCoreApp</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands.models </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> BedrockModel</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Initialize AgentCore app with automatic OpenTelemetry</span></span>
+<span class="line"><span style="color:#E1E4E8">app </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> BedrockAgentCoreApp()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">@tool</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> weather</span><span style="color:#E1E4E8">():</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Get current weather conditions.&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#9ECBFF"> &quot;sunny, 72°F&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">model </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> BedrockModel(</span><span style="color:#FFAB70">model_id</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;anthropic.claude-sonnet-4-20250514-v1:0&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">agent </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Agent(</span></span>
+<span class="line"><span style="color:#FFAB70">    model</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">model,</span></span>
+<span class="line"><span style="color:#FFAB70">    tools</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[calculator, weather],</span></span>
+<span class="line"><span style="color:#FFAB70">    system_prompt</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;You&#39;re a helpful assistant with math and weather capabilities.&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">@app.entrypoint</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> handle_request</span><span style="color:#E1E4E8">(payload):</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Agent entrypoint with automatic tracing.&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    user_input </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> payload.get(</span><span style="color:#9ECBFF">&quot;prompt&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> agent(user_input)</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> response.message[</span><span style="color:#9ECBFF">&#39;content&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;text&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#79B8FF"> __name__</span><span style="color:#F97583"> ==</span><span style="color:#9ECBFF"> &quot;__main__&quot;</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    app.run()</span></span></code></pre></div>
+<h3 id="opentelemetry-configuration">OpenTelemetry Configuration</h3>
+<p><img src="/agentcore-avengers/images/day-4/observability-configure.png" alt="Configure Observability"/></p>
+<p>The <code>BedrockAgentCoreApp</code> automatically:</p>
+<ul>
+<li>Initializes OpenTelemetry exporters</li>
+<li>Creates trace contexts for each request</li>
+<li>Captures tool invocations as spans</li>
+<li>Exports metrics to CloudWatch</li>
+</ul>
+<p>Install the AWS OpenTelemetry distribution:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-cb8qoc5wl" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-cb8qoc5wl"><code><span class="line"><span style="color:#B392F0">pip</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> aws-opentelemetry-distro</span></span></code></pre></div>
+<h3 id="launch-and-invoke-flow">Launch and Invoke Flow</h3>
+<p><img src="/agentcore-avengers/images/day-4/observability-launch.png" alt="Launch Agent"/></p>
+<p><img src="/agentcore-avengers/images/day-4/observability-invoke.png" alt="Invoke Agent"/></p>
+<aside class="callout callout--tip" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Automatic Instrumentation</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>When using <code>BedrockAgentCoreApp</code>, traces are automatically created. No manual span creation required for standard agent operations.</p> </div> </div> </aside> 
+<h3 id="legacy-trace-retrieval">Legacy Trace Retrieval</h3>
+<p>For direct trace access via boto3:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-acxvla121" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-acxvla121"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> boto3</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Enable traces when creating an agent session</span></span>
+<span class="line"><span style="color:#E1E4E8">agentcore </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto3.client(</span><span style="color:#9ECBFF">&#39;bedrock-agentcore-runtime&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">region_name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;us-east-1&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> agentcore.invoke_agent(</span></span>
+<span class="line"><span style="color:#FFAB70">    agentId</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;agent-xxxx&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    sessionId</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;session-123&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    inputText</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;User message here&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    enableTrace</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">,  </span><span style="color:#6A737D"># Enable detailed tracing</span></span>
+<span class="line"><span style="color:#FFAB70">    traceLevel</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;DETAILED&#39;</span><span style="color:#6A737D">  # or &#39;BASIC&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Trace is included in response</span></span>
+<span class="line"><span style="color:#E1E4E8">trace </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> response.get(</span><span style="color:#9ECBFF">&#39;trace&#39;</span><span style="color:#E1E4E8">, {})</span></span></code></pre></div>
+<h3 id="trace-structure">Trace Structure</h3>
+<p>Each trace contains:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-e96omud03" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-e96omud03"><code><span class="line"><span style="color:#E1E4E8">trace </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">    &#39;traceId&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;trace-abc123&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    &#39;agentId&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;agent-xxxx&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    &#39;sessionId&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;session-123&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    &#39;timestamp&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;2025-01-03T21:00:00Z&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Input processing</span></span>
+<span class="line"><span style="color:#9ECBFF">    &#39;input&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;text&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;User message&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;guardrailsApplied&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;guardrailDecision&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;ALLOWED&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Orchestration steps</span></span>
+<span class="line"><span style="color:#9ECBFF">    &#39;orchestration&#39;</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;step&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;memory_retrieval&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;startTime&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;2025-01-03T21:00:00.100Z&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;endTime&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;2025-01-03T21:00:00.220Z&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;durationMs&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">120</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;memoriesRetrieved&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">3</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;step&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;tool_invocation&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;startTime&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;2025-01-03T21:00:00.220Z&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;endTime&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;2025-01-03T21:00:03.620Z&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;durationMs&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">3400</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;tool&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;execute_python&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;toolInput&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;import pandas as pd; ...&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;toolOutput&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;Result: 42&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;step&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;model_invocation&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;startTime&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;2025-01-03T21:00:03.620Z&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;endTime&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;2025-01-03T21:00:04.820Z&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;durationMs&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1200</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;modelId&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;anthropic.claude-sonnet-4-20250514-v1:0&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;inputTokens&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1500</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;outputTokens&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">340</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    ],</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Output</span></span>
+<span class="line"><span style="color:#9ECBFF">    &#39;output&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;text&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;Agent response&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;guardrailsApplied&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;guardrailDecision&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;ALLOWED&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Summary</span></span>
+<span class="line"><span style="color:#9ECBFF">    &#39;totalDurationMs&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">4720</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    &#39;status&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;SUCCESS&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre></div>
+<h3 id="trace-analysis">Trace Analysis</h3>
+<p>Extract insights from traces:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-vvhrvvhi3" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-vvhrvvhi3"><code><span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> analyze_trace</span><span style="color:#E1E4E8">(trace: </span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">) -&gt; </span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Analyze a trace for performance and errors.&quot;&quot;&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    total_duration </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> trace[</span><span style="color:#9ECBFF">&#39;totalDurationMs&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    steps </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> trace[</span><span style="color:#9ECBFF">&#39;orchestration&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Find slowest step</span></span>
+<span class="line"><span style="color:#E1E4E8">    slowest </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> max</span><span style="color:#E1E4E8">(steps, </span><span style="color:#FFAB70">key</span><span style="color:#F97583">=lambda</span><span style="color:#E1E4E8"> s: s[</span><span style="color:#9ECBFF">&#39;durationMs&#39;</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Calculate token usage and cost</span></span>
+<span class="line"><span style="color:#E1E4E8">    model_steps </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [s </span><span style="color:#F97583">for</span><span style="color:#E1E4E8"> s </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> steps </span><span style="color:#F97583">if</span><span style="color:#E1E4E8"> s[</span><span style="color:#9ECBFF">&#39;step&#39;</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">==</span><span style="color:#9ECBFF"> &#39;model_invocation&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    total_tokens </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> sum</span><span style="color:#E1E4E8">(s[</span><span style="color:#9ECBFF">&#39;inputTokens&#39;</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> s[</span><span style="color:#9ECBFF">&#39;outputTokens&#39;</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">for</span><span style="color:#E1E4E8"> s </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> model_steps)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Estimate cost (example rates)</span></span>
+<span class="line"><span style="color:#E1E4E8">    input_tokens </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> sum</span><span style="color:#E1E4E8">(s[</span><span style="color:#9ECBFF">&#39;inputTokens&#39;</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">for</span><span style="color:#E1E4E8"> s </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> model_steps)</span></span>
+<span class="line"><span style="color:#E1E4E8">    output_tokens </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> sum</span><span style="color:#E1E4E8">(s[</span><span style="color:#9ECBFF">&#39;outputTokens&#39;</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">for</span><span style="color:#E1E4E8"> s </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> model_steps)</span></span>
+<span class="line"><span style="color:#E1E4E8">    cost </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (input_tokens </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 0.000003</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> (output_tokens </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 0.000015</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;total_duration_ms&#39;</span><span style="color:#E1E4E8">: total_duration,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;slowest_step&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;name&#39;</span><span style="color:#E1E4E8">: slowest[</span><span style="color:#9ECBFF">&#39;step&#39;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;duration_ms&#39;</span><span style="color:#E1E4E8">: slowest[</span><span style="color:#9ECBFF">&#39;durationMs&#39;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;percentage&#39;</span><span style="color:#E1E4E8">: (slowest[</span><span style="color:#9ECBFF">&#39;durationMs&#39;</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">/</span><span style="color:#E1E4E8"> total_duration) </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 100</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;tool_calls&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">len</span><span style="color:#E1E4E8">([s </span><span style="color:#F97583">for</span><span style="color:#E1E4E8"> s </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> steps </span><span style="color:#F97583">if</span><span style="color:#E1E4E8"> s[</span><span style="color:#9ECBFF">&#39;step&#39;</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">==</span><span style="color:#9ECBFF"> &#39;tool_invocation&#39;</span><span style="color:#E1E4E8">]),</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;total_tokens&#39;</span><span style="color:#E1E4E8">: total_tokens,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;estimated_cost_usd&#39;</span><span style="color:#E1E4E8">: cost,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;status&#39;</span><span style="color:#E1E4E8">: trace[</span><span style="color:#9ECBFF">&#39;status&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Example usage</span></span>
+<span class="line"><span style="color:#E1E4E8">analysis </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> analyze_trace(trace)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Request took </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">analysis[</span><span style="color:#9ECBFF">&#39;total_duration_ms&#39;</span><span style="color:#E1E4E8">]</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">ms&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Slowest step: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">analysis[</span><span style="color:#9ECBFF">&#39;slowest_step&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;name&#39;</span><span style="color:#E1E4E8">]</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF"> (</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">analysis[</span><span style="color:#9ECBFF">&#39;slowest_step&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;duration_ms&#39;</span><span style="color:#E1E4E8">]</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">ms)&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Cost: $</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">analysis[</span><span style="color:#9ECBFF">&#39;estimated_cost_usd&#39;</span><span style="color:#E1E4E8">]</span><span style="color:#F97583">:.4f</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span></code></pre></div>
+<h2 id="cloudwatch-integration">CloudWatch Integration</h2>
+<p>Send traces, metrics, and logs to CloudWatch for centralized monitoring.</p>
+<h3 id="automatic-trace-publishing">Automatic Trace Publishing</h3>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-rheqau4r2" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-rheqau4r2"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> boto3</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># AgentCore automatically sends traces to CloudWatch</span></span>
+<span class="line"><span style="color:#6A737D"># Configure log group for traces</span></span>
+<span class="line"><span style="color:#E1E4E8">logs </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto3.client(</span><span style="color:#9ECBFF">&#39;logs&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">region_name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;us-east-1&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">logs.create_log_group(</span></span>
+<span class="line"><span style="color:#FFAB70">    logGroupName</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;/aws/bedrock/agentcore/traces&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Traces appear as log events</span></span>
+<span class="line"><span style="color:#6A737D"># Query them with CloudWatch Insights</span></span></code></pre></div>
+<h3 id="custom-metrics">Custom Metrics</h3>
+<p>Publish agent-specific metrics:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-l557j34in" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-l557j34in"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> boto3</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> datetime </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> datetime</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">cloudwatch </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto3.client(</span><span style="color:#9ECBFF">&#39;cloudwatch&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">region_name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;us-east-1&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> publish_agent_metrics</span><span style="color:#E1E4E8">(trace_analysis: </span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Publish custom metrics from trace analysis.&quot;&quot;&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    metrics </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;MetricName&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;RequestLatency&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;Value&#39;</span><span style="color:#E1E4E8">: trace_analysis[</span><span style="color:#9ECBFF">&#39;total_duration_ms&#39;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;Unit&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;Milliseconds&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;Timestamp&#39;</span><span style="color:#E1E4E8">: datetime.now()</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;MetricName&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;TokensUsed&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;Value&#39;</span><span style="color:#E1E4E8">: trace_analysis[</span><span style="color:#9ECBFF">&#39;total_tokens&#39;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;Unit&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;Count&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;Timestamp&#39;</span><span style="color:#E1E4E8">: datetime.now()</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;MetricName&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;RequestCost&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;Value&#39;</span><span style="color:#E1E4E8">: trace_analysis[</span><span style="color:#9ECBFF">&#39;estimated_cost_usd&#39;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;Unit&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;None&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;Timestamp&#39;</span><span style="color:#E1E4E8">: datetime.now()</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;MetricName&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;ToolCalls&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;Value&#39;</span><span style="color:#E1E4E8">: trace_analysis[</span><span style="color:#9ECBFF">&#39;tool_calls&#39;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;Unit&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;Count&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;Timestamp&#39;</span><span style="color:#E1E4E8">: datetime.now()</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    ]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    cloudwatch.put_metric_data(</span></span>
+<span class="line"><span style="color:#FFAB70">        Namespace</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;AgentCore/Agent&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        MetricData</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">metrics</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># After each request</span></span>
+<span class="line"><span style="color:#E1E4E8">analysis </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> analyze_trace(trace)</span></span>
+<span class="line"><span style="color:#E1E4E8">publish_agent_metrics(analysis)</span></span></code></pre></div>
+<h3 id="metric-dimensions">Metric Dimensions</h3>
+<p>Add dimensions for filtering:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-j8xquxyc5" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-j8xquxyc5"><code><span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> publish_metrics_with_dimensions</span><span style="color:#E1E4E8">(trace: </span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">, analysis: </span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Publish metrics with dimensions for filtering.&quot;&quot;&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    dimensions </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span><span style="color:#9ECBFF">&#39;Name&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;AgentId&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;Value&#39;</span><span style="color:#E1E4E8">: trace[</span><span style="color:#9ECBFF">&#39;agentId&#39;</span><span style="color:#E1E4E8">]},</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span><span style="color:#9ECBFF">&#39;Name&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;Environment&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;Value&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;production&#39;</span><span style="color:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span><span style="color:#9ECBFF">&#39;Name&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;Status&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;Value&#39;</span><span style="color:#E1E4E8">: trace[</span><span style="color:#9ECBFF">&#39;status&#39;</span><span style="color:#E1E4E8">]}</span></span>
+<span class="line"><span style="color:#E1E4E8">    ]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    cloudwatch.put_metric_data(</span></span>
+<span class="line"><span style="color:#FFAB70">        Namespace</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;AgentCore/Agent&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        MetricData</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[{</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;MetricName&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;RequestLatency&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;Value&#39;</span><span style="color:#E1E4E8">: analysis[</span><span style="color:#9ECBFF">&#39;total_duration_ms&#39;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;Unit&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;Milliseconds&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;Dimensions&#39;</span><span style="color:#E1E4E8">: dimensions,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;Timestamp&#39;</span><span style="color:#E1E4E8">: datetime.now()</span></span>
+<span class="line"><span style="color:#E1E4E8">        }]</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Query metrics by dimension</span></span>
+<span class="line"><span style="color:#6A737D"># Example: &quot;Latency for production environment only&quot;</span></span></code></pre></div>
+<h2 id="structured-logging">Structured Logging</h2>
+<p>Use structured logging for better searchability:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-kgk3rdx05" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-kgk3rdx05"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> logging</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> json</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> datetime </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> datetime</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Configure structured logger</span></span>
+<span class="line"><span style="color:#E1E4E8">logger </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> logging.getLogger(</span><span style="color:#9ECBFF">&#39;agentcore&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">logger.setLevel(logging.</span><span style="color:#79B8FF">INFO</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">handler </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> logging.StreamHandler()</span></span>
+<span class="line"><span style="color:#E1E4E8">handler.setFormatter(logging.Formatter(</span><span style="color:#9ECBFF">&#39;</span><span style="color:#79B8FF">%(message)s</span><span style="color:#9ECBFF">&#39;</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"><span style="color:#E1E4E8">logger.addHandler(handler)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> log_structured</span><span style="color:#E1E4E8">(level: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, message: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">**</span><span style="color:#E1E4E8">kwargs):</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Log with structured fields.&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    log_entry </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;timestamp&#39;</span><span style="color:#E1E4E8">: datetime.now().isoformat(),</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;level&#39;</span><span style="color:#E1E4E8">: level,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;message&#39;</span><span style="color:#E1E4E8">: message,</span></span>
+<span class="line"><span style="color:#F97583">        **</span><span style="color:#E1E4E8">kwargs</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">    logger.info(json.dumps(log_entry))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Usage</span></span>
+<span class="line"><span style="color:#E1E4E8">log_structured(</span><span style="color:#9ECBFF">&#39;INFO&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;Agent request started&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    userId</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;user-123&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    sessionId</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;session-456&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    agentId</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;agent-xxxx&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">log_structured(</span><span style="color:#9ECBFF">&#39;ERROR&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;Tool execution failed&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    userId</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;user-123&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    tool</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;execute_python&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    error</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;Timeout after 60s&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    code_length</span><span style="color:#F97583">=</span><span style="color:#79B8FF">450</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span></code></pre></div>
+<h3 id="request-logging-middleware">Request Logging Middleware</h3>
+<p>Add logging to all agent requests:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-k25cawma7" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-k25cawma7"><code><span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> functools </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> wraps</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> time</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> log_agent_request</span><span style="color:#E1E4E8">(func):</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Decorator to log agent requests.&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#B392F0">    @wraps</span><span style="color:#E1E4E8">(func)</span></span>
+<span class="line"><span style="color:#F97583">    def</span><span style="color:#B392F0"> wrapper</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">args, </span><span style="color:#F97583">**</span><span style="color:#E1E4E8">kwargs):</span></span>
+<span class="line"><span style="color:#E1E4E8">        start_time </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> time.time()</span></span>
+<span class="line"><span style="color:#E1E4E8">        request_id </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> generate_request_id()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">        log_structured(</span><span style="color:#9ECBFF">&#39;INFO&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;Agent request started&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">            request_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">request_id,</span></span>
+<span class="line"><span style="color:#FFAB70">            function</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">func.</span><span style="color:#79B8FF">__name__</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">            args_length</span><span style="color:#F97583">=</span><span style="color:#79B8FF">len</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">(args))</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">            result </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> func(</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">args, </span><span style="color:#F97583">**</span><span style="color:#E1E4E8">kwargs)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">            duration_ms </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (time.time() </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> start_time) </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 1000</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">            log_structured(</span><span style="color:#9ECBFF">&#39;INFO&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;Agent request completed&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">                request_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">request_id,</span></span>
+<span class="line"><span style="color:#FFAB70">                duration_ms</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">duration_ms,</span></span>
+<span class="line"><span style="color:#FFAB70">                status</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;success&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">            )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">            return</span><span style="color:#E1E4E8"> result</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        except</span><span style="color:#79B8FF"> Exception</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> e:</span></span>
+<span class="line"><span style="color:#E1E4E8">            duration_ms </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (time.time() </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> start_time) </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 1000</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">            log_structured(</span><span style="color:#9ECBFF">&#39;ERROR&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;Agent request failed&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">                request_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">request_id,</span></span>
+<span class="line"><span style="color:#FFAB70">                duration_ms</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">duration_ms,</span></span>
+<span class="line"><span style="color:#FFAB70">                error</span><span style="color:#F97583">=</span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">(e),</span></span>
+<span class="line"><span style="color:#FFAB70">                status</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;error&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">            )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">            raise</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> wrapper</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">@log_agent_request</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> invoke_agent</span><span style="color:#E1E4E8">(agent_id: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, session_id: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, message: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#6A737D">    # Agent invocation logic</span></span>
+<span class="line"><span style="color:#F97583">    pass</span></span></code></pre></div>
+<h2 id="cloudwatch-dashboards">CloudWatch Dashboards</h2>
+<p>Visualize agent performance with dashboards:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-jb51tnu7v" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-jb51tnu7v"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> boto3</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">cloudwatch </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto3.client(</span><span style="color:#9ECBFF">&#39;cloudwatch&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">region_name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;us-east-1&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Create dashboard</span></span>
+<span class="line"><span style="color:#E1E4E8">dashboard_body </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;widgets&quot;</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;type&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;metric&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;properties&quot;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                &quot;metrics&quot;</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">                    [</span><span style="color:#9ECBFF">&quot;AgentCore/Agent&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;RequestLatency&quot;</span><span style="color:#E1E4E8">, {</span><span style="color:#9ECBFF">&quot;stat&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Average&quot;</span><span style="color:#E1E4E8">}],</span></span>
+<span class="line"><span style="color:#E1E4E8">                    [</span><span style="color:#9ECBFF">&quot;.&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;.&quot;</span><span style="color:#E1E4E8">, {</span><span style="color:#9ECBFF">&quot;stat&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;p99&quot;</span><span style="color:#E1E4E8">}]</span></span>
+<span class="line"><span style="color:#E1E4E8">                ],</span></span>
+<span class="line"><span style="color:#9ECBFF">                &quot;period&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">300</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                &quot;stat&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Average&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                &quot;region&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;us-east-1&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                &quot;title&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Request Latency&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;type&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;metric&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;properties&quot;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                &quot;metrics&quot;</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">                    [</span><span style="color:#9ECBFF">&quot;AgentCore/Agent&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;TokensUsed&quot;</span><span style="color:#E1E4E8">, {</span><span style="color:#9ECBFF">&quot;stat&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Sum&quot;</span><span style="color:#E1E4E8">}]</span></span>
+<span class="line"><span style="color:#E1E4E8">                ],</span></span>
+<span class="line"><span style="color:#9ECBFF">                &quot;period&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">300</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                &quot;stat&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Sum&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                &quot;region&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;us-east-1&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                &quot;title&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Token Usage (5 min)&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;type&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;metric&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;properties&quot;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                &quot;metrics&quot;</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">                    [</span><span style="color:#9ECBFF">&quot;AgentCore/Agent&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;RequestCost&quot;</span><span style="color:#E1E4E8">, {</span><span style="color:#9ECBFF">&quot;stat&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Sum&quot;</span><span style="color:#E1E4E8">}]</span></span>
+<span class="line"><span style="color:#E1E4E8">                ],</span></span>
+<span class="line"><span style="color:#9ECBFF">                &quot;period&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">3600</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                &quot;stat&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Sum&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                &quot;region&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;us-east-1&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                &quot;title&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Cost per Hour&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;type&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;log&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;properties&quot;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                &quot;query&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#9ECBFF">                    SOURCE &#39;/aws/bedrock/agentcore/traces&#39;</span></span>
+<span class="line"><span style="color:#9ECBFF">                    | fields @timestamp, message</span></span>
+<span class="line"><span style="color:#9ECBFF">                    | filter level = &quot;ERROR&quot;</span></span>
+<span class="line"><span style="color:#9ECBFF">                    | sort @timestamp desc</span></span>
+<span class="line"><span style="color:#9ECBFF">                    | limit 20</span></span>
+<span class="line"><span style="color:#9ECBFF">                &quot;&quot;&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                &quot;region&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;us-east-1&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                &quot;title&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Recent Errors&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    ]</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">cloudwatch.put_dashboard(</span></span>
+<span class="line"><span style="color:#FFAB70">    DashboardName</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;AgentCore-Production&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    DashboardBody</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">json.dumps(dashboard_body)</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span></code></pre></div>
+<aside class="callout callout--tip" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Dashboard Best Practices</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>Include:</p><ul>
+<li>Latency (p50, p95, p99)</li>
+<li>Error rate</li>
+<li>Request volume</li>
+<li>Token usage and cost</li>
+<li>Guardrail block rate</li>
+<li>Tool usage breakdown</li>
+</ul> </div> </div> </aside> 
+<h2 id="cloudwatch-insights-queries">CloudWatch Insights Queries</h2>
+<p>Analyze logs with CloudWatch Insights:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-50vzmzcre" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="sql" id="code-50vzmzcre"><code><span class="line"><span style="color:#6A737D">-- Find slowest requests</span></span>
+<span class="line"><span style="color:#E1E4E8">fields @timestamp, </span><span style="color:#79B8FF">trace</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">totalDurationMs</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">trace</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">agentId</span></span>
+<span class="line"><span style="color:#E1E4E8">| </span><span style="color:#F97583">filter</span><span style="color:#79B8FF"> trace</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">totalDurationMs</span><span style="color:#F97583"> &gt;</span><span style="color:#79B8FF"> 5000</span></span>
+<span class="line"><span style="color:#E1E4E8">| sort </span><span style="color:#79B8FF">trace</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">totalDurationMs</span><span style="color:#F97583"> desc</span></span>
+<span class="line"><span style="color:#E1E4E8">| </span><span style="color:#F97583">limit</span><span style="color:#79B8FF"> 20</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- Error rate by agent</span></span>
+<span class="line"><span style="color:#E1E4E8">fields </span><span style="color:#79B8FF">trace</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">agentId</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">trace</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">status</span></span>
+<span class="line"><span style="color:#E1E4E8">| </span><span style="color:#F97583">stats</span><span style="color:#79B8FF"> count</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> total,</span></span>
+<span class="line"><span style="color:#79B8FF">        sum</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">trace</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">status</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &#39;ERROR&#39;</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> errors</span></span>
+<span class="line"><span style="color:#F97583">  by</span><span style="color:#79B8FF"> trace</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">agentId</span></span>
+<span class="line"><span style="color:#E1E4E8">| fields </span><span style="color:#79B8FF">trace</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">agentId</span><span style="color:#E1E4E8">, errors </span><span style="color:#F97583">/</span><span style="color:#E1E4E8"> total </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 100</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> error_rate</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- Most expensive requests</span></span>
+<span class="line"><span style="color:#E1E4E8">fields @timestamp, </span><span style="color:#79B8FF">trace</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">traceId</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">trace</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">totalDurationMs</span></span>
+<span class="line"><span style="color:#E1E4E8">| </span><span style="color:#F97583">filter</span><span style="color:#E1E4E8"> ispresent(</span><span style="color:#79B8FF">trace</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">orchestration</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">| fields @timestamp,</span></span>
+<span class="line"><span style="color:#79B8FF">         trace</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">traceId</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">         sum</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">trace</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">orchestration</span><span style="color:#E1E4E8">[*].inputTokens) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> input_tokens,</span></span>
+<span class="line"><span style="color:#79B8FF">         sum</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">trace</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">orchestration</span><span style="color:#E1E4E8">[*].outputTokens) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> output_tokens,</span></span>
+<span class="line"><span style="color:#E1E4E8">         (input_tokens </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">000003</span><span style="color:#F97583"> +</span><span style="color:#E1E4E8"> output_tokens </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">000015</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> cost</span></span>
+<span class="line"><span style="color:#E1E4E8">| sort cost </span><span style="color:#F97583">desc</span></span>
+<span class="line"><span style="color:#E1E4E8">| </span><span style="color:#F97583">limit</span><span style="color:#79B8FF"> 20</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- Tool usage breakdown</span></span>
+<span class="line"><span style="color:#E1E4E8">fields </span><span style="color:#79B8FF">trace</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">orchestration</span><span style="color:#E1E4E8">[*].tool </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> tools</span></span>
+<span class="line"><span style="color:#E1E4E8">| </span><span style="color:#F97583">filter</span><span style="color:#E1E4E8"> ispresent(tools)</span></span>
+<span class="line"><span style="color:#E1E4E8">| </span><span style="color:#F97583">stats</span><span style="color:#79B8FF"> count</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">by</span><span style="color:#E1E4E8"> tools</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">-- Guardrail block rate</span></span>
+<span class="line"><span style="color:#E1E4E8">fields </span><span style="color:#79B8FF">trace</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">input</span><span style="color:#E1E4E8">.guardrailDecision</span></span>
+<span class="line"><span style="color:#E1E4E8">| </span><span style="color:#F97583">stats</span><span style="color:#79B8FF"> count</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> total,</span></span>
+<span class="line"><span style="color:#79B8FF">        sum</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">trace</span><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">input</span><span style="color:#E1E4E8">.guardrailDecision </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> &#39;BLOCKED&#39;</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> blocked</span></span>
+<span class="line"><span style="color:#E1E4E8">| fields blocked </span><span style="color:#F97583">/</span><span style="color:#E1E4E8"> total </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 100</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> block_rate</span></span></code></pre></div>
+<h2 id="alerts">Alerts</h2>
+<p>Set up CloudWatch alarms:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-e85izpc6d" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-e85izpc6d"><code><span class="line"><span style="color:#6A737D"># High latency alarm</span></span>
+<span class="line"><span style="color:#E1E4E8">cloudwatch.put_metric_alarm(</span></span>
+<span class="line"><span style="color:#FFAB70">    AlarmName</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;AgentCore-HighLatency&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    ComparisonOperator</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;GreaterThanThreshold&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    EvaluationPeriods</span><span style="color:#F97583">=</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    MetricName</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;RequestLatency&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    Namespace</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;AgentCore/Agent&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    Period</span><span style="color:#F97583">=</span><span style="color:#79B8FF">300</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    Statistic</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;Average&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    Threshold</span><span style="color:#F97583">=</span><span style="color:#79B8FF">5000</span><span style="color:#E1E4E8">,  </span><span style="color:#6A737D"># 5 seconds</span></span>
+<span class="line"><span style="color:#FFAB70">    ActionsEnabled</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    AlarmActions</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span><span style="color:#9ECBFF">&#39;arn:aws:sns:us-east-1:123456789:agent-alerts&#39;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">    AlarmDescription</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;Alert when request latency exceeds 5s&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># High error rate alarm</span></span>
+<span class="line"><span style="color:#E1E4E8">cloudwatch.put_metric_alarm(</span></span>
+<span class="line"><span style="color:#FFAB70">    AlarmName</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;AgentCore-HighErrorRate&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    ComparisonOperator</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;GreaterThanThreshold&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    EvaluationPeriods</span><span style="color:#F97583">=</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    Metrics</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;Id&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;error_rate&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;Expression&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;errors / requests * 100&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;Label&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;Error Rate %&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;Id&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;errors&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;MetricStat&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;Metric&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                    &#39;Namespace&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;AgentCore/Agent&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                    &#39;MetricName&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;Errors&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                    &#39;Dimensions&#39;</span><span style="color:#E1E4E8">: [{</span><span style="color:#9ECBFF">&#39;Name&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;Status&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;Value&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;ERROR&#39;</span><span style="color:#E1E4E8">}]</span></span>
+<span class="line"><span style="color:#E1E4E8">                },</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;Period&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">300</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;Stat&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;Sum&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;Id&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;requests&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;MetricStat&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;Metric&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                    &#39;Namespace&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;AgentCore/Agent&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                    &#39;MetricName&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;Requests&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">                },</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;Period&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">300</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;Stat&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;Sum&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    ],</span></span>
+<span class="line"><span style="color:#FFAB70">    Threshold</span><span style="color:#F97583">=</span><span style="color:#79B8FF">5</span><span style="color:#E1E4E8">,  </span><span style="color:#6A737D"># 5% error rate</span></span>
+<span class="line"><span style="color:#FFAB70">    ActionsEnabled</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    AlarmActions</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span><span style="color:#9ECBFF">&#39;arn:aws:sns:us-east-1:123456789:agent-alerts&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Cost alarm</span></span>
+<span class="line"><span style="color:#E1E4E8">cloudwatch.put_metric_alarm(</span></span>
+<span class="line"><span style="color:#FFAB70">    AlarmName</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;AgentCore-HighCost&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    ComparisonOperator</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;GreaterThanThreshold&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    EvaluationPeriods</span><span style="color:#F97583">=</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    MetricName</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;RequestCost&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    Namespace</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;AgentCore/Agent&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    Period</span><span style="color:#F97583">=</span><span style="color:#79B8FF">3600</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    Statistic</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;Sum&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    Threshold</span><span style="color:#F97583">=</span><span style="color:#79B8FF">10.0</span><span style="color:#E1E4E8">,  </span><span style="color:#6A737D"># $10/hour</span></span>
+<span class="line"><span style="color:#FFAB70">    ActionsEnabled</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    AlarmActions</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span><span style="color:#9ECBFF">&#39;arn:aws:sns:us-east-1:123456789:cost-alerts&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span></code></pre></div>
+<h2 id="complete-observability-stack">Complete Observability Stack</h2>
+<p>Put it all together:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-n4gi06wkf" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-n4gi06wkf"><code><span class="line"><span style="color:#6A737D"># agent_with_observability.py</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> boto3</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> logging</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> json</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> datetime </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> datetime</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Agent</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands.models </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> BedrockModel</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> ObservableAgent</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Agent with full observability.&quot;&quot;&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    def</span><span style="color:#79B8FF"> __init__</span><span style="color:#E1E4E8">(self, agent_id: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#79B8FF">        self</span><span style="color:#E1E4E8">.agent_id </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> agent_id</span></span>
+<span class="line"><span style="color:#79B8FF">        self</span><span style="color:#E1E4E8">.model </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> BedrockModel(</span></span>
+<span class="line"><span style="color:#FFAB70">            model_id</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;anthropic.claude-sonnet-4-20250514-v1:0&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"><span style="color:#79B8FF">        self</span><span style="color:#E1E4E8">.agent </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Agent(</span><span style="color:#FFAB70">model</span><span style="color:#F97583">=</span><span style="color:#79B8FF">self</span><span style="color:#E1E4E8">.model)</span></span>
+<span class="line"><span style="color:#79B8FF">        self</span><span style="color:#E1E4E8">.cloudwatch </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto3.client(</span><span style="color:#9ECBFF">&#39;cloudwatch&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        self</span><span style="color:#E1E4E8">.logger </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> self</span><span style="color:#E1E4E8">.setup_logger()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    def</span><span style="color:#B392F0"> setup_logger</span><span style="color:#E1E4E8">(self):</span></span>
+<span class="line"><span style="color:#E1E4E8">        logger </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> logging.getLogger(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&#39;agent-</span><span style="color:#79B8FF">{self</span><span style="color:#E1E4E8">.agent_id</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        logger.setLevel(logging.</span><span style="color:#79B8FF">INFO</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        handler </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> logging.StreamHandler()</span></span>
+<span class="line"><span style="color:#E1E4E8">        handler.setFormatter(logging.Formatter(</span><span style="color:#9ECBFF">&#39;</span><span style="color:#79B8FF">%(message)s</span><span style="color:#9ECBFF">&#39;</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"><span style="color:#E1E4E8">        logger.addHandler(handler)</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> logger</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    def</span><span style="color:#B392F0"> log</span><span style="color:#E1E4E8">(self, level: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, message: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">**</span><span style="color:#E1E4E8">kwargs):</span></span>
+<span class="line"><span style="color:#E1E4E8">        log_entry </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;timestamp&#39;</span><span style="color:#E1E4E8">: datetime.now().isoformat(),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;level&#39;</span><span style="color:#E1E4E8">: level,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;agent_id&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">self</span><span style="color:#E1E4E8">.agent_id,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;message&#39;</span><span style="color:#E1E4E8">: message,</span></span>
+<span class="line"><span style="color:#F97583">            **</span><span style="color:#E1E4E8">kwargs</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#79B8FF">        self</span><span style="color:#E1E4E8">.logger.info(json.dumps(log_entry))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    def</span><span style="color:#B392F0"> publish_metrics</span><span style="color:#E1E4E8">(self, metrics: </span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#E1E4E8">        metric_data </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> []</span></span>
+<span class="line"><span style="color:#F97583">        for</span><span style="color:#E1E4E8"> name, value </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> metrics.items():</span></span>
+<span class="line"><span style="color:#E1E4E8">            metric_data.append({</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;MetricName&#39;</span><span style="color:#E1E4E8">: name,</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;Value&#39;</span><span style="color:#E1E4E8">: value,</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;Unit&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;None&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;Timestamp&#39;</span><span style="color:#E1E4E8">: datetime.now(),</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;Dimensions&#39;</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">                    {</span><span style="color:#9ECBFF">&#39;Name&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;AgentId&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;Value&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">self</span><span style="color:#E1E4E8">.agent_id}</span></span>
+<span class="line"><span style="color:#E1E4E8">                ]</span></span>
+<span class="line"><span style="color:#E1E4E8">            })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">        self</span><span style="color:#E1E4E8">.cloudwatch.put_metric_data(</span></span>
+<span class="line"><span style="color:#FFAB70">            Namespace</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;AgentCore/Agent&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">            MetricData</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">metric_data</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    def</span><span style="color:#B392F0"> invoke</span><span style="color:#E1E4E8">(self, session_id: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, message: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">) -&gt; </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">        import</span><span style="color:#E1E4E8"> time</span></span>
+<span class="line"><span style="color:#E1E4E8">        start_time </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> time.time()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">        self</span><span style="color:#E1E4E8">.log(</span><span style="color:#9ECBFF">&#39;INFO&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;Request started&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">            session_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">session_id,</span></span>
+<span class="line"><span style="color:#FFAB70">            message_length</span><span style="color:#F97583">=</span><span style="color:#79B8FF">len</span><span style="color:#E1E4E8">(message)</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">            response </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> self</span><span style="color:#E1E4E8">.agent(message)</span></span>
+<span class="line"><span style="color:#E1E4E8">            duration_ms </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (time.time() </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> start_time) </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 1000</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">            self</span><span style="color:#E1E4E8">.log(</span><span style="color:#9ECBFF">&#39;INFO&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;Request completed&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">                session_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">session_id,</span></span>
+<span class="line"><span style="color:#FFAB70">                duration_ms</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">duration_ms,</span></span>
+<span class="line"><span style="color:#FFAB70">                response_length</span><span style="color:#F97583">=</span><span style="color:#79B8FF">len</span><span style="color:#E1E4E8">(response)</span></span>
+<span class="line"><span style="color:#E1E4E8">            )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">            self</span><span style="color:#E1E4E8">.publish_metrics({</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;Requests&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;RequestLatency&#39;</span><span style="color:#E1E4E8">: duration_ms,</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;Successes&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1</span></span>
+<span class="line"><span style="color:#E1E4E8">            })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">            return</span><span style="color:#E1E4E8"> response</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        except</span><span style="color:#79B8FF"> Exception</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> e:</span></span>
+<span class="line"><span style="color:#E1E4E8">            duration_ms </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (time.time() </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> start_time) </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 1000</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">            self</span><span style="color:#E1E4E8">.log(</span><span style="color:#9ECBFF">&#39;ERROR&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;Request failed&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">                session_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">session_id,</span></span>
+<span class="line"><span style="color:#FFAB70">                duration_ms</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">duration_ms,</span></span>
+<span class="line"><span style="color:#FFAB70">                error</span><span style="color:#F97583">=</span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">(e)</span></span>
+<span class="line"><span style="color:#E1E4E8">            )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">            self</span><span style="color:#E1E4E8">.publish_metrics({</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;Requests&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;RequestLatency&#39;</span><span style="color:#E1E4E8">: duration_ms,</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;Errors&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1</span></span>
+<span class="line"><span style="color:#E1E4E8">            })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">            raise</span></span></code></pre></div>
+<h2 id="checkpoint">Checkpoint</h2>
+<p>You’ve now learned:</p>
+<ul>
+<li>✅ AgentCore traces and trace analysis</li>
+<li>✅ CloudWatch integration for metrics and logs</li>
+<li>✅ Structured logging patterns</li>
+<li>✅ Building dashboards and alerts</li>
+<li>✅ Complete observability implementation</li>
+</ul>
+<p><strong>Next, we’ll learn how to evaluate agent performance.</strong></p>
+<div class="nav-buttons"><a href="/days/4" class="nav-button nav-button--prev"><p>← Day 4 Overview</p></a><a href="/days/4/evaluations" class="nav-button nav-button--next"><p>Next: Evaluations →</p></a></div>
+<style>
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 3rem;
+  gap: 1rem;
+}
+
+.nav-button {
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+}
+
+.nav-button--prev {
+  color: var(--color-text-secondary);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--border-subtle);
+}
+
+.nav-button--prev:hover {
+  background: var(--color-bg-secondary);
+}
+
+.nav-button--next {
+  color: white;
+  background: var(--color-day-4);
+}
+
+.nav-button--next:hover {
+  opacity: 0.9;
+}
+</style>   </article> <!-- Navigation Footer --> <nav class="day-layout__pagination" aria-label="Page navigation" data-astro-cid-vfeiczyy>  <div class="pagination" data-astro-cid-gdqvm76k> <a href="/agentcore-avengers/days/4/day-4" class="pagination__link pagination__link--prev" data-astro-cid-gdqvm76k> <span class="pagination__label" data-astro-cid-gdqvm76k>Previous</span> <span class="pagination__title" data-astro-cid-gdqvm76k>Day 4: Endgame</span> </a> <a href="/agentcore-avengers/days/4/evaluations" class="pagination__link pagination__link--next" data-astro-cid-gdqvm76k> <span class="pagination__label" data-astro-cid-gdqvm76k>Next</span> <span class="pagination__title" data-astro-cid-gdqvm76k>Agent Evaluations</span> </a> </div>  </nav> </main> <!-- Table of Contents --> <aside class="day-layout__toc hide-mobile" data-astro-cid-vfeiczyy> <div class="day-layout__toc-content" data-astro-cid-vfeiczyy> <h3 class="day-layout__toc-title" data-astro-cid-vfeiczyy>On this page</h3> <nav aria-label="Table of contents" data-astro-cid-vfeiczyy> <ul class="day-layout__toc-list" data-astro-cid-vfeiczyy> <li data-astro-cid-vfeiczyy> <a href="#observability-architecture" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Observability Architecture </a> </li><li data-astro-cid-vfeiczyy> <a href="#local-development" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Local Development </a> </li><li data-astro-cid-vfeiczyy> <a href="#runtime-deployment" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Runtime Deployment </a> </li><li data-astro-cid-vfeiczyy> <a href="#the-three-pillars" class="day-layout__toc-link" data-astro-cid-vfeiczyy> The Three Pillars </a> </li><li data-astro-cid-vfeiczyy> <a href="#agentcore-traces" class="day-layout__toc-link" data-astro-cid-vfeiczyy> AgentCore Traces </a> </li><li data-astro-cid-vfeiczyy> <a href="#bedrockagentcoreapp-with-automatic-tracing" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> BedrockAgentCoreApp with Automatic Tracing </a> </li><li data-astro-cid-vfeiczyy> <a href="#opentelemetry-configuration" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> OpenTelemetry Configuration </a> </li><li data-astro-cid-vfeiczyy> <a href="#launch-and-invoke-flow" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Launch and Invoke Flow </a> </li><li data-astro-cid-vfeiczyy> <a href="#legacy-trace-retrieval" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Legacy Trace Retrieval </a> </li><li data-astro-cid-vfeiczyy> <a href="#trace-structure" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Trace Structure </a> </li><li data-astro-cid-vfeiczyy> <a href="#trace-analysis" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Trace Analysis </a> </li><li data-astro-cid-vfeiczyy> <a href="#cloudwatch-integration" class="day-layout__toc-link" data-astro-cid-vfeiczyy> CloudWatch Integration </a> </li><li data-astro-cid-vfeiczyy> <a href="#automatic-trace-publishing" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Automatic Trace Publishing </a> </li><li data-astro-cid-vfeiczyy> <a href="#custom-metrics" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Custom Metrics </a> </li><li data-astro-cid-vfeiczyy> <a href="#metric-dimensions" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Metric Dimensions </a> </li><li data-astro-cid-vfeiczyy> <a href="#structured-logging" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Structured Logging </a> </li><li data-astro-cid-vfeiczyy> <a href="#request-logging-middleware" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Request Logging Middleware </a> </li><li data-astro-cid-vfeiczyy> <a href="#cloudwatch-dashboards" class="day-layout__toc-link" data-astro-cid-vfeiczyy> CloudWatch Dashboards </a> </li><li data-astro-cid-vfeiczyy> <a href="#cloudwatch-insights-queries" class="day-layout__toc-link" data-astro-cid-vfeiczyy> CloudWatch Insights Queries </a> </li><li data-astro-cid-vfeiczyy> <a href="#alerts" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Alerts </a> </li><li data-astro-cid-vfeiczyy> <a href="#complete-observability-stack" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Complete Observability Stack </a> </li><li data-astro-cid-vfeiczyy> <a href="#checkpoint" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Checkpoint </a> </li> </ul> </nav> </div> </aside> </div> <footer class="footer" data-astro-cid-b2avyow5> <div class="footer__container" data-astro-cid-b2avyow5> <div class="footer__content" data-astro-cid-b2avyow5> <div class="footer__brand" data-astro-cid-b2avyow5> <span class="footer__logo" data-astro-cid-b2avyow5>AgentCore Initiative</span> <p class="footer__tagline" data-astro-cid-b2avyow5>
+Build production-ready AI agents with AWS AgentCore
+</p> </div> <nav class="footer__nav" aria-label="Footer navigation" data-astro-cid-b2avyow5> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Course</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/1" data-astro-cid-b2avyow5>Day 1: The First Avenger</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/2" data-astro-cid-b2avyow5>Day 2: Age of Ultron</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/3" data-astro-cid-b2avyow5>Day 3: Infinity War</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/4" data-astro-cid-b2avyow5>Day 4: Endgame</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/5" data-astro-cid-b2avyow5>Day 5: Assemble</a></li> </ul> </div> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Resources</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/troubleshooting" data-astro-cid-b2avyow5>Troubleshooting</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/reference/costs" data-astro-cid-b2avyow5>Cost Guide</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/reference/cleanup" data-astro-cid-b2avyow5>Cleanup</a></li> </ul> </div> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Links</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5> <a href="https://docs.aws.amazon.com/bedrock-agentcore/" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+AWS AgentCore Docs
+</a> </li> <li data-astro-cid-b2avyow5> <a href="https://github.com/awslabs/amazon-bedrock-agentcore-samples" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+AgentCore Samples
+</a> </li> <li data-astro-cid-b2avyow5> <a href="https://strandsagents.com" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+Strands Agents
+</a> </li> </ul> </div> </nav> </div> <div class="footer__bottom" data-astro-cid-b2avyow5> <p class="footer__copyright" data-astro-cid-b2avyow5>
+&copy; 2026 The AgentCore Initiative. Built with Astro.
+</p> <p class="footer__disclaimer" data-astro-cid-b2avyow5>
+This is an educational resource. AWS and Amazon Bedrock are trademarks of Amazon.com, Inc.
+</p> </div> </div> </footer>   <!-- Global scripts --> <script type="module">function d(){document.querySelectorAll(".copy-button").forEach(c=>{const e=c.cloneNode(!0);c.parentNode?.replaceChild(e,c),e.addEventListener("click",async()=>{const i=e.getAttribute("data-code-id"),n=document.getElementById(i);if(!n)return;const s=n.textContent||"";try{await navigator.clipboard.writeText(s);const t=e.querySelector(".copy-icon"),o=e.querySelector(".check-icon");t&&t.classList.add("hidden"),o&&o.classList.remove("hidden"),e.classList.add("copied"),setTimeout(()=>{t&&t.classList.remove("hidden"),o&&o.classList.add("hidden"),e.classList.remove("copied")},2e3)}catch(t){console.error("Failed to copy code:",t)}})})}document.readyState==="loading"?document.addEventListener("DOMContentLoaded",d):d();document.addEventListener("astro:page-load",d);</script> <!-- Copy code functionality --> <script type="module" src="/agentcore-avengers/_astro/BaseLayout.astro_astro_type_script_index_1_lang.BwEjmFOO.js"></script> </body> </html>   <script type="module" src="/agentcore-avengers/_astro/DayLayout.astro_astro_type_script_index_0_lang.BT_UbId1.js"></script> 

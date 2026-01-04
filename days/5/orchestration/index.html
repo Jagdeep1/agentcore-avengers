@@ -1,0 +1,967 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="canonical" href="https://jagdeep1.github.io/agentcore-avengers/days/5/orchestration/"><!-- Favicon --><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><!-- Primary Meta Tags --><title>Orchestration &amp; Deployment - Day 5 | The AgentCore Initiative</title><meta name="title" content="Orchestration &#38; Deployment - Day 5 | The AgentCore Initiative"><meta name="description" content="Day 5: Assemble - Multi-agent Capstone"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://jagdeep1.github.io/agentcore-avengers/days/5/orchestration/"><meta property="og:title" content="Orchestration &#38; Deployment - Day 5 | The AgentCore Initiative"><meta property="og:description" content="Day 5: Assemble - Multi-agent Capstone"><meta property="og:image" content="https://jagdeep1.github.io/images/og/default.png"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://jagdeep1.github.io/agentcore-avengers/days/5/orchestration/"><meta name="twitter:title" content="Orchestration &#38; Deployment - Day 5 | The AgentCore Initiative"><meta name="twitter:description" content="Day 5: Assemble - Multi-agent Capstone"><meta name="twitter:image" content="https://jagdeep1.github.io/images/og/default.png"><!-- Fonts - Plus Jakarta Sans & Geist Mono --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"><!-- Theme initialization (prevents flash) --><script>
+      (function () {
+        const stored = localStorage.getItem('agentcore-initiative-progress');
+        let theme = 'dark';
+        if (stored) {
+          try {
+            const progress = JSON.parse(stored);
+            theme = progress.theme || 'dark';
+          } catch (e) {}
+        }
+        if (theme === 'system') {
+          theme = window.matchMedia('(prefers-color-scheme: light)').matches
+            ? 'light'
+            : 'dark';
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script><link rel="stylesheet" href="/agentcore-avengers/_astro/_slug_.C6jciWkZ.css">
+<style>.pagination[data-astro-cid-gvwdafc4]{display:flex;justify-content:space-between;gap:1rem}.pagination__link[data-astro-cid-gvwdafc4]{flex:1;max-width:50%;padding:1rem 1.25rem;background:var(--color-bg-elevated);border:var(--border-subtle);border-radius:var(--radius-lg);text-decoration:none;transition:all var(--transition-fast)}.pagination__link[data-astro-cid-gvwdafc4]:hover{background:var(--color-bg-secondary);border-color:var(--border-default)}.pagination__link--prev[data-astro-cid-gvwdafc4]{text-align:left}.pagination__link--next[data-astro-cid-gvwdafc4]{text-align:right;margin-left:auto}.pagination__label[data-astro-cid-gvwdafc4]{display:block;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-muted);margin-bottom:.25rem}.pagination__title[data-astro-cid-gvwdafc4]{display:block;font-size:.9375rem;font-weight:500;color:var(--color-text-primary)}
+</style>
+<link rel="stylesheet" href="/agentcore-avengers/_astro/_slug_.CP5296fy.css"><style>.callout[data-astro-cid-wi7smz4x]{display:flex;gap:1rem;padding:1rem 1.25rem;border-radius:var(--radius-lg);margin:1.5rem 0;border-left:4px solid}.callout--info[data-astro-cid-wi7smz4x]{background:#3b82f614;border-left-color:var(--color-accent-primary)}.callout--info[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-primary)}.callout--warning[data-astro-cid-wi7smz4x]{background:#f59e0b14;border-left-color:var(--color-accent-warning)}.callout--warning[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-warning)}.callout--danger[data-astro-cid-wi7smz4x]{background:#ef444414;border-left-color:var(--color-accent-danger)}.callout--danger[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-danger)}.callout--success[data-astro-cid-wi7smz4x]{background:#10b98114;border-left-color:var(--color-accent-success)}.callout--success[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-success)}.callout--tip[data-astro-cid-wi7smz4x]{background:#8b5cf614;border-left-color:var(--color-accent-purple)}.callout--tip[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-purple)}.callout__icon[data-astro-cid-wi7smz4x]{flex-shrink:0;width:1.25rem;height:1.25rem;margin-top:.125rem}.callout__content[data-astro-cid-wi7smz4x]{flex:1;min-width:0}.callout__title[data-astro-cid-wi7smz4x]{font-weight:600;font-size:.9375rem;color:var(--color-text-primary);margin-bottom:.25rem}.callout__body[data-astro-cid-wi7smz4x]{font-size:.9375rem;color:var(--color-text-secondary);line-height:1.6}.callout__body[data-astro-cid-wi7smz4x] p{margin:0}.callout__body[data-astro-cid-wi7smz4x] p+p{margin-top:.5rem}.callout__body[data-astro-cid-wi7smz4x] code{font-size:.85em}.callout__body[data-astro-cid-wi7smz4x] a{font-weight:500}
+</style></head> <body>  <header class="header" data-astro-cid-mb6pvx4c> <div class="header__container" data-astro-cid-mb6pvx4c> <!-- Logo --> <a href="/agentcore-avengers/" class="header__logo" aria-label="Home" data-astro-cid-mb6pvx4c> <svg class="header__logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" data-astro-cid-mb6pvx4c> <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c></circle> <path d="M16 6 L22 12 L16 18 L10 12 Z" fill="currentColor" opacity="0.5" data-astro-cid-mb6pvx4c></path> <circle cx="16" cy="16" r="4" fill="currentColor" data-astro-cid-mb6pvx4c></circle> </svg> <span class="header__logo-text" data-astro-cid-mb6pvx4c>AgentCore Initiative</span> </a> <!-- Desktop Navigation --> <nav class="header__nav hide-mobile" aria-label="Main navigation" data-astro-cid-mb6pvx4c> <ul class="header__nav-list" data-astro-cid-mb6pvx4c> <li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/days" class="header__nav-link header__nav-link--active" data-astro-cid-mb6pvx4c> Course </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/troubleshooting" class="header__nav-link" data-astro-cid-mb6pvx4c> Troubleshooting </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/reference" class="header__nav-link" data-astro-cid-mb6pvx4c> Reference </a> </li> </ul> </nav> <!-- Actions --> <div class="header__actions" data-astro-cid-mb6pvx4c> <!-- Theme Toggle Button (placeholder - will be React component) --> <button id="theme-toggle" class="header__theme-toggle" aria-label="Toggle theme" type="button" data-astro-cid-mb6pvx4c> <svg class="header__theme-icon header__theme-icon--dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <circle cx="12" cy="12" r="5" data-astro-cid-mb6pvx4c></circle> <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" data-astro-cid-mb6pvx4c></path> </svg> <svg class="header__theme-icon header__theme-icon--light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-mb6pvx4c></path> </svg> </button> <!-- Mobile Menu Toggle --> <button id="mobile-menu-toggle" class="header__mobile-toggle hide-desktop" aria-label="Toggle menu" aria-expanded="false" type="button" data-astro-cid-mb6pvx4c> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <path class="menu-icon" d="M4 6h16M4 12h16M4 18h16" data-astro-cid-mb6pvx4c></path> <path class="close-icon" d="M6 6l12 12M6 18L18 6" style="display: none" data-astro-cid-mb6pvx4c></path> </svg> </button> </div> </div> <!-- Mobile Navigation --> <nav id="mobile-nav" class="header__mobile-nav hide-desktop" aria-label="Mobile navigation" hidden data-astro-cid-mb6pvx4c> <ul class="header__mobile-nav-list" data-astro-cid-mb6pvx4c> <li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/days" class="header__mobile-nav-link header__mobile-nav-link--active" data-astro-cid-mb6pvx4c> Course </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/troubleshooting" class="header__mobile-nav-link" data-astro-cid-mb6pvx4c> Troubleshooting </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/reference" class="header__mobile-nav-link" data-astro-cid-mb6pvx4c> Reference </a> </li> </ul> </nav> </header>  <script type="module">const r=document.getElementById("theme-toggle");r&&r.addEventListener("click",()=>{const e=document.documentElement,t=e.getAttribute("data-theme")==="dark"?"light":"dark";e.setAttribute("data-theme",t);const c=localStorage.getItem("agentcore-initiative-progress");let i={theme:t};if(c)try{i={...JSON.parse(c),theme:t}}catch{}localStorage.setItem("agentcore-initiative-progress",JSON.stringify(i))});const n=document.getElementById("mobile-menu-toggle"),l=document.getElementById("mobile-nav");n&&l&&n.addEventListener("click",()=>{const e=n.getAttribute("aria-expanded")==="true";n.setAttribute("aria-expanded",String(!e)),l.hidden=e;const o=n.querySelector(".menu-icon"),t=n.querySelector(".close-icon");o&&t&&(o.style.display=e?"block":"none",t.style.display=e?"none":"block")});</script> <div class="day-layout" style="--day-accent: #f59e0b" data-astro-cid-vfeiczyy> <!-- Sidebar --> <aside class="day-layout__sidebar hide-mobile" data-astro-cid-vfeiczyy> <div class="day-layout__sidebar-content" data-astro-cid-vfeiczyy> <!-- Day Header --> <div class="day-layout__day-header" data-astro-cid-vfeiczyy> <span class="day-layout__day-number" data-astro-cid-vfeiczyy>Day 5</span> <h2 class="day-layout__day-title" data-astro-cid-vfeiczyy>Assemble</h2> <p class="day-layout__day-focus" data-astro-cid-vfeiczyy>Multi-agent Capstone</p> </div> <!-- Section Navigation --> <nav class="day-layout__nav" aria-label="Day sections" data-astro-cid-vfeiczyy> <ul class="day-layout__nav-list" data-astro-cid-vfeiczyy> <li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/5/knowledge-bases" class="day-layout__nav-link" data-section="knowledge-bases" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Knowledge Bases </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/5/extract-agent" class="day-layout__nav-link" data-section="extract-agent" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Extract Agent </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/5/transform-agent" class="day-layout__nav-link" data-section="transform-agent" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Transform Agent </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/5/report-agent" class="day-layout__nav-link" data-section="report-agent" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Report Agent </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/5/orchestration" class="day-layout__nav-link day-layout__nav-link--active" data-section="orchestration" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Orchestration &amp; Deployment </a> </li> </ul> </nav> <!-- Challenge Link --> <a href="/agentcore-avengers/days/5/challenge" class="day-layout__challenge-link" data-astro-cid-vfeiczyy> <span class="day-layout__challenge-icon" data-astro-cid-vfeiczyy> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-vfeiczyy> <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" data-astro-cid-vfeiczyy></polygon> </svg> </span>
+Daily Challenge
+</a> </div> </aside> <!-- Main Content --> <main class="day-layout__main" data-astro-cid-vfeiczyy> <article class="day-layout__content prose" data-astro-cid-vfeiczyy>  <h1 id="orchestration--deployment">Orchestration &amp; Deployment</h1>
+<p>The Orchestrator is the brain of your multi-agent system. It decides which agents to invoke and in what order, based on the user’s intent.</p>
+<h2 id="multi-agent-orchestration-patterns">Multi-Agent Orchestration Patterns</h2>
+<h3 id="pattern-1-sequential-pipeline">Pattern 1: Sequential Pipeline</h3>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-8enackelr" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext" id="code-8enackelr"><code><span class="line"><span>User Query → Extract → Transform → Report → Response</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Pros: Simple, predictable</span></span>
+<span class="line"><span>Cons: Always runs all agents, even for simple queries</span></span></code></pre></div>
+<h3 id="pattern-2-hardcoded-router">Pattern 2: Hardcoded Router</h3>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-99pydh0he" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-99pydh0he"><code><span class="line"><span style="color:#F97583">if</span><span style="color:#9ECBFF"> &quot;price&quot;</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> query:</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> extract_agent(query)</span></span>
+<span class="line"><span style="color:#F97583">elif</span><span style="color:#9ECBFF"> &quot;risk&quot;</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> query:</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> extract_agent(query) </span><span style="color:#FDAEB7;font-style:italic">-&gt;</span><span style="color:#E1E4E8"> transform_agent</span></span>
+<span class="line"><span style="color:#F97583">elif</span><span style="color:#9ECBFF"> &quot;report&quot;</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> query:</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> extract_agent </span><span style="color:#FDAEB7;font-style:italic">-&gt;</span><span style="color:#E1E4E8"> transform_agent </span><span style="color:#FDAEB7;font-style:italic">-&gt;</span><span style="color:#E1E4E8"> report_agent</span></span></code></pre></div>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-7wzw8ncab" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext" id="code-7wzw8ncab"><code><span class="line"><span>Pros: Fast, deterministic</span></span>
+<span class="line"><span>Cons: Brittle, requires maintenance, misses nuanced queries</span></span></code></pre></div>
+<h3 id="pattern-3-dynamic-llm-routing-our-approach">Pattern 3: Dynamic LLM Routing (Our Approach)</h3>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-qhe7rbodh" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext" id="code-qhe7rbodh"><code><span class="line"><span>User Query → Orchestrator LLM → Decides routing → Executes agents → Response</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Pros: Flexible, handles nuanced queries, adapts to new patterns</span></span>
+<span class="line"><span>Cons: Slightly more latency, requires good prompt engineering</span></span></code></pre></div>
+<h2 id="orchestrator-architecture">Orchestrator Architecture</h2>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-nk1hu155s" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext" id="code-nk1hu155s"><code><span class="line"><span>┌─────────────────────────────────────────────────────────────────────────────┐</span></span>
+<span class="line"><span>│                           ORCHESTRATOR AGENT                                 │</span></span>
+<span class="line"><span>│                                                                              │</span></span>
+<span class="line"><span>│  User: &quot;Generate a risk report for Apple&quot;                                   │</span></span>
+<span class="line"><span>│                                                                              │</span></span>
+<span class="line"><span>│  ┌──────────────────────────────────────────────────────────────────────┐   │</span></span>
+<span class="line"><span>│  │                    ROUTING DECISION (LLM)                             │   │</span></span>
+<span class="line"><span>│  │                                                                        │   │</span></span>
+<span class="line"><span>│  │  &quot;This request needs:                                                 │   │</span></span>
+<span class="line"><span>│  │   1. Data extraction (stock data + SEC filings)                       │   │</span></span>
+<span class="line"><span>│  │   2. Risk analysis (VaR, volatility, Sharpe)                          │   │</span></span>
+<span class="line"><span>│  │   3. Report generation (risk report format)&quot;                          │   │</span></span>
+<span class="line"><span>│  │                                                                        │   │</span></span>
+<span class="line"><span>│  │  Routing: Extract → Transform → Report                                │   │</span></span>
+<span class="line"><span>│  └──────────────────────────────────────────────────────────────────────┘   │</span></span>
+<span class="line"><span>│                                                                              │</span></span>
+<span class="line"><span>│  ┌─────────────┐     ┌─────────────┐     ┌─────────────┐                   │</span></span>
+<span class="line"><span>│  │   Extract   │────▶│  Transform  │────▶│   Report    │                   │</span></span>
+<span class="line"><span>│  │    Tool     │     │    Tool     │     │    Tool     │                   │</span></span>
+<span class="line"><span>│  └─────────────┘     └─────────────┘     └─────────────┘                   │</span></span>
+<span class="line"><span>│                                                                              │</span></span>
+<span class="line"><span>│  Response: [Professional risk report in Markdown]                           │</span></span>
+<span class="line"><span>│                                                                              │</span></span>
+<span class="line"><span>└─────────────────────────────────────────────────────────────────────────────┘</span></span></code></pre></div>
+<h2 id="agent-as-tool-pattern">Agent-as-Tool Pattern</h2>
+<p>Each deployed agent becomes a tool for the orchestrator:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-ue8bmdyxe" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-ue8bmdyxe"><code><span class="line"><span style="color:#6A737D"># tools/agent_tools.py</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> boto3</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> json</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands.tools </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> tool</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">agentcore_client </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto3.client(</span><span style="color:#9ECBFF">&#39;bedrock-agentcore&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">region_name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;us-west-2&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Agent ARNs (from deployment)</span></span>
+<span class="line"><span style="color:#79B8FF">EXTRACT_AGENT_ARN</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;arn:aws:bedrock-agentcore:us-west-2:ACCOUNT:agent-runtime/extract-agent&quot;</span></span>
+<span class="line"><span style="color:#79B8FF">TRANSFORM_AGENT_ARN</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;arn:aws:bedrock-agentcore:us-west-2:ACCOUNT:agent-runtime/transform-agent&quot;</span></span>
+<span class="line"><span style="color:#79B8FF">REPORT_AGENT_ARN</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;arn:aws:bedrock-agentcore:us-west-2:ACCOUNT:agent-runtime/report-agent&quot;</span></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> invoke_agent</span><span style="color:#E1E4E8">(agent_arn: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, payload: </span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">) -&gt; </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Invoke an AgentCore agent and return the response.&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> agentcore_client.invoke_agent_runtime(</span></span>
+<span class="line"><span style="color:#FFAB70">        agentRuntimeArn</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">agent_arn,</span></span>
+<span class="line"><span style="color:#FFAB70">        qualifier</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;DEFAULT&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        payload</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">json.dumps(payload)</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Handle streaming response</span></span>
+<span class="line"><span style="color:#E1E4E8">    result </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> &quot;&quot;</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> line </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> response[</span><span style="color:#9ECBFF">&quot;response&quot;</span><span style="color:#E1E4E8">].iter_lines():</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> line:</span></span>
+<span class="line"><span style="color:#E1E4E8">            result </span><span style="color:#F97583">+=</span><span style="color:#E1E4E8"> line.decode(</span><span style="color:#9ECBFF">&quot;utf-8&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> result</span></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">@tool</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> extract_financial_data</span><span style="color:#E1E4E8">(query: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, tickers: list[</span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> None</span><span style="color:#E1E4E8">) -&gt; </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Extract financial data from market APIs and SEC filings.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Use this tool FIRST when you need to gather raw financial data.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Capabilities:</span></span>
+<span class="line"><span style="color:#9ECBFF">    - Current stock prices and fundamentals (Yahoo Finance)</span></span>
+<span class="line"><span style="color:#9ECBFF">    - Historical price data</span></span>
+<span class="line"><span style="color:#9ECBFF">    - SEC filings from Knowledge Base (10-K, 10-Q)</span></span>
+<span class="line"><span style="color:#9ECBFF">    - Risk factors and management discussion</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Args:</span></span>
+<span class="line"><span style="color:#9ECBFF">        query: The data extraction request</span></span>
+<span class="line"><span style="color:#9ECBFF">        tickers: Optional list of stock symbols to focus on</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Returns:</span></span>
+<span class="line"><span style="color:#9ECBFF">        Extracted financial data in structured format</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    payload </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span><span style="color:#9ECBFF">&quot;prompt&quot;</span><span style="color:#E1E4E8">: query}</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> tickers:</span></span>
+<span class="line"><span style="color:#E1E4E8">        payload[</span><span style="color:#9ECBFF">&quot;tickers&quot;</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> tickers</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> invoke_agent(</span><span style="color:#79B8FF">EXTRACT_AGENT_ARN</span><span style="color:#E1E4E8">, payload)</span></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">@tool</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> analyze_financial_data</span><span style="color:#E1E4E8">(data: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, analysis_type: </span><span style="color:#79B8FF">str</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;full&quot;</span><span style="color:#E1E4E8">) -&gt; </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Analyze financial data with statistical and risk metrics.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Use this tool AFTER extract_financial_data when analysis is needed.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Capabilities:</span></span>
+<span class="line"><span style="color:#9ECBFF">    - Risk metrics: VaR, Sharpe ratio, volatility, max drawdown</span></span>
+<span class="line"><span style="color:#9ECBFF">    - Technical analysis: Moving averages, trends, signals</span></span>
+<span class="line"><span style="color:#9ECBFF">    - Performance comparison across multiple stocks</span></span>
+<span class="line"><span style="color:#9ECBFF">    - Custom calculations via Code Interpreter</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Args:</span></span>
+<span class="line"><span style="color:#9ECBFF">        data: Raw financial data from Extract Agent</span></span>
+<span class="line"><span style="color:#9ECBFF">        analysis_type: Type of analysis - &quot;risk&quot;, &quot;technical&quot;, &quot;comparison&quot;, &quot;full&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Returns:</span></span>
+<span class="line"><span style="color:#9ECBFF">        Analysis results with metrics and interpretations</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> invoke_agent(</span><span style="color:#79B8FF">TRANSFORM_AGENT_ARN</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;data&quot;</span><span style="color:#E1E4E8">: data,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;analysis_type&quot;</span><span style="color:#E1E4E8">: analysis_type</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">@tool</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> generate_financial_report</span><span style="color:#E1E4E8">(analysis: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, company: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, report_type: </span><span style="color:#79B8FF">str</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;full&quot;</span><span style="color:#E1E4E8">) -&gt; </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Generate a professional financial report from analysis results.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Use this tool LAST to produce the final output.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Report types:</span></span>
+<span class="line"><span style="color:#9ECBFF">    - &quot;quick&quot;: 3-5 bullet points</span></span>
+<span class="line"><span style="color:#9ECBFF">    - &quot;brief&quot;: Executive summary (1 page)</span></span>
+<span class="line"><span style="color:#9ECBFF">    - &quot;risk&quot;: Risk-focused report</span></span>
+<span class="line"><span style="color:#9ECBFF">    - &quot;full&quot;: Comprehensive analysis report</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Args:</span></span>
+<span class="line"><span style="color:#9ECBFF">        analysis: Analysis results from Transform Agent</span></span>
+<span class="line"><span style="color:#9ECBFF">        company: Company name for the report header</span></span>
+<span class="line"><span style="color:#9ECBFF">        report_type: Type of report to generate</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Returns:</span></span>
+<span class="line"><span style="color:#9ECBFF">        Professional Markdown report</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> invoke_agent(</span><span style="color:#79B8FF">REPORT_AGENT_ARN</span><span style="color:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;analysis&quot;</span><span style="color:#E1E4E8">: analysis,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;company&quot;</span><span style="color:#E1E4E8">: company,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;report_type&quot;</span><span style="color:#E1E4E8">: report_type</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span></code></pre></div>
+<h2 id="building-the-orchestrator">Building the Orchestrator</h2>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-5wlf81y38" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-5wlf81y38"><code><span class="line"><span style="color:#6A737D"># agents/orchestrator_agent.py</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Agent</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands.models </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> BedrockModel</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> bedrock_agentcore.runtime </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> BedrockAgentCoreApp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Import agent tools</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> tools.agent_tools </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#E1E4E8">    extract_financial_data,</span></span>
+<span class="line"><span style="color:#E1E4E8">    analyze_financial_data,</span></span>
+<span class="line"><span style="color:#E1E4E8">    generate_financial_report</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">app </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> BedrockAgentCoreApp()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">ORCHESTRATOR_SYSTEM_PROMPT</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;&quot;&quot;You are a Financial Analytics Orchestrator.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">Your role is to coordinate three specialized agents to answer financial queries:</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">## Available Agents (as tools)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">### 1. Extract Agent (extract_financial_data)</span></span>
+<span class="line"><span style="color:#9ECBFF">**Purpose:** Gather raw financial data</span></span>
+<span class="line"><span style="color:#9ECBFF">**Data sources:**</span></span>
+<span class="line"><span style="color:#9ECBFF">- Yahoo Finance: Current prices, fundamentals, historical data</span></span>
+<span class="line"><span style="color:#9ECBFF">- Knowledge Base: SEC filings (10-K, 10-Q), risk factors</span></span>
+<span class="line"><span style="color:#9ECBFF">**When to use:** FIRST, when any financial data is needed</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">### 2. Transform Agent (analyze_financial_data)</span></span>
+<span class="line"><span style="color:#9ECBFF">**Purpose:** Analyze and calculate metrics</span></span>
+<span class="line"><span style="color:#9ECBFF">**Capabilities:**</span></span>
+<span class="line"><span style="color:#9ECBFF">- Risk metrics: VaR, Sharpe ratio, volatility, max drawdown</span></span>
+<span class="line"><span style="color:#9ECBFF">- Technical analysis: Moving averages, trend signals</span></span>
+<span class="line"><span style="color:#9ECBFF">- Performance comparison</span></span>
+<span class="line"><span style="color:#9ECBFF">**When to use:** AFTER extraction, when analysis is needed</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">### 3. Report Agent (generate_financial_report)</span></span>
+<span class="line"><span style="color:#9ECBFF">**Purpose:** Generate professional reports</span></span>
+<span class="line"><span style="color:#9ECBFF">**Formats:** quick, brief, risk, full</span></span>
+<span class="line"><span style="color:#9ECBFF">**When to use:** LAST, to format final output</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">## Routing Decision Matrix</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">| User Intent | Workflow |</span></span>
+<span class="line"><span style="color:#9ECBFF">|-------------|----------|</span></span>
+<span class="line"><span style="color:#9ECBFF">| &quot;What is X&#39;s stock price?&quot; | Extract only |</span></span>
+<span class="line"><span style="color:#9ECBFF">| &quot;Get data for X&quot; | Extract only |</span></span>
+<span class="line"><span style="color:#9ECBFF">| &quot;What are the risk factors for X?&quot; | Extract (KB) only |</span></span>
+<span class="line"><span style="color:#9ECBFF">| &quot;Analyze X&quot; | Extract → Transform |</span></span>
+<span class="line"><span style="color:#9ECBFF">| &quot;Calculate risk for X&quot; | Extract → Transform |</span></span>
+<span class="line"><span style="color:#9ECBFF">| &quot;Compare X and Y&quot; | Extract → Transform |</span></span>
+<span class="line"><span style="color:#9ECBFF">| &quot;Generate a report for X&quot; | Extract → Transform → Report |</span></span>
+<span class="line"><span style="color:#9ECBFF">| &quot;Risk report for X&quot; | Extract → Transform → Report (risk) |</span></span>
+<span class="line"><span style="color:#9ECBFF">| &quot;Full analysis of X&quot; | Extract → Transform → Report (full) |</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">## Execution Guidelines</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">1. **Understand the intent first** - Is this a data request, analysis request, or report request?</span></span>
+<span class="line"><span style="color:#9ECBFF">2. **Start with Extract** - Almost all queries need data first</span></span>
+<span class="line"><span style="color:#9ECBFF">3. **Chain appropriately** - Pass output from one agent as input to the next</span></span>
+<span class="line"><span style="color:#9ECBFF">4. **Match report type** - Use the right report format for the request</span></span>
+<span class="line"><span style="color:#9ECBFF">5. **Handle errors** - If one agent fails, report the issue clearly</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">## Example Flows</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">**Query: &quot;What&#39;s Apple&#39;s current price?&quot;**</span></span>
+<span class="line"><span style="color:#9ECBFF">→ extract_financial_data(&quot;Get current stock price for Apple&quot;, tickers=[&quot;AAPL&quot;])</span></span>
+<span class="line"><span style="color:#9ECBFF">→ Return extracted data directly</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">**Query: &quot;Analyze Tesla&#39;s risk profile&quot;**</span></span>
+<span class="line"><span style="color:#9ECBFF">→ extract_financial_data(&quot;Get Tesla stock data and SEC risk factors&quot;, tickers=[&quot;TSLA&quot;])</span></span>
+<span class="line"><span style="color:#9ECBFF">→ analyze_financial_data(extracted_data, analysis_type=&quot;risk&quot;)</span></span>
+<span class="line"><span style="color:#9ECBFF">→ Return analysis results</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">**Query: &quot;Generate a comprehensive report for Microsoft&quot;**</span></span>
+<span class="line"><span style="color:#9ECBFF">→ extract_financial_data(&quot;Get Microsoft financial data and SEC filings&quot;, tickers=[&quot;MSFT&quot;])</span></span>
+<span class="line"><span style="color:#9ECBFF">→ analyze_financial_data(extracted_data, analysis_type=&quot;full&quot;)</span></span>
+<span class="line"><span style="color:#9ECBFF">→ generate_financial_report(analysis, company=&quot;Microsoft&quot;, report_type=&quot;full&quot;)</span></span>
+<span class="line"><span style="color:#9ECBFF">→ Return final report</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">## Response Format</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">Always explain your routing decision briefly before executing:</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">&quot;I&#39;ll help you with [request]. This requires [workflow explanation].</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">[Execute agents]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">[Final response or report]&quot;</span></span>
+<span class="line"><span style="color:#9ECBFF">&quot;&quot;&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">model </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> BedrockModel(</span></span>
+<span class="line"><span style="color:#FFAB70">    model_id</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;anthropic.claude-sonnet-4-20250514-v1:0&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    region_name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;us-west-2&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">orchestrator </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Agent(</span></span>
+<span class="line"><span style="color:#FFAB70">    model</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">model,</span></span>
+<span class="line"><span style="color:#FFAB70">    tools</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span></span>
+<span class="line"><span style="color:#E1E4E8">        extract_financial_data,</span></span>
+<span class="line"><span style="color:#E1E4E8">        analyze_financial_data,</span></span>
+<span class="line"><span style="color:#E1E4E8">        generate_financial_report</span></span>
+<span class="line"><span style="color:#E1E4E8">    ],</span></span>
+<span class="line"><span style="color:#FFAB70">    system_prompt</span><span style="color:#F97583">=</span><span style="color:#79B8FF">ORCHESTRATOR_SYSTEM_PROMPT</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">@app.entrypoint</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> handle_request</span><span style="color:#E1E4E8">(payload: </span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">) -&gt; </span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Main entry point for the Financial Analytics Pipeline.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Args:</span></span>
+<span class="line"><span style="color:#9ECBFF">        payload: Dictionary with &#39;prompt&#39; (user query) and optional &#39;session_id&#39;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Returns:</span></span>
+<span class="line"><span style="color:#9ECBFF">        Response from the orchestrated pipeline</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    prompt </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> payload.get(</span><span style="color:#9ECBFF">&quot;prompt&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    session_id </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> payload.get(</span><span style="color:#9ECBFF">&quot;session_id&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> orchestrator(prompt)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> dict</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">        response</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">response.message[</span><span style="color:#9ECBFF">&quot;content&quot;</span><span style="color:#E1E4E8">][</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&quot;text&quot;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">        session_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">session_id,</span></span>
+<span class="line"><span style="color:#FFAB70">        agent</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;orchestrator&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        status</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;success&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#79B8FF"> __name__</span><span style="color:#F97583"> ==</span><span style="color:#9ECBFF"> &quot;__main__&quot;</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    app.run()</span></span></code></pre></div>
+<h2 id="deploying-the-complete-pipeline">Deploying the Complete Pipeline</h2>
+<h3 id="step-1-deploy-all-agents">Step 1: Deploy All Agents</h3>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-ud47o4e21" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-ud47o4e21"><code><span class="line"><span style="color:#6A737D"># Deploy Extract Agent</span></span>
+<span class="line"><span style="color:#B392F0">agentcore</span><span style="color:#9ECBFF"> deploy</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --name</span><span style="color:#9ECBFF"> extract-agent</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --entry</span><span style="color:#9ECBFF"> agents/extract_agent.py</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --requirements</span><span style="color:#9ECBFF"> requirements.txt</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --region</span><span style="color:#9ECBFF"> us-west-2</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --profile</span><span style="color:#9ECBFF"> claude</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Deploy Transform Agent</span></span>
+<span class="line"><span style="color:#B392F0">agentcore</span><span style="color:#9ECBFF"> deploy</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --name</span><span style="color:#9ECBFF"> transform-agent</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --entry</span><span style="color:#9ECBFF"> agents/transform_agent.py</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --requirements</span><span style="color:#9ECBFF"> requirements.txt</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --region</span><span style="color:#9ECBFF"> us-west-2</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --profile</span><span style="color:#9ECBFF"> claude</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Deploy Report Agent</span></span>
+<span class="line"><span style="color:#B392F0">agentcore</span><span style="color:#9ECBFF"> deploy</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --name</span><span style="color:#9ECBFF"> report-agent</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --entry</span><span style="color:#9ECBFF"> agents/report_agent.py</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --requirements</span><span style="color:#9ECBFF"> requirements.txt</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --region</span><span style="color:#9ECBFF"> us-west-2</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --profile</span><span style="color:#9ECBFF"> claude</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Deploy Orchestrator (after other agents are deployed)</span></span>
+<span class="line"><span style="color:#B392F0">agentcore</span><span style="color:#9ECBFF"> deploy</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --name</span><span style="color:#9ECBFF"> orchestrator-agent</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --entry</span><span style="color:#9ECBFF"> agents/orchestrator_agent.py</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --requirements</span><span style="color:#9ECBFF"> requirements.txt</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --region</span><span style="color:#9ECBFF"> us-west-2</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --profile</span><span style="color:#9ECBFF"> claude</span></span></code></pre></div>
+<h3 id="step-2-store-agent-arns">Step 2: Store Agent ARNs</h3>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-8tic9gz9g" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-8tic9gz9g"><code><span class="line"><span style="color:#6A737D"># Get deployed agent ARNs</span></span>
+<span class="line"><span style="color:#B392F0">agentcore</span><span style="color:#9ECBFF"> list</span><span style="color:#79B8FF"> --profile</span><span style="color:#9ECBFF"> claude</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Store in Parameter Store</span></span>
+<span class="line"><span style="color:#B392F0">aws</span><span style="color:#9ECBFF"> ssm</span><span style="color:#9ECBFF"> put-parameter</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --name</span><span style="color:#9ECBFF"> &quot;/agentcore/pipeline/extract-agent-arn&quot;</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --value</span><span style="color:#9ECBFF"> &quot;arn:aws:bedrock-agentcore:us-west-2:123456789:agent-runtime/extract-agent&quot;</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --type</span><span style="color:#9ECBFF"> String</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --profile</span><span style="color:#9ECBFF"> claude</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">aws</span><span style="color:#9ECBFF"> ssm</span><span style="color:#9ECBFF"> put-parameter</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --name</span><span style="color:#9ECBFF"> &quot;/agentcore/pipeline/transform-agent-arn&quot;</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --value</span><span style="color:#9ECBFF"> &quot;arn:aws:bedrock-agentcore:us-west-2:123456789:agent-runtime/transform-agent&quot;</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --type</span><span style="color:#9ECBFF"> String</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --profile</span><span style="color:#9ECBFF"> claude</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">aws</span><span style="color:#9ECBFF"> ssm</span><span style="color:#9ECBFF"> put-parameter</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --name</span><span style="color:#9ECBFF"> &quot;/agentcore/pipeline/report-agent-arn&quot;</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --value</span><span style="color:#9ECBFF"> &quot;arn:aws:bedrock-agentcore:us-west-2:123456789:agent-runtime/report-agent&quot;</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --type</span><span style="color:#9ECBFF"> String</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --profile</span><span style="color:#9ECBFF"> claude</span></span></code></pre></div>
+<h3 id="step-3-update-agent-tools-to-use-parameters">Step 3: Update Agent Tools to Use Parameters</h3>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-s8jm4zsme" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-s8jm4zsme"><code><span class="line"><span style="color:#6A737D"># tools/agent_tools.py (production version)</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> boto3</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> functools </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> lru_cache</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">ssm </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto3.client(</span><span style="color:#9ECBFF">&#39;ssm&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">region_name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;us-west-2&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">@lru_cache</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">maxsize</span><span style="color:#F97583">=</span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> get_agent_arn</span><span style="color:#E1E4E8">(agent_name: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">) -&gt; </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Get agent ARN from Parameter Store.&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> ssm.get_parameter(</span></span>
+<span class="line"><span style="color:#FFAB70">        Name</span><span style="color:#F97583">=</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;/agentcore/pipeline/</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">agent_name</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">-arn&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> response[</span><span style="color:#9ECBFF">&#39;Parameter&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;Value&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Use in tools</span></span>
+<span class="line"><span style="color:#79B8FF">EXTRACT_AGENT_ARN</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> get_agent_arn(</span><span style="color:#9ECBFF">&quot;extract-agent&quot;</span><span style="color:#E1E4E8">)</span></span></code></pre></div>
+<h2 id="integrating-day-2-agentcore-gateway">Integrating Day 2: AgentCore Gateway</h2>
+<p>Expose your pipeline via AgentCore Gateway with authentication:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-7ijt0u4gi" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-7ijt0u4gi"><code><span class="line"><span style="color:#6A737D"># gateway_config.py</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> bedrock_agentcore.gateway </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> GatewayConfig, create_gateway</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Configure Gateway for the orchestrator</span></span>
+<span class="line"><span style="color:#E1E4E8">gateway_config </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> GatewayConfig(</span></span>
+<span class="line"><span style="color:#FFAB70">    name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;financial-analytics-gateway&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    description</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;Financial Analytics Pipeline API&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Authentication (from Day 2)</span></span>
+<span class="line"><span style="color:#FFAB70">    auth_config</span><span style="color:#F97583">=</span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">        type</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;JWT&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        issuer</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;https://your-identity-provider.com&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        audience</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;financial-analytics-api&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        required_claims</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span><span style="color:#9ECBFF">&quot;sub&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;email&quot;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    ),</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Rate limiting</span></span>
+<span class="line"><span style="color:#FFAB70">    rate_limit</span><span style="color:#F97583">=</span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">        requests_per_minute</span><span style="color:#F97583">=</span><span style="color:#79B8FF">60</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        burst_limit</span><span style="color:#F97583">=</span><span style="color:#79B8FF">10</span></span>
+<span class="line"><span style="color:#E1E4E8">    ),</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Multi-tenancy support</span></span>
+<span class="line"><span style="color:#FFAB70">    tenant_isolation</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    tenant_id_claim</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;tenant_id&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Create the Gateway</span></span>
+<span class="line"><span style="color:#E1E4E8">gateway </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> create_gateway(</span></span>
+<span class="line"><span style="color:#FFAB70">    config</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">gateway_config,</span></span>
+<span class="line"><span style="color:#FFAB70">    agent_arn</span><span style="color:#F97583">=</span><span style="color:#79B8FF">ORCHESTRATOR_ARN</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Gateway URL: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">gateway.invoke_url</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span></code></pre></div>
+<h3 id="gateway-deployment">Gateway Deployment</h3>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-xagtg31a7" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-xagtg31a7"><code><span class="line"><span style="color:#6A737D"># Deploy Gateway via CLI</span></span>
+<span class="line"><span style="color:#B392F0">agentcore</span><span style="color:#9ECBFF"> gateway</span><span style="color:#9ECBFF"> create</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --name</span><span style="color:#9ECBFF"> financial-analytics-gateway</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --agent-arn</span><span style="color:#E1E4E8"> $ORCHESTRATOR_ARN </span><span style="color:#79B8FF">\</span></span>
+<span class="line"><span style="color:#79B8FF">  --auth-type</span><span style="color:#9ECBFF"> jwt</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --issuer</span><span style="color:#9ECBFF"> &quot;https://your-identity-provider.com&quot;</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --profile</span><span style="color:#9ECBFF"> claude</span></span></code></pre></div>
+<aside class="callout callout--tip" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>From Day 2</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>Review Day 2 for detailed Gateway configuration including OAuth flows,
+multi-tenant setup, and Token Vault integration for external APIs.</p> </div> </div> </aside> 
+<h2 id="integrating-day-3-conversation-memory">Integrating Day 3: Conversation Memory</h2>
+<p>Add memory to the orchestrator for multi-turn conversations:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-kw890jok6" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-kw890jok6"><code><span class="line"><span style="color:#6A737D"># memory_config.py</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> bedrock_agentcore.memory </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> AgentCoreMemory</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Configure memory for orchestrator</span></span>
+<span class="line"><span style="color:#E1E4E8">memory </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> AgentCoreMemory(</span></span>
+<span class="line"><span style="color:#FFAB70">    memory_id</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;financial-orchestrator-memory&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    session_ttl</span><span style="color:#F97583">=</span><span style="color:#79B8FF">3600</span><span style="color:#E1E4E8">,  </span><span style="color:#6A737D"># 1 hour sessions</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Long-term memory extracts user preferences</span></span>
+<span class="line"><span style="color:#FFAB70">    long_term_config</span><span style="color:#F97583">=</span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">        enabled</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        extraction_model</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;anthropic.claude-haiku-3-20240307-v1:0&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        extract_fields</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span><span style="color:#9ECBFF">&quot;preferred_report_format&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;risk_tolerance&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;watched_tickers&quot;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Update orchestrator with memory</span></span>
+<span class="line"><span style="color:#E1E4E8">orchestrator </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Agent(</span></span>
+<span class="line"><span style="color:#FFAB70">    model</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">model,</span></span>
+<span class="line"><span style="color:#FFAB70">    tools</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[extract_financial_data, analyze_financial_data, generate_financial_report],</span></span>
+<span class="line"><span style="color:#FFAB70">    system_prompt</span><span style="color:#F97583">=</span><span style="color:#79B8FF">ORCHESTRATOR_SYSTEM_PROMPT</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    memory</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">memory  </span><span style="color:#6A737D"># Enable conversation memory</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span></code></pre></div>
+<h3 id="memory-enabled-conversations">Memory-Enabled Conversations</h3>
+<p>With memory, users can have natural multi-turn conversations:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-cojjkggnn" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-cojjkggnn"><code><span class="line"><span style="color:#6A737D"># Session 1: User establishes context</span></span>
+<span class="line"><span style="color:#9ECBFF">&quot;Analyze Apple&#39;s risk profile&quot;</span><span style="color:#6A737D">  # Full analysis</span></span>
+<span class="line"><span style="color:#9ECBFF">&quot;How does that compare to Microsoft?&quot;</span><span style="color:#6A737D">  # Remembers Apple context</span></span>
+<span class="line"><span style="color:#9ECBFF">&quot;Generate a report for both&quot;</span><span style="color:#6A737D">  # Uses accumulated context</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Later session: Memory recalls preferences</span></span>
+<span class="line"><span style="color:#9ECBFF">&quot;Show me the latest on my watched stocks&quot;</span><span style="color:#6A737D">  # Knows user&#39;s tickers</span></span>
+<span class="line"><span style="color:#9ECBFF">&quot;Use my preferred format&quot;</span><span style="color:#6A737D">  # Remembers report format preference</span></span></code></pre></div>
+<h3 id="updated-entry-point-with-session-support">Updated Entry Point with Session Support</h3>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-qbwfv63f1" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-qbwfv63f1"><code><span class="line"><span style="color:#B392F0">@app.entrypoint</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> handle_request</span><span style="color:#E1E4E8">(payload: </span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">) -&gt; </span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Entry point with memory support.&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    prompt </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> payload.get(</span><span style="color:#9ECBFF">&quot;prompt&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    session_id </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> payload.get(</span><span style="color:#9ECBFF">&quot;session_id&quot;</span><span style="color:#E1E4E8">)  </span><span style="color:#6A737D"># Client provides session ID</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Memory maintains context across requests in same session</span></span>
+<span class="line"><span style="color:#E1E4E8">    response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> orchestrator(prompt, </span><span style="color:#FFAB70">session_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">session_id)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> dict</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">        response</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">response.message[</span><span style="color:#9ECBFF">&quot;content&quot;</span><span style="color:#E1E4E8">][</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&quot;text&quot;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">        session_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">session_id,</span></span>
+<span class="line"><span style="color:#FFAB70">        agent</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;orchestrator&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        status</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;success&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span></code></pre></div>
+<aside class="callout callout--tip" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>From Day 3</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>Review Day 3 for memory branching (exploring alternative scenarios)
+and long-term semantic extraction patterns.</p> </div> </div> </aside> 
+<h2 id="integrating-day-4-comprehensive-guardrails">Integrating Day 4: Comprehensive Guardrails</h2>
+<p>Apply guardrails to <strong>ALL</strong> agents, not just the orchestrator:</p>
+<h3 id="create-financial-analytics-guardrail">Create Financial Analytics Guardrail</h3>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-vg3p9xhwk" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-vg3p9xhwk"><code><span class="line"><span style="color:#6A737D"># guardrails/financial_guardrail.py</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> boto3</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">bedrock </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto3.client(</span><span style="color:#9ECBFF">&#39;bedrock&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">region_name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;us-west-2&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> bedrock.create_guardrail(</span></span>
+<span class="line"><span style="color:#FFAB70">    name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;financial-analytics-guardrail&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    description</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;Guardrails for financial analytics pipeline&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Content filters</span></span>
+<span class="line"><span style="color:#FFAB70">    contentPolicyConfig</span><span style="color:#F97583">=</span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">        filtersConfig</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span></span>
+<span class="line"><span style="color:#79B8FF">            dict</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">type</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;SEXUAL&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">inputStrength</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;HIGH&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">outputStrength</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;HIGH&#39;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#79B8FF">            dict</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">type</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;VIOLENCE&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">inputStrength</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;HIGH&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">outputStrength</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;HIGH&#39;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#79B8FF">            dict</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">type</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;HATE&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">inputStrength</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;HIGH&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">outputStrength</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;HIGH&#39;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#79B8FF">            dict</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">type</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;MISCONDUCT&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">inputStrength</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;HIGH&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">outputStrength</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;HIGH&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        ]</span></span>
+<span class="line"><span style="color:#E1E4E8">    ),</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Financial-specific topic restrictions</span></span>
+<span class="line"><span style="color:#FFAB70">    topicPolicyConfig</span><span style="color:#F97583">=</span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">        topicsConfig</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span></span>
+<span class="line"><span style="color:#79B8FF">            dict</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">                name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;investment-advice&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">                definition</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;Specific buy, sell, or hold recommendations for securities&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">                examples</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span><span style="color:#9ECBFF">&#39;You should buy AAPL stock&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;Sell all your Tesla shares&#39;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">                type</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;DENY&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">            ),</span></span>
+<span class="line"><span style="color:#79B8FF">            dict</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">                name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;guaranteed-returns&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">                definition</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;Promises or guarantees of investment returns&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">                examples</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span><span style="color:#9ECBFF">&#39;This stock will definitely go up&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;Guaranteed 20</span><span style="color:#79B8FF">% r</span><span style="color:#9ECBFF">eturns&#39;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">                type</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;DENY&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">            ),</span></span>
+<span class="line"><span style="color:#79B8FF">            dict</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">                name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;insider-trading&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">                definition</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;Discussion of non-public material information&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">                examples</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span><span style="color:#9ECBFF">&#39;I heard from an insider that...&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;Before the announcement...&#39;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">                type</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;DENY&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">            )</span></span>
+<span class="line"><span style="color:#E1E4E8">        ]</span></span>
+<span class="line"><span style="color:#E1E4E8">    ),</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # PII protection</span></span>
+<span class="line"><span style="color:#FFAB70">    sensitiveInformationPolicyConfig</span><span style="color:#F97583">=</span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">        piiEntitiesConfig</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span></span>
+<span class="line"><span style="color:#79B8FF">            dict</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">type</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;SSN&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">action</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;BLOCK&#39;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#79B8FF">            dict</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">type</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;CREDIT_DEBIT_CARD_NUMBER&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">action</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;BLOCK&#39;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#79B8FF">            dict</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">type</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;BANK_ACCOUNT_NUMBER&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">action</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;BLOCK&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        ]</span></span>
+<span class="line"><span style="color:#E1E4E8">    ),</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#FFAB70">    blockedInputMessaging</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;This request cannot be processed due to policy restrictions.&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    blockedOutputsMessaging</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;This response was blocked due to policy restrictions.&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">GUARDRAIL_ID</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> response[</span><span style="color:#9ECBFF">&#39;guardrailId&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Created guardrail: </span><span style="color:#79B8FF">{GUARDRAIL_ID}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span></code></pre></div>
+<h3 id="apply-to-all-agents">Apply to All Agents</h3>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-go16ard0p" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-go16ard0p"><code><span class="line"><span style="color:#6A737D"># Apply guardrail to each agent&#39;s model</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> create_guarded_model</span><span style="color:#E1E4E8">(guardrail_id: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, guardrail_version: </span><span style="color:#79B8FF">str</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;1&quot;</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> BedrockModel(</span></span>
+<span class="line"><span style="color:#FFAB70">        model_id</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;anthropic.claude-sonnet-4-20250514-v1:0&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        region_name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;us-west-2&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        guardrail_config</span><span style="color:#F97583">=</span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">            guardrailIdentifier</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">guardrail_id,</span></span>
+<span class="line"><span style="color:#FFAB70">            guardrailVersion</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">guardrail_version,</span></span>
+<span class="line"><span style="color:#FFAB70">            trace</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;enabled&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># All agents use guarded model</span></span>
+<span class="line"><span style="color:#E1E4E8">extract_model </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> create_guarded_model(</span><span style="color:#79B8FF">GUARDRAIL_ID</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">transform_model </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> create_guarded_model(</span><span style="color:#79B8FF">GUARDRAIL_ID</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">report_model </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> create_guarded_model(</span><span style="color:#79B8FF">GUARDRAIL_ID</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">orchestrator_model </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> create_guarded_model(</span><span style="color:#79B8FF">GUARDRAIL_ID</span><span style="color:#E1E4E8">)</span></span></code></pre></div>
+<aside class="callout callout--warning" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>From Day 4</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>Remember tool-specific guardrails:</p><ul>
+<li>Browser Tool: Restrict to approved financial sites</li>
+<li>Code Interpreter: Limit imports, timeout, no network
+Review Day 4 for tool guardrail configuration.</li>
+</ul> </div> </div> </aside> 
+<h2 id="integrating-day-4-distributed-observability">Integrating Day 4: Distributed Observability</h2>
+<p>Track requests across all agents with distributed tracing:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-50xcz28im" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-50xcz28im"><code><span class="line"><span style="color:#6A737D"># observability/distributed_tracing.py</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> bedrock_agentcore.observability </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> setup_observability, create_span, get_current_trace_id</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> configure_pipeline_observability</span><span style="color:#E1E4E8">():</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Configure observability for all pipeline agents.&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    agents </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">&quot;extract-agent&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;transform-agent&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;report-agent&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;orchestrator-agent&quot;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> agent_name </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> agents:</span></span>
+<span class="line"><span style="color:#E1E4E8">        setup_observability(</span></span>
+<span class="line"><span style="color:#FFAB70">            agent_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">agent_name,</span></span>
+<span class="line"><span style="color:#FFAB70">            enable_traces</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">            enable_metrics</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">            log_level</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;INFO&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">            cloudwatch_namespace</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;AgentCore/FinancialPipeline&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#6A737D">            # Enable distributed tracing</span></span>
+<span class="line"><span style="color:#FFAB70">            propagate_trace_context</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># In orchestrator, create parent span</span></span>
+<span class="line"><span style="color:#B392F0">@app.entrypoint</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> handle_request</span><span style="color:#E1E4E8">(payload: </span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">) -&gt; </span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">    with</span><span style="color:#E1E4E8"> create_span(</span><span style="color:#9ECBFF">&quot;orchestrator-pipeline-request&quot;</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> span:</span></span>
+<span class="line"><span style="color:#6A737D">        # Record request metadata</span></span>
+<span class="line"><span style="color:#E1E4E8">        span.set_attribute(</span><span style="color:#9ECBFF">&quot;user_query&quot;</span><span style="color:#E1E4E8">, payload.get(</span><span style="color:#9ECBFF">&quot;prompt&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;&quot;</span><span style="color:#E1E4E8">)[:</span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#E1E4E8">        span.set_attribute(</span><span style="color:#9ECBFF">&quot;session_id&quot;</span><span style="color:#E1E4E8">, payload.get(</span><span style="color:#9ECBFF">&quot;session_id&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;anonymous&quot;</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">            response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> orchestrator(payload.get(</span><span style="color:#9ECBFF">&quot;prompt&quot;</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">            # Record success metrics</span></span>
+<span class="line"><span style="color:#E1E4E8">            span.set_attribute(</span><span style="color:#9ECBFF">&quot;status&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;success&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">            span.set_attribute(</span><span style="color:#9ECBFF">&quot;agents_invoked&quot;</span><span style="color:#E1E4E8">, response.agents_called)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">            return</span><span style="color:#79B8FF"> dict</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">                response</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">response.message[</span><span style="color:#9ECBFF">&quot;content&quot;</span><span style="color:#E1E4E8">][</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&quot;text&quot;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">                trace_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">get_current_trace_id()  </span><span style="color:#6A737D"># Return for debugging</span></span>
+<span class="line"><span style="color:#E1E4E8">            )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        except</span><span style="color:#79B8FF"> Exception</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> e:</span></span>
+<span class="line"><span style="color:#E1E4E8">            span.set_attribute(</span><span style="color:#9ECBFF">&quot;status&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;error&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">            span.set_attribute(</span><span style="color:#9ECBFF">&quot;error_message&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">(e))</span></span>
+<span class="line"><span style="color:#F97583">            raise</span></span></code></pre></div>
+<h3 id="cloudwatch-dashboard">CloudWatch Dashboard</h3>
+<p>Create a dashboard for pipeline monitoring:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-usnbgcmku" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-usnbgcmku"><code><span class="line"><span style="color:#6A737D"># observability/dashboard.py</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> boto3</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">cloudwatch </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto3.client(</span><span style="color:#9ECBFF">&#39;cloudwatch&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">region_name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;us-west-2&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Create dashboard</span></span>
+<span class="line"><span style="color:#E1E4E8">dashboard_body </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> dict</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">    widgets</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span></span>
+<span class="line"><span style="color:#79B8FF">        dict</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">            type</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;metric&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">            properties</span><span style="color:#F97583">=</span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">                title</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;Pipeline Latency by Agent&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">                metrics</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span></span>
+<span class="line"><span style="color:#E1E4E8">                    [</span><span style="color:#9ECBFF">&quot;AgentCore/FinancialPipeline&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;Latency&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;AgentId&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;extract-agent&quot;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">                    [</span><span style="color:#9ECBFF">&quot;...&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;transform-agent&quot;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">                    [</span><span style="color:#9ECBFF">&quot;...&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;report-agent&quot;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">                    [</span><span style="color:#9ECBFF">&quot;...&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;orchestrator-agent&quot;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">                ],</span></span>
+<span class="line"><span style="color:#FFAB70">                period</span><span style="color:#F97583">=</span><span style="color:#79B8FF">60</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">                stat</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;Average&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">            )</span></span>
+<span class="line"><span style="color:#E1E4E8">        ),</span></span>
+<span class="line"><span style="color:#79B8FF">        dict</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">            type</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;metric&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">            properties</span><span style="color:#F97583">=</span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">                title</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;Error Rate by Agent&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">                metrics</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span></span>
+<span class="line"><span style="color:#E1E4E8">                    [</span><span style="color:#9ECBFF">&quot;AgentCore/FinancialPipeline&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;Errors&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;AgentId&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;extract-agent&quot;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">                    [</span><span style="color:#9ECBFF">&quot;...&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;transform-agent&quot;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">                    [</span><span style="color:#9ECBFF">&quot;...&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;report-agent&quot;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">                    [</span><span style="color:#9ECBFF">&quot;...&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;orchestrator-agent&quot;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">                ],</span></span>
+<span class="line"><span style="color:#FFAB70">                period</span><span style="color:#F97583">=</span><span style="color:#79B8FF">60</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">                stat</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;Sum&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">            )</span></span>
+<span class="line"><span style="color:#E1E4E8">        ),</span></span>
+<span class="line"><span style="color:#79B8FF">        dict</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">            type</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;metric&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">            properties</span><span style="color:#F97583">=</span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">                title</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;Token Usage&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">                metrics</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span></span>
+<span class="line"><span style="color:#E1E4E8">                    [</span><span style="color:#9ECBFF">&quot;AgentCore/FinancialPipeline&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;InputTokens&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;AgentId&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;orchestrator-agent&quot;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">                    [</span><span style="color:#9ECBFF">&quot;...&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;OutputTokens&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;...&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;...&quot;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">                ],</span></span>
+<span class="line"><span style="color:#FFAB70">                period</span><span style="color:#F97583">=</span><span style="color:#79B8FF">300</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">                stat</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;Sum&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">            )</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"><span style="color:#E1E4E8">    ]</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">cloudwatch.put_dashboard(</span></span>
+<span class="line"><span style="color:#FFAB70">    DashboardName</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;FinancialAnalyticsPipeline&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    DashboardBody</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">json.dumps(dashboard_body)</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span></code></pre></div>
+<aside class="callout callout--tip" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>From Day 4</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>Review Day 4 for custom metrics, alerting rules, and trace analysis.</p> </div> </div> </aside> 
+<h2 id="integrating-day-4-pipeline-evaluations">Integrating Day 4: Pipeline Evaluations</h2>
+<p>Add quality checks for your pipeline:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-bsc5ssn6u" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-bsc5ssn6u"><code><span class="line"><span style="color:#6A737D"># evaluations/report_quality.py</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> bedrock_agentcore.evaluation </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Evaluator, EvaluationDataset</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Define evaluation criteria for reports</span></span>
+<span class="line"><span style="color:#E1E4E8">report_evaluator </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Evaluator(</span></span>
+<span class="line"><span style="color:#FFAB70">    name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;report-quality-evaluator&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    model_id</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;anthropic.claude-sonnet-4-20250514-v1:0&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    criteria</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span></span>
+<span class="line"><span style="color:#79B8FF">        dict</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">            name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;completeness&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">            description</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;Report includes Executive Summary, Key Metrics, Risk Assessment, and Recommendations&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">            scoring</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;binary&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">        ),</span></span>
+<span class="line"><span style="color:#79B8FF">        dict</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">            name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;accuracy&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">            description</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;Financial metrics match input data, calculations are correct&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">            scoring</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;1-5&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">        ),</span></span>
+<span class="line"><span style="color:#79B8FF">        dict</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">            name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;clarity&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">            description</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;Report is clear, well-organized, and actionable&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">            scoring</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;1-5&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">        ),</span></span>
+<span class="line"><span style="color:#79B8FF">        dict</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">            name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;compliance&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">            description</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;Report does not contain investment advice or guarantees&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">            scoring</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;binary&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"><span style="color:#E1E4E8">    ]</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Create evaluation dataset</span></span>
+<span class="line"><span style="color:#E1E4E8">test_cases </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> EvaluationDataset([</span></span>
+<span class="line"><span style="color:#79B8FF">    dict</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">        input</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;Generate a risk report for Apple&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        expected_sections</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span><span style="color:#9ECBFF">&quot;Executive Summary&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;Risk Metrics&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;Recommendations&quot;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">        expected_metrics</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span><span style="color:#9ECBFF">&quot;VaR&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;Sharpe Ratio&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;Volatility&quot;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">        forbidden_content</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span><span style="color:#9ECBFF">&quot;you should buy&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;guaranteed returns&quot;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    ),</span></span>
+<span class="line"><span style="color:#79B8FF">    dict</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">        input</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;Analyze Microsoft&#39;s risk profile&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        expected_sections</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span><span style="color:#9ECBFF">&quot;Risk Assessment&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;Key Metrics&quot;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">        expected_metrics</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span><span style="color:#9ECBFF">&quot;VaR&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;Volatility&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;Max Drawdown&quot;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">        forbidden_content</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span><span style="color:#9ECBFF">&quot;investment advice&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;will definitely&quot;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"><span style="color:#E1E4E8">])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Run evaluation</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> evaluate_pipeline</span><span style="color:#E1E4E8">():</span></span>
+<span class="line"><span style="color:#E1E4E8">    results </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> report_evaluator.evaluate(</span></span>
+<span class="line"><span style="color:#FFAB70">        agent</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">orchestrator,</span></span>
+<span class="line"><span style="color:#FFAB70">        dataset</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">test_cases</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Completeness: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">results.avg(</span><span style="color:#9ECBFF">&#39;completeness&#39;</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:.0%</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Accuracy: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">results.avg(</span><span style="color:#9ECBFF">&#39;accuracy&#39;</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:.1f</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">/5&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Clarity: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">results.avg(</span><span style="color:#9ECBFF">&#39;clarity&#39;</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:.1f</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">/5&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Compliance: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">results.avg(</span><span style="color:#9ECBFF">&#39;compliance&#39;</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:.0%</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Fail if below thresholds</span></span>
+<span class="line"><span style="color:#F97583">    assert</span><span style="color:#E1E4E8"> results.avg(</span><span style="color:#9ECBFF">&#39;completeness&#39;</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">&gt;=</span><span style="color:#79B8FF"> 0.9</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;Completeness below 90%&quot;</span></span>
+<span class="line"><span style="color:#F97583">    assert</span><span style="color:#E1E4E8"> results.avg(</span><span style="color:#9ECBFF">&#39;accuracy&#39;</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">&gt;=</span><span style="color:#79B8FF"> 4.0</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;Accuracy below 4/5&quot;</span></span>
+<span class="line"><span style="color:#F97583">    assert</span><span style="color:#E1E4E8"> results.avg(</span><span style="color:#9ECBFF">&#39;compliance&#39;</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">&gt;=</span><span style="color:#79B8FF"> 1.0</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;Compliance failures detected&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> results</span></span></code></pre></div>
+<h3 id="continuous-evaluation">Continuous Evaluation</h3>
+<p>Set up online evaluation for production monitoring:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-o6ssauu7v" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-o6ssauu7v"><code><span class="line"><span style="color:#6A737D"># evaluations/online_eval.py</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> bedrock_agentcore.evaluation </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> OnlineEvaluator</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">online_evaluator </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> OnlineEvaluator(</span></span>
+<span class="line"><span style="color:#FFAB70">    name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;financial-pipeline-monitor&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    evaluator</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">report_evaluator,</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Sample 10% of production traffic</span></span>
+<span class="line"><span style="color:#FFAB70">    sample_rate</span><span style="color:#F97583">=</span><span style="color:#79B8FF">0.1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Alert on failures</span></span>
+<span class="line"><span style="color:#FFAB70">    alert_config</span><span style="color:#F97583">=</span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">        sns_topic_arn</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;arn:aws:sns:us-west-2:ACCOUNT:pipeline-alerts&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        threshold_completeness</span><span style="color:#F97583">=</span><span style="color:#79B8FF">0.85</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        threshold_accuracy</span><span style="color:#F97583">=</span><span style="color:#79B8FF">3.5</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        threshold_compliance</span><span style="color:#F97583">=</span><span style="color:#79B8FF">0.95</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Attach to orchestrator</span></span>
+<span class="line"><span style="color:#E1E4E8">orchestrator.add_callback(online_evaluator.evaluate_response)</span></span></code></pre></div>
+<aside class="callout callout--tip" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>From Day 4</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>Review Day 4 for on-demand vs online evaluation patterns and
+custom evaluator development.</p> </div> </div> </aside> 
+<h2 id="end-to-end-testing">End-to-End Testing</h2>
+<h3 id="test-suite">Test Suite</h3>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-ogv31pcd1" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-ogv31pcd1"><code><span class="line"><span style="color:#6A737D"># test_pipeline_e2e.py</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> boto3</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> json</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">agentcore </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto3.client(</span><span style="color:#9ECBFF">&#39;bedrock-agentcore&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">region_name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;us-west-2&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">ORCHESTRATOR_ARN</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;arn:aws:bedrock-agentcore:us-west-2:ACCOUNT:agent-runtime/orchestrator-agent&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> invoke_pipeline</span><span style="color:#E1E4E8">(query: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">) -&gt; </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Invoke the orchestrator with a query.&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> agentcore.invoke_agent_runtime(</span></span>
+<span class="line"><span style="color:#FFAB70">        agentRuntimeArn</span><span style="color:#F97583">=</span><span style="color:#79B8FF">ORCHESTRATOR_ARN</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        qualifier</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;DEFAULT&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        payload</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">json.dumps({</span><span style="color:#9ECBFF">&quot;prompt&quot;</span><span style="color:#E1E4E8">: query})</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    result </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> &quot;&quot;</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> line </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> response[</span><span style="color:#9ECBFF">&quot;response&quot;</span><span style="color:#E1E4E8">].iter_lines():</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> line:</span></span>
+<span class="line"><span style="color:#E1E4E8">            result </span><span style="color:#F97583">+=</span><span style="color:#E1E4E8"> line.decode(</span><span style="color:#9ECBFF">&quot;utf-8&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> result</span></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Test cases</span></span>
+<span class="line"><span style="color:#E1E4E8">test_cases </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#6A737D">    # Data only</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;query&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;What is Apple&#39;s current stock price?&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;expected_agents&quot;</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">&quot;extract&quot;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;expected_content&quot;</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">&quot;price&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;AAPL&quot;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Data + Analysis</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;query&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Analyze the risk profile for Tesla&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;expected_agents&quot;</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">&quot;extract&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;transform&quot;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;expected_content&quot;</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">&quot;volatility&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;VaR&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;Sharpe&quot;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Full pipeline</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;query&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Generate a comprehensive risk report for Microsoft&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;expected_agents&quot;</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">&quot;extract&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;transform&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;report&quot;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;expected_content&quot;</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">&quot;Risk Assessment&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;Volatility&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;Recommendation&quot;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # KB query</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;query&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;What are Amazon&#39;s key risk factors from their 10-K?&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;expected_agents&quot;</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">&quot;extract&quot;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;expected_content&quot;</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">&quot;risk&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;factor&quot;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Comparison</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;query&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Compare the performance of AAPL and MSFT&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;expected_agents&quot;</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">&quot;extract&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;transform&quot;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;expected_content&quot;</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">&quot;comparison&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;return&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;Sharpe&quot;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Run tests</span></span>
+<span class="line"><span style="color:#F97583">for</span><span style="color:#E1E4E8"> test </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> test_cases:</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n{</span><span style="color:#9ECBFF">&#39;=&#39;</span><span style="color:#F97583">*</span><span style="color:#79B8FF">60}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Query: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">test[</span><span style="color:#9ECBFF">&#39;query&#39;</span><span style="color:#E1E4E8">]</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">{</span><span style="color:#9ECBFF">&#39;=&#39;</span><span style="color:#F97583">*</span><span style="color:#79B8FF">60}\n</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    result </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> invoke_pipeline(test[</span><span style="color:#9ECBFF">&quot;query&quot;</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(result[:</span><span style="color:#79B8FF">500</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">+</span><span style="color:#9ECBFF"> &quot;...&quot;</span><span style="color:#F97583"> if</span><span style="color:#79B8FF"> len</span><span style="color:#E1E4E8">(result) </span><span style="color:#F97583">&gt;</span><span style="color:#79B8FF"> 500</span><span style="color:#F97583"> else</span><span style="color:#E1E4E8"> result)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Validate expected content</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> expected </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> test[</span><span style="color:#9ECBFF">&#39;expected_content&#39;</span><span style="color:#E1E4E8">]:</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> expected.lower() </span><span style="color:#F97583">not</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> result.lower():</span></span>
+<span class="line"><span style="color:#79B8FF">            print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">⚠️  Missing expected content: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">expected</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span></code></pre></div>
+<h3 id="sample-outputs">Sample Outputs</h3>
+<p><strong>Query: “What is Apple’s current stock price?”</strong></p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-q7sdwq296" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext" id="code-q7sdwq296"><code><span class="line"><span>I&#39;ll get the current stock price for Apple.</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>**Apple Inc. (AAPL)**</span></span>
+<span class="line"><span>- Current Price: $175.50</span></span>
+<span class="line"><span>- Day Change: +$2.15 (+1.24%)</span></span>
+<span class="line"><span>- 52-Week Range: $142.00 - $182.34</span></span>
+<span class="line"><span>- Market Cap: $2.85T</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Data from Yahoo Finance as of 2025-01-04</span></span></code></pre></div>
+<p><strong>Query: “Generate a comprehensive risk report for Microsoft”</strong></p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-hghsddwvz" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext" id="code-hghsddwvz"><code><span class="line"><span>I&#39;ll generate a comprehensive risk report for Microsoft. This requires:</span></span>
+<span class="line"><span>1. Extracting financial data and SEC filings</span></span>
+<span class="line"><span>2. Calculating risk metrics</span></span>
+<span class="line"><span>3. Generating a full report</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>[Executing pipeline...]</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Microsoft Corporation (MSFT) - Risk Assessment Report</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>**Report Date:** January 4, 2025</span></span>
+<span class="line"><span>**Analysis Period:** 1 Year</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>## Executive Summary</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Microsoft demonstrates a moderate risk profile with strong risk-adjusted</span></span>
+<span class="line"><span>returns (Sharpe 1.32). Annual volatility of 22.8% is slightly below the</span></span>
+<span class="line"><span>technology sector average...</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>[Full report continues...]</span></span></code></pre></div>
+<aside class="callout callout--success" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Pipeline Complete!</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>Congratulations! You’ve built a production-grade multi-agent financial
+analytics pipeline with Knowledge Bases, specialized agents, and
+dynamic orchestration.</p> </div> </div> </aside> 
+<h2 id="production-checklist">Production Checklist</h2>
+<p>Before going to production, ensure ALL Day 1-4 integrations are complete:</p>
+<p><strong>Core Pipeline (Day 1):</strong></p>
+<ul>
+<li>✅ All agents deployed and responding to AgentCore Runtime</li>
+<li>✅ Agent ARNs stored in Parameter Store</li>
+<li>✅ End-to-end pipeline tests passing</li>
+</ul>
+<p><strong>Security &amp; Access (Day 2):</strong></p>
+<ul>
+<li>✅ AgentCore Gateway configured with JWT authentication</li>
+<li>✅ Rate limiting enabled</li>
+<li>✅ Multi-tenancy configured (if needed)</li>
+<li>✅ IAM permissions properly scoped</li>
+</ul>
+<p><strong>Tools &amp; Context (Day 3):</strong></p>
+<ul>
+<li>✅ Memory integration in orchestrator</li>
+<li>✅ Browser Tool enabled in Extract Agent</li>
+<li>✅ Code Interpreter enabled in Transform Agent</li>
+</ul>
+<p><strong>Safety &amp; Quality (Day 4):</strong></p>
+<ul>
+<li>✅ Guardrails applied to ALL agents</li>
+<li>✅ Financial-specific topic restrictions configured</li>
+<li>✅ Distributed observability with tracing</li>
+<li>✅ CloudWatch dashboard deployed</li>
+<li>✅ Evaluation tests passing (&gt;90% completeness, 100% compliance)</li>
+</ul>
+<h2 id="checkpoint">Checkpoint</h2>
+<p>You’ve now completed the Day 5 capstone with full Days 1-4 integration:</p>
+<p><strong>Multi-Agent Pipeline:</strong></p>
+<ul>
+<li>✅ Knowledge Bases with SEC filings</li>
+<li>✅ Extract Agent (Yahoo Finance + KB + Browser Tool)</li>
+<li>✅ Transform Agent (Risk metrics + Code Interpreter)</li>
+<li>✅ Report Agent for synthesis</li>
+<li>✅ Orchestrator with dynamic LLM routing</li>
+</ul>
+<p><strong>Days 1-4 Integration:</strong></p>
+<ul>
+<li>✅ AgentCore Gateway for API access (Day 2)</li>
+<li>✅ Conversation Memory (Day 3)</li>
+<li>✅ Browser Tool for news (Day 3)</li>
+<li>✅ Code Interpreter for analysis (Day 3)</li>
+<li>✅ Guardrails on all agents (Day 4)</li>
+<li>✅ Distributed observability (Day 4)</li>
+<li>✅ Pipeline evaluations (Day 4)</li>
+</ul>
+<p><strong>Time for the Day 5 Challenge!</strong></p>
+<div class="nav-buttons"><a href="/days/5/report-agent" class="nav-button nav-button--prev"><p>← Report Agent</p></a><a href="/days/5/challenge" class="nav-button nav-button--next"><p>Day 5 Challenge →</p></a></div>
+<style>
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 3rem;
+  gap: 1rem;
+}
+
+.nav-button {
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+}
+
+.nav-button--prev {
+  color: var(--color-text-secondary);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--border-subtle);
+}
+
+.nav-button--prev:hover {
+  background: var(--color-bg-secondary);
+}
+
+.nav-button--next {
+  color: white;
+  background: var(--color-tier-gold);
+}
+
+.nav-button--next:hover {
+  opacity: 0.9;
+}
+</style>   </article> <!-- Navigation Footer --> <nav class="day-layout__pagination" aria-label="Page navigation" data-astro-cid-vfeiczyy>  <div class="pagination" data-astro-cid-gvwdafc4> <a href="/agentcore-avengers/days/5/report-agent" class="pagination__link pagination__link--prev" data-astro-cid-gvwdafc4> <span class="pagination__label" data-astro-cid-gvwdafc4>Previous</span> <span class="pagination__title" data-astro-cid-gvwdafc4>Report Agent</span> </a>  </div>  </nav> </main> <!-- Table of Contents --> <aside class="day-layout__toc hide-mobile" data-astro-cid-vfeiczyy> <div class="day-layout__toc-content" data-astro-cid-vfeiczyy> <h3 class="day-layout__toc-title" data-astro-cid-vfeiczyy>On this page</h3> <nav aria-label="Table of contents" data-astro-cid-vfeiczyy> <ul class="day-layout__toc-list" data-astro-cid-vfeiczyy> <li data-astro-cid-vfeiczyy> <a href="#multi-agent-orchestration-patterns" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Multi-Agent Orchestration Patterns </a> </li><li data-astro-cid-vfeiczyy> <a href="#pattern-1-sequential-pipeline" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Pattern 1: Sequential Pipeline </a> </li><li data-astro-cid-vfeiczyy> <a href="#pattern-2-hardcoded-router" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Pattern 2: Hardcoded Router </a> </li><li data-astro-cid-vfeiczyy> <a href="#pattern-3-dynamic-llm-routing-our-approach" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Pattern 3: Dynamic LLM Routing (Our Approach) </a> </li><li data-astro-cid-vfeiczyy> <a href="#orchestrator-architecture" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Orchestrator Architecture </a> </li><li data-astro-cid-vfeiczyy> <a href="#agent-as-tool-pattern" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Agent-as-Tool Pattern </a> </li><li data-astro-cid-vfeiczyy> <a href="#building-the-orchestrator" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Building the Orchestrator </a> </li><li data-astro-cid-vfeiczyy> <a href="#deploying-the-complete-pipeline" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Deploying the Complete Pipeline </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-1-deploy-all-agents" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Step 1: Deploy All Agents </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-2-store-agent-arns" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Step 2: Store Agent ARNs </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-3-update-agent-tools-to-use-parameters" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Step 3: Update Agent Tools to Use Parameters </a> </li><li data-astro-cid-vfeiczyy> <a href="#integrating-day-2-agentcore-gateway" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Integrating Day 2: AgentCore Gateway </a> </li><li data-astro-cid-vfeiczyy> <a href="#gateway-deployment" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Gateway Deployment </a> </li><li data-astro-cid-vfeiczyy> <a href="#integrating-day-3-conversation-memory" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Integrating Day 3: Conversation Memory </a> </li><li data-astro-cid-vfeiczyy> <a href="#memory-enabled-conversations" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Memory-Enabled Conversations </a> </li><li data-astro-cid-vfeiczyy> <a href="#updated-entry-point-with-session-support" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Updated Entry Point with Session Support </a> </li><li data-astro-cid-vfeiczyy> <a href="#integrating-day-4-comprehensive-guardrails" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Integrating Day 4: Comprehensive Guardrails </a> </li><li data-astro-cid-vfeiczyy> <a href="#create-financial-analytics-guardrail" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Create Financial Analytics Guardrail </a> </li><li data-astro-cid-vfeiczyy> <a href="#apply-to-all-agents" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Apply to All Agents </a> </li><li data-astro-cid-vfeiczyy> <a href="#integrating-day-4-distributed-observability" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Integrating Day 4: Distributed Observability </a> </li><li data-astro-cid-vfeiczyy> <a href="#cloudwatch-dashboard" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> CloudWatch Dashboard </a> </li><li data-astro-cid-vfeiczyy> <a href="#integrating-day-4-pipeline-evaluations" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Integrating Day 4: Pipeline Evaluations </a> </li><li data-astro-cid-vfeiczyy> <a href="#continuous-evaluation" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Continuous Evaluation </a> </li><li data-astro-cid-vfeiczyy> <a href="#end-to-end-testing" class="day-layout__toc-link" data-astro-cid-vfeiczyy> End-to-End Testing </a> </li><li data-astro-cid-vfeiczyy> <a href="#test-suite" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Test Suite </a> </li><li data-astro-cid-vfeiczyy> <a href="#sample-outputs" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Sample Outputs </a> </li><li data-astro-cid-vfeiczyy> <a href="#production-checklist" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Production Checklist </a> </li><li data-astro-cid-vfeiczyy> <a href="#checkpoint" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Checkpoint </a> </li> </ul> </nav> </div> </aside> </div> <footer class="footer" data-astro-cid-b2avyow5> <div class="footer__container" data-astro-cid-b2avyow5> <div class="footer__content" data-astro-cid-b2avyow5> <div class="footer__brand" data-astro-cid-b2avyow5> <span class="footer__logo" data-astro-cid-b2avyow5>AgentCore Initiative</span> <p class="footer__tagline" data-astro-cid-b2avyow5>
+Build production-ready AI agents with AWS AgentCore
+</p> </div> <nav class="footer__nav" aria-label="Footer navigation" data-astro-cid-b2avyow5> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Course</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/1" data-astro-cid-b2avyow5>Day 1: The First Avenger</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/2" data-astro-cid-b2avyow5>Day 2: Age of Ultron</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/3" data-astro-cid-b2avyow5>Day 3: Infinity War</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/4" data-astro-cid-b2avyow5>Day 4: Endgame</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/5" data-astro-cid-b2avyow5>Day 5: Assemble</a></li> </ul> </div> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Resources</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/troubleshooting" data-astro-cid-b2avyow5>Troubleshooting</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/reference/costs" data-astro-cid-b2avyow5>Cost Guide</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/reference/cleanup" data-astro-cid-b2avyow5>Cleanup</a></li> </ul> </div> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Links</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5> <a href="https://docs.aws.amazon.com/bedrock-agentcore/" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+AWS AgentCore Docs
+</a> </li> <li data-astro-cid-b2avyow5> <a href="https://github.com/awslabs/amazon-bedrock-agentcore-samples" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+AgentCore Samples
+</a> </li> <li data-astro-cid-b2avyow5> <a href="https://strandsagents.com" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+Strands Agents
+</a> </li> </ul> </div> </nav> </div> <div class="footer__bottom" data-astro-cid-b2avyow5> <p class="footer__copyright" data-astro-cid-b2avyow5>
+&copy; 2026 The AgentCore Initiative. Built with Astro.
+</p> <p class="footer__disclaimer" data-astro-cid-b2avyow5>
+This is an educational resource. AWS and Amazon Bedrock are trademarks of Amazon.com, Inc.
+</p> </div> </div> </footer>   <!-- Global scripts --> <script type="module">function d(){document.querySelectorAll(".copy-button").forEach(c=>{const e=c.cloneNode(!0);c.parentNode?.replaceChild(e,c),e.addEventListener("click",async()=>{const i=e.getAttribute("data-code-id"),n=document.getElementById(i);if(!n)return;const s=n.textContent||"";try{await navigator.clipboard.writeText(s);const t=e.querySelector(".copy-icon"),o=e.querySelector(".check-icon");t&&t.classList.add("hidden"),o&&o.classList.remove("hidden"),e.classList.add("copied"),setTimeout(()=>{t&&t.classList.remove("hidden"),o&&o.classList.add("hidden"),e.classList.remove("copied")},2e3)}catch(t){console.error("Failed to copy code:",t)}})})}document.readyState==="loading"?document.addEventListener("DOMContentLoaded",d):d();document.addEventListener("astro:page-load",d);</script> <!-- Copy code functionality --> <script type="module" src="/agentcore-avengers/_astro/BaseLayout.astro_astro_type_script_index_1_lang.BwEjmFOO.js"></script> </body> </html>   <script type="module" src="/agentcore-avengers/_astro/DayLayout.astro_astro_type_script_index_0_lang.BT_UbId1.js"></script> 

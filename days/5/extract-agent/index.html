@@ -1,0 +1,638 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="canonical" href="https://jagdeep1.github.io/agentcore-avengers/days/5/extract-agent/"><!-- Favicon --><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><!-- Primary Meta Tags --><title>Extract Agent - Day 5 | The AgentCore Initiative</title><meta name="title" content="Extract Agent - Day 5 | The AgentCore Initiative"><meta name="description" content="Day 5: Assemble - Multi-agent Capstone"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://jagdeep1.github.io/agentcore-avengers/days/5/extract-agent/"><meta property="og:title" content="Extract Agent - Day 5 | The AgentCore Initiative"><meta property="og:description" content="Day 5: Assemble - Multi-agent Capstone"><meta property="og:image" content="https://jagdeep1.github.io/images/og/default.png"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://jagdeep1.github.io/agentcore-avengers/days/5/extract-agent/"><meta name="twitter:title" content="Extract Agent - Day 5 | The AgentCore Initiative"><meta name="twitter:description" content="Day 5: Assemble - Multi-agent Capstone"><meta name="twitter:image" content="https://jagdeep1.github.io/images/og/default.png"><!-- Fonts - Plus Jakarta Sans & Geist Mono --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"><!-- Theme initialization (prevents flash) --><script>
+      (function () {
+        const stored = localStorage.getItem('agentcore-initiative-progress');
+        let theme = 'dark';
+        if (stored) {
+          try {
+            const progress = JSON.parse(stored);
+            theme = progress.theme || 'dark';
+          } catch (e) {}
+        }
+        if (theme === 'system') {
+          theme = window.matchMedia('(prefers-color-scheme: light)').matches
+            ? 'light'
+            : 'dark';
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script><link rel="stylesheet" href="/agentcore-avengers/_astro/_slug_.C6jciWkZ.css">
+<style>.pagination[data-astro-cid-gvwdafc4]{display:flex;justify-content:space-between;gap:1rem}.pagination__link[data-astro-cid-gvwdafc4]{flex:1;max-width:50%;padding:1rem 1.25rem;background:var(--color-bg-elevated);border:var(--border-subtle);border-radius:var(--radius-lg);text-decoration:none;transition:all var(--transition-fast)}.pagination__link[data-astro-cid-gvwdafc4]:hover{background:var(--color-bg-secondary);border-color:var(--border-default)}.pagination__link--prev[data-astro-cid-gvwdafc4]{text-align:left}.pagination__link--next[data-astro-cid-gvwdafc4]{text-align:right;margin-left:auto}.pagination__label[data-astro-cid-gvwdafc4]{display:block;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-muted);margin-bottom:.25rem}.pagination__title[data-astro-cid-gvwdafc4]{display:block;font-size:.9375rem;font-weight:500;color:var(--color-text-primary)}
+</style>
+<link rel="stylesheet" href="/agentcore-avengers/_astro/_slug_.CP5296fy.css"><style>.callout[data-astro-cid-wi7smz4x]{display:flex;gap:1rem;padding:1rem 1.25rem;border-radius:var(--radius-lg);margin:1.5rem 0;border-left:4px solid}.callout--info[data-astro-cid-wi7smz4x]{background:#3b82f614;border-left-color:var(--color-accent-primary)}.callout--info[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-primary)}.callout--warning[data-astro-cid-wi7smz4x]{background:#f59e0b14;border-left-color:var(--color-accent-warning)}.callout--warning[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-warning)}.callout--danger[data-astro-cid-wi7smz4x]{background:#ef444414;border-left-color:var(--color-accent-danger)}.callout--danger[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-danger)}.callout--success[data-astro-cid-wi7smz4x]{background:#10b98114;border-left-color:var(--color-accent-success)}.callout--success[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-success)}.callout--tip[data-astro-cid-wi7smz4x]{background:#8b5cf614;border-left-color:var(--color-accent-purple)}.callout--tip[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-purple)}.callout__icon[data-astro-cid-wi7smz4x]{flex-shrink:0;width:1.25rem;height:1.25rem;margin-top:.125rem}.callout__content[data-astro-cid-wi7smz4x]{flex:1;min-width:0}.callout__title[data-astro-cid-wi7smz4x]{font-weight:600;font-size:.9375rem;color:var(--color-text-primary);margin-bottom:.25rem}.callout__body[data-astro-cid-wi7smz4x]{font-size:.9375rem;color:var(--color-text-secondary);line-height:1.6}.callout__body[data-astro-cid-wi7smz4x] p{margin:0}.callout__body[data-astro-cid-wi7smz4x] p+p{margin-top:.5rem}.callout__body[data-astro-cid-wi7smz4x] code{font-size:.85em}.callout__body[data-astro-cid-wi7smz4x] a{font-weight:500}
+</style></head> <body>  <header class="header" data-astro-cid-mb6pvx4c> <div class="header__container" data-astro-cid-mb6pvx4c> <!-- Logo --> <a href="/agentcore-avengers/" class="header__logo" aria-label="Home" data-astro-cid-mb6pvx4c> <svg class="header__logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" data-astro-cid-mb6pvx4c> <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c></circle> <path d="M16 6 L22 12 L16 18 L10 12 Z" fill="currentColor" opacity="0.5" data-astro-cid-mb6pvx4c></path> <circle cx="16" cy="16" r="4" fill="currentColor" data-astro-cid-mb6pvx4c></circle> </svg> <span class="header__logo-text" data-astro-cid-mb6pvx4c>AgentCore Initiative</span> </a> <!-- Desktop Navigation --> <nav class="header__nav hide-mobile" aria-label="Main navigation" data-astro-cid-mb6pvx4c> <ul class="header__nav-list" data-astro-cid-mb6pvx4c> <li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/days" class="header__nav-link header__nav-link--active" data-astro-cid-mb6pvx4c> Course </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/troubleshooting" class="header__nav-link" data-astro-cid-mb6pvx4c> Troubleshooting </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/reference" class="header__nav-link" data-astro-cid-mb6pvx4c> Reference </a> </li> </ul> </nav> <!-- Actions --> <div class="header__actions" data-astro-cid-mb6pvx4c> <!-- Theme Toggle Button (placeholder - will be React component) --> <button id="theme-toggle" class="header__theme-toggle" aria-label="Toggle theme" type="button" data-astro-cid-mb6pvx4c> <svg class="header__theme-icon header__theme-icon--dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <circle cx="12" cy="12" r="5" data-astro-cid-mb6pvx4c></circle> <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" data-astro-cid-mb6pvx4c></path> </svg> <svg class="header__theme-icon header__theme-icon--light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-mb6pvx4c></path> </svg> </button> <!-- Mobile Menu Toggle --> <button id="mobile-menu-toggle" class="header__mobile-toggle hide-desktop" aria-label="Toggle menu" aria-expanded="false" type="button" data-astro-cid-mb6pvx4c> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <path class="menu-icon" d="M4 6h16M4 12h16M4 18h16" data-astro-cid-mb6pvx4c></path> <path class="close-icon" d="M6 6l12 12M6 18L18 6" style="display: none" data-astro-cid-mb6pvx4c></path> </svg> </button> </div> </div> <!-- Mobile Navigation --> <nav id="mobile-nav" class="header__mobile-nav hide-desktop" aria-label="Mobile navigation" hidden data-astro-cid-mb6pvx4c> <ul class="header__mobile-nav-list" data-astro-cid-mb6pvx4c> <li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/days" class="header__mobile-nav-link header__mobile-nav-link--active" data-astro-cid-mb6pvx4c> Course </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/troubleshooting" class="header__mobile-nav-link" data-astro-cid-mb6pvx4c> Troubleshooting </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/reference" class="header__mobile-nav-link" data-astro-cid-mb6pvx4c> Reference </a> </li> </ul> </nav> </header>  <script type="module">const r=document.getElementById("theme-toggle");r&&r.addEventListener("click",()=>{const e=document.documentElement,t=e.getAttribute("data-theme")==="dark"?"light":"dark";e.setAttribute("data-theme",t);const c=localStorage.getItem("agentcore-initiative-progress");let i={theme:t};if(c)try{i={...JSON.parse(c),theme:t}}catch{}localStorage.setItem("agentcore-initiative-progress",JSON.stringify(i))});const n=document.getElementById("mobile-menu-toggle"),l=document.getElementById("mobile-nav");n&&l&&n.addEventListener("click",()=>{const e=n.getAttribute("aria-expanded")==="true";n.setAttribute("aria-expanded",String(!e)),l.hidden=e;const o=n.querySelector(".menu-icon"),t=n.querySelector(".close-icon");o&&t&&(o.style.display=e?"block":"none",t.style.display=e?"none":"block")});</script> <div class="day-layout" style="--day-accent: #f59e0b" data-astro-cid-vfeiczyy> <!-- Sidebar --> <aside class="day-layout__sidebar hide-mobile" data-astro-cid-vfeiczyy> <div class="day-layout__sidebar-content" data-astro-cid-vfeiczyy> <!-- Day Header --> <div class="day-layout__day-header" data-astro-cid-vfeiczyy> <span class="day-layout__day-number" data-astro-cid-vfeiczyy>Day 5</span> <h2 class="day-layout__day-title" data-astro-cid-vfeiczyy>Assemble</h2> <p class="day-layout__day-focus" data-astro-cid-vfeiczyy>Multi-agent Capstone</p> </div> <!-- Section Navigation --> <nav class="day-layout__nav" aria-label="Day sections" data-astro-cid-vfeiczyy> <ul class="day-layout__nav-list" data-astro-cid-vfeiczyy> <li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/5/knowledge-bases" class="day-layout__nav-link" data-section="knowledge-bases" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Knowledge Bases </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/5/extract-agent" class="day-layout__nav-link day-layout__nav-link--active" data-section="extract-agent" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Extract Agent </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/5/transform-agent" class="day-layout__nav-link" data-section="transform-agent" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Transform Agent </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/5/report-agent" class="day-layout__nav-link" data-section="report-agent" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Report Agent </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/5/orchestration" class="day-layout__nav-link" data-section="orchestration" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Orchestration &amp; Deployment </a> </li> </ul> </nav> <!-- Challenge Link --> <a href="/agentcore-avengers/days/5/challenge" class="day-layout__challenge-link" data-astro-cid-vfeiczyy> <span class="day-layout__challenge-icon" data-astro-cid-vfeiczyy> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-vfeiczyy> <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" data-astro-cid-vfeiczyy></polygon> </svg> </span>
+Daily Challenge
+</a> </div> </aside> <!-- Main Content --> <main class="day-layout__main" data-astro-cid-vfeiczyy> <article class="day-layout__content prose" data-astro-cid-vfeiczyy>  <h1 id="extract-agent">Extract Agent</h1>
+<p>The Extract Agent is the data gatherer. It fetches financial data from three sources:</p>
+<ul>
+<li><strong>Real-time market data</strong> from Yahoo Finance</li>
+<li><strong>Historical SEC filings</strong> from the Knowledge Base</li>
+<li><strong>Financial news</strong> via Browser Tool (from Day 3)</li>
+</ul>
+<h2 id="extract-agent-architecture">Extract Agent Architecture</h2>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-12hdnyo73" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext" id="code-12hdnyo73"><code><span class="line"><span>┌─────────────────────────────────────────────────────────────────────────────┐</span></span>
+<span class="line"><span>│                          EXTRACT AGENT                                       │</span></span>
+<span class="line"><span>│                                                                              │</span></span>
+<span class="line"><span>│  System Prompt: &quot;You gather financial data from multiple sources...&quot;        │</span></span>
+<span class="line"><span>│                                                                              │</span></span>
+<span class="line"><span>│  ┌───────────────────────────────────────────────────────────────────────┐  │</span></span>
+<span class="line"><span>│  │                              TOOLS                                     │  │</span></span>
+<span class="line"><span>│  │                                                                        │  │</span></span>
+<span class="line"><span>│  │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐       │  │</span></span>
+<span class="line"><span>│  │  │  fetch_stock_   │  │  query_sec_     │  │  browser_tool   │       │  │</span></span>
+<span class="line"><span>│  │  │     data        │  │    filings      │  │   (Day 3)       │       │  │</span></span>
+<span class="line"><span>│  │  │                 │  │                 │  │                 │       │  │</span></span>
+<span class="line"><span>│  │  │  Yahoo Finance  │  │  Knowledge Base │  │  Financial News │       │  │</span></span>
+<span class="line"><span>│  │  │  - Price        │  │  - 10-K reports │  │  - Headlines    │       │  │</span></span>
+<span class="line"><span>│  │  │  - Fundamentals │  │  - Risk factors │  │  - Sentiment    │       │  │</span></span>
+<span class="line"><span>│  │  │  - History      │  │  - Financials   │  │  - Events       │       │  │</span></span>
+<span class="line"><span>│  │  └─────────────────┘  └─────────────────┘  └─────────────────┘       │  │</span></span>
+<span class="line"><span>│  └───────────────────────────────────────────────────────────────────────┘  │</span></span>
+<span class="line"><span>│                                                                              │</span></span>
+<span class="line"><span>│  Output: Structured JSON with normalized financial data                      │</span></span>
+<span class="line"><span>│                                                                              │</span></span>
+<span class="line"><span>└─────────────────────────────────────────────────────────────────────────────┘</span></span></code></pre></div>
+<h2 id="yahoo-finance-tool">Yahoo Finance Tool</h2>
+<p>Install the yfinance library:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-kqutjpu7p" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-kqutjpu7p"><code><span class="line"><span style="color:#B392F0">pip</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> yfinance</span></span></code></pre></div>
+<p>Create the market data tool:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-up7iz5s71" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-up7iz5s71"><code><span class="line"><span style="color:#6A737D"># tools/yahoo_finance.py</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> yfinance </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> yf</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands.tools </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> tool</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> datetime </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> datetime, timedelta</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">@tool</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> fetch_stock_data</span><span style="color:#E1E4E8">(ticker: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, period: </span><span style="color:#79B8FF">str</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;1y&quot;</span><span style="color:#E1E4E8">) -&gt; </span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Fetch real-time stock data from Yahoo Finance.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Use this tool to get current market data including:</span></span>
+<span class="line"><span style="color:#9ECBFF">    - Current stock price and daily change</span></span>
+<span class="line"><span style="color:#9ECBFF">    - Market capitalization and volume</span></span>
+<span class="line"><span style="color:#9ECBFF">    - P/E ratio, dividend yield, and other fundamentals</span></span>
+<span class="line"><span style="color:#9ECBFF">    - Historical price data</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Args:</span></span>
+<span class="line"><span style="color:#9ECBFF">        ticker: Stock symbol (e.g., &#39;AAPL&#39;, &#39;MSFT&#39;, &#39;GOOGL&#39;)</span></span>
+<span class="line"><span style="color:#9ECBFF">        period: Historical data period (&#39;1d&#39;, &#39;5d&#39;, &#39;1mo&#39;, &#39;3mo&#39;, &#39;6mo&#39;, &#39;1y&#39;, &#39;2y&#39;, &#39;5y&#39;)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Returns:</span></span>
+<span class="line"><span style="color:#9ECBFF">        Dictionary with stock data and metrics</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#F97583">    try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        stock </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> yf.Ticker(ticker)</span></span>
+<span class="line"><span style="color:#E1E4E8">        info </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> stock.info</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Get historical data</span></span>
+<span class="line"><span style="color:#E1E4E8">        history </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> stock.history(</span><span style="color:#FFAB70">period</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">period)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Calculate additional metrics</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#F97583"> not</span><span style="color:#E1E4E8"> history.empty:</span></span>
+<span class="line"><span style="color:#E1E4E8">            current_price </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> history[</span><span style="color:#9ECBFF">&#39;Close&#39;</span><span style="color:#E1E4E8">].iloc[</span><span style="color:#F97583">-</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">            start_price </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> history[</span><span style="color:#9ECBFF">&#39;Close&#39;</span><span style="color:#E1E4E8">].iloc[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">            period_return </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> ((current_price </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> start_price) </span><span style="color:#F97583">/</span><span style="color:#E1E4E8"> start_price) </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 100</span></span>
+<span class="line"><span style="color:#E1E4E8">            volatility </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> history[</span><span style="color:#9ECBFF">&#39;Close&#39;</span><span style="color:#E1E4E8">].pct_change().std() </span><span style="color:#F97583">*</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">252</span><span style="color:#F97583"> **</span><span style="color:#79B8FF"> 0.5</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 100</span><span style="color:#6A737D">  # Annualized</span></span>
+<span class="line"><span style="color:#F97583">        else</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">            current_price </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> info.get(</span><span style="color:#9ECBFF">&#39;currentPrice&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">            period_return </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 0</span></span>
+<span class="line"><span style="color:#E1E4E8">            volatility </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 0</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;ticker&#39;</span><span style="color:#E1E4E8">: ticker.upper(),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;company_name&#39;</span><span style="color:#E1E4E8">: info.get(</span><span style="color:#9ECBFF">&#39;longName&#39;</span><span style="color:#E1E4E8">, ticker),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;sector&#39;</span><span style="color:#E1E4E8">: info.get(</span><span style="color:#9ECBFF">&#39;sector&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;Unknown&#39;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;industry&#39;</span><span style="color:#E1E4E8">: info.get(</span><span style="color:#9ECBFF">&#39;industry&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;Unknown&#39;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">            # Price data</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;current_price&#39;</span><span style="color:#E1E4E8">: current_price,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;previous_close&#39;</span><span style="color:#E1E4E8">: info.get(</span><span style="color:#9ECBFF">&#39;previousClose&#39;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;day_change&#39;</span><span style="color:#E1E4E8">: info.get(</span><span style="color:#9ECBFF">&#39;regularMarketChange&#39;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;day_change_percent&#39;</span><span style="color:#E1E4E8">: info.get(</span><span style="color:#9ECBFF">&#39;regularMarketChangePercent&#39;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">            # Valuation</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;market_cap&#39;</span><span style="color:#E1E4E8">: info.get(</span><span style="color:#9ECBFF">&#39;marketCap&#39;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;pe_ratio&#39;</span><span style="color:#E1E4E8">: info.get(</span><span style="color:#9ECBFF">&#39;trailingPE&#39;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;forward_pe&#39;</span><span style="color:#E1E4E8">: info.get(</span><span style="color:#9ECBFF">&#39;forwardPE&#39;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;peg_ratio&#39;</span><span style="color:#E1E4E8">: info.get(</span><span style="color:#9ECBFF">&#39;pegRatio&#39;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;price_to_book&#39;</span><span style="color:#E1E4E8">: info.get(</span><span style="color:#9ECBFF">&#39;priceToBook&#39;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">            # Financials</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;revenue&#39;</span><span style="color:#E1E4E8">: info.get(</span><span style="color:#9ECBFF">&#39;totalRevenue&#39;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;net_income&#39;</span><span style="color:#E1E4E8">: info.get(</span><span style="color:#9ECBFF">&#39;netIncomeToCommon&#39;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;profit_margin&#39;</span><span style="color:#E1E4E8">: info.get(</span><span style="color:#9ECBFF">&#39;profitMargins&#39;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;operating_margin&#39;</span><span style="color:#E1E4E8">: info.get(</span><span style="color:#9ECBFF">&#39;operatingMargins&#39;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">            # Dividends</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;dividend_yield&#39;</span><span style="color:#E1E4E8">: info.get(</span><span style="color:#9ECBFF">&#39;dividendYield&#39;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;dividend_rate&#39;</span><span style="color:#E1E4E8">: info.get(</span><span style="color:#9ECBFF">&#39;dividendRate&#39;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">            # Trading</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;volume&#39;</span><span style="color:#E1E4E8">: info.get(</span><span style="color:#9ECBFF">&#39;volume&#39;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;avg_volume&#39;</span><span style="color:#E1E4E8">: info.get(</span><span style="color:#9ECBFF">&#39;averageVolume&#39;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;fifty_two_week_high&#39;</span><span style="color:#E1E4E8">: info.get(</span><span style="color:#9ECBFF">&#39;fiftyTwoWeekHigh&#39;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;fifty_two_week_low&#39;</span><span style="color:#E1E4E8">: info.get(</span><span style="color:#9ECBFF">&#39;fiftyTwoWeekLow&#39;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">            # Calculated metrics</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;period_return_percent&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">round</span><span style="color:#E1E4E8">(period_return, </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;annualized_volatility_percent&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">round</span><span style="color:#E1E4E8">(volatility, </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">            # Historical prices (last 10 data points)</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;price_history&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;dates&#39;</span><span style="color:#E1E4E8">: history.index.strftime(</span><span style="color:#9ECBFF">&#39;%Y-%m-</span><span style="color:#79B8FF">%d</span><span style="color:#9ECBFF">&#39;</span><span style="color:#E1E4E8">).tolist()[</span><span style="color:#F97583">-</span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">:],</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;prices&#39;</span><span style="color:#E1E4E8">: history[</span><span style="color:#9ECBFF">&#39;Close&#39;</span><span style="color:#E1E4E8">].round(</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">).tolist()[</span><span style="color:#F97583">-</span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">:]</span></span>
+<span class="line"><span style="color:#E1E4E8">            },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;data_timestamp&#39;</span><span style="color:#E1E4E8">: datetime.now().isoformat()</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    except</span><span style="color:#79B8FF"> Exception</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> e:</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;ticker&#39;</span><span style="color:#E1E4E8">: ticker.upper(),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;error&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Failed to fetch data: </span><span style="color:#79B8FF">{str</span><span style="color:#E1E4E8">(e)</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;data_timestamp&#39;</span><span style="color:#E1E4E8">: datetime.now().isoformat()</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">@tool</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> fetch_multiple_stocks</span><span style="color:#E1E4E8">(tickers: list[</span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">]) -&gt; list[</span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">]:</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Fetch data for multiple stocks at once.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Args:</span></span>
+<span class="line"><span style="color:#9ECBFF">        tickers: List of stock symbols (e.g., [&#39;AAPL&#39;, &#39;MSFT&#39;, &#39;GOOGL&#39;])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Returns:</span></span>
+<span class="line"><span style="color:#9ECBFF">        List of stock data dictionaries</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    results </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> []</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> ticker </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> tickers[:</span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">]:  </span><span style="color:#6A737D"># Limit to 10 stocks</span></span>
+<span class="line"><span style="color:#E1E4E8">        data </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> fetch_stock_data(ticker, </span><span style="color:#FFAB70">period</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;1mo&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        results.append(data)</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> results</span></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">@tool</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> get_stock_history</span><span style="color:#E1E4E8">(ticker: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, period: </span><span style="color:#79B8FF">str</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;1y&quot;</span><span style="color:#E1E4E8">) -&gt; </span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Get detailed historical price data for a stock.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Use this for time-series analysis, charting, or calculating metrics</span></span>
+<span class="line"><span style="color:#9ECBFF">    that need historical prices.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Args:</span></span>
+<span class="line"><span style="color:#9ECBFF">        ticker: Stock symbol</span></span>
+<span class="line"><span style="color:#9ECBFF">        period: Data period (&#39;1mo&#39;, &#39;3mo&#39;, &#39;6mo&#39;, &#39;1y&#39;, &#39;2y&#39;, &#39;5y&#39;)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Returns:</span></span>
+<span class="line"><span style="color:#9ECBFF">        Dictionary with full historical data</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#F97583">    try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        stock </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> yf.Ticker(ticker)</span></span>
+<span class="line"><span style="color:#E1E4E8">        history </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> stock.history(</span><span style="color:#FFAB70">period</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">period)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> history.empty:</span></span>
+<span class="line"><span style="color:#F97583">            return</span><span style="color:#E1E4E8"> {</span><span style="color:#9ECBFF">&#39;ticker&#39;</span><span style="color:#E1E4E8">: ticker, </span><span style="color:#9ECBFF">&#39;error&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;No historical data available&#39;</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;ticker&#39;</span><span style="color:#E1E4E8">: ticker.upper(),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;period&#39;</span><span style="color:#E1E4E8">: period,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;data_points&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">len</span><span style="color:#E1E4E8">(history),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;start_date&#39;</span><span style="color:#E1E4E8">: history.index[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">].strftime(</span><span style="color:#9ECBFF">&#39;%Y-%m-</span><span style="color:#79B8FF">%d</span><span style="color:#9ECBFF">&#39;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;end_date&#39;</span><span style="color:#E1E4E8">: history.index[</span><span style="color:#F97583">-</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">].strftime(</span><span style="color:#9ECBFF">&#39;%Y-%m-</span><span style="color:#79B8FF">%d</span><span style="color:#9ECBFF">&#39;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;dates&#39;</span><span style="color:#E1E4E8">: history.index.strftime(</span><span style="color:#9ECBFF">&#39;%Y-%m-</span><span style="color:#79B8FF">%d</span><span style="color:#9ECBFF">&#39;</span><span style="color:#E1E4E8">).tolist(),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;open&#39;</span><span style="color:#E1E4E8">: history[</span><span style="color:#9ECBFF">&#39;Open&#39;</span><span style="color:#E1E4E8">].round(</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">).tolist(),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;high&#39;</span><span style="color:#E1E4E8">: history[</span><span style="color:#9ECBFF">&#39;High&#39;</span><span style="color:#E1E4E8">].round(</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">).tolist(),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;low&#39;</span><span style="color:#E1E4E8">: history[</span><span style="color:#9ECBFF">&#39;Low&#39;</span><span style="color:#E1E4E8">].round(</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">).tolist(),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;close&#39;</span><span style="color:#E1E4E8">: history[</span><span style="color:#9ECBFF">&#39;Close&#39;</span><span style="color:#E1E4E8">].round(</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">).tolist(),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;volume&#39;</span><span style="color:#E1E4E8">: history[</span><span style="color:#9ECBFF">&#39;Volume&#39;</span><span style="color:#E1E4E8">].tolist()</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    except</span><span style="color:#79B8FF"> Exception</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> e:</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;ticker&#39;</span><span style="color:#E1E4E8">: ticker.upper(),</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;error&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Failed to fetch history: </span><span style="color:#79B8FF">{str</span><span style="color:#E1E4E8">(e)</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span></code></pre></div>
+<aside class="callout callout--tip" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Rate Limiting</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>Yahoo Finance has informal rate limits. Add delays between requests in production
+or use caching for frequently requested data.</p> </div> </div> </aside> 
+<h2 id="knowledge-base-tool">Knowledge Base Tool</h2>
+<p>Import the KB tool from Module 1:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-pdo2j7hbz" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-pdo2j7hbz"><code><span class="line"><span style="color:#6A737D"># tools/kb_retrieval.py</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> boto3</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands.tools </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> tool</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">bedrock_agent_runtime </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto3.client(</span><span style="color:#9ECBFF">&#39;bedrock-agent-runtime&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">region_name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;us-west-2&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">KB_ID</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &#39;your-knowledge-base-id&#39;</span><span style="color:#6A737D">  # From Module 1</span></span>
+<span class="line"><span style="color:#79B8FF">MODEL_ARN</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &#39;arn:aws:bedrock:us-west-2::foundation-model/anthropic.claude-sonnet-4-20250514-v1:0&#39;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">@tool</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> query_sec_filings</span><span style="color:#E1E4E8">(query: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, ticker: </span><span style="color:#79B8FF">str</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> None</span><span style="color:#E1E4E8">) -&gt; </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Query SEC filings from the Knowledge Base.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Use this tool to find information from company SEC filings including:</span></span>
+<span class="line"><span style="color:#9ECBFF">    - 10-K annual reports (financials, risk factors, business description)</span></span>
+<span class="line"><span style="color:#9ECBFF">    - 10-Q quarterly reports</span></span>
+<span class="line"><span style="color:#9ECBFF">    - Management discussion and analysis</span></span>
+<span class="line"><span style="color:#9ECBFF">    - Risk factors and forward-looking statements</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Args:</span></span>
+<span class="line"><span style="color:#9ECBFF">        query: The question to answer from SEC filings</span></span>
+<span class="line"><span style="color:#9ECBFF">        ticker: Optional stock ticker to filter results (e.g., &#39;AAPL&#39;, &#39;MSFT&#39;)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Returns:</span></span>
+<span class="line"><span style="color:#9ECBFF">        Answer generated from SEC filings with source citations</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    config </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;type&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;KNOWLEDGE_BASE&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &#39;knowledgeBaseConfiguration&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;knowledgeBaseId&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">KB_ID</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;modelArn&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">MODEL_ARN</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;retrievalConfiguration&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;vectorSearchConfiguration&#39;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                    &#39;numberOfResults&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">5</span></span>
+<span class="line"><span style="color:#E1E4E8">                }</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> ticker:</span></span>
+<span class="line"><span style="color:#E1E4E8">        config[</span><span style="color:#9ECBFF">&#39;knowledgeBaseConfiguration&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;retrievalConfiguration&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;vectorSearchConfiguration&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;filter&#39;</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;equals&#39;</span><span style="color:#E1E4E8">: {</span><span style="color:#9ECBFF">&#39;key&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&#39;ticker&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;value&#39;</span><span style="color:#E1E4E8">: ticker.upper()}</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> bedrock_agent_runtime.retrieve_and_generate(</span></span>
+<span class="line"><span style="color:#FFAB70">            input</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span><span style="color:#9ECBFF">&#39;text&#39;</span><span style="color:#E1E4E8">: query},</span></span>
+<span class="line"><span style="color:#FFAB70">            retrieveAndGenerateConfiguration</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">config</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">        answer </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> response[</span><span style="color:#9ECBFF">&#39;output&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;text&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Add citation info</span></span>
+<span class="line"><span style="color:#E1E4E8">        sources </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> set</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">        for</span><span style="color:#E1E4E8"> citation </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> response.get(</span><span style="color:#9ECBFF">&#39;citations&#39;</span><span style="color:#E1E4E8">, []):</span></span>
+<span class="line"><span style="color:#F97583">            for</span><span style="color:#E1E4E8"> ref </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> citation.get(</span><span style="color:#9ECBFF">&#39;retrievedReferences&#39;</span><span style="color:#E1E4E8">, []):</span></span>
+<span class="line"><span style="color:#E1E4E8">                uri </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> ref[</span><span style="color:#9ECBFF">&#39;location&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;s3Location&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;uri&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">                sources.add(uri.split(</span><span style="color:#9ECBFF">&#39;/&#39;</span><span style="color:#E1E4E8">)[</span><span style="color:#F97583">-</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> sources:</span></span>
+<span class="line"><span style="color:#E1E4E8">            answer </span><span style="color:#F97583">+=</span><span style="color:#F97583"> f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n\n</span><span style="color:#9ECBFF">[Sources: </span><span style="color:#79B8FF">{</span><span style="color:#9ECBFF">&#39;, &#39;</span><span style="color:#E1E4E8">.join(sources)</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">]&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> answer</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    except</span><span style="color:#79B8FF"> Exception</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> e:</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#F97583"> f</span><span style="color:#9ECBFF">&quot;Error querying SEC filings: </span><span style="color:#79B8FF">{str</span><span style="color:#E1E4E8">(e)</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span></span></code></pre></div>
+<h2 id="browser-tool-for-financial-news">Browser Tool for Financial News</h2>
+<p>The Browser Tool from Day 3 enables web research for real-time financial news:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-yva9ltnqm" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-yva9ltnqm"><code><span class="line"><span style="color:#6A737D"># tools/financial_news.py</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> bedrock_agentcore.tools </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> browser_tool</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands.tools </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> tool</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">@tool</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> fetch_financial_news</span><span style="color:#E1E4E8">(ticker: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, max_articles: </span><span style="color:#79B8FF">int</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 5</span><span style="color:#E1E4E8">) -&gt; </span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Fetch latest financial news for a company using Browser Tool.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Use this to get real-time news that might affect stock prices:</span></span>
+<span class="line"><span style="color:#9ECBFF">    - Earnings announcements</span></span>
+<span class="line"><span style="color:#9ECBFF">    - Product launches</span></span>
+<span class="line"><span style="color:#9ECBFF">    - Management changes</span></span>
+<span class="line"><span style="color:#9ECBFF">    - Market sentiment</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Args:</span></span>
+<span class="line"><span style="color:#9ECBFF">        ticker: Stock symbol (e.g., &#39;AAPL&#39;, &#39;TSLA&#39;)</span></span>
+<span class="line"><span style="color:#9ECBFF">        max_articles: Maximum number of articles to fetch</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Returns:</span></span>
+<span class="line"><span style="color:#9ECBFF">        Dictionary with news headlines and summaries</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#6A737D">    # Navigate to Yahoo Finance news page</span></span>
+<span class="line"><span style="color:#E1E4E8">    news_url </span><span style="color:#F97583">=</span><span style="color:#F97583"> f</span><span style="color:#9ECBFF">&quot;https://finance.yahoo.com/quote/</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">ticker</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">/news&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    result </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> browser_tool.navigate(</span></span>
+<span class="line"><span style="color:#FFAB70">        url</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">news_url,</span></span>
+<span class="line"><span style="color:#FFAB70">        action</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;extract_text&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        wait_for_selector</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;.news-stream&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Parse the extracted content</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> dict</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">        ticker</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">ticker.upper(),</span></span>
+<span class="line"><span style="color:#FFAB70">        source</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;Yahoo Finance News&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        content</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">result.get(</span><span style="color:#9ECBFF">&quot;text&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;&quot;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#FFAB70">        url</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">news_url,</span></span>
+<span class="line"><span style="color:#FFAB70">        fetched_at</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">datetime.now().isoformat()</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">@tool</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> search_financial_news</span><span style="color:#E1E4E8">(query: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">) -&gt; </span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Search for financial news across the web.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Use for broader market news or specific topics:</span></span>
+<span class="line"><span style="color:#9ECBFF">    - &quot;Federal Reserve interest rate decision&quot;</span></span>
+<span class="line"><span style="color:#9ECBFF">    - &quot;Tech sector earnings season&quot;</span></span>
+<span class="line"><span style="color:#9ECBFF">    - &quot;Oil price forecast&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Args:</span></span>
+<span class="line"><span style="color:#9ECBFF">        query: Search query for financial news</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">    Returns:</span></span>
+<span class="line"><span style="color:#9ECBFF">        Search results with relevant articles</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    search_url </span><span style="color:#F97583">=</span><span style="color:#F97583"> f</span><span style="color:#9ECBFF">&quot;https://news.google.com/search?q=</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">query</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">+stock+market&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    result </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> browser_tool.navigate(</span></span>
+<span class="line"><span style="color:#FFAB70">        url</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">search_url,</span></span>
+<span class="line"><span style="color:#FFAB70">        action</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;extract_text&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> dict</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#FFAB70">        query</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">query,</span></span>
+<span class="line"><span style="color:#FFAB70">        source</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;Google News&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        content</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">result.get(</span><span style="color:#9ECBFF">&quot;text&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;&quot;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#FFAB70">        fetched_at</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">datetime.now().isoformat()</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span></code></pre></div>
+<aside class="callout callout--tip" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>From Day 3</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>The Browser Tool gives your agent web research capabilities. Review Day 3
+for browser tool best practices, including rate limiting and ethical scraping.</p> </div> </div> </aside> 
+<aside class="callout callout--warning" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Browser Guardrails</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>In production, apply guardrails to restrict browser navigation to approved
+financial sites. See the Orchestration module for guardrail configuration.</p> </div> </div> </aside> 
+<h2 id="building-the-extract-agent">Building the Extract Agent</h2>
+<p>Now combine the tools into a focused extraction agent:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-wtyune9bl" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-wtyune9bl"><code><span class="line"><span style="color:#6A737D"># agents/extract_agent.py</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Agent</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands.models </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> BedrockModel</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> bedrock_agentcore.runtime </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> BedrockAgentCoreApp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Import tools</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> tools.yahoo_finance </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> fetch_stock_data, fetch_multiple_stocks, get_stock_history</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> tools.kb_retrieval </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> query_sec_filings</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> tools.financial_news </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> fetch_financial_news, search_financial_news</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">app </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> BedrockAgentCoreApp()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">EXTRACT_SYSTEM_PROMPT</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;&quot;&quot;You are a Financial Data Extraction Agent.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">Your role is to gather financial data from multiple sources:</span></span>
+<span class="line"><span style="color:#9ECBFF">1. **Real-time market data** from Yahoo Finance (prices, fundamentals, history)</span></span>
+<span class="line"><span style="color:#9ECBFF">2. **SEC filings** from the Knowledge Base (10-K, 10-Q, risk factors)</span></span>
+<span class="line"><span style="color:#9ECBFF">3. **Financial news** via Browser Tool (headlines, sentiment, events)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">## Guidelines</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">### When to use each tool:</span></span>
+<span class="line"><span style="color:#9ECBFF">- `fetch_stock_data`: Current prices, fundamentals, basic metrics</span></span>
+<span class="line"><span style="color:#9ECBFF">- `get_stock_history`: Detailed historical prices for analysis</span></span>
+<span class="line"><span style="color:#9ECBFF">- `fetch_multiple_stocks`: Comparing multiple companies</span></span>
+<span class="line"><span style="color:#9ECBFF">- `query_sec_filings`: Company filings, risk factors, management discussion</span></span>
+<span class="line"><span style="color:#9ECBFF">- `fetch_financial_news`: Recent news for a specific stock</span></span>
+<span class="line"><span style="color:#9ECBFF">- `search_financial_news`: Broader market news or topics</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">### Output Format:</span></span>
+<span class="line"><span style="color:#9ECBFF">Always return data in a structured JSON format that downstream agents can process:</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">```json</span></span>
+<span class="line"><span style="color:#9ECBFF">{</span></span>
+<span class="line"><span style="color:#9ECBFF">  &quot;request_type&quot;: &quot;stock_data | sec_filing | comparison&quot;,</span></span>
+<span class="line"><span style="color:#9ECBFF">  &quot;tickers&quot;: [&quot;AAPL&quot;],</span></span>
+<span class="line"><span style="color:#9ECBFF">  &quot;data&quot;: {</span></span>
+<span class="line"><span style="color:#9ECBFF">    // Relevant data from tools</span></span>
+<span class="line"><span style="color:#9ECBFF">  },</span></span>
+<span class="line"><span style="color:#9ECBFF">  &quot;sources&quot;: [&quot;Yahoo Finance&quot;, &quot;SEC 10-K&quot;],</span></span>
+<span class="line"><span style="color:#9ECBFF">  &quot;timestamp&quot;: &quot;ISO timestamp&quot;</span></span>
+<span class="line"><span style="color:#9ECBFF">}</span></span></code></pre></div>
+<h3 id="best-practices">Best Practices:</h3>
+<ol>
+<li>Always validate ticker symbols before querying</li>
+<li>Combine data sources when appropriate (e.g., current price + SEC revenue)</li>
+<li>Note any missing or unavailable data</li>
+<li>Include data timestamps for freshness awareness</li>
+</ol>
+<h3 id="do-not">Do NOT:</h3>
+<ul>
+<li>Perform analysis or calculations (Transform Agent does that)</li>
+<li>Generate reports (Report Agent does that)</li>
+<li>Make investment recommendations</li>
+<li>Hallucinate data - only return what tools provide
+&quot;&quot;&quot;</li>
+</ul>
+<p>model = BedrockModel(
+model_id=“anthropic.claude-sonnet-4-20250514-v1:0”,
+region_name=“us-west-2”
+)</p>
+<p>extract_agent = Agent(
+model=model,
+tools=[
+fetch_stock_data,
+fetch_multiple_stocks,
+get_stock_history,
+query_sec_filings,
+fetch_financial_news,      # Browser tool (Day 3)
+search_financial_news      # Browser tool (Day 3)
+],
+system_prompt=EXTRACT_SYSTEM_PROMPT
+)</p>
+<p>@app.entrypoint
+def extract_financial_data(payload: dict) -&gt; dict:
+&quot;&quot;&quot;Entry point for the Extract Agent.</p>
+<p>Args:
+payload: Dictionary with ‘prompt’ (query) and optional ‘tickers’ list</p>
+<p>Returns:
+Extracted financial data in structured format
+&quot;&quot;&quot;
+prompt = payload.get(“prompt”, &quot;&quot;)
+tickers = payload.get(“tickers”, [])</p>
+<h1 id="add-ticker-context-if-provided">Add ticker context if provided</h1>
+<p>if tickers:
+prompt = prompt + “\n\nFocus on these tickers: ” + ’, ‘.join(tickers)</p>
+<p>response = extract_agent(prompt)</p>
+<p>return dict(
+data=response.message[“content”][0][“text”],
+agent=“extract”,
+status=“success”
+)</p>
+<p>if <strong>name</strong> == “<strong>main</strong>”:
+app.run()</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-1fys6d0g0" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext" id="code-1fys6d0g0"><code><span class="line"><span></span></span>
+<span class="line"><span>## Local Testing</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Test the agent before deployment:</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>```python</span></span>
+<span class="line"><span># test_extract_agent.py</span></span>
+<span class="line"><span>from agents.extract_agent import extract_agent</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>test_queries = [</span></span>
+<span class="line"><span>    # Market data queries</span></span>
+<span class="line"><span>    {</span></span>
+<span class="line"><span>        &quot;prompt&quot;: &quot;Get the current stock price and fundamentals for Apple&quot;,</span></span>
+<span class="line"><span>        &quot;expected_tools&quot;: [&quot;fetch_stock_data&quot;]</span></span>
+<span class="line"><span>    },</span></span>
+<span class="line"><span>    {</span></span>
+<span class="line"><span>        &quot;prompt&quot;: &quot;Get historical prices for Tesla over the last 6 months&quot;,</span></span>
+<span class="line"><span>        &quot;expected_tools&quot;: [&quot;get_stock_history&quot;]</span></span>
+<span class="line"><span>    },</span></span>
+<span class="line"><span>    {</span></span>
+<span class="line"><span>        &quot;prompt&quot;: &quot;Compare current prices of AAPL, MSFT, and GOOGL&quot;,</span></span>
+<span class="line"><span>        &quot;expected_tools&quot;: [&quot;fetch_multiple_stocks&quot;]</span></span>
+<span class="line"><span>    },</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    # SEC filing queries</span></span>
+<span class="line"><span>    {</span></span>
+<span class="line"><span>        &quot;prompt&quot;: &quot;What are Apple&#39;s main risk factors according to their latest 10-K?&quot;,</span></span>
+<span class="line"><span>        &quot;expected_tools&quot;: [&quot;query_sec_filings&quot;]</span></span>
+<span class="line"><span>    },</span></span>
+<span class="line"><span>    {</span></span>
+<span class="line"><span>        &quot;prompt&quot;: &quot;What was Microsoft&#39;s revenue breakdown by segment?&quot;,</span></span>
+<span class="line"><span>        &quot;expected_tools&quot;: [&quot;query_sec_filings&quot;]</span></span>
+<span class="line"><span>    },</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    # Combined queries</span></span>
+<span class="line"><span>    {</span></span>
+<span class="line"><span>        &quot;prompt&quot;: &quot;Get Apple&#39;s current stock price and their reported risk factors&quot;,</span></span>
+<span class="line"><span>        &quot;expected_tools&quot;: [&quot;fetch_stock_data&quot;, &quot;query_sec_filings&quot;]</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>]</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>for test in test_queries:</span></span>
+<span class="line"><span>    print(f&quot;\n{&#39;=&#39;*60}&quot;)</span></span>
+<span class="line"><span>    print(f&quot;Query: {test[&#39;prompt&#39;]}&quot;)</span></span>
+<span class="line"><span>    print(f&quot;Expected tools: {test[&#39;expected_tools&#39;]}&quot;)</span></span>
+<span class="line"><span>    print(f&quot;{&#39;=&#39;*60}\n&quot;)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    response = extract_agent(test[&#39;prompt&#39;])</span></span>
+<span class="line"><span>    print(response.message[&quot;content&quot;][0][&quot;text&quot;])</span></span></code></pre></div>
+<h2 id="deploying-to-agentcore-runtime">Deploying to AgentCore Runtime</h2>
+<h3 id="create-requirementstxt">Create requirements.txt</h3>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-ecmjo64e2" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext" id="code-ecmjo64e2"><code><span class="line"><span>strands-agents&gt;=0.1.0</span></span>
+<span class="line"><span>bedrock-agentcore&gt;=0.1.0</span></span>
+<span class="line"><span>yfinance&gt;=0.2.0</span></span>
+<span class="line"><span>boto3&gt;=1.34.0</span></span></code></pre></div>
+<h3 id="deploy-command">Deploy Command</h3>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-e30iq2adw" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-e30iq2adw"><code><span class="line"><span style="color:#6A737D"># Deploy the Extract Agent</span></span>
+<span class="line"><span style="color:#B392F0">agentcore</span><span style="color:#9ECBFF"> deploy</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --name</span><span style="color:#9ECBFF"> extract-agent</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --entry</span><span style="color:#9ECBFF"> agents/extract_agent.py</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --requirements</span><span style="color:#9ECBFF"> requirements.txt</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --region</span><span style="color:#9ECBFF"> us-west-2</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --profile</span><span style="color:#9ECBFF"> claude</span></span></code></pre></div>
+<h3 id="verify-deployment">Verify Deployment</h3>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-6cemi677x" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-6cemi677x"><code><span class="line"><span style="color:#6A737D"># List deployed agents</span></span>
+<span class="line"><span style="color:#B392F0">agentcore</span><span style="color:#9ECBFF"> list</span><span style="color:#79B8FF"> --profile</span><span style="color:#9ECBFF"> claude</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Test invocation</span></span>
+<span class="line"><span style="color:#B392F0">agentcore</span><span style="color:#9ECBFF"> invoke</span><span style="color:#9ECBFF"> extract-agent</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --payload</span><span style="color:#9ECBFF"> &#39;{&quot;prompt&quot;: &quot;Get AAPL current price&quot;}&#39;</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --profile</span><span style="color:#9ECBFF"> claude</span></span></code></pre></div>
+<h2 id="configuration-management">Configuration Management</h2>
+<p>Store configuration securely:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-u2bhz9msq" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-u2bhz9msq"><code><span class="line"><span style="color:#6A737D"># config.py</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> boto3</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> os</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> functools </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> lru_cache</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">ssm </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto3.client(</span><span style="color:#9ECBFF">&#39;ssm&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">region_name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;us-west-2&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">@lru_cache</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">maxsize</span><span style="color:#F97583">=</span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> get_parameter</span><span style="color:#E1E4E8">(name: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, decrypt: </span><span style="color:#79B8FF">bool</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> True</span><span style="color:#E1E4E8">) -&gt; </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Get parameter from SSM Parameter Store.&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> ssm.get_parameter(</span></span>
+<span class="line"><span style="color:#FFAB70">        Name</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">name,</span></span>
+<span class="line"><span style="color:#FFAB70">        WithDecryption</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">decrypt</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> response[</span><span style="color:#9ECBFF">&#39;Parameter&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;Value&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Usage</span></span>
+<span class="line"><span style="color:#79B8FF">KB_ID</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> get_parameter(</span><span style="color:#9ECBFF">&#39;/agentcore/extract-agent/kb-id&#39;</span><span style="color:#E1E4E8">)</span></span></code></pre></div>
+<h3 id="setting-parameters">Setting Parameters</h3>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-bn7b3dlp8" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-bn7b3dlp8"><code><span class="line"><span style="color:#6A737D"># Store KB ID in Parameter Store</span></span>
+<span class="line"><span style="color:#B392F0">aws</span><span style="color:#9ECBFF"> ssm</span><span style="color:#9ECBFF"> put-parameter</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --name</span><span style="color:#9ECBFF"> &quot;/agentcore/extract-agent/kb-id&quot;</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --value</span><span style="color:#9ECBFF"> &quot;your-kb-id&quot;</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --type</span><span style="color:#9ECBFF"> String</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --profile</span><span style="color:#9ECBFF"> claude</span></span></code></pre></div>
+<h2 id="error-handling">Error Handling</h2>
+<p>Add robust error handling:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-o2zm4y5s6" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-o2zm4y5s6"><code><span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands.tools </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> tool</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> logging</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">logger </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> logging.getLogger(</span><span style="color:#79B8FF">__name__</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">@tool</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> fetch_stock_data_safe</span><span style="color:#E1E4E8">(ticker: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, period: </span><span style="color:#79B8FF">str</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;1y&quot;</span><span style="color:#E1E4E8">) -&gt; </span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Fetch stock data with comprehensive error handling.&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#F97583">    try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#6A737D">        # Validate ticker</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#F97583"> not</span><span style="color:#E1E4E8"> ticker </span><span style="color:#F97583">or</span><span style="color:#79B8FF"> len</span><span style="color:#E1E4E8">(ticker) </span><span style="color:#F97583">&gt;</span><span style="color:#79B8FF"> 10</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">            return</span><span style="color:#E1E4E8"> {</span><span style="color:#9ECBFF">&quot;error&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Invalid ticker symbol&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;ticker&quot;</span><span style="color:#E1E4E8">: ticker}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Attempt fetch</span></span>
+<span class="line"><span style="color:#E1E4E8">        result </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> fetch_stock_data(ticker, period)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Validate result</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#9ECBFF"> &quot;error&quot;</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> result:</span></span>
+<span class="line"><span style="color:#E1E4E8">            logger.warning(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Data fetch warning for </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">ticker</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">result[</span><span style="color:#9ECBFF">&#39;error&#39;</span><span style="color:#E1E4E8">]</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> result</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    except</span><span style="color:#79B8FF"> Exception</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> e:</span></span>
+<span class="line"><span style="color:#E1E4E8">        logger.error(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Failed to fetch data for </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">ticker</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">e</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;ticker&quot;</span><span style="color:#E1E4E8">: ticker,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;error&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Unexpected error: </span><span style="color:#79B8FF">{str</span><span style="color:#E1E4E8">(e)</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;fallback&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">True</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span></code></pre></div>
+<h2 id="checkpoint">Checkpoint</h2>
+<p>You’ve now built:</p>
+<ul>
+<li>✅ Yahoo Finance tool for real-time market data</li>
+<li>✅ Integration with Knowledge Base for SEC filings</li>
+<li>✅ Browser Tool for financial news (Day 3 integration)</li>
+<li>✅ Focused Extract Agent with clear responsibilities</li>
+<li>✅ Deployment to AgentCore Runtime</li>
+<li>✅ Local and remote testing patterns</li>
+</ul>
+<p><strong>Next, we’ll build the Transform Agent that analyzes this extracted data.</strong></p>
+<div class="nav-buttons"><a href="/days/5/knowledge-bases" class="nav-button nav-button--prev"><p>← Knowledge Bases</p></a><a href="/days/5/transform-agent" class="nav-button nav-button--next"><p>Next: Transform Agent →</p></a></div>
+<style>
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 3rem;
+  gap: 1rem;
+}
+
+.nav-button {
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+}
+
+.nav-button--prev {
+  color: var(--color-text-secondary);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--border-subtle);
+}
+
+.nav-button--prev:hover {
+  background: var(--color-bg-secondary);
+}
+
+.nav-button--next {
+  color: white;
+  background: var(--color-day-5);
+}
+
+.nav-button--next:hover {
+  opacity: 0.9;
+}
+</style>   </article> <!-- Navigation Footer --> <nav class="day-layout__pagination" aria-label="Page navigation" data-astro-cid-vfeiczyy>  <div class="pagination" data-astro-cid-gvwdafc4> <a href="/agentcore-avengers/days/5/knowledge-bases" class="pagination__link pagination__link--prev" data-astro-cid-gvwdafc4> <span class="pagination__label" data-astro-cid-gvwdafc4>Previous</span> <span class="pagination__title" data-astro-cid-gvwdafc4>Knowledge Bases</span> </a> <a href="/agentcore-avengers/days/5/transform-agent" class="pagination__link pagination__link--next" data-astro-cid-gvwdafc4> <span class="pagination__label" data-astro-cid-gvwdafc4>Next</span> <span class="pagination__title" data-astro-cid-gvwdafc4>Transform Agent</span> </a> </div>  </nav> </main> <!-- Table of Contents --> <aside class="day-layout__toc hide-mobile" data-astro-cid-vfeiczyy> <div class="day-layout__toc-content" data-astro-cid-vfeiczyy> <h3 class="day-layout__toc-title" data-astro-cid-vfeiczyy>On this page</h3> <nav aria-label="Table of contents" data-astro-cid-vfeiczyy> <ul class="day-layout__toc-list" data-astro-cid-vfeiczyy> <li data-astro-cid-vfeiczyy> <a href="#extract-agent-architecture" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Extract Agent Architecture </a> </li><li data-astro-cid-vfeiczyy> <a href="#yahoo-finance-tool" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Yahoo Finance Tool </a> </li><li data-astro-cid-vfeiczyy> <a href="#knowledge-base-tool" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Knowledge Base Tool </a> </li><li data-astro-cid-vfeiczyy> <a href="#browser-tool-for-financial-news" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Browser Tool for Financial News </a> </li><li data-astro-cid-vfeiczyy> <a href="#building-the-extract-agent" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Building the Extract Agent </a> </li><li data-astro-cid-vfeiczyy> <a href="#best-practices" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Best Practices: </a> </li><li data-astro-cid-vfeiczyy> <a href="#do-not" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Do NOT: </a> </li><li data-astro-cid-vfeiczyy> <a href="#deploying-to-agentcore-runtime" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Deploying to AgentCore Runtime </a> </li><li data-astro-cid-vfeiczyy> <a href="#create-requirementstxt" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Create requirements.txt </a> </li><li data-astro-cid-vfeiczyy> <a href="#deploy-command" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Deploy Command </a> </li><li data-astro-cid-vfeiczyy> <a href="#verify-deployment" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Verify Deployment </a> </li><li data-astro-cid-vfeiczyy> <a href="#configuration-management" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Configuration Management </a> </li><li data-astro-cid-vfeiczyy> <a href="#setting-parameters" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Setting Parameters </a> </li><li data-astro-cid-vfeiczyy> <a href="#error-handling" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Error Handling </a> </li><li data-astro-cid-vfeiczyy> <a href="#checkpoint" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Checkpoint </a> </li> </ul> </nav> </div> </aside> </div> <footer class="footer" data-astro-cid-b2avyow5> <div class="footer__container" data-astro-cid-b2avyow5> <div class="footer__content" data-astro-cid-b2avyow5> <div class="footer__brand" data-astro-cid-b2avyow5> <span class="footer__logo" data-astro-cid-b2avyow5>AgentCore Initiative</span> <p class="footer__tagline" data-astro-cid-b2avyow5>
+Build production-ready AI agents with AWS AgentCore
+</p> </div> <nav class="footer__nav" aria-label="Footer navigation" data-astro-cid-b2avyow5> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Course</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/1" data-astro-cid-b2avyow5>Day 1: The First Avenger</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/2" data-astro-cid-b2avyow5>Day 2: Age of Ultron</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/3" data-astro-cid-b2avyow5>Day 3: Infinity War</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/4" data-astro-cid-b2avyow5>Day 4: Endgame</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/5" data-astro-cid-b2avyow5>Day 5: Assemble</a></li> </ul> </div> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Resources</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/troubleshooting" data-astro-cid-b2avyow5>Troubleshooting</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/reference/costs" data-astro-cid-b2avyow5>Cost Guide</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/reference/cleanup" data-astro-cid-b2avyow5>Cleanup</a></li> </ul> </div> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Links</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5> <a href="https://docs.aws.amazon.com/bedrock-agentcore/" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+AWS AgentCore Docs
+</a> </li> <li data-astro-cid-b2avyow5> <a href="https://github.com/awslabs/amazon-bedrock-agentcore-samples" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+AgentCore Samples
+</a> </li> <li data-astro-cid-b2avyow5> <a href="https://strandsagents.com" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+Strands Agents
+</a> </li> </ul> </div> </nav> </div> <div class="footer__bottom" data-astro-cid-b2avyow5> <p class="footer__copyright" data-astro-cid-b2avyow5>
+&copy; 2026 The AgentCore Initiative. Built with Astro.
+</p> <p class="footer__disclaimer" data-astro-cid-b2avyow5>
+This is an educational resource. AWS and Amazon Bedrock are trademarks of Amazon.com, Inc.
+</p> </div> </div> </footer>   <!-- Global scripts --> <script type="module">function d(){document.querySelectorAll(".copy-button").forEach(c=>{const e=c.cloneNode(!0);c.parentNode?.replaceChild(e,c),e.addEventListener("click",async()=>{const i=e.getAttribute("data-code-id"),n=document.getElementById(i);if(!n)return;const s=n.textContent||"";try{await navigator.clipboard.writeText(s);const t=e.querySelector(".copy-icon"),o=e.querySelector(".check-icon");t&&t.classList.add("hidden"),o&&o.classList.remove("hidden"),e.classList.add("copied"),setTimeout(()=>{t&&t.classList.remove("hidden"),o&&o.classList.add("hidden"),e.classList.remove("copied")},2e3)}catch(t){console.error("Failed to copy code:",t)}})})}document.readyState==="loading"?document.addEventListener("DOMContentLoaded",d):d();document.addEventListener("astro:page-load",d);</script> <!-- Copy code functionality --> <script type="module" src="/agentcore-avengers/_astro/BaseLayout.astro_astro_type_script_index_1_lang.BwEjmFOO.js"></script> </body> </html>   <script type="module" src="/agentcore-avengers/_astro/DayLayout.astro_astro_type_script_index_0_lang.BT_UbId1.js"></script> 
