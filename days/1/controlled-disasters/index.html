@@ -24,7 +24,7 @@
 Daily Challenge
 </a> </div> </aside> <!-- Main Content --> <main class="day-layout__main" data-astro-cid-vfeiczyy> <article class="day-layout__content prose" data-astro-cid-vfeiczyy>  <h1 id="controlled-disasters">Controlled Disasters</h1>
 <p>Congratulations! You have a working agent deployed to production. But production isn’t just about “working” - it’s about <strong>working correctly under real-world conditions</strong>.</p>
-<p>This section introduces a controlled disaster: an intentional failure that reveals why enterprise features aren’t optional.</p>
+<p>This section introduces <strong>controlled disasters</strong>: intentional failures that reveal why AgentCore Runtime’s enterprise features aren’t optional.</p>
 <h2 id="the-vanishing-context">The Vanishing Context</h2>
 <div class="disaster" data-astro-cid-gekp2zu6> <div class="disaster__header" data-astro-cid-gekp2zu6> <div class="disaster__icon" data-astro-cid-gekp2zu6> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-gekp2zu6> <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" data-astro-cid-gekp2zu6></path> <path d="M12 9v4" data-astro-cid-gekp2zu6></path> <path d="M12 17h.01" data-astro-cid-gekp2zu6></path> </svg> </div> <div class="disaster__badge" data-astro-cid-gekp2zu6>CONTROLLED DISASTER</div> </div> <h4 class="disaster__title" data-astro-cid-gekp2zu6>The Vanishing Context</h4> <div class="disaster__sections" data-astro-cid-gekp2zu6> <div class="disaster__section" data-astro-cid-gekp2zu6> <span class="disaster__label" data-astro-cid-gekp2zu6> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-gekp2zu6> <circle cx="12" cy="12" r="10" data-astro-cid-gekp2zu6></circle> <path d="M12 8v4" data-astro-cid-gekp2zu6></path> <path d="M12 16h.01" data-astro-cid-gekp2zu6></path> </svg>
 Symptom
@@ -37,7 +37,7 @@ Learn more in Day 3 →
 </a> </div> </div> </div> 
 <h3 id="experience-it-yourself">Experience It Yourself</h3>
 <p>Let’s reproduce this disaster with your deployed agent:</p>
-<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-oy0rpzzhm" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-oy0rpzzhm"><code><span class="line"><span style="color:#6A737D"># Conversation 1: Tell the agent your name</span></span>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-mvhhxmvtv" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-mvhhxmvtv"><code><span class="line"><span style="color:#6A737D"># Conversation 1: Tell the agent your name</span></span>
 <span class="line"><span style="color:#B392F0">agentcore</span><span style="color:#9ECBFF"> invoke</span><span style="color:#79B8FF"> --message</span><span style="color:#9ECBFF"> &quot;Hi! My name is Sarah.&quot;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#6A737D"># Response: &quot;Hello Sarah! Nice to meet you. How can I help you today?&quot;</span></span>
@@ -49,7 +49,7 @@ Learn more in Day 3 →
 <span class="line"><span style="color:#6A737D">#           Could you please tell me your name?&quot;</span></span></code></pre></div>
 <p><strong>The agent forgot!</strong> Each invocation starts with zero context about previous conversations.</p>
 <h3 id="why-does-this-happen">Why Does This Happen?</h3>
-<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-rtpkqqont" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext" id="code-rtpkqqont"><code><span class="line"><span>┌─────────────────────────────────────────────────────────────┐</span></span>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-d4rf6o0cv" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext" id="code-d4rf6o0cv"><code><span class="line"><span>┌─────────────────────────────────────────────────────────────┐</span></span>
 <span class="line"><span>│                    Request 1                                 │</span></span>
 <span class="line"><span>│  ┌────────────────────────────────────────────────────────┐ │</span></span>
 <span class="line"><span>│  │  User: &quot;My name is Sarah&quot;                               │ │</span></span>
@@ -104,7 +104,7 @@ Each request runs in a fresh environment - previous state is not automatically p
 <table><thead><tr><th>Scenario</th><th>Impact</th></tr></thead><tbody><tr><td>Customer support</td><td>Agent forgets customer history, requiring repetitive explanations</td></tr><tr><td>Multi-step tasks</td><td>Agent can’t track progress across conversation turns</td></tr><tr><td>Personalization</td><td>Cannot remember user preferences or context</td></tr><tr><td>Complex workflows</td><td>Unable to maintain state through multi-turn interactions</td></tr></tbody></table>
 <h2 id="the-deeper-problem-tool-context">The Deeper Problem: Tool Context</h2>
 <p>It’s not just conversation history. Watch what happens with tools:</p>
-<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-00tqwd01e" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-00tqwd01e"><code><span class="line"><span style="color:#6A737D"># Request 1: Ask for a calculation</span></span>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-5aq0jzq1p" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-5aq0jzq1p"><code><span class="line"><span style="color:#6A737D"># Request 1: Ask for a calculation</span></span>
 <span class="line"><span style="color:#B392F0">agentcore</span><span style="color:#9ECBFF"> invoke</span><span style="color:#79B8FF"> --message</span><span style="color:#9ECBFF"> &quot;Calculate 15% of </span><span style="color:#E1E4E8">$200</span><span style="color:#9ECBFF"> and remember this as my monthly savings target&quot;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#6A737D"># Response: &quot;15% of $200 is $30. I&#39;ll remember this as your monthly savings target.&quot;</span></span>
@@ -118,7 +118,7 @@ Each request runs in a fresh environment - previous state is not automatically p
 <h2 id="why-not-just-store-it">Why Not Just Store It?</h2>
 <p>You might think: “I’ll just save the conversation to a database!”</p>
 <p>Let’s try a naive implementation:</p>
-<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-zl8i2aktl" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-zl8i2aktl"><code><span class="line"><span style="color:#6A737D"># agent.py - Naive approach (DON&#39;T DO THIS)</span></span>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-wln6h0v4m" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-wln6h0v4m"><code><span class="line"><span style="color:#6A737D"># agent.py - Naive approach (DON&#39;T DO THIS)</span></span>
 <span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> json</span></span>
 <span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> pathlib </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Path</span></span>
 <span class="line"></span>
@@ -151,7 +151,7 @@ Each request runs in a fresh environment - previous state is not automatically p
 <aside class="callout callout--danger" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Problems with This Approach</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p><strong>1. Session Isolation</strong>: AgentCore Runtime containers are ephemeral. The filesystem isn’t shared between invocations.</p><p><strong>2. Concurrency</strong>: Multiple requests could corrupt the shared state.</p><p><strong>3. Multi-tenancy</strong>: All users would share the same conversation history!</p><p><strong>4. Scaling</strong>: File-based storage doesn’t scale across multiple container instances.</p><p><strong>5. Security</strong>: Sensitive conversation data stored insecurely.</p> </div> </div> </aside> 
 <h2 id="the-right-solution-agentcore-memory">The Right Solution: AgentCore Memory</h2>
 <p>This is why AgentCore provides a dedicated <strong>Memory</strong> component:</p>
-<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-5m4ntuvhx" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-5m4ntuvhx"><code><span class="line"><span style="color:#6A737D"># Preview of Day 3 solution</span></span>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-yto6yx91l" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-yto6yx91l"><code><span class="line"><span style="color:#6A737D"># Preview of Day 3 solution</span></span>
 <span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> bedrock_agentcore.memory </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> MemoryClient</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#E1E4E8">memory </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> MemoryClient()</span></span>
@@ -184,6 +184,226 @@ Each request runs in a fresh environment - previous state is not automatically p
 <li><strong>Long-term memory</strong>: Facts, preferences, summaries</li>
 <li><strong>Semantic retrieval</strong>: Find relevant past context</li>
 </ul> </div> </div> </aside> 
+<hr/>
+<h2 id="the-timeout-terror">The Timeout Terror</h2>
+<div class="disaster" data-astro-cid-gekp2zu6> <div class="disaster__header" data-astro-cid-gekp2zu6> <div class="disaster__icon" data-astro-cid-gekp2zu6> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-gekp2zu6> <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" data-astro-cid-gekp2zu6></path> <path d="M12 9v4" data-astro-cid-gekp2zu6></path> <path d="M12 17h.01" data-astro-cid-gekp2zu6></path> </svg> </div> <div class="disaster__badge" data-astro-cid-gekp2zu6>CONTROLLED DISASTER</div> </div> <h4 class="disaster__title" data-astro-cid-gekp2zu6>The Timeout Terror</h4> <div class="disaster__sections" data-astro-cid-gekp2zu6> <div class="disaster__section" data-astro-cid-gekp2zu6> <span class="disaster__label" data-astro-cid-gekp2zu6> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-gekp2zu6> <circle cx="12" cy="12" r="10" data-astro-cid-gekp2zu6></circle> <path d="M12 8v4" data-astro-cid-gekp2zu6></path> <path d="M12 16h.01" data-astro-cid-gekp2zu6></path> </svg>
+Symptom
+</span> <p class="disaster__text" data-astro-cid-gekp2zu6>Complex tasks fail mid-execution with timeout errors</p> </div> <div class="disaster__section" data-astro-cid-gekp2zu6> <span class="disaster__label" data-astro-cid-gekp2zu6> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-gekp2zu6> <circle cx="12" cy="12" r="10" data-astro-cid-gekp2zu6></circle> <path d="m15 9-6 6" data-astro-cid-gekp2zu6></path> <path d="m9 9 6 6" data-astro-cid-gekp2zu6></path> </svg>
+Root Cause
+</span> <p class="disaster__text" data-astro-cid-gekp2zu6>Traditional serverless environments have strict timeout limits (Lambda: 15 minutes max)</p> </div> <div class="disaster__section disaster__section--solution" data-astro-cid-gekp2zu6> <span class="disaster__label" data-astro-cid-gekp2zu6> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-gekp2zu6> <circle cx="12" cy="12" r="10" data-astro-cid-gekp2zu6></circle> <path d="m9 12 2 2 4-4" data-astro-cid-gekp2zu6></path> </svg>
+The Fix
+</span> <p class="disaster__text" data-astro-cid-gekp2zu6>AgentCore Runtime supports workloads up to 8 hours</p> <a href="/days/1" class="disaster__link" data-astro-cid-gekp2zu6>
+Learn more in Day 1 →
+</a> </div> </div> </div> 
+<h3 id="experience-it-yourself-1">Experience It Yourself</h3>
+<p>Try asking your agent to perform a complex, multi-step task:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-xkcbv8g0u" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-xkcbv8g0u"><code><span class="line"><span style="color:#6A737D"># A task that requires extended reasoning and multiple tool calls</span></span>
+<span class="line"><span style="color:#B392F0">agentcore</span><span style="color:#9ECBFF"> invoke</span><span style="color:#9ECBFF"> &#39;{&quot;prompt&quot;: &quot;Research quantum computing thoroughly. First, explain the basic principles. Then describe 5 current applications. Finally, predict 3 future developments with detailed reasoning for each prediction.&quot;}&#39;</span></span></code></pre></div>
+<p><strong>What happens with traditional serverless:</strong></p>
+<ul>
+<li>AWS Lambda: Hard 15-minute timeout</li>
+<li>Container services: Require complex orchestration for long tasks</li>
+<li>Your agent’s reasoning gets cut off mid-thought</li>
+</ul>
+<p><strong>What AgentCore Runtime provides:</strong></p>
+<ul>
+<li>Up to <strong>8 hours</strong> of continuous execution</li>
+<li>Automatic session management</li>
+<li>No cold start penalties for subsequent calls within a session</li>
+</ul>
+<h3 id="why-this-matters">Why This Matters</h3>
+<p>Complex agent tasks often require:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Task Type</th><th>Typical Duration</th><th>Lambda Limit</th></tr></thead><tbody><tr><td>Simple Q&amp;A</td><td>5-30 seconds</td><td>✅ OK</td></tr><tr><td>Multi-tool reasoning</td><td>2-10 minutes</td><td>⚠️ Risky</td></tr><tr><td>Research + synthesis</td><td>15-60 minutes</td><td>❌ Timeout</td></tr><tr><td>Multi-agent collaboration</td><td>1-4 hours</td><td>❌ Impossible</td></tr></tbody></table>
+<aside class="callout callout--info" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>AgentCore Runtime Session Lifecycle</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>AgentCore Runtime sessions have three states:</p><ul>
+<li><strong>Active</strong>: Processing requests or running background tasks</li>
+<li><strong>Idle</strong>: Ready for immediate use (reduces cold starts)</li>
+<li><strong>Terminated</strong>: After 15 min idle or 8-hour max duration</li>
+</ul><p>This design enables both quick interactions and long-running workloads.</p> </div> </div> </aside> 
+<hr/>
+<h2 id="the-leaky-bucket">The Leaky Bucket</h2>
+<div class="disaster" data-astro-cid-gekp2zu6> <div class="disaster__header" data-astro-cid-gekp2zu6> <div class="disaster__icon" data-astro-cid-gekp2zu6> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-gekp2zu6> <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" data-astro-cid-gekp2zu6></path> <path d="M12 9v4" data-astro-cid-gekp2zu6></path> <path d="M12 17h.01" data-astro-cid-gekp2zu6></path> </svg> </div> <div class="disaster__badge" data-astro-cid-gekp2zu6>CONTROLLED DISASTER</div> </div> <h4 class="disaster__title" data-astro-cid-gekp2zu6>The Leaky Bucket</h4> <div class="disaster__sections" data-astro-cid-gekp2zu6> <div class="disaster__section" data-astro-cid-gekp2zu6> <span class="disaster__label" data-astro-cid-gekp2zu6> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-gekp2zu6> <circle cx="12" cy="12" r="10" data-astro-cid-gekp2zu6></circle> <path d="M12 8v4" data-astro-cid-gekp2zu6></path> <path d="M12 16h.01" data-astro-cid-gekp2zu6></path> </svg>
+Symptom
+</span> <p class="disaster__text" data-astro-cid-gekp2zu6>One user&#39;s sensitive data appears in another user&#39;s session</p> </div> <div class="disaster__section" data-astro-cid-gekp2zu6> <span class="disaster__label" data-astro-cid-gekp2zu6> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-gekp2zu6> <circle cx="12" cy="12" r="10" data-astro-cid-gekp2zu6></circle> <path d="m15 9-6 6" data-astro-cid-gekp2zu6></path> <path d="m9 9 6 6" data-astro-cid-gekp2zu6></path> </svg>
+Root Cause
+</span> <p class="disaster__text" data-astro-cid-gekp2zu6>Shared container state between concurrent users</p> </div> <div class="disaster__section disaster__section--solution" data-astro-cid-gekp2zu6> <span class="disaster__label" data-astro-cid-gekp2zu6> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-gekp2zu6> <circle cx="12" cy="12" r="10" data-astro-cid-gekp2zu6></circle> <path d="m9 12 2 2 4-4" data-astro-cid-gekp2zu6></path> </svg>
+The Fix
+</span> <p class="disaster__text" data-astro-cid-gekp2zu6>AgentCore Runtime provides dedicated microVM per session</p> <a href="/days/1" class="disaster__link" data-astro-cid-gekp2zu6>
+Learn more in Day 1 →
+</a> </div> </div> </div> 
+<h3 id="experience-it-yourself-2">Experience It Yourself</h3>
+<p>Open <strong>two terminal windows</strong> and simulate concurrent users:</p>
+<p><strong>Terminal 1 - User Alice:</strong></p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-6odrteaoc" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-6odrteaoc"><code><span class="line"><span style="color:#6A737D"># Alice shares sensitive information</span></span>
+<span class="line"><span style="color:#B392F0">agentcore</span><span style="color:#9ECBFF"> invoke</span><span style="color:#79B8FF"> --session-id</span><span style="color:#9ECBFF"> &quot;alice-session-001&quot;</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#9ECBFF">  &#39;{&quot;prompt&quot;: &quot;My account number is 1234-5678-9012. Please remember this.&quot;}&#39;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Response: &quot;I&#39;ve noted your account number 1234-5678-9012.&quot;</span></span></code></pre></div>
+<p><strong>Terminal 2 - User Bob:</strong></p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-tnnatpk9o" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-tnnatpk9o"><code><span class="line"><span style="color:#6A737D"># Bob tries to access Alice&#39;s data</span></span>
+<span class="line"><span style="color:#B392F0">agentcore</span><span style="color:#9ECBFF"> invoke</span><span style="color:#79B8FF"> --session-id</span><span style="color:#9ECBFF"> &quot;bob-session-002&quot;</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#9ECBFF">  &#39;{&quot;prompt&quot;: &quot;What account number was mentioned in the previous conversation?&quot;}&#39;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># With AgentCore Runtime: &quot;I don&#39;t have any information about account numbers.&quot;</span></span>
+<span class="line"><span style="color:#6A737D"># With naive shared state: Bob might see Alice&#39;s account number!</span></span></code></pre></div>
+<h3 id="real-world-security-incident">Real-World Security Incident</h3>
+<aside class="callout callout--danger" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>The Asana MCP Incident (May 2025)</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>In May 2025, Asana deployed an MCP server for AI integrations (ChatGPT, Claude, Microsoft Copilot). A logic flaw in session isolation caused:</p><ul>
+<li><strong>Cross-tenant data contamination</strong> - One organization’s data leaked to another</li>
+<li><strong>34 days of silent exposure</strong> before discovery</li>
+<li><strong>~1,000 organizations affected</strong>, including major enterprises</li>
+</ul><p>The root cause: Relying on user identity without proper session isolation.</p><p><a href="https://aws.amazon.com/blogs/machine-learning/securely-launch-and-scale-your-agents-and-tools-on-amazon-bedrock-agentcore-runtime/">Read more about secure session management →</a></p> </div> </div> </aside> 
+<h3 id="how-agentcore-runtime-solves-this">How AgentCore Runtime Solves This</h3>
+<p>AgentCore Runtime uses <strong>true microVM isolation</strong>:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-hr73u3h66" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext" id="code-hr73u3h66"><code><span class="line"><span>┌─────────────────────────────────────────────────────────────┐</span></span>
+<span class="line"><span>│                    Traditional Container                     │</span></span>
+<span class="line"><span>│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │</span></span>
+<span class="line"><span>│  │   User A     │  │   User B     │  │   User C     │      │</span></span>
+<span class="line"><span>│  │   Session    │  │   Session    │  │   Session    │      │</span></span>
+<span class="line"><span>│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘      │</span></span>
+<span class="line"><span>│         │                 │                 │               │</span></span>
+<span class="line"><span>│         └────────────┬────┴────────────────┘               │</span></span>
+<span class="line"><span>│                      ▼                                      │</span></span>
+<span class="line"><span>│              Shared Memory/State ⚠️                         │</span></span>
+<span class="line"><span>└─────────────────────────────────────────────────────────────┘</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>┌─────────────────────────────────────────────────────────────┐</span></span>
+<span class="line"><span>│                  AgentCore Runtime microVMs                  │</span></span>
+<span class="line"><span>│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │</span></span>
+<span class="line"><span>│  │   User A     │  │   User B     │  │   User C     │      │</span></span>
+<span class="line"><span>│  │   microVM    │  │   microVM    │  │   microVM    │      │</span></span>
+<span class="line"><span>│  │  ┌────────┐  │  │  ┌────────┐  │  │  ┌────────┐  │      │</span></span>
+<span class="line"><span>│  │  │ CPU    │  │  │  │ CPU    │  │  │  │ CPU    │  │      │</span></span>
+<span class="line"><span>│  │  │ Memory │  │  │  │ Memory │  │  │  │ Memory │  │      │</span></span>
+<span class="line"><span>│  │  │ Files  │  │  │  │ Files  │  │  │  │ Files  │  │      │</span></span>
+<span class="line"><span>│  │  └────────┘  │  │  └────────┘  │  │  └────────┘  │      │</span></span>
+<span class="line"><span>│  └──────────────┘  └──────────────┘  └──────────────┘      │</span></span>
+<span class="line"><span>│        ✅ Isolated       ✅ Isolated       ✅ Isolated       │</span></span>
+<span class="line"><span>└─────────────────────────────────────────────────────────────┘</span></span></code></pre></div>
+<p>Each session gets:</p>
+<ul>
+<li>✅ <strong>Dedicated CPU</strong> - No resource contention</li>
+<li>✅ <strong>Isolated memory</strong> - No data leakage</li>
+<li>✅ <strong>Separate filesystem</strong> - Temporary files are private</li>
+<li>✅ <strong>Memory sanitization</strong> - Complete cleanup on termination</li>
+</ul>
+<hr/>
+<h2 id="the-one-way-street">The One-Way Street</h2>
+<div class="disaster" data-astro-cid-gekp2zu6> <div class="disaster__header" data-astro-cid-gekp2zu6> <div class="disaster__icon" data-astro-cid-gekp2zu6> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-gekp2zu6> <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" data-astro-cid-gekp2zu6></path> <path d="M12 9v4" data-astro-cid-gekp2zu6></path> <path d="M12 17h.01" data-astro-cid-gekp2zu6></path> </svg> </div> <div class="disaster__badge" data-astro-cid-gekp2zu6>CONTROLLED DISASTER</div> </div> <h4 class="disaster__title" data-astro-cid-gekp2zu6>The One-Way Street</h4> <div class="disaster__sections" data-astro-cid-gekp2zu6> <div class="disaster__section" data-astro-cid-gekp2zu6> <span class="disaster__label" data-astro-cid-gekp2zu6> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-gekp2zu6> <circle cx="12" cy="12" r="10" data-astro-cid-gekp2zu6></circle> <path d="M12 8v4" data-astro-cid-gekp2zu6></path> <path d="M12 16h.01" data-astro-cid-gekp2zu6></path> </svg>
+Symptom
+</span> <p class="disaster__text" data-astro-cid-gekp2zu6>Users must wait for complete response before clarifying or correcting</p> </div> <div class="disaster__section" data-astro-cid-gekp2zu6> <span class="disaster__label" data-astro-cid-gekp2zu6> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-gekp2zu6> <circle cx="12" cy="12" r="10" data-astro-cid-gekp2zu6></circle> <path d="m15 9-6 6" data-astro-cid-gekp2zu6></path> <path d="m9 9 6 6" data-astro-cid-gekp2zu6></path> </svg>
+Root Cause
+</span> <p class="disaster__text" data-astro-cid-gekp2zu6>Request-response model with no streaming support</p> </div> <div class="disaster__section disaster__section--solution" data-astro-cid-gekp2zu6> <span class="disaster__label" data-astro-cid-gekp2zu6> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-gekp2zu6> <circle cx="12" cy="12" r="10" data-astro-cid-gekp2zu6></circle> <path d="m9 12 2 2 4-4" data-astro-cid-gekp2zu6></path> </svg>
+The Fix
+</span> <p class="disaster__text" data-astro-cid-gekp2zu6>AgentCore Runtime bidirectional WebSocket streaming</p> <a href="/days/1" class="disaster__link" data-astro-cid-gekp2zu6>
+Learn more in Day 1 →
+</a> </div> </div> </div> 
+<h3 id="experience-it-yourself-3">Experience It Yourself</h3>
+<p><strong>Without streaming (synchronous request):</strong></p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-6x8x97kpw" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-6x8x97kpw"><code><span class="line"><span style="color:#6A737D"># User asks a question</span></span>
+<span class="line"><span style="color:#B392F0">curl</span><span style="color:#79B8FF"> -X</span><span style="color:#9ECBFF"> POST</span><span style="color:#9ECBFF"> http://localhost:8080/invocations</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  -H</span><span style="color:#9ECBFF"> &quot;Content-Type: application/json&quot;</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  -d</span><span style="color:#9ECBFF"> &#39;{&quot;prompt&quot;: &quot;Explain the history of artificial intelligence from 1950 to present day, covering all major milestones...&quot;}&#39;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># User waits... 30 seconds... 45 seconds...</span></span>
+<span class="line"><span style="color:#6A737D"># Realizes they wanted machine learning, not all of AI</span></span>
+<span class="line"><span style="color:#6A737D"># Cannot interrupt or clarify - must wait for full response</span></span>
+<span class="line"><span style="color:#6A737D"># Finally gets 2000 words they didn&#39;t want</span></span></code></pre></div>
+<p><strong>With AgentCore Runtime streaming:</strong></p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-w0ata9okl" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-w0ata9okl"><code><span class="line"><span style="color:#6A737D"># Real-time streaming with WebSocket</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> asyncio</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> bedrock_agentcore.runtime </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> AgentCoreClient</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> def</span><span style="color:#B392F0"> stream_conversation</span><span style="color:#E1E4E8">():</span></span>
+<span class="line"><span style="color:#E1E4E8">    client </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> AgentCoreClient()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Connect via WebSocket for bidirectional communication</span></span>
+<span class="line"><span style="color:#F97583">    async</span><span style="color:#F97583"> with</span><span style="color:#E1E4E8"> client.stream_session(</span><span style="color:#9ECBFF">&quot;my-session&quot;</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> session:</span></span>
+<span class="line"><span style="color:#6A737D">        # Start the request</span></span>
+<span class="line"><span style="color:#E1E4E8">        stream </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> session.invoke_stream({</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;prompt&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Explain the history of artificial intelligence...&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">        })</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Tokens arrive in real-time</span></span>
+<span class="line"><span style="color:#F97583">        async</span><span style="color:#F97583"> for</span><span style="color:#E1E4E8"> token </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> stream:</span></span>
+<span class="line"><span style="color:#79B8FF">            print</span><span style="color:#E1E4E8">(token, </span><span style="color:#FFAB70">end</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">flush</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">            # User can interrupt mid-stream!</span></span>
+<span class="line"><span style="color:#6A737D">            # In a real app, check for user input here</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">asyncio.run(stream_conversation())</span></span></code></pre></div>
+<h3 id="why-streaming-matters">Why Streaming Matters</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Aspect</th><th>Request-Response</th><th>Bidirectional Streaming</th></tr></thead><tbody><tr><td>Time to first token</td><td>5-60 seconds</td><td>&lt; 1 second</td></tr><tr><td>User can interrupt</td><td>❌ No</td><td>✅ Yes</td></tr><tr><td>Clarify mid-response</td><td>❌ No</td><td>✅ Yes</td></tr><tr><td>Voice applications</td><td>❌ Awkward pauses</td><td>✅ Natural flow</td></tr><tr><td>Error recovery</td><td>Wait for timeout</td><td>Real-time feedback</td></tr></tbody></table>
+<aside class="callout callout--info" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Bidirectional Streaming</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>AgentCore Runtime’s WebSocket support enables:</p><ul>
+<li><strong>Token-by-token streaming</strong> - See responses as they’re generated</li>
+<li><strong>Mid-conversation interruption</strong> - Users can redirect without waiting</li>
+<li><strong>Real-time clarification</strong> - Natural conversation flow</li>
+<li><strong>Voice application support</strong> - No awkward pauses</li>
+</ul><p><a href="https://aws.amazon.com/about-aws/whats-new/2025/12/bedrock-agentcore-runtime-bi-directional-streaming/">Learn more about bidirectional streaming →</a></p> </div> </div> </aside> 
+<hr/>
 <h2 id="exercise-document-the-disaster">Exercise: Document the Disaster</h2>
 <p>Before moving to the challenge, document what you observed:</p>
 <h3 id="reflection-questions">Reflection Questions</h3>
@@ -203,7 +423,7 @@ Each request runs in a fresh environment - previous state is not automatically p
 </ol>
 <h3 id="record-your-findings">Record Your Findings</h3>
 <p>Create a file <code>disaster-notes.md</code> in your project:</p>
-<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-x3v883x3w" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="markdown" id="code-x3v883x3w"><code><span class="line"><span style="color:#79B8FF;font-weight:bold"># Day 1 Disaster Notes</span></span>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-oqkt2x0mo" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="markdown" id="code-oqkt2x0mo"><code><span class="line"><span style="color:#79B8FF;font-weight:bold"># Day 1 Disaster Notes</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#79B8FF;font-weight:bold">## Observed Behavior</span></span>
 <span class="line"><span style="color:#FFAB70">-</span><span style="color:#E1E4E8"> [Your observations]</span></span>
@@ -217,7 +437,7 @@ Each request runs in a fresh environment - previous state is not automatically p
 <span class="line"><span style="color:#79B8FF;font-weight:bold">## Solution (Preview)</span></span>
 <span class="line"><span style="color:#FFAB70">-</span><span style="color:#E1E4E8"> AgentCore Memory (Day 3)</span></span></code></pre></div>
 <h2 id="looking-ahead">Looking Ahead</h2>
-<p>Today’s disaster reveals the first major gap between “demo agent” and “production agent”:</p>
+<p>Today’s disasters reveal the gaps between “demo agent” and “production agent”:</p>
 
 
 
@@ -248,17 +468,50 @@ Each request runs in a fresh environment - previous state is not automatically p
 
 
 
-<table><thead><tr><th>Day</th><th>Disaster</th><th>Missing Component</th></tr></thead><tbody><tr><td><strong>Day 1</strong></td><td><strong>Vanishing Context</strong></td><td><strong>Memory</strong></td></tr><tr><td>Day 2</td><td>The Open Door</td><td>Identity + Gateway</td></tr><tr><td>Day 3</td><td>The Runaway Agent</td><td>Tool Controls</td></tr><tr><td>Day 4</td><td>Flying Blind</td><td>Observability</td></tr></tbody></table>
-<p>Each disaster motivates the next day’s enterprise feature.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Day</th><th>Disaster</th><th>Problem</th><th>AgentCore Solution</th></tr></thead><tbody><tr><td><strong>Day 1</strong></td><td><strong>Vanishing Context</strong></td><td>No memory persistence</td><td>AgentCore Memory</td></tr><tr><td><strong>Day 1</strong></td><td><strong>Timeout Terror</strong></td><td>15-min execution limits</td><td>Runtime (8hr support)</td></tr><tr><td><strong>Day 1</strong></td><td><strong>Leaky Bucket</strong></td><td>Shared container state</td><td>Runtime (microVM isolation)</td></tr><tr><td><strong>Day 1</strong></td><td><strong>One-Way Street</strong></td><td>No streaming</td><td>Runtime (WebSocket)</td></tr><tr><td>Day 2</td><td>The Open Door</td><td>No authentication</td><td>Identity + Gateway</td></tr><tr><td>Day 3</td><td>The Runaway Agent</td><td>Uncontrolled tools</td><td>Tool Controls</td></tr><tr><td>Day 4</td><td>Flying Blind</td><td>No visibility</td><td>Observability</td></tr></tbody></table>
+<p>Each disaster motivates an enterprise feature. Today you experienced four - three are <strong>already solved by AgentCore Runtime</strong>!</p>
 <h2 id="summary">Summary</h2>
-<p>You’ve now experienced firsthand why enterprise features matter:</p>
+<p>You’ve now experienced firsthand why AgentCore Runtime’s enterprise features matter:</p>
 <ul>
-<li>✅ Built and deployed a working agent</li>
-<li>✅ Discovered its memory limitation</li>
-<li>✅ Understood why naive solutions don’t work</li>
-<li>✅ Previewed the proper solution</li>
+<li>✅ <strong>Vanishing Context</strong> - Memory persistence is essential for conversations</li>
+<li>✅ <strong>Timeout Terror</strong> - AgentCore Runtime’s 8-hour execution enables complex tasks</li>
+<li>✅ <strong>Leaky Bucket</strong> - microVM isolation prevents cross-session data leakage</li>
+<li>✅ <strong>One-Way Street</strong> - Bidirectional streaming enables natural conversations</li>
 </ul>
+<p>AgentCore Runtime solves three of these problems out of the box. Memory persistence (The Vanishing Context) requires AgentCore Memory, which you’ll implement in Day 3.</p>
 <p><strong>Time for the Day 1 Challenge!</strong></p>
+<h2 id="references">References</h2>
+<p>Learn more about AgentCore Runtime capabilities:</p>
+<ul>
+<li><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/agents-tools-runtime.html">AgentCore Runtime Overview</a> - Official documentation</li>
+<li><a href="https://aws.amazon.com/blogs/aws/introducing-amazon-bedrock-agentcore-securely-deploy-and-operate-ai-agents-at-any-scale/">Introducing Amazon Bedrock AgentCore</a> - AWS News Blog launch announcement</li>
+<li><a href="https://aws.amazon.com/blogs/machine-learning/securely-launch-and-scale-your-agents-and-tools-on-amazon-bedrock-agentcore-runtime/">Securely Launch and Scale Agents</a> - Deep dive on Runtime security and scaling</li>
+<li><a href="https://aws.amazon.com/blogs/machine-learning/introducing-agent-to-agent-protocol-support-in-amazon-bedrock-agentcore-runtime/">Agent-to-Agent Protocol Support</a> - A2A protocol for multi-agent systems</li>
+<li><a href="https://aws.amazon.com/about-aws/whats-new/2025/12/bedrock-agentcore-runtime-bi-directional-streaming/">Bidirectional Streaming Announcement</a> - WebSocket streaming feature</li>
+</ul>
 <div class="nav-buttons"><a href="/days/1/agentcore-runtime" class="nav-button nav-button--prev"><p>← AgentCore Runtime</p></a><a href="/days/1/challenge" class="nav-button nav-button--next"><p>Day 1 Challenge →</p></a></div>
 <style>
 .nav-buttons {
@@ -294,7 +547,7 @@ Each request runs in a fresh environment - previous state is not automatically p
 .nav-button--next:hover {
   opacity: 0.9;
 }
-</style>    </article> <!-- Navigation Footer --> <nav class="day-layout__pagination" aria-label="Page navigation" data-astro-cid-vfeiczyy>  <div class="pagination" data-astro-cid-er2v6o3k> <a href="/agentcore-avengers/days/1/agentcore-runtime" class="pagination__link pagination__link--prev" data-astro-cid-er2v6o3k> <span class="pagination__label" data-astro-cid-er2v6o3k>Previous</span> <span class="pagination__title" data-astro-cid-er2v6o3k>AgentCore Runtime</span> </a>  </div>  </nav> </main> <!-- Table of Contents --> <aside class="day-layout__toc hide-mobile" data-astro-cid-vfeiczyy> <div class="day-layout__toc-content" data-astro-cid-vfeiczyy> <h3 class="day-layout__toc-title" data-astro-cid-vfeiczyy>On this page</h3> <nav aria-label="Table of contents" data-astro-cid-vfeiczyy> <ul class="day-layout__toc-list" data-astro-cid-vfeiczyy> <li data-astro-cid-vfeiczyy> <a href="#the-vanishing-context" class="day-layout__toc-link" data-astro-cid-vfeiczyy> The Vanishing Context </a> </li><li data-astro-cid-vfeiczyy> <a href="#experience-it-yourself" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Experience It Yourself </a> </li><li data-astro-cid-vfeiczyy> <a href="#why-does-this-happen" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Why Does This Happen? </a> </li><li data-astro-cid-vfeiczyy> <a href="#real-world-impact" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Real-World Impact </a> </li><li data-astro-cid-vfeiczyy> <a href="#the-deeper-problem-tool-context" class="day-layout__toc-link" data-astro-cid-vfeiczyy> The Deeper Problem: Tool Context </a> </li><li data-astro-cid-vfeiczyy> <a href="#why-not-just-store-it" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Why Not Just Store It? </a> </li><li data-astro-cid-vfeiczyy> <a href="#the-right-solution-agentcore-memory" class="day-layout__toc-link" data-astro-cid-vfeiczyy> The Right Solution: AgentCore Memory </a> </li><li data-astro-cid-vfeiczyy> <a href="#exercise-document-the-disaster" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Exercise: Document the Disaster </a> </li><li data-astro-cid-vfeiczyy> <a href="#reflection-questions" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Reflection Questions </a> </li><li data-astro-cid-vfeiczyy> <a href="#record-your-findings" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Record Your Findings </a> </li><li data-astro-cid-vfeiczyy> <a href="#looking-ahead" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Looking Ahead </a> </li><li data-astro-cid-vfeiczyy> <a href="#summary" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Summary </a> </li> </ul> </nav> </div> </aside> </div> <footer class="footer" data-astro-cid-b2avyow5> <div class="footer__container" data-astro-cid-b2avyow5> <div class="footer__content" data-astro-cid-b2avyow5> <div class="footer__brand" data-astro-cid-b2avyow5> <span class="footer__logo" data-astro-cid-b2avyow5>AgentCore Initiative</span> <p class="footer__tagline" data-astro-cid-b2avyow5>
+</style>    </article> <!-- Navigation Footer --> <nav class="day-layout__pagination" aria-label="Page navigation" data-astro-cid-vfeiczyy>  <div class="pagination" data-astro-cid-er2v6o3k> <a href="/agentcore-avengers/days/1/agentcore-runtime" class="pagination__link pagination__link--prev" data-astro-cid-er2v6o3k> <span class="pagination__label" data-astro-cid-er2v6o3k>Previous</span> <span class="pagination__title" data-astro-cid-er2v6o3k>AgentCore Runtime</span> </a>  </div>  </nav> </main> <!-- Table of Contents --> <aside class="day-layout__toc hide-mobile" data-astro-cid-vfeiczyy> <div class="day-layout__toc-content" data-astro-cid-vfeiczyy> <h3 class="day-layout__toc-title" data-astro-cid-vfeiczyy>On this page</h3> <nav aria-label="Table of contents" data-astro-cid-vfeiczyy> <ul class="day-layout__toc-list" data-astro-cid-vfeiczyy> <li data-astro-cid-vfeiczyy> <a href="#the-vanishing-context" class="day-layout__toc-link" data-astro-cid-vfeiczyy> The Vanishing Context </a> </li><li data-astro-cid-vfeiczyy> <a href="#experience-it-yourself" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Experience It Yourself </a> </li><li data-astro-cid-vfeiczyy> <a href="#why-does-this-happen" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Why Does This Happen? </a> </li><li data-astro-cid-vfeiczyy> <a href="#real-world-impact" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Real-World Impact </a> </li><li data-astro-cid-vfeiczyy> <a href="#the-deeper-problem-tool-context" class="day-layout__toc-link" data-astro-cid-vfeiczyy> The Deeper Problem: Tool Context </a> </li><li data-astro-cid-vfeiczyy> <a href="#why-not-just-store-it" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Why Not Just Store It? </a> </li><li data-astro-cid-vfeiczyy> <a href="#the-right-solution-agentcore-memory" class="day-layout__toc-link" data-astro-cid-vfeiczyy> The Right Solution: AgentCore Memory </a> </li><li data-astro-cid-vfeiczyy> <a href="#the-timeout-terror" class="day-layout__toc-link" data-astro-cid-vfeiczyy> The Timeout Terror </a> </li><li data-astro-cid-vfeiczyy> <a href="#experience-it-yourself-1" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Experience It Yourself </a> </li><li data-astro-cid-vfeiczyy> <a href="#why-this-matters" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Why This Matters </a> </li><li data-astro-cid-vfeiczyy> <a href="#the-leaky-bucket" class="day-layout__toc-link" data-astro-cid-vfeiczyy> The Leaky Bucket </a> </li><li data-astro-cid-vfeiczyy> <a href="#experience-it-yourself-2" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Experience It Yourself </a> </li><li data-astro-cid-vfeiczyy> <a href="#real-world-security-incident" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Real-World Security Incident </a> </li><li data-astro-cid-vfeiczyy> <a href="#how-agentcore-runtime-solves-this" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> How AgentCore Runtime Solves This </a> </li><li data-astro-cid-vfeiczyy> <a href="#the-one-way-street" class="day-layout__toc-link" data-astro-cid-vfeiczyy> The One-Way Street </a> </li><li data-astro-cid-vfeiczyy> <a href="#experience-it-yourself-3" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Experience It Yourself </a> </li><li data-astro-cid-vfeiczyy> <a href="#why-streaming-matters" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Why Streaming Matters </a> </li><li data-astro-cid-vfeiczyy> <a href="#exercise-document-the-disaster" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Exercise: Document the Disaster </a> </li><li data-astro-cid-vfeiczyy> <a href="#reflection-questions" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Reflection Questions </a> </li><li data-astro-cid-vfeiczyy> <a href="#record-your-findings" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Record Your Findings </a> </li><li data-astro-cid-vfeiczyy> <a href="#looking-ahead" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Looking Ahead </a> </li><li data-astro-cid-vfeiczyy> <a href="#summary" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Summary </a> </li><li data-astro-cid-vfeiczyy> <a href="#references" class="day-layout__toc-link" data-astro-cid-vfeiczyy> References </a> </li> </ul> </nav> </div> </aside> </div> <footer class="footer" data-astro-cid-b2avyow5> <div class="footer__container" data-astro-cid-b2avyow5> <div class="footer__content" data-astro-cid-b2avyow5> <div class="footer__brand" data-astro-cid-b2avyow5> <span class="footer__logo" data-astro-cid-b2avyow5>AgentCore Initiative</span> <p class="footer__tagline" data-astro-cid-b2avyow5>
 Build production-ready AI agents with AWS AgentCore
 </p> </div> <nav class="footer__nav" aria-label="Footer navigation" data-astro-cid-b2avyow5> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Course</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/1" data-astro-cid-b2avyow5>Day 1: The First Avenger</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/2" data-astro-cid-b2avyow5>Day 2: Age of Ultron</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/3" data-astro-cid-b2avyow5>Day 3: Infinity War</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/4" data-astro-cid-b2avyow5>Day 4: Endgame</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/5" data-astro-cid-b2avyow5>Day 5: Assemble</a></li> </ul> </div> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Resources</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/troubleshooting" data-astro-cid-b2avyow5>Troubleshooting</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/reference/costs" data-astro-cid-b2avyow5>Cost Guide</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/reference/cleanup" data-astro-cid-b2avyow5>Cleanup</a></li> </ul> </div> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Links</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5> <a href="https://docs.aws.amazon.com/bedrock-agentcore/" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
 AWS AgentCore Docs
