@@ -4,11 +4,12 @@ dayNumber: 1
 avengersTitle: "The First Avenger"
 focus: "Foundation - Strands Agent + AgentCore Runtime"
 description: "Experience the limitations of a basic agent to understand why enterprise features matter."
-estimatedTime: "30 minutes"
+estimatedTime: "60 minutes"
 objectives:
-  - "Experience the 'Vanishing Context' disaster firsthand"
-  - "Understand why memory persistence is essential"
-  - "Preview Day 3's solution with AgentCore Memory"
+  - "Explore MCP and A2A protocol hosting"
+  - "Learn about long-running workload support"
+  - "Experience bidirectional streaming capabilities"
+  - "Understand session isolation and security"
 order: 4
 published: true
 ---
@@ -20,194 +21,765 @@ import DisasterScenario from '@/components/course/DisasterScenario.astro';
 
 Congratulations! You have a working agent deployed to production. But production isn't just about "working" - it's about **working correctly under real-world conditions**.
 
-This section introduces a controlled disaster: an intentional failure that reveals why enterprise features aren't optional.
+This section introduces **controlled disasters**: intentional failures that reveal why AgentCore Runtime's enterprise features aren't optional.
 
-## The Vanishing Context
+## Prerequisites: Authentication Setup
+
+Before deploying MCP or A2A servers, you need to set up authentication. AgentCore Runtime requires JWT-based authentication for secure access.
+
+<Callout type="info" title="Course Helpers Repository">
+We provide helper utilities to simplify Cognito and IAM setup. Clone the helpers repo:
+
+```bash
+git clone https://github.com/Jagdeep1/agentcore-avengers-code
+cd agentcore-course-helpers
+pip install -e .
+```
+
+Or install directly:
+```bash
+pip install git+https://github.com/Jagdeep1/agentcore-avengers-code.git
+```
+</Callout>
+
+### Set Up Cognito Authentication
+
+```python
+# setup_auth.py - Run this once before deploying MCP/A2A servers
+from agentcore_course_helpers import setup_cognito, create_execution_role
+
+# Create Cognito User Pool for JWT authentication
+cognito_config = setup_cognito(pool_name="AgentCorePool")
+
+# Save ALL these values - you'll need them for deployment and token refresh
+print(f"Client ID: {cognito_config['client_id']}")
+print(f"Client Secret: {cognito_config['client_secret']}")  # Need this to refresh tokens!
+print(f"Discovery URL: {cognito_config['discovery_url']}")
+print(f"Bearer Token: {cognito_config['bearer_token']}")
+
+# Create IAM execution role for your agents
+role_arn = create_execution_role("AgentCoreExecutionRole")
+print(f"Role ARN: {role_arn}")
+```
+
+Run the setup:
+
+```bash
+python setup_auth.py
+```
+
+<Callout type="warning" title="Save Your Configuration">
+Save **all** these values - you'll need them when deploying and invoking MCP/A2A servers:
+- `client_id` - For deployment and token refresh
+- `client_secret` - For refreshing expired tokens
+- `discovery_url` - For deployment configuration
+- `role_arn` - For deployment configuration
+</Callout>
+
+### Refreshing Expired Tokens
+
+If your bearer token expires, get a new one without re-running the full setup:
+
+```python
+# refresh_token.py - Get a fresh bearer token
+from agentcore_course_helpers import get_bearer_token
+
+# Use your saved values from setup
+CLIENT_ID = "your-client-id"
+CLIENT_SECRET = "your-client-secret"
+
+bearer_token = get_bearer_token(CLIENT_ID, CLIENT_SECRET)
+print(f"New Bearer Token: {bearer_token}")
+```
+
+---
+
+## The Island Agent
 
 <DisasterScenario
-  title="The Vanishing Context"
-  symptom="Your agent forgets the entire conversation after each request"
-  cause="No memory persistence - each invocation is completely stateless"
-  solution="AgentCore Memory provides persistent conversation history"
-  dayReference={3}
+  title="The Island Agent"
+  symptom="Your agent's tools are locked inside - other systems can't use them"
+  cause="No standardized protocol for exposing agent capabilities to external systems"
+  solution="AgentCore Runtime hosts MCP (Model Context Protocol) servers"
+  dayReference={1}
+/>
+
+### The Problem
+
+You've built an agent with powerful tools - calculation, data lookup, document generation. But what happens when:
+
+- Another team's agent needs your calculation tool?
+- A workflow automation system wants to use your data lookup?
+- An IDE plugin needs access to your document generator?
+
+Without a standard protocol, your tools are **trapped on an island**:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     Your Agent (Island)                      │
+│                                                              │
+│   ┌──────────┐  ┌──────────┐  ┌──────────┐                 │
+│   │Calculator│  │Data      │  │Document  │                 │
+│   │Tool      │  │Lookup    │  │Generator │                 │
+│   └──────────┘  └──────────┘  └──────────┘                 │
+│                                                              │
+│   🚫 No way out - tools can't be shared                     │
+└─────────────────────────────────────────────────────────────┘
+
+      ❓ Other agents       ❓ IDEs          ❓ Automation
+         can't access          can't access      can't access
+```
+
+### The Solution: MCP Server Hosting
+
+AgentCore Runtime can host **MCP (Model Context Protocol) servers**, making your tools accessible to any MCP-compatible client.
+
+#### Setting Up an MCP Server Project
+
+Building on the project structure from AgentCore Runtime, let's create an MCP server:
+
+```bash
+# Create a new directory for your MCP server
+mkdir mymcptools
+cd mymcptools
+
+# Set up virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
+
+# Install dependencies
+pip install mcp bedrock-agentcore-starter-toolkit
+```
+
+Create `requirements.txt`:
+
+```txt
+mcp
+```
+
+Now create `mcp_server.py`:
+
+```python
+# mcp_server.py - Expose your tools via MCP
+from mcp.server.fastmcp import FastMCP
+
+# Create MCP server with stateless HTTP (required for AgentCore)
+mcp = FastMCP(host="0.0.0.0", stateless_http=True)
+
+@mcp.tool()
+def add_numbers(a: int, b: int) -> int:
+    """Add two numbers together"""
+    return a + b
+
+@mcp.tool()
+def multiply_numbers(a: int, b: int) -> int:
+    """Multiply two numbers together"""
+    return a * b
+
+@mcp.tool()
+def greet_user(name: str) -> str:
+    """Greet a user by name"""
+    return f"Hello, {name}! Nice to meet you."
+
+if __name__ == "__main__":
+    mcp.run(transport="streamable-http")
+```
+
+#### Deploy as MCP Server
+
+Create a deployment script using the Python SDK:
+
+```python
+# deploy_mcp.py - Deploy MCP server to AgentCore Runtime
+from bedrock_agentcore_starter_toolkit import Runtime
+
+# Use values from setup_auth.py
+CLIENT_ID = "your-client-id"          # From cognito_config['client_id']
+DISCOVERY_URL = "your-discovery-url"  # From cognito_config['discovery_url']
+ROLE_ARN = "your-role-arn"            # From create_execution_role()
+
+runtime = Runtime()
+
+# Configure with MCP protocol and JWT authentication
+runtime.configure(
+    entrypoint="mcp_server.py",
+    requirements_file="requirements.txt",
+    execution_role=ROLE_ARN,
+    protocol="MCP",  # Set protocol to MCP
+    authorizer_configuration={
+        "customJWTAuthorizer": {
+            "allowedClients": [CLIENT_ID],
+            "discoveryUrl": DISCOVERY_URL,
+        }
+    },
+)
+
+# Deploy to AgentCore Runtime
+result = runtime.launch()
+print(f"MCP Server ARN: {result.agent_arn}")
+```
+
+Run the deployment:
+
+```bash
+python deploy_mcp.py
+```
+
+Your MCP server project structure:
+
+```
+mymcptools/
+├── .venv/
+├── mcp_server.py
+├── deploy_mcp.py
+└── requirements.txt
+```
+
+### Experience It Yourself
+
+**Test your deployed MCP server:**
+
+```python
+# mcp_client.py - Connect to your MCP server
+import asyncio
+from datetime import timedelta
+from urllib.parse import quote
+from mcp import ClientSession
+from mcp.client.streamable_http import streamablehttp_client
+from agentcore_course_helpers import get_bearer_token
+
+# Get a fresh token (use values from setup_auth.py)
+CLIENT_ID = "your-client-id"
+CLIENT_SECRET = "your-client-secret"
+bearer_token = get_bearer_token(CLIENT_ID, CLIENT_SECRET)
+
+# Your deployed MCP server ARN (from deploy_mcp.py output)
+MCP_ARN = "your-mcp-server-arn"
+REGION = "us-east-1"
+
+async def test_mcp_tools():
+    # URL-encode the ARN (use quote for proper encoding)
+    encoded_arn = quote(MCP_ARN, safe='')
+    mcp_url = f"https://bedrock-agentcore.{REGION}.amazonaws.com/runtimes/{encoded_arn}/invocations?qualifier=DEFAULT"
+
+    headers = {
+        "authorization": f"Bearer {bearer_token}",
+        "Content-Type": "application/json"
+    }
+
+    async with streamablehttp_client(
+        mcp_url, headers, timeout=timedelta(seconds=120), terminate_on_close=False
+    ) as (read_stream, write_stream, _):
+        async with ClientSession(read_stream, write_stream) as session:
+            await session.initialize()
+
+            # List available tools
+            tools = await session.list_tools()
+            print("Available tools:", [t.name for t in tools.tools])
+
+            # Call a tool
+            result = await session.call_tool("add_numbers", {"a": 5, "b": 3})
+            print(f"5 + 3 = {result.content[0].text}")
+
+asyncio.run(test_mcp_tools())
+```
+
+<Callout type="info" title="MCP Protocol Support">
+AgentCore Runtime's MCP hosting enables:
+- **Tool sharing** - Any MCP client can discover and use your tools
+- **Stateless scaling** - Handles concurrent requests automatically
+- **Authentication** - JWT-based security via Cognito or custom authorizers
+- **Session isolation** - Each client gets isolated session via microVMs
+
+[Learn more about MCP hosting →](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-mcp.html)
+</Callout>
+
+---
+
+## The Lonely Agent
+
+<DisasterScenario
+  title="The Lonely Agent"
+  symptom="Your agents can't collaborate - they work in silos"
+  cause="No standardized protocol for agent-to-agent communication"
+  solution="AgentCore Runtime hosts A2A (Agent-to-Agent) protocol servers"
+  dayReference={1}
+/>
+
+### The Problem
+
+Modern AI systems need multiple specialized agents working together:
+
+- A **research agent** gathers information
+- An **analysis agent** processes data
+- A **writing agent** generates reports
+
+But without a standard communication protocol, agents can't discover or talk to each other:
+
+```
+┌─────────────┐     ❓     ┌─────────────┐     ❓     ┌─────────────┐
+│  Research   │ ─────────> │  Analysis   │ ─────────> │   Writing   │
+│   Agent     │  How do    │   Agent     │  How do    │   Agent     │
+│             │  I find    │             │  I send    │             │
+│             │  you?      │             │  results?  │             │
+└─────────────┘            └─────────────┘            └─────────────┘
+
+Each agent is lonely - no way to discover or communicate with others
+```
+
+### The Solution: A2A Protocol Hosting
+
+AgentCore Runtime supports the **A2A (Agent-to-Agent) protocol**, an open standard for agent interoperability.
+
+#### Setting Up an A2A Agent Project
+
+Let's create an agent that speaks the A2A protocol:
+
+```bash
+# Create a new directory for your A2A agent
+mkdir mya2aagent
+cd mya2aagent
+
+# Set up virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
+
+# Install dependencies
+pip install strands-agents[a2a] a2a-sdk bedrock-agentcore-starter-toolkit uvicorn fastapi
+```
+
+Create `requirements.txt`:
+
+```txt
+strands-agents[a2a]
+a2a-sdk
+uvicorn
+fastapi
+```
+
+Now create `a2a_agent.py`:
+
+```python
+# a2a_agent.py - Create an A2A-compatible agent
+import os
+from strands import Agent
+from strands.multiagent.a2a import A2AServer
+from fastapi import FastAPI
+import uvicorn
+
+app = FastAPI()
+
+# Your agent with its specialized capabilities
+agent = Agent(
+    system_prompt="""You are an AWS Documentation Assistant.
+    Provide concise, accurate answers about AWS services.""",
+    tools=[],  # Add your tools here
+    name="AWS Docs Agent",
+    description="An agent that answers AWS documentation questions.",
+)
+
+# Wrap as A2A server
+runtime_url = os.environ.get('AGENTCORE_RUNTIME_URL', 'http://127.0.0.1:9000/')
+
+a2a_server = A2AServer(
+    agent=agent,
+    http_url=runtime_url,
+    serve_at_root=True
+)
+
+@app.get("/ping")
+def ping():
+    return {"status": "healthy"}
+
+# Mount A2A endpoints
+app.mount("/", a2a_server.to_fastapi_app())
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=9000)
+```
+
+#### Deploy as A2A Server
+
+Create a deployment script using the Python SDK:
+
+```python
+# deploy_a2a.py - Deploy A2A agent to AgentCore Runtime
+from bedrock_agentcore_starter_toolkit import Runtime
+
+# Use values from setup_auth.py
+CLIENT_ID = "your-client-id"          # From cognito_config['client_id']
+DISCOVERY_URL = "your-discovery-url"  # From cognito_config['discovery_url']
+ROLE_ARN = "your-role-arn"            # From create_execution_role()
+
+runtime = Runtime()
+
+# Configure with A2A protocol and JWT authentication
+runtime.configure(
+    entrypoint="a2a_agent.py",
+    requirements_file="requirements.txt",
+    execution_role=ROLE_ARN,
+    protocol="A2A",  # Set protocol to A2A
+    authorizer_configuration={
+        "customJWTAuthorizer": {
+            "allowedClients": [CLIENT_ID],
+            "discoveryUrl": DISCOVERY_URL,
+        }
+    },
+)
+
+# Deploy to AgentCore Runtime
+result = runtime.launch()
+print(f"A2A Agent ARN: {result.agent_arn}")
+```
+
+Run the deployment:
+
+```bash
+python deploy_a2a.py
+```
+
+Your A2A agent project structure:
+
+```
+mya2aagent/
+├── .venv/
+├── a2a_agent.py
+├── deploy_a2a.py
+└── requirements.txt
+```
+
+### Experience It Yourself
+
+**Discover and communicate with A2A agents:**
+
+```python
+# a2a_client.py - Discover and invoke A2A agents
+import asyncio
+import httpx
+import json
+from urllib.parse import quote
+from a2a.client import A2ACardResolver, ClientConfig, ClientFactory
+from a2a.types import Message, Part, Role, TextPart
+from uuid import uuid4
+from agentcore_course_helpers import get_bearer_token
+
+# Get a fresh token (use values from setup_auth.py)
+CLIENT_ID = "your-client-id"
+CLIENT_SECRET = "your-client-secret"
+bearer_token = get_bearer_token(CLIENT_ID, CLIENT_SECRET)
+
+# Your deployed A2A agent ARN (from deploy_a2a.py output)
+AGENT_ARN = "your-a2a-agent-arn"
+REGION = "us-east-1"
+
+async def talk_to_agent():
+    # URL-encode the ARN (use quote for proper encoding)
+    encoded_arn = quote(AGENT_ARN, safe='')
+    runtime_url = f"https://bedrock-agentcore.{REGION}.amazonaws.com/runtimes/{encoded_arn}/invocations/"
+
+    session_id = str(uuid4())
+    headers = {
+        "Accept": "*/*",
+        "Authorization": f"Bearer {bearer_token}",
+        "X-Amzn-Bedrock-AgentCore-Runtime-Session-Id": session_id,
+        "X-Amzn-Trace-Id": f"a2a_agent_{session_id}",
+    }
+
+    async with httpx.AsyncClient(timeout=300, headers=headers) as client:
+        # Discover agent capabilities via agent card
+        resolver = A2ACardResolver(httpx_client=client, base_url=runtime_url)
+        agent_card = await resolver.get_agent_card()
+        print(f"Found agent: {agent_card.name}")
+        print(f"Description: {agent_card.description}")
+
+        # Create A2A client
+        config = ClientConfig(httpx_client=client, streaming=False)
+        a2a_client = ClientFactory(config).create(agent_card)
+
+        # Send a message
+        message = Message(
+            kind="message",
+            role=Role.user,
+            parts=[Part(TextPart(kind="text", text="What is DynamoDB?"))],
+            message_id=uuid4().hex,
+        )
+
+        async for response in a2a_client.send_message(message):
+            print(f"Agent response: {response}")
+
+asyncio.run(talk_to_agent())
+```
+
+**Agent Card Discovery:**
+
+Every A2A agent exposes a discoverable "agent card" at `/.well-known/agent-card.json`:
+
+```bash
+curl https://bedrock-agentcore.us-east-1.amazonaws.com/runtimes/{arn}/invocations/.well-known/agent-card.json
+
+# Returns:
+# {
+#   "name": "AWS Docs Agent",
+#   "description": "An agent that answers AWS documentation questions.",
+#   "capabilities": [...],
+#   "skills": [...]
+# }
+```
+
+<Callout type="info" title="A2A Protocol Support">
+AgentCore Runtime's A2A hosting enables:
+- **Agent discovery** - Agents advertise capabilities via agent cards
+- **Interoperability** - Works with any A2A-compatible agent (Claude, ChatGPT, custom)
+- **Multi-agent orchestration** - Build systems where agents collaborate
+- **Authentication** - Secure agent-to-agent communication via JWT
+
+[Learn more about A2A hosting →](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-a2a.html)
+</Callout>
+
+---
+
+## The Timeout Terror
+
+<DisasterScenario
+  title="The Timeout Terror"
+  symptom="Complex tasks fail mid-execution with timeout errors"
+  cause="Traditional serverless environments have strict timeout limits (Lambda: 15 minutes max)"
+  solution="AgentCore Runtime supports workloads up to 8 hours"
+  dayReference={1}
 />
 
 ### Experience It Yourself
 
-Let's reproduce this disaster with your deployed agent:
+Try asking your agent to perform a complex, multi-step task:
 
 ```bash
-# Conversation 1: Tell the agent your name
-agentcore invoke --message "Hi! My name is Sarah."
-
-# Response: "Hello Sarah! Nice to meet you. How can I help you today?"
-
-# Conversation 2: Ask if it remembers
-agentcore invoke --message "What's my name?"
-
-# Response: "I don't have any information about your name.
-#           Could you please tell me your name?"
+# A task that requires extended reasoning and multiple tool calls
+agentcore invoke '{"prompt": "Research quantum computing thoroughly. First, explain the basic principles. Then describe 5 current applications. Finally, predict 3 future developments with detailed reasoning for each prediction."}'
 ```
 
-**The agent forgot!** Each invocation starts with zero context about previous conversations.
+**What happens with traditional serverless:**
+- AWS Lambda: Hard 15-minute timeout
+- Container services: Require complex orchestration for long tasks
+- Your agent's reasoning gets cut off mid-thought
 
-### Why Does This Happen?
+**What AgentCore Runtime provides:**
+- Up to **8 hours** of continuous execution
+- Automatic session management
+- No cold start penalties for subsequent calls within a session
+
+### Why This Matters
+
+Complex agent tasks often require:
+
+| Task Type | Typical Duration | Lambda Limit |
+|-----------|-----------------|--------------|
+| Simple Q&A | 5-30 seconds | ✅ OK |
+| Multi-tool reasoning | 2-10 minutes | ⚠️ Risky |
+| Research + synthesis | 15-60 minutes | ❌ Timeout |
+| Multi-agent collaboration | 1-4 hours | ❌ Impossible |
+
+<Callout type="info" title="AgentCore Runtime Session Lifecycle">
+AgentCore Runtime sessions have three states:
+- **Active**: Processing requests or running background tasks
+- **Idle**: Ready for immediate use (reduces cold starts)
+- **Terminated**: After 15 min idle or 8-hour max duration
+
+This design enables both quick interactions and long-running workloads.
+</Callout>
+
+---
+
+## The One-Way Street
+
+<DisasterScenario
+  title="The One-Way Street"
+  symptom="Users must wait for complete response before clarifying or correcting"
+  cause="Request-response model with no streaming support"
+  solution="AgentCore Runtime bidirectional WebSocket streaming"
+  dayReference={1}
+/>
+
+### Experience It Yourself
+
+**Without streaming (synchronous request):**
+
+```bash
+# User asks a question
+curl -X POST http://localhost:8080/invocations \
+  -H "Content-Type: application/json" \
+  -d '{"prompt": "Explain the history of artificial intelligence from 1950 to present day, covering all major milestones..."}'
+
+# User waits... 30 seconds... 45 seconds...
+# Realizes they wanted machine learning, not all of AI
+# Cannot interrupt or clarify - must wait for full response
+# Finally gets 2000 words they didn't want
+```
+
+**With AgentCore Runtime bidirectional streaming:**
+
+AgentCore Runtime supports WebSocket-based bidirectional streaming, enabling real-time voice and text interactions. Here's a production-ready example using the Strands BidiAgent:
+
+```python
+# server.py - Bidirectional Streaming Agent with Voice Support
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from strands.experimental.bidi.agent import BidiAgent
+from strands.experimental.bidi.models.nova_sonic import BidiNovaSonicModel
+from strands_tools import calculator
+import uvicorn
+
+app = FastAPI(title="Strands BidiAgent WebSocket Server")
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+
+    # Get voice preference from query params
+    voice_id = websocket.query_params.get("voice_id", "matthew")
+
+    # Configure Nova Sonic for voice streaming
+    model = BidiNovaSonicModel(
+        region="us-east-1",
+        model_id="amazon.nova-sonic-v1:0",
+        provider_config={
+            "audio": {
+                "input_sample_rate": 16000,
+                "output_sample_rate": 16000,
+                "voice": voice_id,
+            }
+        },
+        tools=[calculator],
+    )
+
+    # Create bidirectional agent
+    agent = BidiAgent(
+        model=model,
+        tools=[calculator],
+        system_prompt="You are a helpful assistant with access to a calculator.",
+    )
+
+    # Run agent with WebSocket I/O - truly bidirectional!
+    await agent.run(
+        inputs=[websocket.receive_json],
+        outputs=[websocket.send_json]
+    )
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8080)
+```
+
+<Callout type="tip" title="Advanced Deployment">
+Bidirectional streaming with voice support requires Docker container deployment.
+For a complete tutorial, see the [Bidirectional Streaming Samples](https://github.com/awslabs/amazon-bedrock-agentcore-samples/tree/main/01-tutorials/01-AgentCore-runtime/06-bi-directional-streaming).
+</Callout>
+
+### Why Streaming Matters
+
+| Aspect | Request-Response | Bidirectional Streaming |
+|--------|-----------------|------------------------|
+| Time to first token | 5-60 seconds | < 1 second |
+| User can interrupt | ❌ No | ✅ Yes |
+| Clarify mid-response | ❌ No | ✅ Yes |
+| Voice applications | ❌ Awkward pauses | ✅ Natural flow |
+| Error recovery | Wait for timeout | Real-time feedback |
+
+<Callout type="info" title="Bidirectional Streaming">
+AgentCore Runtime's WebSocket support enables:
+- **Token-by-token streaming** - See responses as they're generated
+- **Mid-conversation interruption** - Users can redirect without waiting
+- **Real-time clarification** - Natural conversation flow
+- **Voice application support** - No awkward pauses
+
+[Learn more about bidirectional streaming →](https://aws.amazon.com/about-aws/whats-new/2025/12/bedrock-agentcore-runtime-bi-directional-streaming/)
+</Callout>
+
+---
+
+## The Leaky Bucket
+
+<DisasterScenario
+  title="The Leaky Bucket"
+  symptom="One user's sensitive data appears in another user's session"
+  cause="Shared container state between concurrent users"
+  solution="AgentCore Runtime provides dedicated microVM per session"
+  dayReference={1}
+/>
+
+### Experience It Yourself
+
+Open **two terminal windows** and simulate concurrent users:
+
+**Terminal 1 - User Alice:**
+```bash
+# Alice shares sensitive information
+agentcore invoke --session-id "alice-session-001" \
+  '{"prompt": "My account number is 1234-5678-9012. Please remember this."}'
+
+# Response: "I've noted your account number 1234-5678-9012."
+```
+
+**Terminal 2 - User Bob:**
+```bash
+# Bob tries to access Alice's data
+agentcore invoke --session-id "bob-session-002" \
+  '{"prompt": "What account number was mentioned in the previous conversation?"}'
+
+# With AgentCore Runtime: "I don't have any information about account numbers."
+# With naive shared state: Bob might see Alice's account number!
+```
+
+### Real-World Security Incident
+
+<Callout type="danger" title="The Asana MCP Incident (May 2025)">
+In May 2025, Asana deployed an MCP server for AI integrations (ChatGPT, Claude, Microsoft Copilot). A logic flaw in session isolation caused:
+
+- **Cross-tenant data contamination** - One organization's data leaked to another
+- **34 days of silent exposure** before discovery
+- **~1,000 organizations affected**, including major enterprises
+
+The root cause: Relying on user identity without proper session isolation.
+
+[Read more about secure session management →](https://aws.amazon.com/blogs/machine-learning/securely-launch-and-scale-your-agents-and-tools-on-amazon-bedrock-agentcore-runtime/)
+</Callout>
+
+### How AgentCore Runtime Solves This
+
+AgentCore Runtime uses **true microVM isolation**:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    Request 1                                 │
-│  ┌────────────────────────────────────────────────────────┐ │
-│  │  User: "My name is Sarah"                               │ │
-│  │  Agent: "Hello Sarah!"                                  │ │
-│  │                                                         │ │
-│  │  Context: ████████████ (exists during request)         │ │
-│  └────────────────────────────────────────────────────────┘ │
-│                         │                                    │
-│                         ▼                                    │
-│                   Request ends                               │
-│              Context is DESTROYED ❌                         │
+│                    Traditional Container                     │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
+│  │   User A     │  │   User B     │  │   User C     │      │
+│  │   Session    │  │   Session    │  │   Session    │      │
+│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘      │
+│         │                 │                 │               │
+│         └────────────┬────┴────────────────┘               │
+│                      ▼                                      │
+│              Shared Memory/State ⚠️                         │
 └─────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────┐
-│                    Request 2                                 │
-│  ┌────────────────────────────────────────────────────────┐ │
-│  │  User: "What's my name?"                                │ │
-│  │  Agent: "I don't know your name"                        │ │
-│  │                                                         │ │
-│  │  Context: ░░░░░░░░░░░░ (empty - fresh start)           │ │
-│  └────────────────────────────────────────────────────────┘ │
+│                  AgentCore Runtime microVMs                  │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
+│  │   User A     │  │   User B     │  │   User C     │      │
+│  │   microVM    │  │   microVM    │  │   microVM    │      │
+│  │  ┌────────┐  │  │  ┌────────┐  │  │  ┌────────┐  │      │
+│  │  │ CPU    │  │  │  │ CPU    │  │  │  │ CPU    │  │      │
+│  │  │ Memory │  │  │  │ Memory │  │  │  │ Memory │  │      │
+│  │  │ Files  │  │  │  │ Files  │  │  │  │ Files  │  │      │
+│  │  └────────┘  │  │  └────────┘  │  │  └────────┘  │      │
+│  └──────────────┘  └──────────────┘  └──────────────┘      │
+│        ✅ Isolated       ✅ Isolated       ✅ Isolated       │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-<Callout type="warning" title="This is By Design">
-  AgentCore Runtime provides **session isolation** for security.
-  Each request runs in a fresh environment - previous state is not automatically preserved.
-</Callout>
+Each session gets:
+- ✅ **Dedicated CPU** - No resource contention
+- ✅ **Isolated memory** - No data leakage
+- ✅ **Separate filesystem** - Temporary files are private
+- ✅ **Memory sanitization** - Complete cleanup on termination
 
-### Real-World Impact
-
-In production, this limitation causes:
-
-| Scenario | Impact |
-|----------|--------|
-| Customer support | Agent forgets customer history, requiring repetitive explanations |
-| Multi-step tasks | Agent can't track progress across conversation turns |
-| Personalization | Cannot remember user preferences or context |
-| Complex workflows | Unable to maintain state through multi-turn interactions |
-
-## The Deeper Problem: Tool Context
-
-It's not just conversation history. Watch what happens with tools:
-
-```bash
-# Request 1: Ask for a calculation
-agentcore invoke --message "Calculate 15% of $200 and remember this as my monthly savings target"
-
-# Response: "15% of $200 is $30. I'll remember this as your monthly savings target."
-
-# Request 2: Reference the previous calculation
-agentcore invoke --message "How much was my savings target again?"
-
-# Response: "I don't have any information about a savings target.
-#           Would you like me to help you calculate one?"
-```
-
-The agent "said" it would remember, but it can't actually persist anything.
-
-## Why Not Just Store It?
-
-You might think: "I'll just save the conversation to a database!"
-
-Let's try a naive implementation:
-
-```python
-# agent.py - Naive approach (DON'T DO THIS)
-import json
-from pathlib import Path
-
-MEMORY_FILE = Path("/tmp/conversation_history.json")
-
-def load_history():
-    if MEMORY_FILE.exists():
-        return json.loads(MEMORY_FILE.read_text())
-    return []
-
-def save_history(history):
-    MEMORY_FILE.write_text(json.dumps(history))
-
-@runtime_handler
-def handler(event, context):
-    # Load previous conversation
-    history = load_history()
-
-    # Add new message
-    history.append({"role": "user", "content": event["message"]})
-
-    # Get response with history
-    response = agent_with_history(history)
-
-    # Save updated history
-    history.append({"role": "assistant", "content": response})
-    save_history(history)
-
-    return {"response": response}
-```
-
-<Callout type="danger" title="Problems with This Approach">
-
-**1. Session Isolation**: AgentCore Runtime containers are ephemeral. The filesystem isn't shared between invocations.
-
-**2. Concurrency**: Multiple requests could corrupt the shared state.
-
-**3. Multi-tenancy**: All users would share the same conversation history!
-
-**4. Scaling**: File-based storage doesn't scale across multiple container instances.
-
-**5. Security**: Sensitive conversation data stored insecurely.
-
-</Callout>
-
-## The Right Solution: AgentCore Memory
-
-This is why AgentCore provides a dedicated **Memory** component:
-
-```python
-# Preview of Day 3 solution
-from bedrock_agentcore.memory import MemoryClient
-
-memory = MemoryClient()
-
-@runtime_handler
-def handler(event, context):
-    session_id = event["session_id"]
-
-    # Load conversation history from AgentCore Memory
-    history = memory.get_session(session_id)
-
-    # Get response with full context
-    response = agent(event["message"], history=history)
-
-    # Save to persistent memory
-    memory.add_message(session_id, "user", event["message"])
-    memory.add_message(session_id, "assistant", response)
-
-    return {"response": response}
-```
-
-AgentCore Memory provides:
-
-- ✅ **Persistent storage** across invocations
-- ✅ **Session-based isolation** (each user/session is separate)
-- ✅ **Automatic scaling** (managed service)
-- ✅ **Security** (encrypted, access-controlled)
-- ✅ **Memory strategies** (summarization, fact extraction)
-
-<Callout type="info" title="Day 3 Preview">
-  In Day 3, you'll implement full memory integration with multiple strategies:
-  - **Short-term memory**: Recent conversation turns
-  - **Long-term memory**: Facts, preferences, summaries
-  - **Semantic retrieval**: Find relevant past context
-</Callout>
+---
 
 ## Exercise: Document the Disaster
 
@@ -215,13 +787,15 @@ Before moving to the challenge, document what you observed:
 
 ### Reflection Questions
 
-1. **What happened** when you asked the agent about information from a previous request?
+1. **What's the benefit** of exposing agent tools via MCP vs custom APIs?
 
-2. **Why** does AgentCore Runtime behave this way? (Hint: Security)
+2. **When would you use A2A** instead of direct API calls between agents?
 
-3. **What types of applications** would be severely impacted by this limitation?
+3. **What happens** when a complex agent task exceeds traditional serverless timeouts?
 
-4. **What's the difference** between session isolation and memory persistence?
+4. **How does bidirectional streaming** improve user experience for voice applications?
+
+5. **Why is session isolation critical** for multi-tenant agent deployments?
 
 ### Record Your Findings
 
@@ -230,42 +804,80 @@ Create a file `disaster-notes.md` in your project:
 ```markdown
 # Day 1 Disaster Notes
 
-## Observed Behavior
-- [Your observations]
+## Island Agent
+- Tools I'd want to share via MCP:
+- Systems that could consume my MCP server:
 
-## Root Cause
-- [Your understanding]
+## Lonely Agent
+- Agent collaboration scenarios:
+- Benefits of standardized A2A protocol:
 
-## Business Impact
-- [Real-world consequences]
+## Timeout Terror
+- Task types that exceed 15-minute limits:
+- How 8-hour execution changes what's possible:
 
-## Solution (Preview)
-- AgentCore Memory (Day 3)
+## One-Way Street
+- Use cases requiring bidirectional streaming:
+- Voice application requirements:
+
+## Leaky Bucket
+- Security risks of shared container state:
+- Benefits of microVM isolation:
 ```
 
 ## Looking Ahead
 
-Today's disaster reveals the first major gap between "demo agent" and "production agent":
+Today's disasters reveal the gaps between "demo agent" and "production agent":
 
-| Day | Disaster | Missing Component |
-|-----|----------|-------------------|
-| **Day 1** | **Vanishing Context** | **Memory** |
-| Day 2 | The Open Door | Identity + Gateway |
-| Day 3 | The Runaway Agent | Tool Controls |
-| Day 4 | Flying Blind | Observability |
+| Day | Disaster | Problem | AgentCore Solution |
+|-----|----------|---------|-------------------|
+| **Day 1** | **Island Agent** | Can't share tools | Runtime (MCP hosting) |
+| **Day 1** | **Lonely Agent** | Can't collaborate | Runtime (A2A hosting) |
+| **Day 1** | **Timeout Terror** | 15-min execution limits | Runtime (8hr support) |
+| **Day 1** | **One-Way Street** | No streaming | Runtime (WebSocket) |
+| **Day 1** | **Leaky Bucket** | Shared container state | Runtime (microVM isolation) |
+| Day 2 | The Open Door | No authentication | Identity + Gateway |
+| Day 3 | Vanishing Context | No memory persistence | AgentCore Memory |
+| Day 4 | Flying Blind | No visibility | Observability |
 
-Each disaster motivates the next day's enterprise feature.
+Each disaster motivates an enterprise feature. Today you experienced five - **all solved by AgentCore Runtime**!
 
 ## Summary
 
-You've now experienced firsthand why enterprise features matter:
+You've now experienced firsthand why AgentCore Runtime's enterprise features matter:
 
-- ✅ Built and deployed a working agent
-- ✅ Discovered its memory limitation
-- ✅ Understood why naive solutions don't work
-- ✅ Previewed the proper solution
+- ✅ **Island Agent** - MCP hosting makes your tools discoverable and usable by any MCP client
+- ✅ **Lonely Agent** - A2A hosting enables agent discovery and multi-agent collaboration
+- ✅ **Timeout Terror** - AgentCore Runtime's 8-hour execution enables complex, multi-step agent tasks
+- ✅ **One-Way Street** - Bidirectional WebSocket streaming enables real-time voice and natural conversations
+- ✅ **Leaky Bucket** - microVM isolation prevents cross-session data leakage and security incidents
+
+**AgentCore Runtime solves all five of these problems out of the box!**
+
+In Day 2, you'll add authentication and authorization. In Day 3, you'll tackle memory persistence for conversational context.
 
 **Time for the Day 1 Challenge!**
+
+## References
+
+Learn more about AgentCore Runtime capabilities:
+
+### Official Documentation
+- [AgentCore Runtime Overview](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/agents-tools-runtime.html) - Official documentation
+- [MCP Server Hosting](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-mcp.html) - Deploy MCP servers on AgentCore Runtime
+- [A2A Server Hosting](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-a2a.html) - Deploy A2A servers on AgentCore Runtime
+
+### AWS Blog Posts
+- [Introducing Amazon Bedrock AgentCore](https://aws.amazon.com/blogs/aws/introducing-amazon-bedrock-agentcore-securely-deploy-and-operate-ai-agents-at-any-scale/) - AWS News Blog launch announcement
+- [Securely Launch and Scale Agents](https://aws.amazon.com/blogs/machine-learning/securely-launch-and-scale-your-agents-and-tools-on-amazon-bedrock-agentcore-runtime/) - Deep dive on Runtime security and scaling
+- [Agent-to-Agent Protocol Support](https://aws.amazon.com/blogs/machine-learning/introducing-agent-to-agent-protocol-support-in-amazon-bedrock-agentcore-runtime/) - A2A protocol for multi-agent systems
+
+### Feature Announcements
+- [Bidirectional Streaming](https://aws.amazon.com/about-aws/whats-new/2025/12/bedrock-agentcore-runtime-bi-directional-streaming/) - WebSocket streaming feature
+
+### Protocol Specifications
+- [A2A Protocol](https://a2a-protocol.org/dev/specification/) - Open standard for agent-to-agent communication
+- [MCP Protocol](https://modelcontextprotocol.io/) - Model Context Protocol specification
 
 <div class="nav-buttons">
   <a href="/days/1/agentcore-runtime" class="nav-button nav-button--prev">

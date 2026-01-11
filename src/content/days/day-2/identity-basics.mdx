@@ -7,9 +7,9 @@ description: "Configure AgentCore Identity for secure authentication of users an
 estimatedTime: "45 minutes"
 objectives:
   - "Understand the dual authentication model (inbound and outbound)"
-  - "Create workload identities for your agents"
-  - "Configure JWT authorizers for inbound requests"
-  - "Set up credential providers for third-party access"
+  - "Configure JWT authorization using authorizer_configuration"
+  - "Deploy agents with Cognito authentication"
+  - "Set up credential providers for third-party API access"
 order: 1
 published: true
 ---
@@ -50,291 +50,47 @@ AgentCore Identity provides two types of authentication:
   Both are essential for production deployments.
 </Callout>
 
-## Core Components
+## Hands-On: Inbound Authentication
 
-### 1. Workload Identity
+Let's secure your Day 1 agent with JWT authentication. We'll use our course helpers to simplify Cognito setup.
 
-A workload identity represents your agent in the identity system:
+## Step 1: Set Up Your Project
 
-```python
-import boto3
-
-identity_client = boto3.client('bedrock-agentcore-identity', region_name='us-east-1')
-
-# Create a workload identity for your agent
-response = identity_client.create_workload_identity(
-    name='my-agent-identity',
-    description='Identity for Day 2 agent',
-    tags={
-        'project': 'agentcore-initiative',
-        'day': '2'
-    }
-)
-
-workload_identity_id = response['workloadIdentityId']
-print(f"Created workload identity: {workload_identity_id}")
-```
-
-### 2. JWT Authorizer
-
-Configure inbound authentication using JWT tokens:
-
-```python
-# Create a JWT authorizer for inbound requests
-authorizer_response = identity_client.create_jwt_authorizer(
-    workloadIdentityId=workload_identity_id,
-    name='my-agent-authorizer',
-    issuer='https://your-identity-provider.com',
-    audience='your-agent-audience',
-    jwksUri='https://your-identity-provider.com/.well-known/jwks.json'
-)
-
-print(f"Created JWT authorizer: {authorizer_response['authorizerId']}")
-```
-
-<Callout type="tip" title="Identity Providers">
-  AgentCore Identity works with any OAuth 2.0 / OIDC compliant provider:
-  - Amazon Cognito
-  - Auth0
-  - Okta
-  - Azure AD
-  - Google Identity
-</Callout>
-
-### 3. Credential Provider
-
-Set up outbound authentication for external services:
-
-```python
-# Create a credential provider for GitHub access
-credential_response = identity_client.create_credential_provider(
-    workloadIdentityId=workload_identity_id,
-    name='github-provider',
-    providerType='OAUTH2',
-    oauth2Config={
-        'authorizationEndpoint': 'https://github.com/login/oauth/authorize',
-        'tokenEndpoint': 'https://github.com/login/oauth/access_token',
-        'clientId': 'your-github-client-id',
-        'clientSecret': 'your-github-client-secret',
-        'scopes': ['repo', 'read:user']
-    }
-)
-
-print(f"Created credential provider: {credential_response['credentialProviderId']}")
-```
-
-## Setting Up Amazon Cognito
-
-AgentCore Identity integrates with Amazon Cognito for user authentication. Here's the complete setup:
-
-![Cognito Integration Architecture](/images/day-2/inbound-auth-cognito.png)
-
-### Step 1: Create Cognito User Pool
-
-```python
-# cognito_setup.py
-import boto3
-
-cognito = boto3.client('cognito-idp', region_name='us-east-1')
-
-# Create User Pool
-user_pool = cognito.create_user_pool(
-    PoolName='agentcore-day2-users',
-    Policies={
-        'PasswordPolicy': {
-            'MinimumLength': 8,
-            'RequireUppercase': True,
-            'RequireLowercase': True,
-            'RequireNumbers': True,
-            'RequireSymbols': False
-        }
-    },
-    AutoVerifiedAttributes=['email'],
-    UsernameAttributes=['email'],
-    Schema=[
-        {
-            'Name': 'email',
-            'AttributeDataType': 'String',
-            'Required': True,
-            'Mutable': True
-        }
-    ]
-)
-
-user_pool_id = user_pool['UserPool']['Id']
-print(f"User Pool ID: {user_pool_id}")
-
-# Create User Pool Client
-client_response = cognito.create_user_pool_client(
-    UserPoolId=user_pool_id,
-    ClientName='agentcore-day2-client',
-    GenerateSecret=False,
-    ExplicitAuthFlows=[
-        'ALLOW_USER_PASSWORD_AUTH',
-        'ALLOW_REFRESH_TOKEN_AUTH'
-    ],
-    TokenValidityUnits={
-        'AccessToken': 'hours',
-        'IdToken': 'hours',
-        'RefreshToken': 'days'
-    },
-    AccessTokenValidity=1,
-    IdTokenValidity=1,
-    RefreshTokenValidity=30
-)
-
-client_id = client_response['UserPoolClient']['ClientId']
-print(f"Client ID: {client_id}")
-
-# Get User Pool details
-pool_details = cognito.describe_user_pool(UserPoolId=user_pool_id)
-issuer = f"https://cognito-idp.us-east-1.amazonaws.com/{user_pool_id}"
-jwks_uri = f"{issuer}/.well-known/jwks.json"
-
-print(f"Issuer: {issuer}")
-print(f"JWKS URI: {jwks_uri}")
-```
-
-### Step 2: Create Test User
-
-```python
-# Create a test user
-cognito.admin_create_user(
-    UserPoolId=user_pool_id,
-    Username='testuser@example.com',
-    TemporaryPassword='TempPass123!',
-    MessageAction='SUPPRESS',
-    UserAttributes=[
-        {'Name': 'email', 'Value': 'testuser@example.com'},
-        {'Name': 'email_verified', 'Value': 'true'}
-    ]
-)
-
-# Set permanent password
-cognito.admin_set_user_password(
-    UserPoolId=user_pool_id,
-    Username='testuser@example.com',
-    Password='SecurePass123!',
-    Permanent=True
-)
-
-print("Test user created: testuser@example.com")
-```
-
-### Step 3: Get Authentication Token
-
-```python
-# authenticate_user.py
-import boto3
-
-cognito = boto3.client('cognito-idp', region_name='us-east-1')
-
-# Authenticate and get tokens
-response = cognito.initiate_auth(
-    ClientId=client_id,
-    AuthFlow='USER_PASSWORD_AUTH',
-    AuthParameters={
-        'USERNAME': 'testuser@example.com',
-        'PASSWORD': 'SecurePass123!'
-    }
-)
-
-id_token = response['AuthenticationResult']['IdToken']
-access_token = response['AuthenticationResult']['AccessToken']
-refresh_token = response['AuthenticationResult']['RefreshToken']
-
-print(f"ID Token: {id_token[:50]}...")
-print(f"Access Token: {access_token[:50]}...")
-```
-
-<Callout type="info" title="JWT Token Structure">
-The ID token contains user identity claims (sub, email, etc.) that your agent can use for personalization and authorization decisions.
-</Callout>
-
-## Deploying with Identity Configuration
-
-The Identity deployment process follows three stages, similar to Day 1 but with authentication:
-
-### Configuration Stage
-
-![Identity Configuration Workflow](/images/day-2/identity-configure.png)
-
-Configure your agent with Identity settings using the IdentityClient:
-
-```python
-# identity_config.py
-from bedrock_agentcore.services.identity import IdentityClient
-
-identity_client = IdentityClient(region='us-east-1')
-
-# Create workload identity
-workload = identity_client.create_workload_identity(
-    name='day2-secure-agent',
-    description='Agent with Cognito authentication'
-)
-
-workload_id = workload['workloadIdentityId']
-
-# Create JWT authorizer with Cognito details
-authorizer = identity_client.create_jwt_authorizer(
-    workloadIdentityId=workload_id,
-    name='cognito-authorizer',
-    issuer=issuer,  # From Step 1
-    audience=client_id,  # From Step 1
-    jwksUri=jwks_uri  # From Step 1
-)
-
-print(f"Workload Identity: {workload_id}")
-print(f"Authorizer: {authorizer['authorizerId']}")
-```
-
-### Launch Stage
-
-![Identity Launch Process](/images/day-2/identity-launch.png)
-
-Deploy your agent with Identity configuration:
+We'll build on your Day 1 project. If you completed Day 1, navigate to your project:
 
 ```bash
-# Build and launch with Identity
-agentcore deploy \
-  --agent-name day2-secure-agent \
-  --workload-identity-id $WORKLOAD_ID \
-  --authorizer-id $AUTHORIZER_ID
+cd myfirstagent
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 ```
 
-### Invocation Stage
+Or create a new project:
 
-![Identity Invocation Flow](/images/day-2/identity-invoke.png)
+```bash
+# Create project directory
+mkdir day2-secure-agent
+cd day2-secure-agent
 
-Invoke with authentication token:
+# Create and activate virtual environment
+python3 -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
-```python
-# invoke_with_auth.py
-import boto3
-import json
-
-client = boto3.client('bedrock-agentcore', region_name='us-east-1')
-
-# Include JWT token in request
-response = client.invoke_agent_runtime(
-    agentRuntimeArn='arn:aws:bedrock-agentcore:us-east-1:123456789012:runtime/day2-secure-agent',
-    qualifier='DEFAULT',
-    payload=json.dumps({
-        "prompt": "What is my user ID?",
-        "authToken": id_token  # JWT from Cognito
-    })
-)
-
-result = json.loads(response['response'][0])
-print(f"Agent response: {result}")
+# Install dependencies
+pip install --upgrade pip
+pip install bedrock-agentcore strands-agents strands-agents-tools bedrock-agentcore-starter-toolkit
 ```
 
-## Update Your Agent with Authentication
+Install the course helpers:
 
-Modify your agent to use Identity:
+```bash
+pip install git+https://github.com/Jagdeep1/agentcore-avengers-code.git
+```
+
+## Step 2: Create Your Agent
+
+Create `agent.py` with your agent code (same as Day 1):
 
 ```python
-# agent.py - Day 2 with Identity
+# agent.py - Your agent code (same as Day 1)
 from strands import Agent, tool
 from strands_tools import calculator
 from bedrock_agentcore.runtime import BedrockAgentCoreApp
@@ -344,173 +100,678 @@ from datetime import datetime
 app = BedrockAgentCoreApp()
 
 @tool
+def get_weather() -> str:
+    """Get the current weather."""
+    return "sunny"
+
+@tool
 def get_current_time() -> str:
     """Get the current date and time."""
     return datetime.now().isoformat()
 
-@tool
-def get_user_info(user_id: str) -> dict:
-    """Get information about the authenticated user.
-
-    Args:
-        user_id: The user's unique identifier from JWT
-
-    Returns:
-        dict: User information
-    """
-    # In production, query user database
-    return {
-        "user_id": user_id,
-        "account_type": "premium",
-        "preferences": {"timezone": "UTC"}
-    }
-
 model = BedrockModel(
-    model_id="anthropic.claude-sonnet-4-20250514-v1:0",
+    model_id="global.anthropic.claude-sonnet-4-20250514-v1:0",
 )
 
 agent = Agent(
     model=model,
-    tools=[calculator, get_current_time, get_user_info],
-    system_prompt="""You are a personalized assistant with access to user context.
-
-    When responding, consider the user's identity and preferences.
-    Always greet the user by their ID if available."""
+    tools=[calculator, get_weather, get_current_time],
+    system_prompt="You're a helpful assistant. You can do simple math, tell the weather, and get the time."
 )
 
 @app.entrypoint
 def handle_request(payload):
-    """Handle authenticated requests with user context."""
-
-    # Extract user context from JWT claims
-    user_context = payload.get('userContext', {})
-    user_id = user_context.get('sub')  # JWT subject claim
-    user_email = user_context.get('email')
-
-    # Validate authentication
-    if not user_id:
-        return {
-            "error": "Unauthorized",
-            "message": "Valid authentication required"
-        }
-
-    # Get user prompt
-    prompt = payload.get("prompt", "")
-
-    # Enrich prompt with user context
-    enriched_prompt = f"[User: {user_id} ({user_email})] {prompt}"
-
-    # Invoke agent
-    response = agent(enriched_prompt)
-
-    return {
-        "response": response.message['content'][0]['text'],
-        "authenticated_user": user_id,
-        "user_email": user_email
-    }
+    """Handle incoming requests from AgentCore Runtime."""
+    user_input = payload.get("prompt")
+    print(f"User input: {user_input}")
+    response = agent(user_input)
+    return response.message['content'][0]['text']
 
 if __name__ == "__main__":
     app.run()
 ```
 
-## Outbound Authentication: API Key Provider
+Create `requirements.txt`:
 
-Enable your agent to call external APIs securely:
+```txt
+bedrock-agentcore
+strands-agents
+strands-agents-tools
+```
+
+Your project structure should look like:
+
+```
+day2-secure-agent/
+├── .venv/
+├── agent.py
+└── requirements.txt
+```
+
+## Step 3: Set Up Cognito Authentication
+
+Create `deploy_secure_agent.py` to set up Cognito and deploy your agent:
+
+```python
+# deploy_secure_agent.py - Deploy agent with JWT authentication
+import time
+from agentcore_course_helpers import setup_cognito, cleanup_cognito
+from bedrock_agentcore_starter_toolkit import Runtime
+
+# Step 1: Set up Cognito (creates user pool, client, and test user)
+print("Setting up Cognito...")
+config = setup_cognito(pool_name="Day2Pool")
+
+print(f"\n✅ Cognito Setup Complete!")
+print(f"   Discovery URL: {config['discovery_url']}")
+print(f"   Client ID: {config['client_id']}")
+print(f"   Test User: courseuser / CoursePassword123!")
+print(f"   Bearer Token: {config['bearer_token'][:50]}...")
+
+# Step 2: Configure AgentCore Runtime with JWT authorization
+print("\n📦 Configuring AgentCore Runtime...")
+agentcore_runtime = Runtime()
+
+response = agentcore_runtime.configure(
+    entrypoint="agent.py",
+    auto_create_execution_role=True,
+    auto_create_ecr=True,
+    requirements_file="requirements.txt",
+    agent_name="secure-agent",
+    authorizer_configuration={
+        "customJWTAuthorizer": {
+            "discoveryUrl": config["discovery_url"],
+            "allowedClients": [config["client_id"]]
+        }
+    }
+)
+print("✅ Configuration complete!")
+
+# Step 3: Deploy the agent
+print("\n🚀 Deploying agent (this takes 3-5 minutes)...")
+launch_result = agentcore_runtime.launch()
+print(f"   Agent ID: {launch_result.agent_id}")
+
+# Wait for deployment
+status = agentcore_runtime.status().endpoint['status']
+while status not in ['READY', 'CREATE_FAILED']:
+    time.sleep(10)
+    status = agentcore_runtime.status().endpoint['status']
+    print(f"   Status: {status}")
+
+if status == 'READY':
+    print("✅ Agent deployed successfully!")
+else:
+    print("❌ Deployment failed!")
+    exit(1)
+
+# Step 4: Test invocation WITH authentication
+print("\n🔐 Testing authenticated invocation...")
+response = agentcore_runtime.invoke(
+    {"prompt": "What is 25 * 4?"},
+    bearer_token=config["bearer_token"]
+)
+print(f"✅ Response: {response}")
+
+# Save config for later use
+print(f"\n📝 Save these values for invoke_agent.py:")
+print(f"   POOL_ID = \"{config['pool_id']}\"")
+print(f"   CLIENT_ID = \"{config['client_id']}\"")
+print(f"   CLIENT_SECRET = \"{config['client_secret']}\"")
+```
+
+Run the deployment script:
+
+```bash
+python deploy_secure_agent.py
+```
+
+Expected output:
+
+```
+Setting up Cognito...
+Created User Pool: us-east-1_xxxxxx
+Created App Client: xxxxxxxxxxxxxxxxxx
+Created user: courseuser
+
+✅ Cognito Setup Complete!
+   Discovery URL: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_xxxxxx/.well-known/openid-configuration
+   Client ID: xxxxxxxxxxxxxxxxxx
+   Test User: courseuser / CoursePassword123!
+   Bearer Token: eyJraWQiOiJxxxxxx...
+
+📦 Configuring AgentCore Runtime...
+✅ Configuration complete!
+
+🚀 Deploying agent (this takes 3-5 minutes)...
+   Agent ID: abc123-xxxx-xxxx
+   Status: CREATING
+   Status: CREATING
+   Status: READY
+✅ Agent deployed successfully!
+
+🔐 Testing authenticated invocation...
+✅ Response: 25 × 4 = 100
+```
+
+## Step 4: Invoke Your Secure Agent
+
+Create `invoke_agent.py` to invoke your deployed agent using the REST API with Bearer token:
+
+```python
+# invoke_agent.py - Invoke agent with Bearer token via REST API
+import requests
+import urllib.parse
+import json
+import uuid
+from agentcore_course_helpers import get_bearer_token
+
+# Replace with values from deploy_secure_agent.py output
+AGENT_ARN = "arn:aws:bedrock-agentcore:us-east-1:123456789012:agent-runtime/secure-agent"
+REGION = "us-east-1"
+CLIENT_ID = "your-client-id-here"
+CLIENT_SECRET = "your-client-secret-here"
+
+# Get a fresh bearer token (tokens expire after 1 hour)
+print("Getting fresh bearer token...")
+bearer_token = get_bearer_token(
+    client_id=CLIENT_ID,
+    client_secret=CLIENT_SECRET
+)
+print("✅ Got fresh token!")
+
+# URL encode the agent ARN
+escaped_agent_arn = urllib.parse.quote(AGENT_ARN, safe='')
+
+# Construct the AgentCore REST API URL
+url = f"https://bedrock-agentcore.{REGION}.amazonaws.com/runtimes/{escaped_agent_arn}/invocations?qualifier=DEFAULT"
+
+# Generate a unique session ID (must be at least 33 characters)
+session_id = str(uuid.uuid4())
+
+# Set up headers with Bearer token authentication
+headers = {
+    "Authorization": f"Bearer {bearer_token}",
+    "Content-Type": "application/json",
+    "X-Amzn-Bedrock-AgentCore-Runtime-Session-Id": session_id
+}
+
+# Invoke the agent
+prompt = "What time is it and what's the weather?"
+print(f"\nInvoking agent: {prompt}")
+
+response = requests.post(
+    url,
+    headers=headers,
+    data=json.dumps({"prompt": prompt})
+)
+
+# Handle response
+print(f"Status Code: {response.status_code}")
+
+if response.status_code == 200:
+    result = response.json()
+    print(f"✅ Response: {json.dumps(result, indent=2)}")
+else:
+    print(f"❌ Error: {response.json()}")
+```
+
+Run it:
+
+```bash
+python invoke_agent.py
+```
+
+Expected output:
+
+```
+Getting fresh bearer token...
+✅ Got fresh token!
+
+Invoking agent: What time is it and what's the weather?
+Status Code: 200
+✅ Response: "The current time is 2025-01-10T14:32:15 and the weather is sunny."
+```
+
+<Callout type="info" title="Bearer Token Authentication">
+  JWT-configured agents use the `Authorization: Bearer <token>` header instead of AWS SigV4 signing.
+  This is how your web/mobile app will authenticate users calling your agent.
+</Callout>
+
+<Callout type="warning" title="Without Token = AccessDenied">
+  Try removing the `bearer_token` parameter - you'll get:
+  `AccessDeniedException: Agent is configured for a different authorization token type`
+</Callout>
+
+## Step 5: Cleanup
+
+Create `cleanup.py` to remove all resources:
+
+```python
+# cleanup.py - Clean up all AWS resources
+from agentcore_course_helpers import cleanup_cognito
+
+# Replace with your pool ID from deployment
+POOL_ID = "us-east-1_xxxxxx"
+
+# Clean up Cognito
+print("Cleaning up Cognito...")
+cleanup_cognito(POOL_ID)
+print("✅ Cognito resources deleted!")
+
+print("\n📝 Now run 'agentcore destroy' to remove the AgentCore Runtime")
+```
+
+Run cleanup:
+
+```bash
+python cleanup.py
+agentcore destroy
+```
+
+Expected output:
+
+```
+Cleaning up Cognito...
+Deleted client: Day2PoolClient
+Deleted user: courseuser
+Deleted User Pool: us-east-1_xxxxxx
+✅ Cognito resources deleted!
+
+📝 Now run 'agentcore destroy' to remove the AgentCore Runtime
+```
+
+<Callout type="danger" title="Don't Forget to Cleanup">
+  AgentCore charges for running agents. Always destroy unused agents and Cognito resources to avoid unexpected charges.
+</Callout>
+
+<Callout type="tip" title="Identity Providers">
+  AgentCore Identity works with any OAuth 2.0 / OIDC compliant provider:
+  - Amazon Cognito (what we use in this course)
+  - Auth0
+  - Okta
+  - Azure AD
+  - Google Identity
+</Callout>
+
+## JWT vs IAM Authentication
+
+AgentCore Runtime supports two authentication modes:
+
+| Mode | Use Case | How It Works |
+|------|----------|--------------|
+| **JWT (OAuth)** | End-user authentication | Users login → get token → call agent |
+| **IAM (SigV4)** | Service-to-service | AWS roles/credentials → call agent |
+
+**When to use each:**
+- **JWT**: Web/mobile apps where humans authenticate (what we're doing today)
+- **IAM**: Backend services, Lambda functions, other AWS services calling your agent
+
+By default, AgentCore uses IAM. We configured JWT by adding `authorizer_configuration`.
+
+## What Happens Behind the Scenes
+
+When a request arrives at your agent:
+
+1. **Token Validation**: AgentCore Runtime validates the JWT against Cognito's JWKS endpoint
+2. **Client Check**: Verifies the token's `client_id` is in your `allowedClients` list
+3. **Expiration Check**: Ensures the token hasn't expired
+4. **Forward to Agent**: Valid requests reach your `@app.entrypoint` function
+5. **Reject Invalid**: Invalid tokens get `AccessDeniedException` before reaching your code
+
+Your agent code stays simple - authentication happens at the runtime level!
+
+## Deep Dive: What setup_cognito() Does
+
+<Callout type="info" title="Optional Reading">
+  This section explains what the `setup_cognito()` helper does under the hood.
+  Skip ahead to [Your Agent Code](#your-agent-code) if you want to continue building.
+</Callout>
+
+![Cognito Integration Architecture](/images/day-2/inbound-auth-cognito.png)
+
+The helper performs three main steps:
+
+**1. Create User Pool** - The identity store for your users:
+```python
+cognito.create_user_pool(PoolName="Day2Pool", ...)
+```
+
+**2. Create App Client** - How your agent authenticates:
+```python
+cognito.create_user_pool_client(
+    UserPoolId=pool_id,
+    GenerateSecret=True,  # For secure token requests
+    ExplicitAuthFlows=["ALLOW_USER_PASSWORD_AUTH", ...]
+)
+```
+
+**3. Create Test User & Get Token**:
+```python
+cognito.admin_create_user(Username="courseuser", ...)
+cognito.initiate_auth(AuthFlow="USER_PASSWORD_AUTH", ...)
+```
+
+The **discovery URL** follows this pattern:
+```
+https://cognito-idp.{region}.amazonaws.com/{pool_id}/.well-known/openid-configuration
+```
+
+This URL tells AgentCore where to find Cognito's public keys for JWT validation.
+
+<Callout type="tip" title="Production Tip">
+  In production, you'd use AWS CDK or CloudFormation to create Cognito resources.
+  The helper is designed for learning and experimentation.
+</Callout>
+
+## Hands-On: Outbound Authentication
+
+Enable your agent to securely call external APIs using credential providers. In this example, we'll use the GitHub API to demonstrate how credential providers work.
 
 ![API Key Credential Provider](/images/day-2/outbound-auth-api.png)
 
-### Step 1: Create API Key Credential Provider
+<Callout type="warning" title="For Demonstration Only">
+  This example uses a GitHub Personal Access Token (PAT) to demonstrate the `@requires_api_key` pattern. For production GitHub integrations, consider:
+  - **3-Legged OAuth (3LO)**: Use `@requires_access_token` with `USER_FEDERATION` for user-authorized access
+  - **MCP Integration**: Use the [GitHub MCP Server](https://github.com/modelcontextprotocol/servers/tree/main/src/github) for standardized tool access
+</Callout>
+
+<Callout type="info" title="Prerequisites">
+  You'll need a GitHub Personal Access Token. Create one at [github.com/settings/tokens](https://github.com/settings/tokens) → Generate new token (classic) → Select `public_repo` scope.
+</Callout>
+
+### Step 1: Create the Credential Provider
+
+Create `setup_credential_provider.py` to store your API key securely:
 
 ```python
-# credential_provider.py
+# setup_credential_provider.py - Create API key credential provider
 from bedrock_agentcore.services.identity import IdentityClient
+from boto3.session import Session
 
-identity_client = IdentityClient(region='us-east-1')
+boto_session = Session()
+region = boto_session.region_name
 
-# Create credential provider for external API
-api_key_provider = identity_client.create_api_key_credential_provider(
-    workloadIdentityId=workload_id,
-    name='weather-api-credentials',
-    description='API key for OpenWeather API',
-    apiKey='your-api-key-here'  # Store securely
-)
+print(f"Creating credential provider in {region}...")
 
-provider_id = api_key_provider['credentialProviderId']
-print(f"Credential Provider ID: {provider_id}")
+identity_client = IdentityClient(region=region)
+
+# Create credential provider for GitHub API
+# Replace with your actual Personal Access Token
+GITHUB_TOKEN = "ghp_your-github-token-here"
+
+api_key_provider = identity_client.create_api_key_credential_provider({
+    "name": "github-api-credentials",
+    "apiKey": GITHUB_TOKEN
+})
+
+print(f"✅ Created credential provider!")
+print(f"   Provider Name: github-api-credentials")
+print(f"   Provider Details: {api_key_provider}")
 ```
 
-### Step 2: Use Credentials in Agent
+Run it:
+
+```bash
+python setup_credential_provider.py
+```
+
+Expected output:
+
+```
+Creating credential provider in us-east-1...
+✅ Created credential provider!
+   Provider Name: github-api-credentials
+   Provider Details: {'name': 'github-api-credentials', ...}
+```
+
+### Step 2: Create Agent with Outbound Auth
+
+Create `agent_outbound.py` that uses the `@requires_api_key` decorator:
 
 ```python
-# tools_with_auth.py
-from strands import tool
+# agent_outbound.py - Agent with outbound authentication
+from bedrock_agentcore.identity.auth import requires_api_key
+from bedrock_agentcore.runtime import BedrockAgentCoreApp
+from strands import Agent, tool
+from strands.models import BedrockModel
 import requests
-import os
+
+app = BedrockAgentCoreApp()
+
+# Global variable to store retrieved API key
+GITHUB_TOKEN = ""
+
+@requires_api_key(provider_name="github-api-credentials")
+async def get_api_key(*, api_key: str):
+    """Retrieve API key from credential provider."""
+    global GITHUB_TOKEN
+    GITHUB_TOKEN = api_key
+    print(f"✅ Retrieved GitHub token from credential provider")
 
 @tool
-def get_real_weather(city: str) -> dict:
-    """Get real weather data for a city.
+def get_github_user(username: str) -> dict:
+    """Get GitHub user profile information.
 
     Args:
-        city: City name (e.g., 'London', 'New York')
+        username: GitHub username (e.g., 'octocat', 'torvalds')
 
     Returns:
-        dict: Weather data including temperature and conditions
+        dict: User profile including name, bio, and public repos count
     """
-    # Credential provider automatically injects API key
-    # via environment variable or context
-    api_key = os.environ.get('WEATHER_API_KEY')
-
     try:
         response = requests.get(
-            'https://api.openweathermap.org/data/2.5/weather',
-            params={'q': city, 'appid': api_key, 'units': 'metric'},
+            f'https://api.github.com/users/{username}',
+            headers={
+                'Authorization': f'token {GITHUB_TOKEN}',
+                'Accept': 'application/vnd.github.v3+json'
+            },
             timeout=10
         )
         response.raise_for_status()
         data = response.json()
 
         return {
-            "city": city,
-            "temperature": data['main']['temp'],
-            "conditions": data['weather'][0]['description'],
-            "humidity": data['main']['humidity']
+            "username": data['login'],
+            "name": data.get('name', 'N/A'),
+            "bio": data.get('bio', 'No bio'),
+            "public_repos": data['public_repos'],
+            "followers": data['followers']
         }
     except requests.RequestException as e:
-        return {"error": f"Failed to fetch weather: {str(e)}"}
+        return {"error": f"Failed to fetch GitHub user: {str(e)}"}
+
+model = BedrockModel(model_id="anthropic.claude-sonnet-4-20250514-v1:0")
+agent = Agent(model=model, tools=[get_github_user], system_prompt="You can look up GitHub user profiles.")
+
+@app.entrypoint
+async def handle_request(payload):
+    """Handle requests with outbound authentication."""
+    # Retrieve API key if not already available
+    if not GITHUB_TOKEN:
+        await get_api_key(api_key="")
+
+    user_input = payload.get("prompt")
+    response = agent(user_input)
+    return response.message['content'][0]['text']
+
+if __name__ == "__main__":
+    app.run()
 ```
 
-<Callout type="tip" title="Credential Security">
-AgentCore Identity automatically manages credential rotation and secure storage. Your agent code never needs to hardcode sensitive credentials.
-</Callout>
+### Step 3: Deploy and Add Outbound Policies
 
-## Token Vault: Secure Credential Storage
-
-AgentCore Identity includes a Token Vault for securely storing OAuth tokens:
+Create `deploy_outbound_agent.py` to deploy the agent. AgentCore will auto-create an execution role, and we'll attach the outbound identity policies after launch:
 
 ```python
-# Store an OAuth token
-identity_client.store_token(
-    workloadIdentityId=workload_id,
-    credentialProviderId=credential_provider_id,
-    tokenType='OAUTH2',
-    accessToken='gho_xxxxxxxxxxxx',
-    refreshToken='ghr_xxxxxxxxxxxx',
-    expiresAt='2025-01-03T12:00:00Z'
-)
+# deploy_outbound_agent.py - Deploy agent with outbound auth
+import time
+import json
+import boto3
+from bedrock_agentcore_starter_toolkit import Runtime
+from boto3.session import Session
 
-# Retrieve a token (automatic refresh if expired)
-token = identity_client.get_token(
-    workloadIdentityId=workload_id,
-    credentialProviderId=credential_provider_id
-)
+boto_session = Session()
+region = boto_session.region_name
 
-print(f"Access token: {token['accessToken'][:20]}...")
+print("📦 Configuring AgentCore Runtime...")
+agentcore_runtime = Runtime()
+
+response = agentcore_runtime.configure(
+    entrypoint="agent_outbound.py",
+    auto_create_execution_role=True,  # Let AgentCore create the role
+    auto_create_ecr=True,
+    requirements_file="requirements.txt",
+    agent_name="outbound_auth_agent"
+)
+print("✅ Configuration complete!")
+
+# Launch the agent
+print("\n🚀 Launching agent...")
+launch_result = agentcore_runtime.launch()
+print(f"   Agent ID: {launch_result.agent_id}")
+print(f"   Agent ARN: {launch_result.agent_arn}")
+
+# Get the auto-created execution role ARN
+print("\n🔐 Adding outbound identity policies...")
+agentcore_control_client = boto3.client('bedrock-agentcore-control', region_name=region)
+runtime_response = agentcore_control_client.get_agent_runtime(
+    agentRuntimeId=launch_result.agent_id
+)
+runtime_role_arn = runtime_response['roleArn']
+role_name = runtime_role_arn.split("/")[1]
+print(f"   Execution Role: {role_name}")
+
+# Add outbound identity policies to the auto-created role
+outbound_policies = {
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "GetResourceAPIKey",
+            "Effect": "Allow",
+            "Action": ["bedrock-agentcore:GetResourceApiKey"],
+            "Resource": "*"
+        },
+        {
+            "Sid": "SecretManager",
+            "Effect": "Allow",
+            "Action": ["secretsmanager:GetSecretValue"],
+            "Resource": "arn:aws:secretsmanager:*:*:secret:bedrock-agentcore*"
+        }
+    ]
+}
+
+iam_client = boto3.client('iam')
+iam_client.put_role_policy(
+    RoleName=role_name,
+    PolicyName="OutboundIdentityPolicies",
+    PolicyDocument=json.dumps(outbound_policies)
+)
+print("✅ Outbound policies attached!")
+
+# Wait for deployment
+print("\n⏳ Waiting for agent to be ready (3-5 minutes)...")
+status = agentcore_runtime.status().endpoint['status']
+while status not in ['READY', 'CREATE_FAILED']:
+    time.sleep(10)
+    status = agentcore_runtime.status().endpoint['status']
+    print(f"   Status: {status}")
+
+if status == 'READY':
+    print("✅ Agent deployed successfully!")
+
+    # Test invocation (user_id required for outbound auth with SigV4)
+    print("\n🐙 Testing GitHub user lookup...")
+    response = agentcore_runtime.invoke(
+        {"prompt": "Tell me about the GitHub user 'octocat'"},
+        user_id="test-user-123"
+    )
+    print(f"✅ Response: {response}")
+else:
+    print("❌ Deployment failed!")
 ```
 
-<Callout type="success" title="Automatic Refresh">
-  Token Vault automatically refreshes expired OAuth tokens using stored refresh tokens.
-  Your agent code doesn't need to handle token lifecycle.
+Update `requirements.txt` to include requests:
+
+```txt
+bedrock-agentcore
+strands-agents
+strands-agents-tools
+requests
+```
+
+Run the deployment:
+
+```bash
+python deploy_outbound_agent.py
+```
+
+Expected output:
+
+```
+📦 Configuring AgentCore Runtime...
+✅ Configuration complete!
+
+🚀 Launching agent...
+   Agent ID: xyz789-xxxx-xxxx
+   Agent ARN: arn:aws:bedrock-agentcore:us-east-1:123456789012:agent-runtime/outbound-auth-agent
+
+🔐 Adding outbound identity policies...
+   Execution Role: outbound-auth-agent-execution-role
+✅ Outbound policies attached!
+
+⏳ Waiting for agent to be ready (3-5 minutes)...
+   Status: CREATING
+   Status: READY
+✅ Agent deployed successfully!
+
+🐙 Testing GitHub user lookup...
+✅ Response: The GitHub user 'octocat' is "The Octocat" with 8 public repositories and 9,500 followers.
+```
+
+<Callout type="info" title="Why user_id?">
+  When using outbound authentication with SigV4 (IAM) inbound auth, you must provide a `user_id` parameter. This identifies which user the agent is acting on behalf of when retrieving credentials from the credential provider.
+</Callout>
+
+<Callout type="tip" title="Credential Security">
+  AgentCore Identity securely stores your API keys in AWS Secrets Manager. The `@requires_api_key` decorator retrieves credentials at runtime - your agent code never needs to hardcode sensitive credentials.
+</Callout>
+
+## OAuth Access Tokens with Decorators
+
+For OAuth 2.0 flows (accessing services like GitHub, Google, Slack), use the `@requires_access_token` decorator:
+
+```python
+from bedrock_agentcore.identity.auth import requires_access_token
+
+@requires_access_token(
+    provider_name="github-oauth-provider",
+    scopes=["repo", "read:user"],
+    auth_flow="USER_FEDERATION"  # or "M2M" for machine-to-machine
+)
+async def access_github(*, access_token: str):
+    """Access GitHub API with OAuth token."""
+    headers = {"Authorization": f"Bearer {access_token}"}
+    response = requests.get(
+        "https://api.github.com/user",
+        headers=headers
+    )
+    return response.json()
+```
+
+### Decorator Parameters
+
+| Parameter | Description |
+|-----------|-------------|
+| `provider_name` | The credential provider name |
+| `scopes` | OAuth2 scopes to request |
+| `auth_flow` | "M2M" (machine-to-machine) or "USER_FEDERATION" |
+| `on_auth_url` | Callback for handling authorization URLs (3LO flows) |
+| `callback_url` | OAuth2 callback URL |
+| `force_authentication` | Force re-authentication |
+
+<Callout type="success" title="Automatic Token Management">
+  AgentCore Identity handles the complete OAuth flow including token refresh. The decorator automatically retrieves valid tokens - your agent code doesn't need to handle token lifecycle.
 </Callout>
 
 ## Best Practices
@@ -554,10 +815,13 @@ aws cloudtrail lookup-events \
 
 At this point, you have:
 
-- ✅ Understood the dual authentication model
-- ✅ Created a workload identity
-- ✅ Configured a JWT authorizer
-- ✅ Updated your agent to use Identity
+- ✅ Understood the dual authentication model (inbound and outbound)
+- ✅ Set up Amazon Cognito for user authentication
+- ✅ Configured JWT authorization using `authorizer_configuration`
+- ✅ Deployed your agent with authentication using `Runtime.configure()`
+- ✅ Invoked your agent with `bearer_token` authentication
+- ✅ Created credential providers for outbound API access
+- ✅ Used `@requires_api_key` decorator to retrieve credentials
 
 **Next, we'll connect your agent to external tools using Gateway.**
 
