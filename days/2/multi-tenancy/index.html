@@ -1,0 +1,985 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="canonical" href="https://jagdeep1.github.io/agentcore-avengers/days/2/multi-tenancy/"><!-- Favicon --><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><!-- Primary Meta Tags --><title>Multi-Tenancy and Fine-Grained Access Control - Day 2 | The AgentCore Initiative</title><meta name="title" content="Multi-Tenancy and Fine-Grained Access Control - Day 2 | The AgentCore Initiative"><meta name="description" content="Day 2: Age of Ultron - Identity + AgentCore Gateway"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://jagdeep1.github.io/agentcore-avengers/days/2/multi-tenancy/"><meta property="og:title" content="Multi-Tenancy and Fine-Grained Access Control - Day 2 | The AgentCore Initiative"><meta property="og:description" content="Day 2: Age of Ultron - Identity + AgentCore Gateway"><meta property="og:image" content="https://jagdeep1.github.io/images/og/default.png"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://jagdeep1.github.io/agentcore-avengers/days/2/multi-tenancy/"><meta name="twitter:title" content="Multi-Tenancy and Fine-Grained Access Control - Day 2 | The AgentCore Initiative"><meta name="twitter:description" content="Day 2: Age of Ultron - Identity + AgentCore Gateway"><meta name="twitter:image" content="https://jagdeep1.github.io/images/og/default.png"><!-- Fonts - Plus Jakarta Sans & Geist Mono --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"><!-- Theme initialization (prevents flash) --><script>
+      (function () {
+        const stored = localStorage.getItem('agentcore-initiative-progress');
+        let theme = 'dark';
+        if (stored) {
+          try {
+            const progress = JSON.parse(stored);
+            theme = progress.theme || 'dark';
+          } catch (e) {}
+        }
+        if (theme === 'system') {
+          theme = window.matchMedia('(prefers-color-scheme: light)').matches
+            ? 'light'
+            : 'dark';
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script><link rel="stylesheet" href="/agentcore-avengers/_astro/_slug_.BJ-bV7gI.css">
+<style>.pagination[data-astro-cid-ucfvjs2v]{display:flex;justify-content:space-between;gap:1rem}.pagination__link[data-astro-cid-ucfvjs2v]{flex:1;max-width:50%;padding:1rem 1.25rem;background:var(--color-bg-elevated);border:var(--border-subtle);border-radius:var(--radius-lg);text-decoration:none;transition:all var(--transition-fast)}.pagination__link[data-astro-cid-ucfvjs2v]:hover{background:var(--color-bg-secondary);border-color:var(--border-default)}.pagination__link--prev[data-astro-cid-ucfvjs2v]{text-align:left}.pagination__link--next[data-astro-cid-ucfvjs2v]{text-align:right;margin-left:auto}.pagination__label[data-astro-cid-ucfvjs2v]{display:block;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-muted);margin-bottom:.25rem}.pagination__title[data-astro-cid-ucfvjs2v]{display:block;font-size:.9375rem;font-weight:500;color:var(--color-text-primary)}
+</style>
+<link rel="stylesheet" href="/agentcore-avengers/_astro/_slug_.CP5296fy.css"><style>.callout[data-astro-cid-wi7smz4x]{display:flex;gap:1rem;padding:1rem 1.25rem;border-radius:var(--radius-lg);margin:1.5rem 0;border-left:4px solid}.callout--info[data-astro-cid-wi7smz4x]{background:#3b82f614;border-left-color:var(--color-accent-primary)}.callout--info[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-primary)}.callout--warning[data-astro-cid-wi7smz4x]{background:#f59e0b14;border-left-color:var(--color-accent-warning)}.callout--warning[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-warning)}.callout--danger[data-astro-cid-wi7smz4x]{background:#ef444414;border-left-color:var(--color-accent-danger)}.callout--danger[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-danger)}.callout--success[data-astro-cid-wi7smz4x]{background:#10b98114;border-left-color:var(--color-accent-success)}.callout--success[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-success)}.callout--tip[data-astro-cid-wi7smz4x]{background:#8b5cf614;border-left-color:var(--color-accent-purple)}.callout--tip[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-purple)}.callout__icon[data-astro-cid-wi7smz4x]{flex-shrink:0;width:1.25rem;height:1.25rem;margin-top:.125rem}.callout__content[data-astro-cid-wi7smz4x]{flex:1;min-width:0}.callout__title[data-astro-cid-wi7smz4x]{font-weight:600;font-size:.9375rem;color:var(--color-text-primary);margin-bottom:.25rem}.callout__body[data-astro-cid-wi7smz4x]{font-size:.9375rem;color:var(--color-text-secondary);line-height:1.6}.callout__body[data-astro-cid-wi7smz4x] p{margin:0}.callout__body[data-astro-cid-wi7smz4x] p+p{margin-top:.5rem}.callout__body[data-astro-cid-wi7smz4x] code{font-size:.85em}.callout__body[data-astro-cid-wi7smz4x] a{font-weight:500}
+</style></head> <body>  <header class="header" data-astro-cid-mb6pvx4c> <div class="header__container" data-astro-cid-mb6pvx4c> <!-- Logo --> <a href="/agentcore-avengers/" class="header__logo" aria-label="Home" data-astro-cid-mb6pvx4c> <svg class="header__logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" data-astro-cid-mb6pvx4c> <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c></circle> <path d="M16 6 L22 12 L16 18 L10 12 Z" fill="currentColor" opacity="0.5" data-astro-cid-mb6pvx4c></path> <circle cx="16" cy="16" r="4" fill="currentColor" data-astro-cid-mb6pvx4c></circle> </svg> <span class="header__logo-text" data-astro-cid-mb6pvx4c>AgentCore Initiative</span> </a> <!-- Desktop Navigation --> <nav class="header__nav hide-mobile" aria-label="Main navigation" data-astro-cid-mb6pvx4c> <ul class="header__nav-list" data-astro-cid-mb6pvx4c> <li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/days" class="header__nav-link header__nav-link--active" data-astro-cid-mb6pvx4c> Course </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/troubleshooting" class="header__nav-link" data-astro-cid-mb6pvx4c> Troubleshooting </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/reference" class="header__nav-link" data-astro-cid-mb6pvx4c> Reference </a> </li> </ul> </nav> <!-- Actions --> <div class="header__actions" data-astro-cid-mb6pvx4c> <!-- Theme Toggle Button (placeholder - will be React component) --> <button id="theme-toggle" class="header__theme-toggle" aria-label="Toggle theme" type="button" data-astro-cid-mb6pvx4c> <svg class="header__theme-icon header__theme-icon--dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <circle cx="12" cy="12" r="5" data-astro-cid-mb6pvx4c></circle> <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" data-astro-cid-mb6pvx4c></path> </svg> <svg class="header__theme-icon header__theme-icon--light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-mb6pvx4c></path> </svg> </button> <!-- Mobile Menu Toggle --> <button id="mobile-menu-toggle" class="header__mobile-toggle hide-desktop" aria-label="Toggle menu" aria-expanded="false" type="button" data-astro-cid-mb6pvx4c> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <path class="menu-icon" d="M4 6h16M4 12h16M4 18h16" data-astro-cid-mb6pvx4c></path> <path class="close-icon" d="M6 6l12 12M6 18L18 6" style="display: none" data-astro-cid-mb6pvx4c></path> </svg> </button> </div> </div> <!-- Mobile Navigation --> <nav id="mobile-nav" class="header__mobile-nav hide-desktop" aria-label="Mobile navigation" hidden data-astro-cid-mb6pvx4c> <ul class="header__mobile-nav-list" data-astro-cid-mb6pvx4c> <li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/days" class="header__mobile-nav-link header__mobile-nav-link--active" data-astro-cid-mb6pvx4c> Course </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/troubleshooting" class="header__mobile-nav-link" data-astro-cid-mb6pvx4c> Troubleshooting </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/reference" class="header__mobile-nav-link" data-astro-cid-mb6pvx4c> Reference </a> </li> </ul> </nav> </header>  <script type="module">const r=document.getElementById("theme-toggle");r&&r.addEventListener("click",()=>{const e=document.documentElement,t=e.getAttribute("data-theme")==="dark"?"light":"dark";e.setAttribute("data-theme",t);const c=localStorage.getItem("agentcore-initiative-progress");let i={theme:t};if(c)try{i={...JSON.parse(c),theme:t}}catch{}localStorage.setItem("agentcore-initiative-progress",JSON.stringify(i))});const n=document.getElementById("mobile-menu-toggle"),l=document.getElementById("mobile-nav");n&&l&&n.addEventListener("click",()=>{const e=n.getAttribute("aria-expanded")==="true";n.setAttribute("aria-expanded",String(!e)),l.hidden=e;const o=n.querySelector(".menu-icon"),t=n.querySelector(".close-icon");o&&t&&(o.style.display=e?"block":"none",t.style.display=e?"none":"block")});</script> <div class="day-layout" style="--day-accent: #ef4444" data-astro-cid-vfeiczyy> <!-- Sidebar --> <aside class="day-layout__sidebar hide-mobile" data-astro-cid-vfeiczyy> <div class="day-layout__sidebar-content" data-astro-cid-vfeiczyy> <!-- Day Header --> <div class="day-layout__day-header" data-astro-cid-vfeiczyy> <span class="day-layout__day-number" data-astro-cid-vfeiczyy>Day 2</span> <h2 class="day-layout__day-title" data-astro-cid-vfeiczyy>Age of Ultron</h2> <p class="day-layout__day-focus" data-astro-cid-vfeiczyy>Identity + AgentCore Gateway</p> </div> <!-- Section Navigation --> <nav class="day-layout__nav" aria-label="Day sections" data-astro-cid-vfeiczyy> <ul class="day-layout__nav-list" data-astro-cid-vfeiczyy> <li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/2/identity-basics" class="day-layout__nav-link" data-section="identity-basics" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Identity Basics </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/2/agentcore-gateway" class="day-layout__nav-link" data-section="agentcore-gateway" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> AgentCore Gateway </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/2/multi-tenancy" class="day-layout__nav-link day-layout__nav-link--active" data-section="multi-tenancy" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Multi-Tenancy and Fine-Grained Access Control </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/2/controlled-disasters" class="day-layout__nav-link" data-section="controlled-disasters" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Controlled Disasters </a> </li> </ul> </nav> <!-- Challenge Link --> <a href="/agentcore-avengers/days/2/challenge" class="day-layout__challenge-link" data-astro-cid-vfeiczyy> <span class="day-layout__challenge-icon" data-astro-cid-vfeiczyy> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-vfeiczyy> <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" data-astro-cid-vfeiczyy></polygon> </svg> </span>
+Daily Challenge
+</a> </div> </aside> <!-- Main Content --> <main class="day-layout__main" data-astro-cid-vfeiczyy> <article class="day-layout__content prose" data-astro-cid-vfeiczyy>  <h1 id="multi-tenancy-and-fine-grained-access-control">Multi-Tenancy and Fine-Grained Access Control</h1>
+<p>In the previous module, we set up a Gateway with JWT authentication. But basic JWT auth grants <strong>all-or-nothing access</strong> - if you have a valid token, you can access any tool. In production, you need <strong>Fine-Grained Access Control (FAGC)</strong> where different users have access to different tools.</p>
+<h2 id="the-fine-grained-access-challenge">The Fine-Grained Access Challenge</h2>
+<p>Consider this scenario with an Order Management API that has 4 tools:</p>
+<p><img src="/agentcore-avengers/images/day2/fgac.png" alt="FAGC Overview"/></p>
+<ul>
+<li><strong>External Customer</strong>: Should only access <code>SearchPromotions</code> (read-only)</li>
+<li><strong>Internal Admin</strong>: Should access both <code>AddPromotions</code> and <code>SearchPromotions</code></li>
+</ul>
+<p>Without FAGC, both users would see and access all tools. With FAGC, each user only sees and can invoke the tools they’re authorized for.</p>
+<aside class="callout callout--danger" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Why This Matters</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>Without fine-grained access control:</p><ul>
+<li>Users can discover tools they shouldn’t know about</li>
+<li>Users can invoke tools beyond their permission level</li>
+<li>Semantic search returns unauthorized tools</li>
+<li>A single permission bypass can expose sensitive operations</li>
+</ul> </div> </div> </aside> 
+<h2 id="how-gateway-interceptors-work">How Gateway Interceptors Work</h2>
+<p>AgentCore Gateway provides <strong>interceptors</strong> - Lambda functions that run at two critical points:</p>
+<ol>
+<li><strong>Request Interceptor</strong>: Runs BEFORE the request reaches the target</li>
+<li><strong>Response Interceptor</strong>: Runs BEFORE the response returns to the caller</li>
+</ol>
+<h3 id="three-access-control-points">Three Access Control Points</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Control Point</th><th>Interceptor Type</th><th>What It Does</th></tr></thead><tbody><tr><td><strong>Tool Invocation</strong></td><td>Request Interceptor</td><td>Block unauthorized <code>tools/call</code> requests</td></tr><tr><td><strong>Tool Discovery</strong></td><td>Response Interceptor</td><td>Filter <code>tools/list</code> results</td></tr><tr><td><strong>Semantic Search</strong></td><td>Response Interceptor</td><td>Filter search results</td></tr></tbody></table>
+<h3 id="scope-based-authorization">Scope-Based Authorization</h3>
+<p>We’ll use Cognito scopes to define permissions:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-mxwycu1i7" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext" id="code-mxwycu1i7"><code><span class="line"><span>&lt;resource-server-id&gt;/&lt;target-name&gt;           # Full access to all tools</span></span>
+<span class="line"><span>&lt;resource-server-id&gt;/&lt;target-name&gt;:&lt;tool&gt;    # Access to specific tool only</span></span></code></pre></div>
+<p>For example:</p>
+<ul>
+<li><code>agentcore-gateway-fagc/NasaMarsWeatherTarget</code> - Full access to all tools</li>
+<li><code>agentcore-gateway-fagc/NasaMarsWeatherTarget:getInsightWeather</code> - Access to one tool only</li>
+</ul>
+<aside class="callout callout--info" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Gateway Interceptors</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>Gateway Interceptors are Lambda functions that inspect JWT claims and enforce fine-grained permissions. They’re attached at the Gateway level, so they enforce policy for ALL targets - no need to modify individual tools or APIs.</p> </div> </div> </aside> 
+<h2 id="prerequisites">Prerequisites</h2>
+<p>This module builds on the Gateway infrastructure from the previous module. You should have:</p>
+<ul>
+<li>A running Gateway with a target (e.g., <code>NasaMarsWeatherTarget</code>)</li>
+<li>Cognito User Pool with domain configured</li>
+<li>Gateway URL and credentials</li>
+</ul>
+<h2 id="step-1-update-cognito-with-fine-grained-scopes">Step 1: Update Cognito with Fine-Grained Scopes</h2>
+<p>First, we add FAGC-specific scopes to our existing Cognito setup and create two app clients:</p>
+<ul>
+<li><strong>Admin client</strong>: Has full access to all tools in the target</li>
+<li><strong>Restricted client</strong>: Has no tool-specific scopes</li>
+</ul>
+<p>Create <code>update_cognito_scopes.py</code>:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-evyi7vawk" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-evyi7vawk"><code><span class="line"><span style="color:#6A737D"># update_cognito_scopes.py - Add fine-grained scopes to existing Cognito</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> boto3</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> os</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">REGION</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> os.environ.get(</span><span style="color:#9ECBFF">&#39;AWS_DEFAULT_REGION&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;us-east-1&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Values from Gateway module - UPDATE THESE</span></span>
+<span class="line"><span style="color:#79B8FF">USER_POOL_ID</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;us-east-1_XXXXXX&quot;</span><span style="color:#6A737D">  # From setup_cognito.py output</span></span>
+<span class="line"><span style="color:#79B8FF">TARGET_NAME</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;NasaMarsWeatherTarget&quot;</span><span style="color:#6A737D">  # Must match gateway target name</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">cognito </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto3.client(</span><span style="color:#9ECBFF">&#39;cognito-idp&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">region_name</span><span style="color:#F97583">=</span><span style="color:#79B8FF">REGION</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Updating Cognito for Fine-Grained Access Control...&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Define new resource server with FAGC scopes</span></span>
+<span class="line"><span style="color:#79B8FF">RESOURCE_SERVER_ID</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;agentcore-gateway-fagc&quot;</span></span>
+<span class="line"><span style="color:#79B8FF">FAGC_SCOPES</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;ScopeName&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">TARGET_NAME</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;ScopeDescription&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Full access to all tools in </span><span style="color:#79B8FF">{TARGET_NAME}</span><span style="color:#9ECBFF">&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;ScopeName&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">{TARGET_NAME}</span><span style="color:#9ECBFF">:getInsightWeather&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;ScopeDescription&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Access to getInsightWeather tool only&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Create resource server</span></span>
+<span class="line"><span style="color:#F97583">try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    cognito.create_resource_server(</span></span>
+<span class="line"><span style="color:#FFAB70">        UserPoolId</span><span style="color:#F97583">=</span><span style="color:#79B8FF">USER_POOL_ID</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        Identifier</span><span style="color:#F97583">=</span><span style="color:#79B8FF">RESOURCE_SERVER_ID</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        Name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;Gateway FAGC Scopes&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        Scopes</span><span style="color:#F97583">=</span><span style="color:#79B8FF">FAGC_SCOPES</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Created resource server: </span><span style="color:#79B8FF">{RESOURCE_SERVER_ID}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">except</span><span style="color:#79B8FF"> Exception</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> e:</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#9ECBFF"> &quot;already exists&quot;</span><span style="color:#F97583"> in</span><span style="color:#79B8FF"> str</span><span style="color:#E1E4E8">(e).lower():</span></span>
+<span class="line"><span style="color:#E1E4E8">        cognito.update_resource_server(</span></span>
+<span class="line"><span style="color:#FFAB70">            UserPoolId</span><span style="color:#F97583">=</span><span style="color:#79B8FF">USER_POOL_ID</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">            Identifier</span><span style="color:#F97583">=</span><span style="color:#79B8FF">RESOURCE_SERVER_ID</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">            Name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;Gateway FAGC Scopes&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">            Scopes</span><span style="color:#F97583">=</span><span style="color:#79B8FF">FAGC_SCOPES</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Updated resource server: </span><span style="color:#79B8FF">{RESOURCE_SERVER_ID}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    else</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">        raise</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Full scope strings</span></span>
+<span class="line"><span style="color:#E1E4E8">full_access_scope </span><span style="color:#F97583">=</span><span style="color:#F97583"> f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">{RESOURCE_SERVER_ID}</span><span style="color:#9ECBFF">/</span><span style="color:#79B8FF">{TARGET_NAME}</span><span style="color:#9ECBFF">&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Create Admin client (full access)</span></span>
+<span class="line"><span style="color:#E1E4E8">admin_response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> cognito.create_user_pool_client(</span></span>
+<span class="line"><span style="color:#FFAB70">    UserPoolId</span><span style="color:#F97583">=</span><span style="color:#79B8FF">USER_POOL_ID</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    ClientName</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;fagc-admin-client&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    GenerateSecret</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    AllowedOAuthFlows</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span><span style="color:#9ECBFF">&quot;client_credentials&quot;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">    AllowedOAuthScopes</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[full_access_scope],</span></span>
+<span class="line"><span style="color:#FFAB70">    AllowedOAuthFlowsUserPoolClient</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">admin_client_id </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> admin_response[</span><span style="color:#9ECBFF">&#39;UserPoolClient&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;ClientId&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">admin_client_secret </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> admin_response[</span><span style="color:#9ECBFF">&#39;UserPoolClient&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;ClientSecret&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Created Admin client: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">admin_client_id</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Create Restricted client (basic scope only, no tool access)</span></span>
+<span class="line"><span style="color:#6A737D"># Note: Use the resource server ID from your setup_cognito.py output</span></span>
+<span class="line"><span style="color:#E1E4E8">restricted_response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> cognito.create_user_pool_client(</span></span>
+<span class="line"><span style="color:#FFAB70">    UserPoolId</span><span style="color:#F97583">=</span><span style="color:#79B8FF">USER_POOL_ID</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    ClientName</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;fagc-restricted-client&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    GenerateSecret</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    AllowedOAuthFlows</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span><span style="color:#9ECBFF">&quot;client_credentials&quot;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">    AllowedOAuthScopes</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span><span style="color:#9ECBFF">&quot;gateway-resource-server/gateway:read&quot;</span><span style="color:#E1E4E8">],  </span><span style="color:#6A737D"># Basic gateway scope, no tool access</span></span>
+<span class="line"><span style="color:#FFAB70">    AllowedOAuthFlowsUserPoolClient</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">restricted_client_id </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> restricted_response[</span><span style="color:#9ECBFF">&#39;UserPoolClient&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;ClientId&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">restricted_client_secret </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> restricted_response[</span><span style="color:#9ECBFF">&#39;UserPoolClient&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;ClientSecret&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Created Restricted client: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">restricted_client_id</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">Save these values for the next steps:&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;   ADMIN_CLIENT_ID = </span><span style="color:#79B8FF">\&quot;{</span><span style="color:#E1E4E8">admin_client_id</span><span style="color:#79B8FF">}\&quot;</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;   ADMIN_CLIENT_SECRET = </span><span style="color:#79B8FF">\&quot;{</span><span style="color:#E1E4E8">admin_client_secret</span><span style="color:#79B8FF">}\&quot;</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;   RESTRICTED_CLIENT_ID = </span><span style="color:#79B8FF">\&quot;{</span><span style="color:#E1E4E8">restricted_client_id</span><span style="color:#79B8FF">}\&quot;</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;   RESTRICTED_CLIENT_SECRET = </span><span style="color:#79B8FF">\&quot;{</span><span style="color:#E1E4E8">restricted_client_secret</span><span style="color:#79B8FF">}\&quot;</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span></code></pre></div>
+<p>Run it:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-jzabgecxg" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-jzabgecxg"><code><span class="line"><span style="color:#B392F0">python</span><span style="color:#9ECBFF"> update_cognito_scopes.py</span></span></code></pre></div>
+<h2 id="step-2-create-request-interceptor-lambda">Step 2: Create Request Interceptor Lambda</h2>
+<p>The request interceptor runs before tool invocations and enforces authorization:</p>
+<p><img src="/agentcore-avengers/images/day2/invoke-tool.png" alt="Request Interceptor Flow"/></p>
+<p>Create <code>request_interceptor.py</code>:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-92fqajyh3" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-92fqajyh3"><code><span class="line"><span style="color:#6A737D"># request_interceptor.py - Lambda function for request-level FAGC</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> json</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> time</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> urllib.request</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> jose </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> jwk, jwt</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> jose.utils </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> base64url_decode</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># These values will be replaced during deployment</span></span>
+<span class="line"><span style="color:#79B8FF">GATEWAY_TARGET_NAME</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;TARGET_NAME_PLACEHOLDER&quot;</span></span>
+<span class="line"><span style="color:#79B8FF">RESOURCE_SERVER_ID</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;RESOURCE_SERVER_ID_PLACEHOLDER&quot;</span></span>
+<span class="line"><span style="color:#79B8FF">JWKS_URL</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;JWKS_URL_PLACEHOLDER&quot;</span></span>
+<span class="line"><span style="color:#79B8FF">CLIENT_ID</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;CLIENT_ID_PLACEHOLDER&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Load JWKS keys at cold start</span></span>
+<span class="line"><span style="color:#F97583">with</span><span style="color:#E1E4E8"> urllib.request.urlopen(</span><span style="color:#79B8FF">JWKS_URL</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> f:</span></span>
+<span class="line"><span style="color:#E1E4E8">    response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> f.read()</span></span>
+<span class="line"><span style="color:#E1E4E8">keys </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> json.loads(response.decode(</span><span style="color:#9ECBFF">&#39;utf-8&#39;</span><span style="color:#E1E4E8">))[</span><span style="color:#9ECBFF">&#39;keys&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># System tools that should pass through (filtered by response interceptor instead)</span></span>
+<span class="line"><span style="color:#79B8FF">SYSTEM_TOOLS</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;x_amz_bedrock_agentcore_search&quot;</span><span style="color:#E1E4E8">,  </span><span style="color:#6A737D"># semantic search tool</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> decode_jwt_payload</span><span style="color:#E1E4E8">(token):</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Verify and decode JWT payload&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    headers </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> jwt.get_unverified_headers(token)</span></span>
+<span class="line"><span style="color:#E1E4E8">    kid </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> headers[</span><span style="color:#9ECBFF">&#39;kid&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Find matching key</span></span>
+<span class="line"><span style="color:#E1E4E8">    key_index </span><span style="color:#F97583">=</span><span style="color:#F97583"> -</span><span style="color:#79B8FF">1</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> i, key </span><span style="color:#F97583">in</span><span style="color:#79B8FF"> enumerate</span><span style="color:#E1E4E8">(keys):</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> kid </span><span style="color:#F97583">==</span><span style="color:#E1E4E8"> key[</span><span style="color:#9ECBFF">&#39;kid&#39;</span><span style="color:#E1E4E8">]:</span></span>
+<span class="line"><span style="color:#E1E4E8">            key_index </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> i</span></span>
+<span class="line"><span style="color:#F97583">            break</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> key_index </span><span style="color:#F97583">==</span><span style="color:#F97583"> -</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">        raise</span><span style="color:#79B8FF"> Exception</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&#39;Public key not found in jwks.json&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Construct the public key</span></span>
+<span class="line"><span style="color:#E1E4E8">    public_key </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> jwk.construct(keys[key_index])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Get message and signature</span></span>
+<span class="line"><span style="color:#E1E4E8">    message, encoded_signature </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> str</span><span style="color:#E1E4E8">(token).rsplit(</span><span style="color:#9ECBFF">&#39;.&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    decoded_signature </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> base64url_decode(encoded_signature.encode(</span><span style="color:#9ECBFF">&#39;utf-8&#39;</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Verify signature</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#F97583"> not</span><span style="color:#E1E4E8"> public_key.verify(message.encode(</span><span style="color:#9ECBFF">&quot;utf8&quot;</span><span style="color:#E1E4E8">), decoded_signature):</span></span>
+<span class="line"><span style="color:#F97583">        raise</span><span style="color:#79B8FF"> Exception</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&#39;Signature verification failed&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Get claims</span></span>
+<span class="line"><span style="color:#E1E4E8">    claims </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> jwt.get_unverified_claims(token)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Check expiration</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> time.time() </span><span style="color:#F97583">&gt;</span><span style="color:#E1E4E8"> claims[</span><span style="color:#9ECBFF">&#39;exp&#39;</span><span style="color:#E1E4E8">]:</span></span>
+<span class="line"><span style="color:#F97583">        raise</span><span style="color:#79B8FF"> Exception</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&#39;Token is expired&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Check token use</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> claims.get(</span><span style="color:#9ECBFF">&#39;token_use&#39;</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">!=</span><span style="color:#9ECBFF"> &#39;access&#39;</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">        raise</span><span style="color:#79B8FF"> Exception</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Invalid token use: must be &#39;access&#39; token&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> claims</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> check_tool_authorization</span><span style="color:#E1E4E8">(scopes, tool_name):</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Check if user has permission for specific tool based on scopes.&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#F97583"> not</span><span style="color:#E1E4E8"> scopes:</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#79B8FF"> False</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    user_scopes </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> scopes.split(</span><span style="color:#9ECBFF">&quot; &quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    actual_scopes </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> []</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> s </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> user_scopes:</span></span>
+<span class="line"><span style="color:#6A737D">        # Strip resource server prefix if present</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#9ECBFF"> &quot;/&quot;</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> s:</span></span>
+<span class="line"><span style="color:#E1E4E8">            actual_scopes.append(s.split(</span><span style="color:#9ECBFF">&quot;/&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">)[</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#F97583">        else</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">            actual_scopes.append(s)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Full access to all tools in this target</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#79B8FF"> GATEWAY_TARGET_NAME</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> actual_scopes:</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#79B8FF"> True</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Specific tool permission: &lt;target&gt;:&lt;toolName&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">    required_scope </span><span style="color:#F97583">=</span><span style="color:#F97583"> f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">{GATEWAY_TARGET_NAME}</span><span style="color:#9ECBFF">:</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">tool_name</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> required_scope </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> actual_scopes:</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#79B8FF"> True</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> False</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> extract_tool_name</span><span style="color:#E1E4E8">(body):</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Extract tool name from MCP tools/call request body&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#F97583">    try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#79B8FF"> isinstance</span><span style="color:#E1E4E8">(body, </span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#E1E4E8">            params </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> body.get(</span><span style="color:#9ECBFF">&quot;params&quot;</span><span style="color:#E1E4E8">, {})</span></span>
+<span class="line"><span style="color:#E1E4E8">            tool_name </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> params.get(</span><span style="color:#9ECBFF">&quot;name&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#6A737D">            # Tool names are of the form: &lt;target&gt;___&lt;toolName&gt;</span></span>
+<span class="line"><span style="color:#F97583">            if</span><span style="color:#9ECBFF"> &quot;___&quot;</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> tool_name:</span></span>
+<span class="line"><span style="color:#F97583">                return</span><span style="color:#E1E4E8"> tool_name.split(</span><span style="color:#9ECBFF">&quot;___&quot;</span><span style="color:#E1E4E8">)[</span><span style="color:#F97583">-</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#F97583">            return</span><span style="color:#E1E4E8"> tool_name</span></span>
+<span class="line"><span style="color:#F97583">    except</span><span style="color:#79B8FF"> Exception</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">        pass</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> None</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> build_pass_through_response</span><span style="color:#E1E4E8">(auth_header, body):</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Return a pass-through response to let the request reach the target&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;interceptorOutputVersion&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;1.0&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;mcp&quot;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;transformedGatewayRequest&quot;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                &quot;headers&quot;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                    &quot;Authorization&quot;</span><span style="color:#E1E4E8">: auth_header,</span></span>
+<span class="line"><span style="color:#9ECBFF">                    &quot;Content-Type&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;application/json&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">                },</span></span>
+<span class="line"><span style="color:#9ECBFF">                &quot;body&quot;</span><span style="color:#E1E4E8">: body</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> build_error_response</span><span style="color:#E1E4E8">(message, body, status_code</span><span style="color:#F97583">=</span><span style="color:#79B8FF">403</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Return an MCP-style error response&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;interceptorOutputVersion&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;1.0&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;mcp&quot;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;transformedGatewayResponse&quot;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                &quot;statusCode&quot;</span><span style="color:#E1E4E8">: status_code,</span></span>
+<span class="line"><span style="color:#9ECBFF">                &quot;body&quot;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                    &quot;jsonrpc&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;2.0&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                    &quot;id&quot;</span><span style="color:#E1E4E8">: body.get(</span><span style="color:#9ECBFF">&quot;id&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;unknown&quot;</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">if</span><span style="color:#79B8FF"> isinstance</span><span style="color:#E1E4E8">(body, </span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">else</span><span style="color:#9ECBFF"> &quot;unknown&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                    &quot;error&quot;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                        &quot;code&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">-</span><span style="color:#79B8FF">32600</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                        &quot;message&quot;</span><span style="color:#E1E4E8">: message</span></span>
+<span class="line"><span style="color:#E1E4E8">                    }</span></span>
+<span class="line"><span style="color:#E1E4E8">                }</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> lambda_handler</span><span style="color:#E1E4E8">(event, context):</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Request Interceptor received event: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">json.dumps(event)</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Extract gateway request</span></span>
+<span class="line"><span style="color:#E1E4E8">    mcp_data </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> event.get(</span><span style="color:#9ECBFF">&quot;mcp&quot;</span><span style="color:#E1E4E8">, {})</span></span>
+<span class="line"><span style="color:#E1E4E8">    gateway_request </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> mcp_data.get(</span><span style="color:#9ECBFF">&quot;gatewayRequest&quot;</span><span style="color:#E1E4E8">, {})</span></span>
+<span class="line"><span style="color:#E1E4E8">    headers </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> gateway_request.get(</span><span style="color:#9ECBFF">&quot;headers&quot;</span><span style="color:#E1E4E8">, {})</span></span>
+<span class="line"><span style="color:#E1E4E8">    body </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> gateway_request.get(</span><span style="color:#9ECBFF">&quot;body&quot;</span><span style="color:#E1E4E8">, {})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Extract Authorization header</span></span>
+<span class="line"><span style="color:#E1E4E8">    auth_header </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> headers.get(</span><span style="color:#9ECBFF">&quot;Authorization&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Enforce presence of Bearer token</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#F97583"> not</span><span style="color:#E1E4E8"> auth_header.startswith(</span><span style="color:#9ECBFF">&quot;Bearer &quot;</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> build_error_response(</span><span style="color:#9ECBFF">&quot;No authorization token provided&quot;</span><span style="color:#E1E4E8">, body)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Decode token and check authorization</span></span>
+<span class="line"><span style="color:#F97583">    try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        token </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> auth_header.replace(</span><span style="color:#9ECBFF">&quot;Bearer &quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        decoded_token </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> decode_jwt_payload(token)</span></span>
+<span class="line"><span style="color:#E1E4E8">        scopes </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> decoded_token.get(</span><span style="color:#9ECBFF">&quot;scope&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">        method </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> body.get(</span><span style="color:#9ECBFF">&quot;method&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        tool_name </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> extract_tool_name(body)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Allow tools/list through - filtering handled by response interceptor</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> method </span><span style="color:#F97583">==</span><span style="color:#9ECBFF"> &quot;tools/list&quot;</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">            return</span><span style="color:#E1E4E8"> build_pass_through_response(auth_header, body)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Allow system tools through - filtering handled by response interceptor</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> tool_name </span><span style="color:#F97583">in</span><span style="color:#79B8FF"> SYSTEM_TOOLS</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">            return</span><span style="color:#E1E4E8"> build_pass_through_response(auth_header, body)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # For business tools, enforce FAGC</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#F97583"> not</span><span style="color:#E1E4E8"> tool_name:</span></span>
+<span class="line"><span style="color:#F97583">            return</span><span style="color:#E1E4E8"> build_error_response(</span><span style="color:#9ECBFF">&quot;No tool name in request&quot;</span><span style="color:#E1E4E8">, body)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#F97583"> not</span><span style="color:#E1E4E8"> check_tool_authorization(scopes, tool_name):</span></span>
+<span class="line"><span style="color:#F97583">            return</span><span style="color:#E1E4E8"> build_error_response(</span></span>
+<span class="line"><span style="color:#F97583">                f</span><span style="color:#9ECBFF">&quot;Insufficient permission for tool: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">tool_name</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">                body</span></span>
+<span class="line"><span style="color:#E1E4E8">            )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    except</span><span style="color:#79B8FF"> Exception</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> e:</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> build_error_response(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Invalid token - </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">e</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">, body)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Authorized - pass through</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> build_pass_through_response(auth_header, body)</span></span></code></pre></div>
+<h2 id="step-3-create-response-interceptor-lambda">Step 3: Create Response Interceptor Lambda</h2>
+<p>The response interceptor filters <code>tools/list</code> and semantic search results:</p>
+<p><img src="/agentcore-avengers/images/day2/list-tool.png" alt="Response Interceptor - List Tools"/></p>
+<p><img src="/agentcore-avengers/images/day2/search-tool.png" alt="Response Interceptor - Semantic Search"/></p>
+<p>Create <code>response_interceptor.py</code>:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-nlwf7few5" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-nlwf7few5"><code><span class="line"><span style="color:#6A737D"># response_interceptor.py - Lambda function for response-level FAGC</span></span>
+<span class="line"><span style="color:#6A737D"># Filters tools/list and semantic search results based on user scopes</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> json</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> time</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> urllib.request</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> jose </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> jwk, jwt</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> jose.utils </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> base64url_decode</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># These values will be replaced during deployment</span></span>
+<span class="line"><span style="color:#79B8FF">JWKS_URL</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;JWKS_URL_PLACEHOLDER&quot;</span></span>
+<span class="line"><span style="color:#79B8FF">CLIENT_ID</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;CLIENT_ID_PLACEHOLDER&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Load JWKS keys at cold start</span></span>
+<span class="line"><span style="color:#F97583">with</span><span style="color:#E1E4E8"> urllib.request.urlopen(</span><span style="color:#79B8FF">JWKS_URL</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> f:</span></span>
+<span class="line"><span style="color:#E1E4E8">    response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> f.read()</span></span>
+<span class="line"><span style="color:#E1E4E8">keys </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> json.loads(response.decode(</span><span style="color:#9ECBFF">&#39;utf-8&#39;</span><span style="color:#E1E4E8">))[</span><span style="color:#9ECBFF">&#39;keys&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> decode_jwt_payload</span><span style="color:#E1E4E8">(token):</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Verify and decode JWT payload&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    headers </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> jwt.get_unverified_headers(token)</span></span>
+<span class="line"><span style="color:#E1E4E8">    kid </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> headers[</span><span style="color:#9ECBFF">&#39;kid&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Find matching key</span></span>
+<span class="line"><span style="color:#E1E4E8">    key_index </span><span style="color:#F97583">=</span><span style="color:#F97583"> -</span><span style="color:#79B8FF">1</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> i, key </span><span style="color:#F97583">in</span><span style="color:#79B8FF"> enumerate</span><span style="color:#E1E4E8">(keys):</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> kid </span><span style="color:#F97583">==</span><span style="color:#E1E4E8"> key[</span><span style="color:#9ECBFF">&#39;kid&#39;</span><span style="color:#E1E4E8">]:</span></span>
+<span class="line"><span style="color:#E1E4E8">            key_index </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> i</span></span>
+<span class="line"><span style="color:#F97583">            break</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> key_index </span><span style="color:#F97583">==</span><span style="color:#F97583"> -</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">        raise</span><span style="color:#79B8FF"> Exception</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&#39;Public key not found in jwks.json&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Construct the public key</span></span>
+<span class="line"><span style="color:#E1E4E8">    public_key </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> jwk.construct(keys[key_index])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Get message and signature</span></span>
+<span class="line"><span style="color:#E1E4E8">    message, encoded_signature </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> str</span><span style="color:#E1E4E8">(token).rsplit(</span><span style="color:#9ECBFF">&#39;.&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    decoded_signature </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> base64url_decode(encoded_signature.encode(</span><span style="color:#9ECBFF">&#39;utf-8&#39;</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Verify signature</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#F97583"> not</span><span style="color:#E1E4E8"> public_key.verify(message.encode(</span><span style="color:#9ECBFF">&quot;utf8&quot;</span><span style="color:#E1E4E8">), decoded_signature):</span></span>
+<span class="line"><span style="color:#F97583">        raise</span><span style="color:#79B8FF"> Exception</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&#39;Signature verification failed&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Get claims</span></span>
+<span class="line"><span style="color:#E1E4E8">    claims </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> jwt.get_unverified_claims(token)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Check expiration</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> time.time() </span><span style="color:#F97583">&gt;</span><span style="color:#E1E4E8"> claims[</span><span style="color:#9ECBFF">&#39;exp&#39;</span><span style="color:#E1E4E8">]:</span></span>
+<span class="line"><span style="color:#F97583">        raise</span><span style="color:#79B8FF"> Exception</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&#39;Token is expired&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Check token use</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> claims.get(</span><span style="color:#9ECBFF">&#39;token_use&#39;</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">!=</span><span style="color:#9ECBFF"> &#39;access&#39;</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">        raise</span><span style="color:#79B8FF"> Exception</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Invalid token use: must be &#39;access&#39; token&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> claims</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> filter_tools_by_scope</span><span style="color:#E1E4E8">(tools, allowed_scopes):</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Filter tools based on user&#39;s scopes&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#F97583"> not</span><span style="color:#E1E4E8"> allowed_scopes:</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> []</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    filtered_tools </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> []</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> tool </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> tools:</span></span>
+<span class="line"><span style="color:#E1E4E8">        tool_name </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> tool.get(</span><span style="color:#9ECBFF">&quot;name&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Skip system tools without target separator</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#9ECBFF"> &quot;___&quot;</span><span style="color:#F97583"> not</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> tool_name:</span></span>
+<span class="line"><span style="color:#F97583">            continue</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">        mcp_target </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> tool_name.split(</span><span style="color:#9ECBFF">&quot;___&quot;</span><span style="color:#E1E4E8">)[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">        tool_action </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> tool_name.split(</span><span style="color:#9ECBFF">&quot;___&quot;</span><span style="color:#E1E4E8">)[</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        for</span><span style="color:#E1E4E8"> scope </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> allowed_scopes:</span></span>
+<span class="line"><span style="color:#6A737D">            # Remove resource server prefix to get actual scope</span></span>
+<span class="line"><span style="color:#E1E4E8">            actual_scope </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> scope.split(</span><span style="color:#9ECBFF">&quot;/&quot;</span><span style="color:#E1E4E8">)[</span><span style="color:#F97583">-</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">if</span><span style="color:#9ECBFF"> &quot;/&quot;</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> scope </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> scope</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">            # Full access to MCP target</span></span>
+<span class="line"><span style="color:#F97583">            if</span><span style="color:#E1E4E8"> actual_scope </span><span style="color:#F97583">==</span><span style="color:#E1E4E8"> mcp_target:</span></span>
+<span class="line"><span style="color:#E1E4E8">                filtered_tools.append(tool)</span></span>
+<span class="line"><span style="color:#F97583">                break</span></span>
+<span class="line"><span style="color:#6A737D">            # Specific tool access</span></span>
+<span class="line"><span style="color:#F97583">            elif</span><span style="color:#E1E4E8"> actual_scope </span><span style="color:#F97583">==</span><span style="color:#F97583"> f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">mcp_target</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">:</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">tool_action</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">                filtered_tools.append(tool)</span></span>
+<span class="line"><span style="color:#F97583">                break</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> filtered_tools</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> lambda_handler</span><span style="color:#E1E4E8">(event, context):</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Response Interceptor received event: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">json.dumps(event)</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Extract gateway response</span></span>
+<span class="line"><span style="color:#E1E4E8">    mcp_data </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> event.get(</span><span style="color:#9ECBFF">&quot;mcp&quot;</span><span style="color:#E1E4E8">, {})</span></span>
+<span class="line"><span style="color:#E1E4E8">    gateway_response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> mcp_data.get(</span><span style="color:#9ECBFF">&quot;gatewayResponse&quot;</span><span style="color:#E1E4E8">, {})</span></span>
+<span class="line"><span style="color:#E1E4E8">    headers </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> gateway_response.get(</span><span style="color:#9ECBFF">&quot;headers&quot;</span><span style="color:#E1E4E8">, {})</span></span>
+<span class="line"><span style="color:#E1E4E8">    body </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> gateway_response.get(</span><span style="color:#9ECBFF">&quot;body&quot;</span><span style="color:#E1E4E8">, {})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Pass through the Authorization header</span></span>
+<span class="line"><span style="color:#E1E4E8">    auth_header </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> headers.get(</span><span style="color:#9ECBFF">&quot;Authorization&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    token </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> auth_header.replace(</span><span style="color:#9ECBFF">&quot;Bearer &quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;&quot;</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">if</span><span style="color:#E1E4E8"> auth_header.startswith(</span><span style="color:#9ECBFF">&quot;Bearer &quot;</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">else</span><span style="color:#9ECBFF"> &quot;&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    filtered_body </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> body</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#6A737D">        # Parse JWT to get scopes</span></span>
+<span class="line"><span style="color:#E1E4E8">        claims </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> decode_jwt_payload(token)</span></span>
+<span class="line"><span style="color:#E1E4E8">        scope_string </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> claims.get(</span><span style="color:#9ECBFF">&quot;scope&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        scopes </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> scope_string.split() </span><span style="color:#F97583">if</span><span style="color:#E1E4E8"> scope_string </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> []</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Get tools from response (supports both tools/list and semantic search)</span></span>
+<span class="line"><span style="color:#E1E4E8">        result </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> body.get(</span><span style="color:#9ECBFF">&quot;result&quot;</span><span style="color:#E1E4E8">, {})</span></span>
+<span class="line"><span style="color:#E1E4E8">        tools </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> result.get(</span><span style="color:#9ECBFF">&quot;tools&quot;</span><span style="color:#E1E4E8">, [])</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#F97583"> not</span><span style="color:#E1E4E8"> tools:</span></span>
+<span class="line"><span style="color:#E1E4E8">            structured_content </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> result.get(</span><span style="color:#9ECBFF">&quot;structuredContent&quot;</span><span style="color:#E1E4E8">, {})</span></span>
+<span class="line"><span style="color:#E1E4E8">            tools </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> structured_content.get(</span><span style="color:#9ECBFF">&quot;tools&quot;</span><span style="color:#E1E4E8">, [])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Filter tools based on scopes</span></span>
+<span class="line"><span style="color:#E1E4E8">        filtered_tools </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> filter_tools_by_scope(tools, scopes)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Update body with filtered tools</span></span>
+<span class="line"><span style="color:#E1E4E8">        filtered_body </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> body.copy()</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#9ECBFF"> &quot;result&quot;</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> filtered_body:</span></span>
+<span class="line"><span style="color:#F97583">            if</span><span style="color:#9ECBFF"> &quot;structuredContent&quot;</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> filtered_body[</span><span style="color:#9ECBFF">&quot;result&quot;</span><span style="color:#E1E4E8">]:</span></span>
+<span class="line"><span style="color:#E1E4E8">                filtered_body[</span><span style="color:#9ECBFF">&quot;result&quot;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&quot;structuredContent&quot;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&quot;tools&quot;</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> filtered_tools</span></span>
+<span class="line"><span style="color:#F97583">            else</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">                filtered_body[</span><span style="color:#9ECBFF">&quot;result&quot;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&quot;tools&quot;</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> filtered_tools</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">            # Also filter content array if it contains embedded tool JSON</span></span>
+<span class="line"><span style="color:#F97583">            if</span><span style="color:#9ECBFF"> &quot;content&quot;</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> filtered_body[</span><span style="color:#9ECBFF">&quot;result&quot;</span><span style="color:#E1E4E8">]:</span></span>
+<span class="line"><span style="color:#F97583">                for</span><span style="color:#E1E4E8"> content_item </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> filtered_body[</span><span style="color:#9ECBFF">&quot;result&quot;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&quot;content&quot;</span><span style="color:#E1E4E8">]:</span></span>
+<span class="line"><span style="color:#F97583">                    if</span><span style="color:#E1E4E8"> content_item.get(</span><span style="color:#9ECBFF">&quot;type&quot;</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">==</span><span style="color:#9ECBFF"> &quot;text&quot;</span><span style="color:#F97583"> and</span><span style="color:#9ECBFF"> &quot;text&quot;</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> content_item:</span></span>
+<span class="line"><span style="color:#F97583">                        try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">                            content_data </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> json.loads(content_item[</span><span style="color:#9ECBFF">&quot;text&quot;</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#F97583">                            if</span><span style="color:#9ECBFF"> &quot;tools&quot;</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> content_data:</span></span>
+<span class="line"><span style="color:#E1E4E8">                                content_filtered </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> filter_tools_by_scope(content_data[</span><span style="color:#9ECBFF">&quot;tools&quot;</span><span style="color:#E1E4E8">], scopes)</span></span>
+<span class="line"><span style="color:#E1E4E8">                                content_data[</span><span style="color:#9ECBFF">&quot;tools&quot;</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> content_filtered</span></span>
+<span class="line"><span style="color:#E1E4E8">                                content_item[</span><span style="color:#9ECBFF">&quot;text&quot;</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> json.dumps(content_data)</span></span>
+<span class="line"><span style="color:#F97583">                        except</span><span style="color:#E1E4E8"> (json.JSONDecodeError, </span><span style="color:#79B8FF">KeyError</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#F97583">                            pass</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    except</span><span style="color:#79B8FF"> Exception</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> e:</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Error processing JWT or filtering: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">e</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#6A737D">        # On error, return original body (fail open for debugging)</span></span>
+<span class="line"><span style="color:#E1E4E8">        filtered_body </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> body</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Return transformed response</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;interceptorOutputVersion&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;1.0&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;mcp&quot;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;transformedGatewayResponse&quot;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                &quot;statusCode&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">200</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                &quot;headers&quot;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">                    &quot;Accept&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;application/json&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                    &quot;Authorization&quot;</span><span style="color:#E1E4E8">: auth_header</span></span>
+<span class="line"><span style="color:#E1E4E8">                },</span></span>
+<span class="line"><span style="color:#9ECBFF">                &quot;body&quot;</span><span style="color:#E1E4E8">: filtered_body</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span></code></pre></div>
+<h2 id="step-4-deploy-interceptors-to-gateway">Step 4: Deploy Interceptors to Gateway</h2>
+<p>Create <code>deploy_interceptors.py</code> to package and deploy the Lambdas, then attach them to the Gateway:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-5egfe6fma" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-5egfe6fma"><code><span class="line"><span style="color:#6A737D"># deploy_interceptors.py - Deploy Lambda interceptors and attach to Gateway</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> boto3</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> json</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> time</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> zipfile</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> subprocess</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> tempfile</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> io</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> os</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> datetime </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> datetime</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">REGION</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> os.environ.get(</span><span style="color:#9ECBFF">&#39;AWS_DEFAULT_REGION&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;us-east-1&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Values from previous steps - UPDATE THESE</span></span>
+<span class="line"><span style="color:#79B8FF">GATEWAY_ID</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;marsweathergateway-XXXXXX&quot;</span><span style="color:#6A737D">  # From create_gateway.py output</span></span>
+<span class="line"><span style="color:#79B8FF">USER_POOL_ID</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;us-east-1_XXXXXX&quot;</span><span style="color:#6A737D">  # From setup_cognito.py output</span></span>
+<span class="line"><span style="color:#79B8FF">TARGET_NAME</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;NasaMarsWeatherTarget&quot;</span></span>
+<span class="line"><span style="color:#79B8FF">RESOURCE_SERVER_ID</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;agentcore-gateway-fagc&quot;</span></span>
+<span class="line"><span style="color:#79B8FF">ADMIN_CLIENT_ID</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;XXXXXX&quot;</span><span style="color:#6A737D">  # From update_cognito_scopes.py output</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Generate timestamp for unique naming</span></span>
+<span class="line"><span style="color:#E1E4E8">timestamp </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> datetime.now().strftime(</span><span style="color:#9ECBFF">&#39;%Y%m</span><span style="color:#79B8FF">%d</span><span style="color:#9ECBFF">-%H%M%S&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Cognito URLs</span></span>
+<span class="line"><span style="color:#E1E4E8">jwks_url </span><span style="color:#F97583">=</span><span style="color:#F97583"> f</span><span style="color:#9ECBFF">&quot;https://cognito-idp.</span><span style="color:#79B8FF">{REGION}</span><span style="color:#9ECBFF">.amazonaws.com/</span><span style="color:#79B8FF">{USER_POOL_ID}</span><span style="color:#9ECBFF">/.well-known/jwks.json&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">iam_client </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto3.client(</span><span style="color:#9ECBFF">&#39;iam&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">region_name</span><span style="color:#F97583">=</span><span style="color:#79B8FF">REGION</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">lambda_client </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto3.client(</span><span style="color:#9ECBFF">&#39;lambda&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">region_name</span><span style="color:#F97583">=</span><span style="color:#79B8FF">REGION</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">gateway_client </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto3.client(</span><span style="color:#9ECBFF">&#39;bedrock-agentcore-control&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">region_name</span><span style="color:#F97583">=</span><span style="color:#79B8FF">REGION</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Deploying Gateway Interceptors for Fine-Grained Access Control&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Step 1: Create IAM role for Lambda</span></span>
+<span class="line"><span style="color:#E1E4E8">lambda_trust_policy </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;Version&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;2012-10-17&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;Statement&quot;</span><span style="color:#E1E4E8">: [{</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;Effect&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Allow&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;Principal&quot;</span><span style="color:#E1E4E8">: {</span><span style="color:#9ECBFF">&quot;Service&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;lambda.amazonaws.com&quot;</span><span style="color:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;Action&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;sts:AssumeRole&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }]</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">lambda_role_name </span><span style="color:#F97583">=</span><span style="color:#F97583"> f</span><span style="color:#9ECBFF">&#39;fagc-interceptor-role-</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">timestamp</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">role_response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> iam_client.create_role(</span></span>
+<span class="line"><span style="color:#FFAB70">    RoleName</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">lambda_role_name,</span></span>
+<span class="line"><span style="color:#FFAB70">    AssumeRolePolicyDocument</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">json.dumps(lambda_trust_policy)</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">lambda_role_arn </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> role_response[</span><span style="color:#9ECBFF">&#39;Role&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;Arn&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">iam_client.attach_role_policy(</span></span>
+<span class="line"><span style="color:#FFAB70">    RoleName</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">lambda_role_name,</span></span>
+<span class="line"><span style="color:#FFAB70">    PolicyArn</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Created Lambda role: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">lambda_role_arn</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">time.sleep(</span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">)  </span><span style="color:#6A737D"># Wait for role propagation</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Step 2: Deploy Request Interceptor Lambda</span></span>
+<span class="line"><span style="color:#F97583">with</span><span style="color:#79B8FF"> open</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&#39;request_interceptor.py&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;r&#39;</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> f:</span></span>
+<span class="line"><span style="color:#E1E4E8">    request_code </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> f.read()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Replace placeholders with actual values</span></span>
+<span class="line"><span style="color:#E1E4E8">request_code </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> request_code.replace(</span><span style="color:#9ECBFF">&quot;TARGET_NAME_PLACEHOLDER&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">TARGET_NAME</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">request_code </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> request_code.replace(</span><span style="color:#9ECBFF">&quot;RESOURCE_SERVER_ID_PLACEHOLDER&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">RESOURCE_SERVER_ID</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">request_code </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> request_code.replace(</span><span style="color:#9ECBFF">&quot;JWKS_URL_PLACEHOLDER&quot;</span><span style="color:#E1E4E8">, jwks_url)</span></span>
+<span class="line"><span style="color:#E1E4E8">request_code </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> request_code.replace(</span><span style="color:#9ECBFF">&quot;CLIENT_ID_PLACEHOLDER&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">ADMIN_CLIENT_ID</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Create ZIP with dependencies</span></span>
+<span class="line"><span style="color:#F97583">with</span><span style="color:#E1E4E8"> tempfile.TemporaryDirectory() </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> temp_dir:</span></span>
+<span class="line"><span style="color:#E1E4E8">    subprocess.run([</span><span style="color:#9ECBFF">&#39;pip&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;install&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;python-jose[cryptography]&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;-t&#39;</span><span style="color:#E1E4E8">, temp_dir],</span></span>
+<span class="line"><span style="color:#FFAB70">                   check</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">capture_output</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    zip_buffer </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> io.BytesIO()</span></span>
+<span class="line"><span style="color:#F97583">    with</span><span style="color:#E1E4E8"> zipfile.ZipFile(zip_buffer, </span><span style="color:#9ECBFF">&#39;w&#39;</span><span style="color:#E1E4E8">, zipfile.</span><span style="color:#79B8FF">ZIP_DEFLATED</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> zip_file:</span></span>
+<span class="line"><span style="color:#E1E4E8">        zip_file.writestr(</span><span style="color:#9ECBFF">&#39;lambda_function.py&#39;</span><span style="color:#E1E4E8">, request_code)</span></span>
+<span class="line"><span style="color:#F97583">        for</span><span style="color:#E1E4E8"> root, dirs, files </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> os.walk(temp_dir):</span></span>
+<span class="line"><span style="color:#F97583">            for</span><span style="color:#FFAB70"> file</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> files:</span></span>
+<span class="line"><span style="color:#E1E4E8">                file_path </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> os.path.join(root, </span><span style="color:#FFAB70">file</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">                arc_name </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> os.path.relpath(file_path, temp_dir)</span></span>
+<span class="line"><span style="color:#E1E4E8">                zip_file.write(file_path, arc_name)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">zip_buffer.seek(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">request_lambda_name </span><span style="color:#F97583">=</span><span style="color:#F97583"> f</span><span style="color:#9ECBFF">&#39;fagc-request-interceptor-</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">timestamp</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&#39;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">request_lambda_response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> lambda_client.create_function(</span></span>
+<span class="line"><span style="color:#FFAB70">    FunctionName</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">request_lambda_name,</span></span>
+<span class="line"><span style="color:#FFAB70">    Runtime</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;python3.12&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    Role</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">lambda_role_arn,</span></span>
+<span class="line"><span style="color:#FFAB70">    Handler</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;lambda_function.lambda_handler&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    Code</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span><span style="color:#9ECBFF">&#39;ZipFile&#39;</span><span style="color:#E1E4E8">: zip_buffer.read()},</span></span>
+<span class="line"><span style="color:#FFAB70">    Timeout</span><span style="color:#F97583">=</span><span style="color:#79B8FF">30</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">request_lambda_arn </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> request_lambda_response[</span><span style="color:#9ECBFF">&#39;FunctionArn&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Created Request Interceptor: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">request_lambda_arn</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Step 3: Deploy Response Interceptor Lambda (similar process)</span></span>
+<span class="line"><span style="color:#F97583">with</span><span style="color:#79B8FF"> open</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&#39;response_interceptor.py&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;r&#39;</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> f:</span></span>
+<span class="line"><span style="color:#E1E4E8">    response_code </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> f.read()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">response_code </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> response_code.replace(</span><span style="color:#9ECBFF">&quot;JWKS_URL_PLACEHOLDER&quot;</span><span style="color:#E1E4E8">, jwks_url)</span></span>
+<span class="line"><span style="color:#E1E4E8">response_code </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> response_code.replace(</span><span style="color:#9ECBFF">&quot;CLIENT_ID_PLACEHOLDER&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">ADMIN_CLIENT_ID</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">with</span><span style="color:#E1E4E8"> tempfile.TemporaryDirectory() </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> temp_dir:</span></span>
+<span class="line"><span style="color:#E1E4E8">    subprocess.run([</span><span style="color:#9ECBFF">&#39;pip&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;install&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;python-jose[cryptography]&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;-t&#39;</span><span style="color:#E1E4E8">, temp_dir],</span></span>
+<span class="line"><span style="color:#FFAB70">                   check</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">capture_output</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    zip_buffer </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> io.BytesIO()</span></span>
+<span class="line"><span style="color:#F97583">    with</span><span style="color:#E1E4E8"> zipfile.ZipFile(zip_buffer, </span><span style="color:#9ECBFF">&#39;w&#39;</span><span style="color:#E1E4E8">, zipfile.</span><span style="color:#79B8FF">ZIP_DEFLATED</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> zip_file:</span></span>
+<span class="line"><span style="color:#E1E4E8">        zip_file.writestr(</span><span style="color:#9ECBFF">&#39;lambda_function.py&#39;</span><span style="color:#E1E4E8">, response_code)</span></span>
+<span class="line"><span style="color:#F97583">        for</span><span style="color:#E1E4E8"> root, dirs, files </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> os.walk(temp_dir):</span></span>
+<span class="line"><span style="color:#F97583">            for</span><span style="color:#FFAB70"> file</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> files:</span></span>
+<span class="line"><span style="color:#E1E4E8">                file_path </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> os.path.join(root, </span><span style="color:#FFAB70">file</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">                arc_name </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> os.path.relpath(file_path, temp_dir)</span></span>
+<span class="line"><span style="color:#E1E4E8">                zip_file.write(file_path, arc_name)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">zip_buffer.seek(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">response_lambda_name </span><span style="color:#F97583">=</span><span style="color:#F97583"> f</span><span style="color:#9ECBFF">&#39;fagc-response-interceptor-</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">timestamp</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&#39;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">response_lambda_response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> lambda_client.create_function(</span></span>
+<span class="line"><span style="color:#FFAB70">    FunctionName</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">response_lambda_name,</span></span>
+<span class="line"><span style="color:#FFAB70">    Runtime</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;python3.12&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    Role</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">lambda_role_arn,</span></span>
+<span class="line"><span style="color:#FFAB70">    Handler</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;lambda_function.lambda_handler&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    Code</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span><span style="color:#9ECBFF">&#39;ZipFile&#39;</span><span style="color:#E1E4E8">: zip_buffer.read()},</span></span>
+<span class="line"><span style="color:#FFAB70">    Timeout</span><span style="color:#F97583">=</span><span style="color:#79B8FF">30</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">response_lambda_arn </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> response_lambda_response[</span><span style="color:#9ECBFF">&#39;FunctionArn&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Created Response Interceptor: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">response_lambda_arn</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Step 4: Attach interceptors to Gateway</span></span>
+<span class="line"><span style="color:#6A737D"># Get current gateway config (update_gateway requires ALL parameters)</span></span>
+<span class="line"><span style="color:#E1E4E8">gateway_info </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> gateway_client.get_gateway(</span><span style="color:#FFAB70">gatewayIdentifier</span><span style="color:#F97583">=</span><span style="color:#79B8FF">GATEWAY_ID</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">gateway_client.update_gateway(</span></span>
+<span class="line"><span style="color:#FFAB70">    gatewayIdentifier</span><span style="color:#F97583">=</span><span style="color:#79B8FF">GATEWAY_ID</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    name</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">gateway_info[</span><span style="color:#9ECBFF">&#39;name&#39;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">    roleArn</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">gateway_info[</span><span style="color:#9ECBFF">&#39;roleArn&#39;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">    protocolType</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">gateway_info[</span><span style="color:#9ECBFF">&#39;protocolType&#39;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">    authorizerType</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">gateway_info[</span><span style="color:#9ECBFF">&#39;authorizerType&#39;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">    authorizerConfiguration</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">gateway_info.get(</span><span style="color:#9ECBFF">&#39;authorizerConfiguration&#39;</span><span style="color:#E1E4E8">, {}),</span></span>
+<span class="line"><span style="color:#FFAB70">    interceptorConfigurations</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;interceptor&#39;</span><span style="color:#E1E4E8">: {</span><span style="color:#9ECBFF">&#39;lambda&#39;</span><span style="color:#E1E4E8">: {</span><span style="color:#9ECBFF">&#39;arn&#39;</span><span style="color:#E1E4E8">: request_lambda_arn}},</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;interceptionPoints&#39;</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">&#39;REQUEST&#39;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;inputConfiguration&#39;</span><span style="color:#E1E4E8">: {</span><span style="color:#9ECBFF">&#39;passRequestHeaders&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;interceptor&#39;</span><span style="color:#E1E4E8">: {</span><span style="color:#9ECBFF">&#39;lambda&#39;</span><span style="color:#E1E4E8">: {</span><span style="color:#9ECBFF">&#39;arn&#39;</span><span style="color:#E1E4E8">: response_lambda_arn}},</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;interceptionPoints&#39;</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">&#39;RESPONSE&#39;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#39;inputConfiguration&#39;</span><span style="color:#E1E4E8">: {</span><span style="color:#9ECBFF">&#39;passRequestHeaders&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    ]</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Wait for gateway to be ready</span></span>
+<span class="line"><span style="color:#F97583">while</span><span style="color:#79B8FF"> True</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    status </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> gateway_client.get_gateway(</span><span style="color:#FFAB70">gatewayIdentifier</span><span style="color:#F97583">=</span><span style="color:#79B8FF">GATEWAY_ID</span><span style="color:#E1E4E8">)[</span><span style="color:#9ECBFF">&#39;status&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Gateway status: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">status</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> status </span><span style="color:#F97583">==</span><span style="color:#9ECBFF"> &#39;READY&#39;</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">        break</span></span>
+<span class="line"><span style="color:#E1E4E8">    time.sleep(</span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">Interceptors attached to Gateway!&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Save these for cleanup:&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;   LAMBDA_ROLE_NAME = </span><span style="color:#79B8FF">\&quot;{</span><span style="color:#E1E4E8">lambda_role_name</span><span style="color:#79B8FF">}\&quot;</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;   REQUEST_LAMBDA_NAME = </span><span style="color:#79B8FF">\&quot;{</span><span style="color:#E1E4E8">request_lambda_name</span><span style="color:#79B8FF">}\&quot;</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;   RESPONSE_LAMBDA_NAME = </span><span style="color:#79B8FF">\&quot;{</span><span style="color:#E1E4E8">response_lambda_name</span><span style="color:#79B8FF">}\&quot;</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span></code></pre></div>
+<aside class="callout callout--info" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>update_gateway Requires All Parameters</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>The <code>update_gateway</code> API requires all original parameters (name, roleArn, protocolType, authorizerType) even when only adding interceptors. Always fetch the current config first and include all values.</p> </div> </div> </aside> 
+<p>Run it:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-y7mosqx84" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-y7mosqx84"><code><span class="line"><span style="color:#B392F0">python</span><span style="color:#9ECBFF"> deploy_interceptors.py</span></span></code></pre></div>
+<h2 id="step-4b-update-gateway-allowed-clients">Step 4b: Update Gateway Allowed Clients</h2>
+<p>After deploying interceptors, update the Gateway’s JWT authorizer to include the FAGC client IDs. Otherwise, the new clients will get “Invalid Bearer token” errors.</p>
+<p>Create <code>update_gateway_clients.py</code>:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-g6v3bg87m" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-g6v3bg87m"><code><span class="line"><span style="color:#6A737D"># update_gateway_clients.py - Add FAGC clients to Gateway&#39;s allowed clients list</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> boto3</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> time</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> os</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">REGION</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> os.environ.get(</span><span style="color:#9ECBFF">&#39;AWS_DEFAULT_REGION&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;us-east-1&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Values from previous steps - UPDATE THESE</span></span>
+<span class="line"><span style="color:#79B8FF">GATEWAY_ID</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;marsweathergateway-XXXXXX&quot;</span></span>
+<span class="line"><span style="color:#79B8FF">USER_POOL_ID</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;us-east-1_XXXXXX&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Client IDs - UPDATE THESE</span></span>
+<span class="line"><span style="color:#79B8FF">ORIGINAL_CLIENT_ID</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;XXXXXX&quot;</span><span style="color:#6A737D">  # Original client from setup_cognito.py</span></span>
+<span class="line"><span style="color:#79B8FF">ADMIN_CLIENT_ID</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;XXXXXX&quot;</span><span style="color:#6A737D">  # From update_cognito_scopes.py output</span></span>
+<span class="line"><span style="color:#79B8FF">RESTRICTED_CLIENT_ID</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;XXXXXX&quot;</span><span style="color:#6A737D">  # From update_cognito_scopes.py output</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">gateway_client </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto3.client(</span><span style="color:#9ECBFF">&#39;bedrock-agentcore-control&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">region_name</span><span style="color:#F97583">=</span><span style="color:#79B8FF">REGION</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Updating Gateway to allow FAGC clients...&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Get current gateway configuration</span></span>
+<span class="line"><span style="color:#E1E4E8">current </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> gateway_client.get_gateway(</span><span style="color:#FFAB70">gatewayIdentifier</span><span style="color:#F97583">=</span><span style="color:#79B8FF">GATEWAY_ID</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Current status: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">current[</span><span style="color:#9ECBFF">&#39;status&#39;</span><span style="color:#E1E4E8">]</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Build updated authorizer configuration with all client IDs</span></span>
+<span class="line"><span style="color:#E1E4E8">auth_config </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;customJWTAuthorizer&quot;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;allowedClients&quot;</span><span style="color:#E1E4E8">: [</span><span style="color:#79B8FF">ORIGINAL_CLIENT_ID</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">ADMIN_CLIENT_ID</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">RESTRICTED_CLIENT_ID</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;discoveryUrl&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;https://cognito-idp.</span><span style="color:#79B8FF">{REGION}</span><span style="color:#9ECBFF">.amazonaws.com/</span><span style="color:#79B8FF">{USER_POOL_ID}</span><span style="color:#9ECBFF">/.well-known/openid-configuration&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Update gateway - must include all required parameters</span></span>
+<span class="line"><span style="color:#E1E4E8">gateway_client.update_gateway(</span></span>
+<span class="line"><span style="color:#FFAB70">    gatewayIdentifier</span><span style="color:#F97583">=</span><span style="color:#79B8FF">GATEWAY_ID</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    name</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">current[</span><span style="color:#9ECBFF">&#39;name&#39;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">    roleArn</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">current[</span><span style="color:#9ECBFF">&#39;roleArn&#39;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">    protocolType</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">current[</span><span style="color:#9ECBFF">&#39;protocolType&#39;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">    authorizerType</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">current[</span><span style="color:#9ECBFF">&#39;authorizerType&#39;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">    authorizerConfiguration</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">auth_config,</span></span>
+<span class="line"><span style="color:#FFAB70">    interceptorConfigurations</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">current.get(</span><span style="color:#9ECBFF">&#39;interceptorConfigurations&#39;</span><span style="color:#E1E4E8">, [])</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Wait for gateway to be ready</span></span>
+<span class="line"><span style="color:#F97583">while</span><span style="color:#79B8FF"> True</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    status </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> gateway_client.get_gateway(</span><span style="color:#FFAB70">gatewayIdentifier</span><span style="color:#F97583">=</span><span style="color:#79B8FF">GATEWAY_ID</span><span style="color:#E1E4E8">)[</span><span style="color:#9ECBFF">&#39;status&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Gateway status: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">status</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> status </span><span style="color:#F97583">==</span><span style="color:#9ECBFF"> &#39;READY&#39;</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">        break</span></span>
+<span class="line"><span style="color:#E1E4E8">    time.sleep(</span><span style="color:#79B8FF">5</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">Gateway updated with FAGC clients!&quot;</span><span style="color:#E1E4E8">)</span></span></code></pre></div>
+<p>Run it:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-nz3ig3g6j" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-nz3ig3g6j"><code><span class="line"><span style="color:#B392F0">python</span><span style="color:#9ECBFF"> update_gateway_clients.py</span></span></code></pre></div>
+<h2 id="step-5-test-access-control">Step 5: Test Access Control</h2>
+<p>Now let’s verify FAGC is working:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-ldlyetjel" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-ldlyetjel"><code><span class="line"><span style="color:#6A737D"># test_fagc.py - Test Fine-Grained Access Control</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> boto3</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> requests</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> base64</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> os</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">REGION</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> os.environ.get(</span><span style="color:#9ECBFF">&#39;AWS_DEFAULT_REGION&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;us-east-1&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Values from previous steps - UPDATE THESE</span></span>
+<span class="line"><span style="color:#79B8FF">GATEWAY_URL</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;https://marsweathergateway-XXXXXX.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp&quot;</span></span>
+<span class="line"><span style="color:#79B8FF">USER_POOL_ID</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;us-east-1_XXXXXX&quot;</span></span>
+<span class="line"><span style="color:#79B8FF">TARGET_NAME</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;NasaMarsWeatherTarget&quot;</span></span>
+<span class="line"><span style="color:#79B8FF">RESOURCE_SERVER_ID</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;agentcore-gateway-fagc&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Client IDs from update_cognito_scopes.py</span></span>
+<span class="line"><span style="color:#79B8FF">ADMIN_CLIENT_ID</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;XXXXXX&quot;</span></span>
+<span class="line"><span style="color:#79B8FF">RESTRICTED_CLIENT_ID</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;XXXXXX&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Get client secrets from Cognito</span></span>
+<span class="line"><span style="color:#E1E4E8">cognito_client </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto3.client(</span><span style="color:#9ECBFF">&#39;cognito-idp&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">region_name</span><span style="color:#F97583">=</span><span style="color:#79B8FF">REGION</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">admin_desc </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> cognito_client.describe_user_pool_client(</span><span style="color:#FFAB70">UserPoolId</span><span style="color:#F97583">=</span><span style="color:#79B8FF">USER_POOL_ID</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">ClientId</span><span style="color:#F97583">=</span><span style="color:#79B8FF">ADMIN_CLIENT_ID</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">ADMIN_CLIENT_SECRET</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> admin_desc[</span><span style="color:#9ECBFF">&#39;UserPoolClient&#39;</span><span style="color:#E1E4E8">].get(</span><span style="color:#9ECBFF">&#39;ClientSecret&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">restricted_desc </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> cognito_client.describe_user_pool_client(</span><span style="color:#FFAB70">UserPoolId</span><span style="color:#F97583">=</span><span style="color:#79B8FF">USER_POOL_ID</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">ClientId</span><span style="color:#F97583">=</span><span style="color:#79B8FF">RESTRICTED_CLIENT_ID</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">RESTRICTED_CLIENT_SECRET</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> restricted_desc[</span><span style="color:#9ECBFF">&#39;UserPoolClient&#39;</span><span style="color:#E1E4E8">].get(</span><span style="color:#9ECBFF">&#39;ClientSecret&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Get Cognito token endpoint</span></span>
+<span class="line"><span style="color:#E1E4E8">pool_info </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> cognito_client.describe_user_pool(</span><span style="color:#FFAB70">UserPoolId</span><span style="color:#F97583">=</span><span style="color:#79B8FF">USER_POOL_ID</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">domain </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> pool_info[</span><span style="color:#9ECBFF">&#39;UserPool&#39;</span><span style="color:#E1E4E8">].get(</span><span style="color:#9ECBFF">&#39;Domain&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">TOKEN_URL</span><span style="color:#F97583"> =</span><span style="color:#F97583"> f</span><span style="color:#9ECBFF">&quot;https://</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">domain</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">.auth.</span><span style="color:#79B8FF">{REGION}</span><span style="color:#9ECBFF">.amazoncognito.com/oauth2/token&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> get_token</span><span style="color:#E1E4E8">(client_id, client_secret, scope):</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Get access token from Cognito&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    auth_string </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> base64.b64encode(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">client_id</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">:</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">client_secret</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">.encode()).decode()</span></span>
+<span class="line"><span style="color:#E1E4E8">    response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> requests.post(</span><span style="color:#79B8FF">TOKEN_URL</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">headers</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;Content-Type&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;application/x-www-form-urlencoded&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;Authorization&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Basic </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">auth_string</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }, </span><span style="color:#FFAB70">data</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span><span style="color:#9ECBFF">&quot;grant_type&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;client_credentials&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;scope&quot;</span><span style="color:#E1E4E8">: scope})</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> response.json()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> list_tools</span><span style="color:#E1E4E8">(token):</span></span>
+<span class="line"><span style="color:#E1E4E8">    response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> requests.post(</span><span style="color:#79B8FF">GATEWAY_URL</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">headers</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;Authorization&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Bearer </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">token</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;Content-Type&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;application/json&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }, </span><span style="color:#FFAB70">json</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span><span style="color:#9ECBFF">&quot;jsonrpc&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;2.0&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;id&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;1&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;method&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;tools/list&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;params&quot;</span><span style="color:#E1E4E8">: {}})</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> response.json()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> invoke_tool</span><span style="color:#E1E4E8">(token, tool_name):</span></span>
+<span class="line"><span style="color:#E1E4E8">    response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> requests.post(</span><span style="color:#79B8FF">GATEWAY_URL</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">headers</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;Authorization&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Bearer </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">token</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;Content-Type&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;application/json&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }, </span><span style="color:#FFAB70">json</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;jsonrpc&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;2.0&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;id&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;1&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;method&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;tools/call&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;params&quot;</span><span style="color:#E1E4E8">: {</span><span style="color:#9ECBFF">&quot;name&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">{TARGET_NAME}</span><span style="color:#9ECBFF">___</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">tool_name</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;arguments&quot;</span><span style="color:#E1E4E8">: {</span><span style="color:#9ECBFF">&quot;feedtype&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;json&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;ver&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;1.0&quot;</span><span style="color:#E1E4E8">}}</span></span>
+<span class="line"><span style="color:#E1E4E8">    })</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> response.json()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Test 1: Admin client (full access)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;TEST 1: Admin Client (Full Target Access)&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">admin_scope </span><span style="color:#F97583">=</span><span style="color:#F97583"> f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">{RESOURCE_SERVER_ID}</span><span style="color:#9ECBFF">/</span><span style="color:#79B8FF">{TARGET_NAME}</span><span style="color:#9ECBFF">&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">token_resp </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> get_token(</span><span style="color:#79B8FF">ADMIN_CLIENT_ID</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">ADMIN_CLIENT_SECRET</span><span style="color:#E1E4E8">, admin_scope)</span></span>
+<span class="line"><span style="color:#E1E4E8">admin_token </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> token_resp[</span><span style="color:#9ECBFF">&quot;access_token&quot;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">tools </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> list_tools(admin_token)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Admin sees </span><span style="color:#79B8FF">{len</span><span style="color:#E1E4E8">(tools.get(</span><span style="color:#9ECBFF">&#39;result&#39;</span><span style="color:#E1E4E8">, {}).get(</span><span style="color:#9ECBFF">&#39;tools&#39;</span><span style="color:#E1E4E8">, []))</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF"> tool(s)&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">invoke_resp </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> invoke_tool(admin_token, </span><span style="color:#9ECBFF">&quot;getInsightWeather&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#9ECBFF"> &quot;error&quot;</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> invoke_resp:</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Tool invocation DENIED: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">invoke_resp[</span><span style="color:#9ECBFF">&#39;error&#39;</span><span style="color:#E1E4E8">]</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">else</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Tool invocation ALLOWED - Got result!&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Test 2: Restricted client (no tool access)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">TEST 2: Restricted Client (No Tool Access)&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">restricted_scope </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> &quot;gateway-resource-server/gateway:read&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">token_resp </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> get_token(</span><span style="color:#79B8FF">RESTRICTED_CLIENT_ID</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">RESTRICTED_CLIENT_SECRET</span><span style="color:#E1E4E8">, restricted_scope)</span></span>
+<span class="line"><span style="color:#E1E4E8">restricted_token </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> token_resp[</span><span style="color:#9ECBFF">&quot;access_token&quot;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">tools </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> list_tools(restricted_token)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Restricted user sees </span><span style="color:#79B8FF">{len</span><span style="color:#E1E4E8">(tools.get(</span><span style="color:#9ECBFF">&#39;result&#39;</span><span style="color:#E1E4E8">, {}).get(</span><span style="color:#9ECBFF">&#39;tools&#39;</span><span style="color:#E1E4E8">, []))</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF"> tool(s)&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">invoke_resp </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> invoke_tool(restricted_token, </span><span style="color:#9ECBFF">&quot;getInsightWeather&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#9ECBFF"> &quot;error&quot;</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> invoke_resp:</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Tool invocation DENIED (expected): </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">invoke_resp[</span><span style="color:#9ECBFF">&#39;error&#39;</span><span style="color:#E1E4E8">].get(</span><span style="color:#9ECBFF">&#39;message&#39;</span><span style="color:#E1E4E8">, invoke_resp[</span><span style="color:#9ECBFF">&#39;error&#39;</span><span style="color:#E1E4E8">])</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">else</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;WARNING: Tool invocation was ALLOWED (unexpected)&quot;</span><span style="color:#E1E4E8">)</span></span></code></pre></div>
+<p>Expected output:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-rhlgibm6e" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="txt" id="code-rhlgibm6e"><code><span class="line"><span>TEST 1: Admin Client (Full Target Access)</span></span>
+<span class="line"><span>Admin sees 1 tool(s)</span></span>
+<span class="line"><span>Tool invocation ALLOWED - Got result!</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>TEST 2: Restricted Client (No Tool Access)</span></span>
+<span class="line"><span>Restricted user sees 0 tool(s)</span></span>
+<span class="line"><span>Tool invocation DENIED (expected): Insufficient permission for tool: getInsightWeather</span></span></code></pre></div>
+<aside class="callout callout--tip" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Scaling to Multiple Tools</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>This pattern scales to APIs with many tools:</p><ul>
+<li>Define a scope for each tool: <code>Target:getOrder</code>, <code>Target:updateOrder</code>, <code>Target:deleteOrder</code></li>
+<li>Users only see and access tools matching their scopes</li>
+<li>Full target scope grants access to all tools</li>
+</ul> </div> </div> </aside> 
+<h2 id="step-6-cleanup">Step 6: Cleanup</h2>
+<p>Create <code>cleanup_interceptors.py</code> to remove the FAGC resources:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-r7974j7q2" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-r7974j7q2"><code><span class="line"><span style="color:#6A737D"># cleanup_interceptors.py - Remove FAGC interceptors</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> boto3</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> time</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> os</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">REGION</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> os.environ.get(</span><span style="color:#9ECBFF">&#39;AWS_DEFAULT_REGION&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;us-east-1&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Values from deploy_interceptors.py output - UPDATE THESE</span></span>
+<span class="line"><span style="color:#79B8FF">GATEWAY_ID</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;marsweathergateway-XXXXXX&quot;</span></span>
+<span class="line"><span style="color:#79B8FF">USER_POOL_ID</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;us-east-1_XXXXXX&quot;</span></span>
+<span class="line"><span style="color:#79B8FF">LAMBDA_ROLE_NAME</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;fagc-interceptor-role-XXXXXX&quot;</span></span>
+<span class="line"><span style="color:#79B8FF">REQUEST_LAMBDA_NAME</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;fagc-request-interceptor-XXXXXX&quot;</span></span>
+<span class="line"><span style="color:#79B8FF">RESPONSE_LAMBDA_NAME</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;fagc-response-interceptor-XXXXXX&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">iam_client </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto3.client(</span><span style="color:#9ECBFF">&#39;iam&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">region_name</span><span style="color:#F97583">=</span><span style="color:#79B8FF">REGION</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">lambda_client </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto3.client(</span><span style="color:#9ECBFF">&#39;lambda&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">region_name</span><span style="color:#F97583">=</span><span style="color:#79B8FF">REGION</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">gateway_client </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto3.client(</span><span style="color:#9ECBFF">&#39;bedrock-agentcore-control&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">region_name</span><span style="color:#F97583">=</span><span style="color:#79B8FF">REGION</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">cognito </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto3.client(</span><span style="color:#9ECBFF">&#39;cognito-idp&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">region_name</span><span style="color:#F97583">=</span><span style="color:#79B8FF">REGION</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Cleaning up FAGC resources...&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Step 1: Delete Lambda functions (interceptors will fail without them)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">Step 1: Deleting Lambda functions...&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    lambda_client.delete_function(</span><span style="color:#FFAB70">FunctionName</span><span style="color:#F97583">=</span><span style="color:#79B8FF">REQUEST_LAMBDA_NAME</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Deleted: </span><span style="color:#79B8FF">{REQUEST_LAMBDA_NAME}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">except</span><span style="color:#79B8FF"> Exception</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> e:</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Error: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">e</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    lambda_client.delete_function(</span><span style="color:#FFAB70">FunctionName</span><span style="color:#F97583">=</span><span style="color:#79B8FF">RESPONSE_LAMBDA_NAME</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Deleted: </span><span style="color:#79B8FF">{RESPONSE_LAMBDA_NAME}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">except</span><span style="color:#79B8FF"> Exception</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> e:</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Error: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">e</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Step 2: Delete IAM role</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">Step 2: Deleting IAM role...&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    iam_client.detach_role_policy(</span></span>
+<span class="line"><span style="color:#FFAB70">        RoleName</span><span style="color:#F97583">=</span><span style="color:#79B8FF">LAMBDA_ROLE_NAME</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        PolicyArn</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"><span style="color:#E1E4E8">    iam_client.delete_role(</span><span style="color:#FFAB70">RoleName</span><span style="color:#F97583">=</span><span style="color:#79B8FF">LAMBDA_ROLE_NAME</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Deleted: </span><span style="color:#79B8FF">{LAMBDA_ROLE_NAME}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">except</span><span style="color:#79B8FF"> Exception</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> e:</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Error: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">e</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Step 3: Delete Cognito FAGC clients</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">Step 3: Cleaning up Cognito clients...&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    clients </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> cognito.list_user_pool_clients(</span><span style="color:#FFAB70">UserPoolId</span><span style="color:#F97583">=</span><span style="color:#79B8FF">USER_POOL_ID</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">MaxResults</span><span style="color:#F97583">=</span><span style="color:#79B8FF">60</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> client </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> clients[</span><span style="color:#9ECBFF">&#39;UserPoolClients&#39;</span><span style="color:#E1E4E8">]:</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> client[</span><span style="color:#9ECBFF">&#39;ClientName&#39;</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">&#39;fagc-admin-client&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;fagc-restricted-client&#39;</span><span style="color:#E1E4E8">]:</span></span>
+<span class="line"><span style="color:#E1E4E8">            cognito.delete_user_pool_client(</span><span style="color:#FFAB70">UserPoolId</span><span style="color:#F97583">=</span><span style="color:#79B8FF">USER_POOL_ID</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">ClientId</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">client[</span><span style="color:#9ECBFF">&#39;ClientId&#39;</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#79B8FF">            print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Deleted Cognito client: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">client[</span><span style="color:#9ECBFF">&#39;ClientName&#39;</span><span style="color:#E1E4E8">]</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    cognito.delete_resource_server(</span><span style="color:#FFAB70">UserPoolId</span><span style="color:#F97583">=</span><span style="color:#79B8FF">USER_POOL_ID</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">Identifier</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;agentcore-gateway-fagc&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Deleted FAGC resource server&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">except</span><span style="color:#79B8FF"> Exception</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> e:</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Error: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">e</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">FAGC cleanup complete!&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Note: Gateway interceptors still reference deleted Lambdas - they will fail silently.&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;The base Gateway from the Gateway module is NOT deleted.&quot;</span><span style="color:#E1E4E8">)</span></span></code></pre></div>
+<aside class="callout callout--info" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Why Not Remove Interceptors?</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>The Gateway API requires at least 1 interceptor when <code>interceptorConfigurations</code> is provided. Since the Lambda functions are deleted, the interceptors will simply fail when invoked. To fully remove interceptors, you would need to recreate the Gateway without them.</p> </div> </div> </aside> 
+<h2 id="checkpoint">Checkpoint</h2>
+<p>You’ve learned:</p>
+<ul>
+<li><strong>Gateway Interceptors</strong> run at REQUEST and RESPONSE points</li>
+<li><strong>Request Interceptor</strong> blocks unauthorized tool invocations with 403 errors</li>
+<li><strong>Response Interceptor</strong> filters tools/list and semantic search results</li>
+<li><strong>Scope-based authorization</strong> uses Cognito scopes like <code>Target:toolName</code></li>
+<li>This pattern <strong>scales</strong> to APIs with many tools and complex permission models</li>
+</ul>
+<p><strong>Next, we’ll explore what happens when security controls fail.</strong></p>
+<div class="nav-buttons"><a href="/days/2/agentcore-gateway" class="nav-button nav-button--prev"><p>← AgentCore Gateway</p></a><a href="/days/2/controlled-disasters" class="nav-button nav-button--next"><p>Next: Controlled Disasters →</p></a></div>
+<style>
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 3rem;
+  gap: 1rem;
+}
+
+.nav-button {
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+}
+
+.nav-button--prev {
+  color: var(--color-text-secondary);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--border-subtle);
+}
+
+.nav-button--prev:hover {
+  background: var(--color-bg-secondary);
+}
+
+.nav-button--next {
+  color: white;
+  background: var(--color-day-2);
+}
+
+.nav-button--next:hover {
+  opacity: 0.9;
+}
+</style>   </article> <!-- Navigation Footer --> <nav class="day-layout__pagination" aria-label="Page navigation" data-astro-cid-vfeiczyy>  <div class="pagination" data-astro-cid-ucfvjs2v> <a href="/agentcore-avengers/days/2/agentcore-gateway" class="pagination__link pagination__link--prev" data-astro-cid-ucfvjs2v> <span class="pagination__label" data-astro-cid-ucfvjs2v>Previous</span> <span class="pagination__title" data-astro-cid-ucfvjs2v>AgentCore Gateway</span> </a> <a href="/agentcore-avengers/days/2/controlled-disasters" class="pagination__link pagination__link--next" data-astro-cid-ucfvjs2v> <span class="pagination__label" data-astro-cid-ucfvjs2v>Next</span> <span class="pagination__title" data-astro-cid-ucfvjs2v>Controlled Disasters</span> </a> </div>  </nav> </main> <!-- Table of Contents --> <aside class="day-layout__toc hide-mobile" data-astro-cid-vfeiczyy> <div class="day-layout__toc-content" data-astro-cid-vfeiczyy> <h3 class="day-layout__toc-title" data-astro-cid-vfeiczyy>On this page</h3> <nav aria-label="Table of contents" data-astro-cid-vfeiczyy> <ul class="day-layout__toc-list" data-astro-cid-vfeiczyy> <li data-astro-cid-vfeiczyy> <a href="#the-fine-grained-access-challenge" class="day-layout__toc-link" data-astro-cid-vfeiczyy> The Fine-Grained Access Challenge </a> </li><li data-astro-cid-vfeiczyy> <a href="#how-gateway-interceptors-work" class="day-layout__toc-link" data-astro-cid-vfeiczyy> How Gateway Interceptors Work </a> </li><li data-astro-cid-vfeiczyy> <a href="#three-access-control-points" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Three Access Control Points </a> </li><li data-astro-cid-vfeiczyy> <a href="#scope-based-authorization" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Scope-Based Authorization </a> </li><li data-astro-cid-vfeiczyy> <a href="#prerequisites" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Prerequisites </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-1-update-cognito-with-fine-grained-scopes" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 1: Update Cognito with Fine-Grained Scopes </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-2-create-request-interceptor-lambda" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 2: Create Request Interceptor Lambda </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-3-create-response-interceptor-lambda" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 3: Create Response Interceptor Lambda </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-4-deploy-interceptors-to-gateway" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 4: Deploy Interceptors to Gateway </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-4b-update-gateway-allowed-clients" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 4b: Update Gateway Allowed Clients </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-5-test-access-control" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 5: Test Access Control </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-6-cleanup" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 6: Cleanup </a> </li><li data-astro-cid-vfeiczyy> <a href="#checkpoint" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Checkpoint </a> </li> </ul> </nav> </div> </aside> </div> <footer class="footer" data-astro-cid-b2avyow5> <div class="footer__container" data-astro-cid-b2avyow5> <div class="footer__content" data-astro-cid-b2avyow5> <div class="footer__brand" data-astro-cid-b2avyow5> <span class="footer__logo" data-astro-cid-b2avyow5>AgentCore Initiative</span> <p class="footer__tagline" data-astro-cid-b2avyow5>
+Build production-ready AI agents with AWS AgentCore
+</p> </div> <nav class="footer__nav" aria-label="Footer navigation" data-astro-cid-b2avyow5> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Course</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/1" data-astro-cid-b2avyow5>Day 1: The First Avenger</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/2" data-astro-cid-b2avyow5>Day 2: Age of Ultron</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/3" data-astro-cid-b2avyow5>Day 3: Infinity War</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/4" data-astro-cid-b2avyow5>Day 4: Endgame</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/5" data-astro-cid-b2avyow5>Day 5: Assemble</a></li> </ul> </div> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Resources</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/troubleshooting" data-astro-cid-b2avyow5>Troubleshooting</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/reference/costs" data-astro-cid-b2avyow5>Cost Guide</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/reference/cleanup" data-astro-cid-b2avyow5>Cleanup</a></li> </ul> </div> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Links</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5> <a href="https://docs.aws.amazon.com/bedrock-agentcore/" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+AWS AgentCore Docs
+</a> </li> <li data-astro-cid-b2avyow5> <a href="https://github.com/awslabs/amazon-bedrock-agentcore-samples" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+AgentCore Samples
+</a> </li> <li data-astro-cid-b2avyow5> <a href="https://strandsagents.com" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+Strands Agents
+</a> </li> </ul> </div> </nav> </div> <div class="footer__bottom" data-astro-cid-b2avyow5> <p class="footer__copyright" data-astro-cid-b2avyow5>
+&copy; 2026 The AgentCore Initiative. Built with Astro.
+</p> <p class="footer__disclaimer" data-astro-cid-b2avyow5>
+This is an educational resource. AWS and Amazon Bedrock are trademarks of Amazon.com, Inc.
+</p> </div> </div> </footer>   <!-- Global scripts --> <script type="module">function d(){document.querySelectorAll(".copy-button").forEach(c=>{const e=c.cloneNode(!0);c.parentNode?.replaceChild(e,c),e.addEventListener("click",async()=>{const i=e.getAttribute("data-code-id"),n=document.getElementById(i);if(!n)return;const s=n.textContent||"";try{await navigator.clipboard.writeText(s);const t=e.querySelector(".copy-icon"),o=e.querySelector(".check-icon");t&&t.classList.add("hidden"),o&&o.classList.remove("hidden"),e.classList.add("copied"),setTimeout(()=>{t&&t.classList.remove("hidden"),o&&o.classList.add("hidden"),e.classList.remove("copied")},2e3)}catch(t){console.error("Failed to copy code:",t)}})})}document.readyState==="loading"?document.addEventListener("DOMContentLoaded",d):d();document.addEventListener("astro:page-load",d);</script> <!-- Copy code functionality --> <script type="module" src="/agentcore-avengers/_astro/BaseLayout.astro_astro_type_script_index_1_lang.BwEjmFOO.js"></script> </body> </html>   <script type="module" src="/agentcore-avengers/_astro/DayLayout.astro_astro_type_script_index_0_lang.BT_UbId1.js"></script> 
