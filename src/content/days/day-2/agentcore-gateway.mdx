@@ -7,7 +7,8 @@ description: "Connect your agent to external tools and APIs using AgentCore Gate
 estimatedTime: "60 minutes"
 objectives:
   - "Understand Gateway's role as a unified tool interface"
-  - "Create a gateway and connect API targets"
+  - "Learn all six Gateway target types"
+  - "Create a gateway with OpenAPI target"
   - "Use semantic search for tool discovery"
   - "Integrate Gateway tools with your Strands agent"
 order: 2
@@ -47,402 +48,834 @@ Gateway transforms this:
   This means your agent can discover and use tools without custom integration code.
 </Callout>
 
-## AgentCore Gateway Architecture
+## Gateway Target Types
 
-AgentCore Gateway transforms external APIs into Model Context Protocol (MCP) tools that your agent can use.
+AgentCore Gateway supports six target types to connect your agent to different services:
 
-### Gateway with API Key Authentication
+| Target Type | Use Case | Description |
+|-------------|----------|-------------|
+| **OpenAPI Schema** | Transform REST APIs | Upload OpenAPI spec (JSON/YAML), Gateway auto-generates MCP tools from API operations |
+| **AWS Lambda** | Custom business logic | Connect Lambda functions as MCP tools for custom processing |
+| **API Gateway REST API** | Existing AWS APIs | Integrate existing Amazon API Gateway REST API stages as targets |
+| **Smithy Model** | AWS-style APIs | Use Smithy models to define API schemas for tool generation |
+| **MCP Servers** | Existing MCP servers | Route requests to existing MCP-compliant servers |
+| **Built-in Integrations** | Popular services | Pre-built templates for Slack, GitHub, Salesforce, Jira, etc. |
 
-![Gateway with API Key Architecture](/images/day-2/gateway-architecture-apikey.png)
+### When to Use Each Target Type
 
-For APIs that use API keys:
-- **Runtime Agent** has access to MCP tools via Gateway
-- **AgentCore Gateway** routes tool calls to external APIs
-- **Credential Provider** securely injects API keys
-- **External API** validates requests and returns data
+- **OpenAPI Schema**: You have an existing REST API with OpenAPI documentation
+- **AWS Lambda**: You need custom business logic or want to wrap internal services
+- **API Gateway REST API**: You already have APIs deployed in Amazon API Gateway
+- **Smithy Model**: You're building AWS-style APIs or prefer Smithy's type system
+- **MCP Servers**: You have existing MCP-compliant tool servers to integrate
+- **Built-in Integrations**: Quick integration with popular SaaS services (no custom code needed)
 
-### Gateway with OAuth Authentication
+<Callout type="info" title="Tutorial Focus">
+  In this tutorial, we'll focus on the **OpenAPI Schema target** pattern as it's the most common way to transform existing REST APIs into MCP tools. The other target types follow similar patterns for Gateway creation and authentication.
+</Callout>
 
-![Gateway with OAuth Architecture](/images/day-2/gateway-architecture-oauth.png)
+## Hands-On: OpenAPI Gateway with NASA Mars Weather API
 
-For APIs that use OAuth (GitHub, Slack, etc.):
-- **User** grants consent for agent to access their data
-- **Credential Provider** manages OAuth tokens and refresh
-- **Gateway** handles token exchange and API calls
-- **External API** validates OAuth token and returns user data
+Let's build a Mars Weather agent that calls NASA's Open APIs using AgentCore Gateway.
 
-## Creating Your First Gateway
+![Gateway with OpenAPI Architecture](/images/day-2/gateway-architecture-apikey.png)
 
-### Step 1: Create a Gateway
+<Callout type="info" title="Prerequisites">
+  You'll need a NASA API key. Get a free key at [api.nasa.gov](https://api.nasa.gov/) - it takes 2 minutes and you'll receive the key in your email.
+</Callout>
 
-```python
-# create_gateway.py
-from bedrock_agentcore.services.gateway import GatewayClient
-from bedrock_agentcore.services.identity import IdentityClient
+### Step 1: Set Up Your Project
 
-gateway_client = GatewayClient(region='us-east-1')
-identity_client = IdentityClient(region='us-east-1')
+Create a new project directory:
 
-# Create Gateway with Cognito authorization
-gateway = gateway_client.create_gateway(
-    name='day2-api-gateway',
-    description='Gateway for transforming OpenAPI specs to MCP tools',
-    workloadIdentityId=workload_id,  # From Identity setup
-    authorizerId=authorizer_id  # Cognito JWT authorizer
-)
+```bash
+mkdir day2-gateway-agent
+cd day2-gateway-agent
 
-gateway_id = gateway['gatewayId']
-print(f"Gateway ID: {gateway_id}")
+# Create and activate virtual environment
+python3 -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Install dependencies
+pip install --upgrade pip
+pip install bedrock-agentcore strands-agents mcp boto3
+pip install git+https://github.com/Jagdeep1/agentcore-avengers-code.git
 ```
 
-## Creating OpenAPI Gateway Targets
+Create `requirements.txt`:
 
-Transform OpenAPI specifications into MCP tools:
-
-### Step 1: Create API Key Credential Provider
-
-```python
-# Create credential provider for target API
-weather_credentials = identity_client.create_api_key_credential_provider(
-    workloadIdentityId=workload_id,
-    name='openweather-credentials',
-    description='API key for OpenWeather API',
-    apiKey='your-openweather-api-key'
-)
-
-credential_provider_id = weather_credentials['credentialProviderId']
+```txt
+bedrock-agentcore
+strands-agents
+mcp
+boto3
 ```
 
-### Step 2: Create OpenAPI Gateway Target
+Your project structure should look like:
+
+```
+day2-gateway-agent/
+├── .venv/
+└── requirements.txt
+```
+
+### Step 2: Create IAM Role for Gateway
+
+Create `setup_gateway_role.py` to create an IAM role that the Gateway will assume:
 
 ```python
-# create_openapi_target.py
-from bedrock_agentcore.services.gateway import GatewayClient
+# setup_gateway_role.py - Create IAM role for Gateway
+import boto3
+import json
 
-gateway_client = GatewayClient(region='us-east-1')
+iam_client = boto3.client('iam')
+sts_client = boto3.client('sts')
 
-# Define OpenAPI spec (can also reference external URL)
-openapi_spec = {
-    "openapi": "3.0.0",
-    "info": {
-        "title": "OpenWeather API",
-        "version": "2.5"
-    },
-    "servers": [
-        {"url": "https://api.openweathermap.org/data/2.5"}
-    ],
-    "paths": {
-        "/weather": {
-            "get": {
-                "operationId": "getCurrentWeather",
-                "summary": "Get current weather for a city",
-                "parameters": [
-                    {
-                        "name": "q",
-                        "in": "query",
-                        "required": True,
-                        "schema": {"type": "string"},
-                        "description": "City name"
-                    },
-                    {
-                        "name": "units",
-                        "in": "query",
-                        "schema": {"type": "string", "default": "metric"}
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Weather data",
-                        "content": {
-                            "application/json": {
-                                "schema": {"type": "object"}
-                            }
-                        }
-                    }
+ROLE_NAME = "agentcore-gateway-role"
+
+# Get account ID
+account_id = sts_client.get_caller_identity()["Account"]
+
+print(f"Creating Gateway IAM role: {ROLE_NAME}")
+
+# Trust policy - allows AgentCore Gateway to assume this role
+trust_policy = {
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "bedrock-agentcore.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole",
+            "Condition": {
+                "StringEquals": {
+                    "aws:SourceAccount": account_id
                 }
             }
         }
-    },
-    "components": {
-        "securitySchemes": {
-            "ApiKeyAuth": {
-                "type": "apiKey",
-                "in": "query",
-                "name": "appid"
-            }
-        }
-    },
-    "security": [{"ApiKeyAuth": []}]
+    ]
 }
 
-# Create Gateway target
-target = gateway_client.create_openapi_target(
-    gatewayId=gateway_id,
-    name='weather-api',
-    description='OpenWeather API as MCP tools',
-    openApiSpec=openapi_spec,
-    credentialProviderId=credential_provider_id
-)
+# Create the IAM role
+try:
+    role_response = iam_client.create_role(
+        RoleName=ROLE_NAME,
+        AssumeRolePolicyDocument=json.dumps(trust_policy),
+        Description="IAM role for AgentCore Gateway"
+    )
+    role_arn = role_response['Role']['Arn']
+    print(f"✅ Created role: {role_arn}")
+except iam_client.exceptions.EntityAlreadyExistsException:
+    role_arn = f"arn:aws:iam::{account_id}:role/{ROLE_NAME}"
+    print(f"ℹ️  Role already exists: {role_arn}")
 
-target_id = target['targetId']
-print(f"OpenAPI Target ID: {target_id}")
+# Attach Gateway permissions (includes credential provider access)
+gateway_policy = {
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "bedrock-agentcore:*",
+                "bedrock:*",
+                "agent-credential-provider:*",
+                "iam:PassRole",
+                "secretsmanager:GetSecretValue",
+                "lambda:InvokeFunction",
+                "s3:GetObject"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+
+iam_client.put_role_policy(
+    RoleName=ROLE_NAME,
+    PolicyName="GatewayPermissions",
+    PolicyDocument=json.dumps(gateway_policy)
+)
+print("✅ Attached Gateway permissions")
+
+print(f"\n📝 Save this for later steps:")
+print(f"   GATEWAY_ROLE_ARN = \"{role_arn}\"")
 ```
 
-### Step 3: Use OpenAPI Tools in Agent
+Run it:
+
+```bash
+python setup_gateway_role.py
+```
+
+Expected output:
+
+```
+Creating Gateway IAM role: agentcore-gateway-role
+✅ Created role: arn:aws:iam::123456789012:role/agentcore-gateway-role
+✅ Attached Gateway permissions
+
+📝 Save this for later steps:
+   GATEWAY_ROLE_ARN = "arn:aws:iam::123456789012:role/agentcore-gateway-role"
+```
+
+### Step 3: Set Up Cognito for Inbound Auth
+
+Create `setup_cognito.py` to set up Cognito for Gateway inbound authentication:
 
 ```python
-# agent_with_gateway.py
-from bedrock_agentcore.runtime import BedrockAgentCoreApp
-from bedrock_agentcore.services.gateway import MCPClient
-from strands import Agent
-from strands.models import BedrockModel
+# setup_cognito.py - Set up Cognito for Gateway inbound auth
+import boto3
+import os
 
-app = BedrockAgentCoreApp()
+REGION = os.environ.get('AWS_DEFAULT_REGION', 'us-east-1')
+USER_POOL_NAME = "gateway-auth-pool"
+RESOURCE_SERVER_ID = "gateway-resource-server"
+CLIENT_NAME = "gateway-client"
 
-# Initialize MCP client to access Gateway tools
-mcp_client = MCPClient(
-    gateway_id=gateway_id,
-    region='us-east-1'
+cognito = boto3.client("cognito-idp", region_name=REGION)
+
+print("Setting up Cognito for Gateway authentication...")
+
+# Create User Pool
+try:
+    pool_response = cognito.create_user_pool(PoolName=USER_POOL_NAME)
+    user_pool_id = pool_response['UserPool']['Id']
+    print(f"✅ Created User Pool: {user_pool_id}")
+except Exception as e:
+    # Find existing pool
+    pools = cognito.list_user_pools(MaxResults=60)['UserPools']
+    user_pool_id = next((p['Id'] for p in pools if p['Name'] == USER_POOL_NAME), None)
+    print(f"ℹ️  Using existing User Pool: {user_pool_id}")
+
+# Create Resource Server with scopes
+SCOPES = [
+    {"ScopeName": "gateway:read", "ScopeDescription": "Read access"},
+    {"ScopeName": "gateway:write", "ScopeDescription": "Write access"}
+]
+
+try:
+    cognito.create_resource_server(
+        UserPoolId=user_pool_id,
+        Identifier=RESOURCE_SERVER_ID,
+        Name=RESOURCE_SERVER_ID,
+        Scopes=SCOPES
+    )
+    print("✅ Created Resource Server")
+except cognito.exceptions.InvalidParameterException:
+    print("ℹ️  Resource Server already exists")
+
+# Create App Client for M2M auth
+try:
+    client_response = cognito.create_user_pool_client(
+        UserPoolId=user_pool_id,
+        ClientName=CLIENT_NAME,
+        GenerateSecret=True,
+        AllowedOAuthFlows=['client_credentials'],
+        AllowedOAuthScopes=[
+            f"{RESOURCE_SERVER_ID}/gateway:read",
+            f"{RESOURCE_SERVER_ID}/gateway:write"
+        ],
+        AllowedOAuthFlowsUserPoolClient=True
+    )
+    client_id = client_response['UserPoolClient']['ClientId']
+    client_secret = client_response['UserPoolClient']['ClientSecret']
+    print(f"✅ Created App Client: {client_id}")
+except Exception as e:
+    print(f"Error creating client: {e}")
+    raise
+
+# Create domain for token endpoint
+domain_prefix = f"gateway-{user_pool_id.split('_')[1].lower()}"
+try:
+    cognito.create_user_pool_domain(
+        Domain=domain_prefix,
+        UserPoolId=user_pool_id
+    )
+    print(f"✅ Created domain: {domain_prefix}")
+except cognito.exceptions.InvalidParameterException:
+    print(f"ℹ️  Domain already exists: {domain_prefix}")
+
+# Discovery URL for Gateway
+discovery_url = f"https://cognito-idp.{REGION}.amazonaws.com/{user_pool_id}/.well-known/openid-configuration"
+token_url = f"https://{domain_prefix}.auth.{REGION}.amazoncognito.com/oauth2/token"
+
+print(f"\n📝 Save these values for later steps:")
+print(f"   USER_POOL_ID = \"{user_pool_id}\"")
+print(f"   CLIENT_ID = \"{client_id}\"")
+print(f"   CLIENT_SECRET = \"{client_secret}\"")
+print(f"   DISCOVERY_URL = \"{discovery_url}\"")
+print(f"   TOKEN_URL = \"{token_url}\"")
+print(f"   SCOPES = \"{RESOURCE_SERVER_ID}/gateway:read {RESOURCE_SERVER_ID}/gateway:write\"")
+```
+
+Run it:
+
+```bash
+python setup_cognito.py
+```
+
+Expected output:
+
+```
+Setting up Cognito for Gateway authentication...
+✅ Created User Pool: us-east-1_xxxxxx
+✅ Created Resource Server
+✅ Created App Client: xxxxxxxxxxxxxxxxxx
+✅ Created domain: gateway-xxxxxx
+
+📝 Save these values for later steps:
+   USER_POOL_ID = "us-east-1_xxxxxx"
+   CLIENT_ID = "xxxxxxxxxxxxxxxxxx"
+   CLIENT_SECRET = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+   DISCOVERY_URL = "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_xxxxxx/.well-known/openid-configuration"
+   TOKEN_URL = "https://gateway-xxxxxx.auth.us-east-1.amazoncognito.com/oauth2/token"
+   SCOPES = "gateway-resource-server/gateway:read gateway-resource-server/gateway:write"
+```
+
+### Step 4: Create the Gateway
+
+Create `create_gateway.py` to create the Gateway with JWT authorization:
+
+```python
+# create_gateway.py - Create Gateway with JWT authorizer
+import boto3
+import os
+
+REGION = os.environ.get('AWS_DEFAULT_REGION', 'us-east-1')
+
+# Replace with values from previous steps
+GATEWAY_ROLE_ARN = "arn:aws:iam::123456789012:role/agentcore-gateway-role"
+CLIENT_ID = "your-client-id"
+DISCOVERY_URL = "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_xxxxxx/.well-known/openid-configuration"
+
+gateway_client = boto3.client('bedrock-agentcore-control', region_name=REGION)
+
+print("Creating AgentCore Gateway...")
+
+# JWT authorizer configuration (security built-in)
+auth_config = {
+    "customJWTAuthorizer": {
+        "allowedClients": [CLIENT_ID],
+        "discoveryUrl": DISCOVERY_URL
+    }
+}
+
+create_response = gateway_client.create_gateway(
+    name='MarsWeatherGateway',
+    roleArn=GATEWAY_ROLE_ARN,
+    protocolType='MCP',
+    authorizerType='CUSTOM_JWT',
+    authorizerConfiguration=auth_config,
+    description='AgentCore Gateway for NASA Mars Weather API'
 )
 
-# Get MCP tools from Gateway
-gateway_tools = mcp_client.get_tools()
+gateway_id = create_response["gatewayId"]
+gateway_url = create_response["gatewayUrl"]
 
-model = BedrockModel(
-    model_id="anthropic.claude-sonnet-4-20250514-v1:0",
+print(f"✅ Gateway created!")
+print(f"   Gateway ID: {gateway_id}")
+print(f"   Gateway URL: {gateway_url}")
+
+print(f"\n📝 Save these values for later steps:")
+print(f"   GATEWAY_ID = \"{gateway_id}\"")
+print(f"   GATEWAY_URL = \"{gateway_url}\"")
+```
+
+Run it:
+
+```bash
+python create_gateway.py
+```
+
+Expected output:
+
+```
+Creating AgentCore Gateway...
+✅ Gateway created!
+   Gateway ID: gw-xxxxxxxxxx
+   Gateway URL: https://xxxxxxxxxx.bedrock-agentcore-gateway.us-east-1.amazonaws.com
+
+📝 Save these values for later steps:
+   GATEWAY_ID = "gw-xxxxxxxxxx"
+   GATEWAY_URL = "https://xxxxxxxxxx.bedrock-agentcore-gateway.us-east-1.amazonaws.com"
+```
+
+<Callout type="tip" title="Security Built-In">
+  The Gateway is created with JWT authorization configured. Only requests with valid tokens from your Cognito User Pool will be accepted. No separate security configuration needed!
+</Callout>
+
+### Step 5: Create API Key Credential Provider
+
+Create `setup_credential_provider.py` to store your NASA API key:
+
+```python
+# setup_credential_provider.py - Create API key credential provider for NASA API
+import boto3
+import os
+
+REGION = os.environ.get('AWS_DEFAULT_REGION', 'us-east-1')
+
+# Replace with your NASA API key from api.nasa.gov
+NASA_API_KEY = "YOUR_NASA_API_KEY"
+
+gateway_client = boto3.client('bedrock-agentcore-control', region_name=REGION)
+
+print("Creating API key credential provider...")
+
+response = gateway_client.create_api_key_credential_provider(
+    name="NasaInsightAPIKey",
+    apiKey=NASA_API_KEY
 )
 
-# Create agent with Gateway tools
-agent = Agent(
-    model=model,
-    tools=gateway_tools,  # Tools from OpenAPI spec
-    system_prompt="""You are a weather assistant with access to real-time weather data.
+credential_provider_arn = response['credentialProviderArn']
 
-    Use the getCurrentWeather tool to fetch actual weather conditions for any city."""
+print(f"✅ Created credential provider!")
+print(f"   Provider ARN: {credential_provider_arn}")
+
+print(f"\n📝 Save this for later steps:")
+print(f"   CREDENTIAL_PROVIDER_ARN = \"{credential_provider_arn}\"")
+```
+
+Run it:
+
+```bash
+python setup_credential_provider.py
+```
+
+Expected output:
+
+```
+Creating API key credential provider...
+✅ Created credential provider!
+   Provider ARN: arn:aws:bedrock-agentcore:us-east-1:123456789012:credential-provider/NasaInsightAPIKey
+
+📝 Save this for later steps:
+   CREDENTIAL_PROVIDER_ARN = "arn:aws:bedrock-agentcore:us-east-1:123456789012:credential-provider/NasaInsightAPIKey"
+```
+
+### Step 6: Upload OpenAPI Spec to S3
+
+Create `nasa_mars_insights_openapi.json` with the NASA Insight API spec:
+
+<Callout type="warning" title="No api_key Parameter">
+  Do NOT include the `api_key` parameter in the OpenAPI spec. The credential provider automatically injects it. Including it causes a validation conflict.
+</Callout>
+
+```json
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "NASA InSight Mars Weather API",
+    "description": "Returns per-Sol weather summaries from the InSight lander.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    { "url": "https://api.nasa.gov" }
+  ],
+  "paths": {
+    "/insight_weather/": {
+      "get": {
+        "summary": "Retrieve latest InSight Mars weather data",
+        "operationId": "getInsightWeather",
+        "parameters": [
+          {
+            "name": "feedtype",
+            "in": "query",
+            "required": true,
+            "description": "Response format (only json is supported).",
+            "schema": {
+              "type": "string",
+              "enum": ["json"]
+            }
+          },
+          {
+            "name": "ver",
+            "in": "query",
+            "required": true,
+            "description": "API version string (only 1.0 supported).",
+            "schema": {
+              "type": "string",
+              "enum": ["1.0"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response - weather data per Martian sol.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+Create `upload_openapi_spec.py` to upload the spec to S3:
+
+```python
+# upload_openapi_spec.py - Upload OpenAPI spec to S3
+import boto3
+import os
+
+session = boto3.session.Session()
+s3_client = session.client('s3')
+sts_client = session.client('sts')
+
+# Get account info
+account_id = sts_client.get_caller_identity()["Account"]
+region = session.region_name
+
+# Create bucket name
+bucket_name = f'agentcore-gateway-{account_id}-{region}'
+file_path = 'nasa_mars_insights_openapi.json'
+object_key = 'nasa_mars_insights_openapi.json'
+
+print(f"Uploading OpenAPI spec to S3...")
+
+# Create bucket if it doesn't exist
+try:
+    if region == "us-east-1":
+        s3_client.create_bucket(Bucket=bucket_name)
+    else:
+        s3_client.create_bucket(
+            Bucket=bucket_name,
+            CreateBucketConfiguration={'LocationConstraint': region}
+        )
+    print(f"✅ Created bucket: {bucket_name}")
+except s3_client.exceptions.BucketAlreadyOwnedByYou:
+    print(f"ℹ️  Bucket already exists: {bucket_name}")
+
+# Upload the OpenAPI spec
+with open(file_path, 'rb') as file_data:
+    s3_client.put_object(
+        Bucket=bucket_name,
+        Key=object_key,
+        Body=file_data
+    )
+
+openapi_s3_uri = f's3://{bucket_name}/{object_key}'
+print(f"✅ Uploaded OpenAPI spec!")
+print(f"   S3 URI: {openapi_s3_uri}")
+
+print(f"\n📝 Save this for the next step:")
+print(f"   OPENAPI_S3_URI = \"{openapi_s3_uri}\"")
+```
+
+Run it:
+
+```bash
+python upload_openapi_spec.py
+```
+
+Expected output:
+
+```
+Uploading OpenAPI spec to S3...
+✅ Created bucket: agentcore-gateway-123456789012-us-east-1
+✅ Uploaded OpenAPI spec!
+   S3 URI: s3://agentcore-gateway-123456789012-us-east-1/nasa_mars_insights_openapi.json
+
+📝 Save this for the next step:
+   OPENAPI_S3_URI = "s3://agentcore-gateway-123456789012-us-east-1/nasa_mars_insights_openapi.json"
+```
+
+### Step 7: Create OpenAPI Gateway Target
+
+Create `create_gateway_target.py` to create the OpenAPI target:
+
+```python
+# create_gateway_target.py - Create OpenAPI Gateway target
+import boto3
+import os
+
+REGION = os.environ.get('AWS_DEFAULT_REGION', 'us-east-1')
+
+# Replace with values from previous steps
+GATEWAY_ID = "gw-xxxxxxxxxx"
+CREDENTIAL_PROVIDER_ARN = "arn:aws:bedrock-agentcore:us-east-1:123456789012:credential-provider/NasaInsightAPIKey"
+OPENAPI_S3_URI = "s3://agentcore-gateway-123456789012-us-east-1/nasa_mars_insights_openapi.json"
+
+gateway_client = boto3.client('bedrock-agentcore-control', region_name=REGION)
+
+print("Creating OpenAPI Gateway target...")
+
+# OpenAPI target configuration
+target_config = {
+    "mcp": {
+        "openApiSchema": {
+            "s3": {
+                "uri": OPENAPI_S3_URI
+            }
+        }
+    }
+}
+
+# API Key credential configuration
+api_key_credential_config = [
+    {
+        "credentialProviderType": "API_KEY",
+        "credentialProvider": {
+            "apiKeyCredentialProvider": {
+                "credentialParameterName": "api_key",
+                "providerArn": CREDENTIAL_PROVIDER_ARN,
+                "credentialLocation": "QUERY_PARAMETER"
+            }
+        }
+    }
+]
+
+TARGET_NAME = "NasaMarsWeatherTarget"
+
+response = gateway_client.create_gateway_target(
+    gatewayIdentifier=GATEWAY_ID,
+    name=TARGET_NAME,
+    description='NASA Mars Weather API as MCP tools',
+    targetConfiguration=target_config,
+    credentialProviderConfigurations=api_key_credential_config
 )
 
-@app.entrypoint
-def handle_request(payload):
-    """Handle requests with Gateway tools."""
-    prompt = payload.get("prompt", "")
-    response = agent(prompt)
-    return response.message['content'][0]['text']
+target_id = response.get('targetId', TARGET_NAME)
 
-if __name__ == "__main__":
-    app.run()
+print(f"✅ Gateway target created!")
+print(f"   Target Name: {TARGET_NAME}")
+print(f"   Target ID: {target_id}")
+
+print(f"\n📝 Save this for the next step:")
+print(f"   TARGET_NAME = \"{TARGET_NAME}\"")
+```
+
+Run it:
+
+```bash
+python create_gateway_target.py
+```
+
+Expected output:
+
+```
+Creating OpenAPI Gateway target...
+✅ Gateway target created!
+   Target Name: NasaMarsWeatherTarget
+   Target ID: NasaMarsWeatherTarget
+
+📝 Save this for the next step:
+   TARGET_NAME = "NasaMarsWeatherTarget"
 ```
 
 <Callout type="success" title="Automatic Tool Generation">
-AgentCore Gateway automatically converts OpenAPI operations into MCP tools. Your agent can discover and use them without manual tool definition!
+  AgentCore Gateway automatically converted the OpenAPI operations into MCP tools. The `getInsightWeather` operation is now available as an MCP tool!
 </Callout>
 
-## OAuth Gateway Targets
+### Step 8: Create Agent with Gateway Tools
 
-Enable your agent to access user data from OAuth-protected services:
-
-### Step 1: Create OAuth Credential Provider (3-Legged)
+Create `get_token.py` to get an access token from Cognito:
 
 ```python
-# oauth_credentials.py
-from bedrock_agentcore.services.identity import IdentityClient
+# get_token.py - Get access token from Cognito
+import requests
+import base64
 
-identity_client = IdentityClient(region='us-east-1')
+# Replace with your Cognito values
+CLIENT_ID = "your-client-id"
+CLIENT_SECRET = "your-client-secret"
+TOKEN_URL = "https://gateway-xxxxxx.auth.us-east-1.amazoncognito.com/oauth2/token"
+SCOPES = "gateway-resource-server/gateway:read gateway-resource-server/gateway:write"
 
-# Create OAuth 2.0 credential provider for GitHub
-github_oauth = identity_client.create_oauth_credential_provider(
-    workloadIdentityId=workload_id,
-    name='github-oauth',
-    description='OAuth for GitHub API',
-    oauth_flow='authorization_code',  # 3-legged OAuth
-    client_id='your-github-client-id',
-    client_secret='your-github-client-secret',
-    authorization_url='https://github.com/login/oauth/authorize',
-    token_url='https://github.com/login/oauth/access_token',
-    scopes=['read:user', 'repo']
-)
+def get_access_token():
+    """Get M2M access token from Cognito."""
+    credentials = base64.b64encode(f"{CLIENT_ID}:{CLIENT_SECRET}".encode()).decode()
 
-oauth_provider_id = github_oauth['credentialProviderId']
-```
-
-### Step 2: Create OAuth Gateway Target
-
-```python
-# Create GitHub API target with OAuth
-github_target = gateway_client.create_openapi_target(
-    gatewayId=gateway_id,
-    name='github-api',
-    description='GitHub API as MCP tools',
-    openApiSpecUrl='https://raw.githubusercontent.com/github/rest-api-description/main/descriptions/api.github.com/api.github.com.json',
-    credentialProviderId=oauth_provider_id
-)
-
-print(f"GitHub Target ID: {github_target['targetId']}")
-```
-
-### Step 3: Handle OAuth User Consent
-
-```python
-# oauth_flow.py
-import boto3
-
-identity_client = boto3.client('bedrock-agentcore-identity', region_name='us-east-1')
-
-# Generate authorization URL for user
-auth_response = identity_client.get_authorization_url(
-    credentialProviderId=oauth_provider_id,
-    redirectUri='https://your-app.com/oauth/callback',
-    state='random-state-string'
-)
-
-authorization_url = auth_response['authorizationUrl']
-print(f"Direct user to: {authorization_url}")
-
-# After user authorizes, exchange code for token
-token_response = identity_client.exchange_authorization_code(
-    credentialProviderId=oauth_provider_id,
-    code='authorization-code-from-callback',
-    redirectUri='https://your-app.com/oauth/callback'
-)
-
-print("OAuth tokens stored securely by AgentCore")
-```
-
-<Callout type="info" title="OAuth Token Management">
-AgentCore Identity automatically handles OAuth token refresh, expiration, and secure storage. Your agent always has valid credentials.
-</Callout>
-
-### Step 3: Add a Lambda Target
-
-Connect your own Lambda functions:
-
-```python
-# Add a Lambda function as a target
-lambda_target = gateway_client.create_gateway_target(
-    gatewayId=gateway_id,
-    name='custom-tools',
-    targetType='LAMBDA',
-    lambdaConfig={
-        'functionArn': 'arn:aws:lambda:us-east-1:123456789012:function:agent-tools',
-        'tools': [
-            {
-                'name': 'search_database',
-                'description': 'Search the product database',
-                'inputSchema': {
-                    'type': 'object',
-                    'properties': {
-                        'query': {'type': 'string', 'description': 'Search query'},
-                        'limit': {'type': 'integer', 'description': 'Max results'}
-                    },
-                    'required': ['query']
-                }
-            },
-            {
-                'name': 'create_ticket',
-                'description': 'Create a support ticket',
-                'inputSchema': {
-                    'type': 'object',
-                    'properties': {
-                        'title': {'type': 'string'},
-                        'description': {'type': 'string'},
-                        'priority': {'type': 'string', 'enum': ['low', 'medium', 'high']}
-                    },
-                    'required': ['title', 'description']
-                }
-            }
-        ]
-    },
-    authentication={
-        'type': 'IAM'
-    }
-)
-```
-
-### Step 4: Add Pre-built Integrations
-
-Gateway provides 1-click integrations with popular services:
-
-```python
-# Add Slack integration
-slack_target = gateway_client.create_gateway_target(
-    gatewayId=gateway_id,
-    name='slack-integration',
-    targetType='INTEGRATION',
-    integrationConfig={
-        'provider': 'SLACK',
-        'scopes': ['chat:write', 'channels:read']
-    },
-    authentication={
-        'type': 'OAUTH2',
-        'oauth2Config': {
-            'credentialProviderId': 'your-slack-credential-provider-id'
+    response = requests.post(
+        TOKEN_URL,
+        headers={
+            "Authorization": f"Basic {credentials}",
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        data={
+            "grant_type": "client_credentials",
+            "scope": SCOPES
         }
-    }
-)
+    )
+
+    if response.status_code == 200:
+        return response.json()["access_token"]
+    else:
+        raise Exception(f"Failed to get token: {response.text}")
+
+if __name__ == "__main__":
+    token = get_access_token()
+    print(f"✅ Got access token!")
+    print(f"   Token: {token[:50]}...")
 ```
 
-<Callout type="tip" title="Supported Integrations">
-  Gateway includes pre-built integrations for:
-  - **Collaboration**: Slack, Microsoft Teams
-  - **Project Management**: Jira, Asana, Linear
-  - **CRM**: Salesforce, HubSpot
-  - **Developer Tools**: GitHub, GitLab
-  - **Support**: Zendesk, Intercom
-</Callout>
-
-## Using Gateway in Your Agent
-
-### With Strands Agents
+Create `agent_gateway.py` to create an agent using Gateway MCP tools:
 
 ```python
-# agent_with_gateway.py
-from strands import Agent
+# agent_gateway.py - Agent using Gateway MCP tools
 from strands.models import BedrockModel
-from strands.tools.mcp import MCPClient
-from bedrock_agentcore.runtime import runtime_handler
+from mcp.client.streamable_http import streamablehttp_client
+from strands.tools.mcp.mcp_client import MCPClient
+from strands import Agent
+import logging
+
+# Replace with your values
+GATEWAY_URL = "https://xxxxxxxxxx.bedrock-agentcore-gateway.us-east-1.amazonaws.com"
+TARGET_NAME = "NasaMarsWeatherTarget"
+
+# Import token helper
+from get_token import get_access_token
+
+# Configure logging
+logging.getLogger("strands").setLevel(logging.INFO)
+logging.basicConfig(
+    format="%(levelname)s | %(name)s | %(message)s",
+    handlers=[logging.StreamHandler()]
+)
+
+print("🚀 Starting Mars Weather Agent...")
+
+# Get access token for Gateway
+print("Getting access token...")
+token = get_access_token()
+print("✅ Got access token!")
+
+# Create MCP client to connect to Gateway
+def create_streamable_http_transport():
+    return streamablehttp_client(
+        GATEWAY_URL,
+        headers={"Authorization": f"Bearer {token}"}
+    )
+
+client = MCPClient(create_streamable_http_transport)
 
 # Initialize the model
 model = BedrockModel(
-    model_id="anthropic.claude-sonnet-4-20250514-v1:0",
+    model_id="us.amazon.nova-pro-v1:0",
+    temperature=0.7
 )
 
-# Connect to Gateway as an MCP client
-gateway_mcp = MCPClient(
-    endpoint="https://gateway.bedrock-agentcore.us-east-1.amazonaws.com/gw-xxxx",
-    # Authentication is handled automatically with IAM
-)
+# Use the MCP client with the agent
+with client:
+    # List available tools from Gateway
+    tools = client.list_tools_sync()
+    print(f"✅ Tools loaded: {[t.tool_name for t in tools]}")
 
-# Discover available tools
-available_tools = gateway_mcp.list_tools()
-print(f"Available tools: {[t.name for t in available_tools]}")
+    # Create agent with Gateway tools
+    agent = Agent(
+        model=model,
+        tools=tools,
+        system_prompt="You are a Mars Weather assistant. Use the available tools to get weather data from Mars."
+    )
 
-# Create agent with Gateway tools
-agent = Agent(
-    model=model,
-    tools=available_tools,  # Tools from Gateway
-    system_prompt="""You are an assistant with access to multiple tools via Gateway.
-Use the available tools to help users with their requests.
-Always check what tools are available before responding."""
-)
+    # Test the agent
+    print("\n🔴 Asking about Mars weather...")
+    response = agent("What is the weather on Mars?")
+    print(f"\n✅ Response: {response.message['content'][0]['text']}")
 
-@runtime_handler
-def handler(event, context):
-    message = event.get("message", "")
-
-    # Agent automatically uses Gateway tools
-    response = agent(message)
-
-    return {"response": str(response)}
+    # You can also call the tool directly
+    print("\n📡 Calling tool directly...")
+    result = client.call_tool_sync(
+        tool_use_id="get-mars-weather-1",
+        name=f"{TARGET_NAME}___getInsightWeather",
+        arguments={"ver": "1.0", "feedtype": "json"}
+    )
+    print(f"✅ Tool result: {result['content'][0]['text'][:200]}...")
 ```
 
-### Semantic Tool Search
+Run it:
 
-Gateway enables intelligent tool discovery:
+```bash
+python agent_gateway.py
+```
+
+Expected output:
+
+```
+🚀 Starting Mars Weather Agent...
+Getting access token...
+✅ Got access token!
+✅ Tools loaded: ['NasaMarsWeatherTarget___getInsightWeather']
+
+🔴 Asking about Mars weather...
+✅ Response: Based on the data from the InSight lander on Mars...
+
+📡 Calling tool directly...
+✅ Tool result: {"sol_keys": ["872", "873", "874"]...
+```
+
+### Step 9: Cleanup
+
+Create `cleanup.py` to delete all Gateway resources:
 
 ```python
-# Search for relevant tools
+# cleanup.py - Delete Gateway and related resources
+import boto3
+import os
+
+REGION = os.environ.get('AWS_DEFAULT_REGION', 'us-east-1')
+
+# Replace with your values
+GATEWAY_ID = "gw-xxxxxxxxxx"
+USER_POOL_ID = "us-east-1_xxxxxx"
+
+gateway_client = boto3.client('bedrock-agentcore-control', region_name=REGION)
+cognito = boto3.client('cognito-idp', region_name=REGION)
+
+print("🧹 Cleaning up resources...")
+
+# Delete Gateway
+try:
+    gateway_client.delete_gateway(gatewayId=GATEWAY_ID)
+    print(f"✅ Deleted Gateway: {GATEWAY_ID}")
+except Exception as e:
+    print(f"❌ Error deleting Gateway: {e}")
+
+# Delete Cognito User Pool
+try:
+    # First delete the domain
+    pool_desc = cognito.describe_user_pool(UserPoolId=USER_POOL_ID)
+    domain = pool_desc.get('UserPool', {}).get('Domain')
+    if domain:
+        cognito.delete_user_pool_domain(Domain=domain, UserPoolId=USER_POOL_ID)
+        print(f"✅ Deleted Cognito domain: {domain}")
+
+    cognito.delete_user_pool(UserPoolId=USER_POOL_ID)
+    print(f"✅ Deleted Cognito User Pool: {USER_POOL_ID}")
+except Exception as e:
+    print(f"❌ Error deleting Cognito: {e}")
+
+print("\n📝 Also remember to manually delete:")
+print("   - IAM role: agentcore-gateway-role")
+print("   - S3 bucket: agentcore-gateway-*")
+print("   - Credential provider: NasaInsightAPIKey")
+```
+
+Run it when done:
+
+```bash
+python cleanup.py
+```
+
+<Callout type="danger" title="Don't Forget to Cleanup">
+  AgentCore charges for running gateways. Always delete unused Gateway resources to avoid unexpected charges.
+</Callout>
+
+## Semantic Tool Search
+
+Gateway enables intelligent tool discovery using semantic search:
+
+```python
+# Search for relevant tools based on natural language
 search_results = gateway_client.search_tools(
-    gatewayId=gateway_id,
-    query="send a message to a Slack channel",
+    gatewayId=GATEWAY_ID,
+    query="get weather data from Mars",
     maxResults=5
 )
 
@@ -452,7 +885,7 @@ for tool in search_results['tools']:
     print(f"  Relevance: {tool['relevanceScore']}")
 ```
 
-Your agent can use semantic search dynamically:
+Your agent can use semantic search dynamically to find the best tool for a task:
 
 ```python
 @tool
@@ -472,55 +905,14 @@ def find_and_use_tool(task_description: str) -> str:
         return "No suitable tool found for this task"
 
     best_tool = results[0]
-
-    # Let the LLM determine parameters
-    # This is handled by the agent loop automatically
     return f"Found tool: {best_tool.name} - {best_tool.description}"
 ```
-
-## Gateway Security
-
-### Inbound Authorization
-
-Protect your gateway with OAuth:
-
-```python
-# Configure gateway authorization
-gateway_client.update_gateway(
-    gatewayId=gateway_id,
-    authorization={
-        'type': 'OAUTH2',
-        'oauth2Config': {
-            'issuer': 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_xxx',
-            'audience': 'your-client-id'
-        }
-    }
-)
-```
-
-### Outbound Credentials
-
-Gateway handles credentials for each target:
-
-```python
-# Credentials are managed per-target
-# API keys stored in Secrets Manager
-# OAuth tokens stored in Identity Token Vault
-# IAM roles for AWS services
-
-# Your agent code never sees raw credentials!
-```
-
-<Callout type="success" title="Zero Credential Exposure">
-  Gateway manages all credentials internally. Your agent code never handles
-  raw API keys or OAuth tokens - they're injected at the Gateway level.
-</Callout>
 
 ## Monitoring and Debugging
 
 ### CloudWatch Metrics
 
-Gateway provides detailed metrics:
+Gateway provides detailed metrics in CloudWatch:
 
 ```bash
 # View Gateway metrics
@@ -534,38 +926,45 @@ aws cloudwatch get-metric-statistics \
   --statistics Sum
 ```
 
-Key metrics:
-- `ToolInvocations`: Total tool calls
-- `ToolLatency`: Response time
-- `ToolErrors`: Failed invocations
-- `AuthorizationFailures`: Auth issues
+Key metrics to monitor:
+
+| Metric | Description |
+|--------|-------------|
+| `ToolInvocations` | Total number of tool calls |
+| `ToolLatency` | Response time for tool calls |
+| `ToolErrors` | Number of failed invocations |
+| `AuthorizationFailures` | Authentication/authorization failures |
 
 ### Request Tracing
 
 Enable tracing for debugging:
 
 ```python
-# Invoke with tracing
+# Invoke with tracing enabled
 response = gateway_mcp.invoke_tool(
-    tool_name='search_database',
-    arguments={'query': 'laptop'},
+    tool_name='getInsightWeather',
+    arguments={'ver': '1.0', 'feedtype': 'json'},
     trace=True
 )
 
 print(f"Trace ID: {response.trace_id}")
-# View in CloudWatch: /aws/bedrock-agentcore-gateway/traces
+# View traces in CloudWatch: /aws/bedrock-agentcore-gateway/traces
 ```
 
 ## Checkpoint
 
-You've now learned:
+At this point, you have:
 
-- ✅ What Gateway provides and why it matters
-- ✅ How to create a gateway and add targets
-- ✅ Connecting OpenAPI, Lambda, and pre-built integrations
-- ✅ Using Gateway tools in your Strands agent
-- ✅ Semantic tool discovery
-- ✅ Gateway security model
+- ✅ Understood all six Gateway target types
+- ✅ Created an IAM role for Gateway
+- ✅ Set up Cognito for inbound authentication
+- ✅ Created a Gateway with JWT authorization
+- ✅ Created an API key credential provider
+- ✅ Uploaded an OpenAPI spec to S3
+- ✅ Created an OpenAPI Gateway target
+- ✅ Built an agent using Gateway MCP tools
+- ✅ Learned about semantic tool search
+- ✅ Understood monitoring and debugging options
 
 **Next, we'll implement multi-tenant isolation.**
 

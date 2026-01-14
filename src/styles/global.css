@@ -215,8 +215,90 @@ pre code {
   padding-left: 1.5em;
 }
 
+.prose ul {
+  list-style-type: disc;
+}
+
+.prose ol {
+  list-style-type: decimal;
+}
+
 .prose li {
   margin-top: 0.5em;
+  color: var(--color-text-secondary);
+}
+
+.prose li::marker {
+  color: var(--color-accent-primary);
+}
+
+.prose li strong {
+  color: var(--color-text-primary);
+}
+
+/* ============================================
+   TABLE STYLES
+   ============================================ */
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.9rem;
+  background-color: var(--color-bg-card);
+  border: var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.prose thead {
+  background-color: var(--color-bg-elevated);
+  border-bottom: var(--border-default);
+}
+
+.prose th {
+  padding: 0.875rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+.prose td {
+  padding: 0.75rem 1rem;
+  color: var(--color-text-secondary);
+  border-bottom: var(--border-subtle);
+  vertical-align: top;
+}
+
+.prose tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.prose tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* Bold text in first column for definition-style tables */
+.prose td:first-child strong {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+/* Responsive table wrapper for wide tables */
+.prose .table-wrapper {
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  border-radius: var(--radius-lg);
+}
+
+.prose .table-wrapper table {
+  margin: 0;
+}
+
+/* Light mode adjustments */
+[data-theme="light"] .prose tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.02);
 }
 
 /* Glow effect for accents */

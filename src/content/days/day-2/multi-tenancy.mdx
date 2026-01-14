@@ -1,415 +1,997 @@
 ---
-title: "Multi-Tenancy"
+title: "Multi-Tenancy and Fine-Grained Access Control"
 dayNumber: 2
 avengersTitle: "Age of Ultron"
 focus: "Identity + AgentCore Gateway"
-description: "Implement tenant isolation to ensure users can only access their own data through Gateway interceptors."
+description: "Implement fine-grained access control using Gateway Interceptors to enforce per-user, per-tool permissions."
 estimatedTime: "45 minutes"
 objectives:
-  - "Understand multi-tenant security requirements"
-  - "Implement Gateway interceptors for tenant isolation"
-  - "Filter tools based on user permissions"
-  - "Propagate identity context through tool invocations"
+  - "Understand Gateway Interceptors architecture"
+  - "Implement per-user, per-tool access control"
+  - "Create request interceptors for authorization"
+  - "Create response interceptors for filtering"
 order: 3
 published: true
 ---
 
 import Callout from '@/components/content/Callout.astro';
 
-# Multi-Tenancy
+# Multi-Tenancy and Fine-Grained Access Control
 
-In production, multiple users (or tenants) share your agent infrastructure. **Multi-tenancy** ensures each user can only access their own data - even when using shared tools.
+In the previous module, we set up a Gateway with JWT authentication. But basic JWT auth grants **all-or-nothing access** - if you have a valid token, you can access any tool. In production, you need **Fine-Grained Access Control (FAGC)** where different users have access to different tools.
 
-## The Multi-Tenant Challenge
+## The Fine-Grained Access Challenge
 
-Consider this scenario:
+Consider this scenario with an Order Management API that has 4 tools:
 
-```
-User A: "Show me my GitHub repositories"
-User B: "Show me my GitHub repositories"
+![FAGC Overview](/images/day2/fgac.png)
 
-Without isolation:
-  → Both users see ALL repositories
-  → Data leak! Security disaster!
+- **External Customer**: Should only access `SearchPromotions` (read-only)
+- **Internal Admin**: Should access both `AddPromotions` and `SearchPromotions`
 
-With isolation:
-  → User A sees only User A's repos
-  → User B sees only User B's repos
-  → Properly secured
-```
+Without FAGC, both users would see and access all tools. With FAGC, each user only sees and can invoke the tools they're authorized for.
 
-<Callout type="danger" title="Critical Security">
-  Multi-tenant isolation isn't optional for production agents.
-  A single data leak can destroy user trust and violate compliance requirements.
+<Callout type="danger" title="Why This Matters">
+  Without fine-grained access control:
+  - Users can discover tools they shouldn't know about
+  - Users can invoke tools beyond their permission level
+  - Semantic search returns unauthorized tools
+  - A single permission bypass can expose sensitive operations
 </Callout>
 
-## Gateway Interceptors
+## How Gateway Interceptors Work
 
-AgentCore Gateway provides **interceptors** - Lambda functions that run before and after tool invocations:
+AgentCore Gateway provides **interceptors** - Lambda functions that run at two critical points:
+
+1. **Request Interceptor**: Runs BEFORE the request reaches the target
+2. **Response Interceptor**: Runs BEFORE the response returns to the caller
+
+### Three Access Control Points
+
+| Control Point | Interceptor Type | What It Does |
+|--------------|------------------|--------------|
+| **Tool Invocation** | Request Interceptor | Block unauthorized `tools/call` requests |
+| **Tool Discovery** | Response Interceptor | Filter `tools/list` results |
+| **Semantic Search** | Response Interceptor | Filter search results |
+
+### Scope-Based Authorization
+
+We'll use Cognito scopes to define permissions:
 
 ```
-┌────────────────────────────────────────────────────────────────────┐
-│                        Tool Invocation Flow                         │
-│                                                                     │
-│  Agent Request                                                      │
-│       │                                                             │
-│       ▼                                                             │
-│  ┌─────────────────────────────────────────┐                       │
-│  │         REQUEST INTERCEPTOR              │                       │
-│  │  • Validate tenant ID                    │                       │
-│  │  • Filter available tools                │                       │
-│  │  • Inject tenant context                 │                       │
-│  │  • Transform request                     │                       │
-│  └─────────────────────────────────────────┘                       │
-│       │                                                             │
-│       ▼                                                             │
-│  ┌─────────────────────────────────────────┐                       │
-│  │           GATEWAY TARGET                 │                       │
-│  │         (API / Lambda / MCP)             │                       │
-│  └─────────────────────────────────────────┘                       │
-│       │                                                             │
-│       ▼                                                             │
-│  ┌─────────────────────────────────────────┐                       │
-│  │         RESPONSE INTERCEPTOR             │                       │
-│  │  • Filter response data                  │                       │
-│  │  • Redact sensitive fields               │                       │
-│  │  • Audit logging                         │                       │
-│  └─────────────────────────────────────────┘                       │
-│       │                                                             │
-│       ▼                                                             │
-│  Agent Response                                                     │
-└────────────────────────────────────────────────────────────────────┘
+<resource-server-id>/<target-name>           # Full access to all tools
+<resource-server-id>/<target-name>:<tool>    # Access to specific tool only
 ```
 
-## Implementing Tenant Isolation
+For example:
+- `agentcore-gateway-fagc/NasaMarsWeatherTarget` - Full access to all tools
+- `agentcore-gateway-fagc/NasaMarsWeatherTarget:getInsightWeather` - Access to one tool only
 
-### Step 1: Create Request Interceptor
+<Callout type="info" title="Gateway Interceptors">
+Gateway Interceptors are Lambda functions that inspect JWT claims and enforce fine-grained permissions. They're attached at the Gateway level, so they enforce policy for ALL targets - no need to modify individual tools or APIs.
+</Callout>
+
+## Prerequisites
+
+This module builds on the Gateway infrastructure from the previous module. You should have:
+
+- A running Gateway with a target (e.g., `NasaMarsWeatherTarget`)
+- Cognito User Pool with domain configured
+- Gateway URL and credentials
+
+## Step 1: Update Cognito with Fine-Grained Scopes
+
+First, we add FAGC-specific scopes to our existing Cognito setup and create two app clients:
+- **Admin client**: Has full access to all tools in the target
+- **Restricted client**: Has no tool-specific scopes
+
+Create `update_cognito_scopes.py`:
 
 ```python
-# lambda/request_interceptor.py
-import json
-import logging
-
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-
-def handler(event, context):
-    """
-    Request interceptor for tenant isolation.
-
-    This function runs BEFORE every tool invocation through Gateway.
-    """
-
-    # Extract request details
-    tool_name = event.get('toolName')
-    tool_input = event.get('toolInput', {})
-    headers = event.get('headers', {})
-
-    # Extract tenant context from JWT claims
-    user_context = event.get('userContext', {})
-    tenant_id = user_context.get('custom:tenant_id')
-    user_id = user_context.get('sub')
-
-    logger.info(f"Request interceptor: tool={tool_name}, tenant={tenant_id}, user={user_id}")
-
-    # Validate tenant exists
-    if not tenant_id:
-        return {
-            'statusCode': 403,
-            'error': 'TENANT_REQUIRED',
-            'message': 'Tenant ID is required for this operation'
-        }
-
-    # Inject tenant context into the request
-    modified_input = {
-        **tool_input,
-        '_tenant_context': {
-            'tenant_id': tenant_id,
-            'user_id': user_id,
-            'request_id': context.aws_request_id
-        }
-    }
-
-    # Add tenant header for downstream services
-    modified_headers = {
-        **headers,
-        'X-Tenant-ID': tenant_id,
-        'X-User-ID': user_id
-    }
-
-    return {
-        'statusCode': 200,
-        'toolInput': modified_input,
-        'headers': modified_headers,
-        'continue': True  # Proceed to target
-    }
-```
-
-### Step 2: Create Response Interceptor
-
-```python
-# lambda/response_interceptor.py
-import json
-import logging
-
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-
-def handler(event, context):
-    """
-    Response interceptor for data filtering and auditing.
-
-    This function runs AFTER every tool invocation.
-    """
-
-    tool_name = event.get('toolName')
-    tool_output = event.get('toolOutput', {})
-    user_context = event.get('userContext', {})
-
-    tenant_id = user_context.get('custom:tenant_id')
-    user_id = user_context.get('sub')
-
-    # Filter response based on tenant
-    filtered_output = filter_response_for_tenant(
-        tool_output,
-        tenant_id
-    )
-
-    # Redact sensitive fields
-    redacted_output = redact_sensitive_data(filtered_output)
-
-    # Audit logging
-    logger.info(json.dumps({
-        'event': 'TOOL_INVOCATION',
-        'tool': tool_name,
-        'tenant_id': tenant_id,
-        'user_id': user_id,
-        'request_id': context.aws_request_id,
-        'success': True
-    }))
-
-    return {
-        'statusCode': 200,
-        'toolOutput': redacted_output
-    }
-
-def filter_response_for_tenant(data, tenant_id):
-    """Filter response to only include tenant's data."""
-    if isinstance(data, list):
-        return [
-            item for item in data
-            if item.get('tenant_id') == tenant_id or 'tenant_id' not in item
-        ]
-    return data
-
-def redact_sensitive_data(data):
-    """Redact sensitive fields from response."""
-    sensitive_fields = ['password', 'secret', 'token', 'api_key', 'ssn']
-
-    if isinstance(data, dict):
-        return {
-            k: '[REDACTED]' if k.lower() in sensitive_fields else redact_sensitive_data(v)
-            for k, v in data.items()
-        }
-    elif isinstance(data, list):
-        return [redact_sensitive_data(item) for item in data]
-    return data
-```
-
-### Step 3: Attach Interceptors to Gateway
-
-```python
+# update_cognito_scopes.py - Add fine-grained scopes to existing Cognito
 import boto3
+import os
 
-gateway_client = boto3.client('bedrock-agentcore-gateway', region_name='us-east-1')
+REGION = os.environ.get('AWS_DEFAULT_REGION', 'us-east-1')
 
-# Update gateway with interceptors
-gateway_client.update_gateway(
-    gatewayId='gw-xxxx',
-    requestInterceptor={
-        'lambdaArn': 'arn:aws:lambda:us-east-1:123456789012:function:request-interceptor'
+# Values from Gateway module - UPDATE THESE
+USER_POOL_ID = "us-east-1_XXXXXX"  # From setup_cognito.py output
+TARGET_NAME = "NasaMarsWeatherTarget"  # Must match gateway target name
+
+cognito = boto3.client('cognito-idp', region_name=REGION)
+
+print("Updating Cognito for Fine-Grained Access Control...")
+
+# Define new resource server with FAGC scopes
+RESOURCE_SERVER_ID = "agentcore-gateway-fagc"
+FAGC_SCOPES = [
+    {
+        "ScopeName": TARGET_NAME,
+        "ScopeDescription": f"Full access to all tools in {TARGET_NAME}"
     },
-    responseInterceptor={
-        'lambdaArn': 'arn:aws:lambda:us-east-1:123456789012:function:response-interceptor'
+    {
+        "ScopeName": f"{TARGET_NAME}:getInsightWeather",
+        "ScopeDescription": "Access to getInsightWeather tool only"
     }
+]
+
+# Create resource server
+try:
+    cognito.create_resource_server(
+        UserPoolId=USER_POOL_ID,
+        Identifier=RESOURCE_SERVER_ID,
+        Name="Gateway FAGC Scopes",
+        Scopes=FAGC_SCOPES
+    )
+    print(f"Created resource server: {RESOURCE_SERVER_ID}")
+except Exception as e:
+    if "already exists" in str(e).lower():
+        cognito.update_resource_server(
+            UserPoolId=USER_POOL_ID,
+            Identifier=RESOURCE_SERVER_ID,
+            Name="Gateway FAGC Scopes",
+            Scopes=FAGC_SCOPES
+        )
+        print(f"Updated resource server: {RESOURCE_SERVER_ID}")
+    else:
+        raise
+
+# Full scope strings
+full_access_scope = f"{RESOURCE_SERVER_ID}/{TARGET_NAME}"
+
+# Create Admin client (full access)
+admin_response = cognito.create_user_pool_client(
+    UserPoolId=USER_POOL_ID,
+    ClientName="fagc-admin-client",
+    GenerateSecret=True,
+    AllowedOAuthFlows=["client_credentials"],
+    AllowedOAuthScopes=[full_access_scope],
+    AllowedOAuthFlowsUserPoolClient=True
 )
+admin_client_id = admin_response['UserPoolClient']['ClientId']
+admin_client_secret = admin_response['UserPoolClient']['ClientSecret']
+print(f"Created Admin client: {admin_client_id}")
+
+# Create Restricted client (basic scope only, no tool access)
+# Note: Use the resource server ID from your setup_cognito.py output
+restricted_response = cognito.create_user_pool_client(
+    UserPoolId=USER_POOL_ID,
+    ClientName="fagc-restricted-client",
+    GenerateSecret=True,
+    AllowedOAuthFlows=["client_credentials"],
+    AllowedOAuthScopes=["gateway-resource-server/gateway:read"],  # Basic gateway scope, no tool access
+    AllowedOAuthFlowsUserPoolClient=True
+)
+restricted_client_id = restricted_response['UserPoolClient']['ClientId']
+restricted_client_secret = restricted_response['UserPoolClient']['ClientSecret']
+print(f"Created Restricted client: {restricted_client_id}")
+
+print("\nSave these values for the next steps:")
+print(f"   ADMIN_CLIENT_ID = \"{admin_client_id}\"")
+print(f"   ADMIN_CLIENT_SECRET = \"{admin_client_secret}\"")
+print(f"   RESTRICTED_CLIENT_ID = \"{restricted_client_id}\"")
+print(f"   RESTRICTED_CLIENT_SECRET = \"{restricted_client_secret}\"")
 ```
 
-## Dynamic Tool Filtering
+Run it:
 
-Interceptors can filter which tools are available to each user:
+```bash
+python update_cognito_scopes.py
+```
+
+## Step 2: Create Request Interceptor Lambda
+
+The request interceptor runs before tool invocations and enforces authorization:
+
+![Request Interceptor Flow](/images/day2/invoke-tool.png)
+
+Create `request_interceptor.py`:
 
 ```python
-# lambda/request_interceptor.py (extended)
+# request_interceptor.py - Lambda function for request-level FAGC
+import json
+import time
+import urllib.request
+from jose import jwk, jwt
+from jose.utils import base64url_decode
 
-# Tool permissions by role
-TOOL_PERMISSIONS = {
-    'admin': ['*'],  # All tools
-    'developer': ['search_code', 'create_branch', 'view_commits'],
-    'viewer': ['search_code', 'view_commits'],
+# These values will be replaced during deployment
+GATEWAY_TARGET_NAME = "TARGET_NAME_PLACEHOLDER"
+RESOURCE_SERVER_ID = "RESOURCE_SERVER_ID_PLACEHOLDER"
+JWKS_URL = "JWKS_URL_PLACEHOLDER"
+CLIENT_ID = "CLIENT_ID_PLACEHOLDER"
+
+# Load JWKS keys at cold start
+with urllib.request.urlopen(JWKS_URL) as f:
+    response = f.read()
+keys = json.loads(response.decode('utf-8'))['keys']
+
+# System tools that should pass through (filtered by response interceptor instead)
+SYSTEM_TOOLS = {
+    "x_amz_bedrock_agentcore_search",  # semantic search tool
 }
 
-def filter_tools_for_user(event, context):
-    """Filter available tools based on user role."""
+def decode_jwt_payload(token):
+    """Verify and decode JWT payload"""
+    headers = jwt.get_unverified_headers(token)
+    kid = headers['kid']
 
-    user_context = event.get('userContext', {})
-    user_role = user_context.get('custom:role', 'viewer')
+    # Find matching key
+    key_index = -1
+    for i, key in enumerate(keys):
+        if kid == key['kid']:
+            key_index = i
+            break
 
-    # Get allowed tools for this role
-    allowed_tools = TOOL_PERMISSIONS.get(user_role, [])
+    if key_index == -1:
+        raise Exception('Public key not found in jwks.json')
 
-    if event.get('operation') == 'list_tools':
-        # Filter tool list
-        all_tools = event.get('tools', [])
+    # Construct the public key
+    public_key = jwk.construct(keys[key_index])
 
-        if '*' in allowed_tools:
-            filtered_tools = all_tools
+    # Get message and signature
+    message, encoded_signature = str(token).rsplit('.', 1)
+    decoded_signature = base64url_decode(encoded_signature.encode('utf-8'))
+
+    # Verify signature
+    if not public_key.verify(message.encode("utf8"), decoded_signature):
+        raise Exception('Signature verification failed')
+
+    # Get claims
+    claims = jwt.get_unverified_claims(token)
+
+    # Check expiration
+    if time.time() > claims['exp']:
+        raise Exception('Token is expired')
+
+    # Check token use
+    if claims.get('token_use') != 'access':
+        raise Exception("Invalid token use: must be 'access' token")
+
+    return claims
+
+def check_tool_authorization(scopes, tool_name):
+    """Check if user has permission for specific tool based on scopes."""
+    if not scopes:
+        return False
+
+    user_scopes = scopes.split(" ")
+    actual_scopes = []
+
+    for s in user_scopes:
+        # Strip resource server prefix if present
+        if "/" in s:
+            actual_scopes.append(s.split("/", 1)[1])
         else:
-            filtered_tools = [
-                t for t in all_tools
-                if t['name'] in allowed_tools
-            ]
+            actual_scopes.append(s)
 
-        return {
-            'statusCode': 200,
-            'tools': filtered_tools
-        }
+    # Full access to all tools in this target
+    if GATEWAY_TARGET_NAME in actual_scopes:
+        return True
 
-    # For tool invocation, verify permission
-    tool_name = event.get('toolName')
+    # Specific tool permission: <target>:<toolName>
+    required_scope = f"{GATEWAY_TARGET_NAME}:{tool_name}"
+    if required_scope in actual_scopes:
+        return True
 
-    if '*' not in allowed_tools and tool_name not in allowed_tools:
-        return {
-            'statusCode': 403,
-            'error': 'TOOL_NOT_PERMITTED',
-            'message': f'User role "{user_role}" cannot access tool "{tool_name}"'
-        }
+    return False
 
-    return {'statusCode': 200, 'continue': True}
-```
+def extract_tool_name(body):
+    """Extract tool name from MCP tools/call request body"""
+    try:
+        if isinstance(body, dict):
+            params = body.get("params", {})
+            tool_name = params.get("name", "")
+            # Tool names are of the form: <target>___<toolName>
+            if "___" in tool_name:
+                return tool_name.split("___")[-1]
+            return tool_name
+    except Exception:
+        pass
+    return None
 
-<Callout type="tip" title="Fine-Grained Access">
-  Interceptors enable sophisticated access control:
-  - Role-based tool filtering
-  - Time-based access restrictions
-  - Resource-level permissions
-  - Dynamic policy evaluation
-</Callout>
-
-## Identity Propagation
-
-When tools call other services, maintain the identity chain:
-
-```python
-# In your request interceptor
-def propagate_identity(event, context):
-    """Propagate user identity through the tool chain."""
-
-    user_context = event.get('userContext', {})
-    headers = event.get('headers', {})
-
-    # Create an "act on behalf of" token
-    # This allows downstream services to know who the original user is
-    act_as_headers = {
-        **headers,
-        'X-Original-User': user_context.get('sub'),
-        'X-Original-Tenant': user_context.get('custom:tenant_id'),
-        'X-Agent-ID': event.get('agentId'),
-        'X-Trace-ID': context.aws_request_id
-    }
-
+def build_pass_through_response(auth_header, body):
+    """Return a pass-through response to let the request reach the target"""
     return {
-        'statusCode': 200,
-        'headers': act_as_headers,
-        'continue': True
+        "interceptorOutputVersion": "1.0",
+        "mcp": {
+            "transformedGatewayRequest": {
+                "headers": {
+                    "Authorization": auth_header,
+                    "Content-Type": "application/json"
+                },
+                "body": body
+            }
+        }
     }
-```
 
-## Testing Multi-Tenant Isolation
+def build_error_response(message, body, status_code=403):
+    """Return an MCP-style error response"""
+    return {
+        "interceptorOutputVersion": "1.0",
+        "mcp": {
+            "transformedGatewayResponse": {
+                "statusCode": status_code,
+                "body": {
+                    "jsonrpc": "2.0",
+                    "id": body.get("id", "unknown") if isinstance(body, dict) else "unknown",
+                    "error": {
+                        "code": -32600,
+                        "message": message
+                    }
+                }
+            }
+        }
+    }
 
-Create a test suite to verify isolation:
+def lambda_handler(event, context):
+    print(f"Request Interceptor received event: {json.dumps(event)}")
 
-```python
-# test_multi_tenancy.py
-import pytest
-import boto3
+    # Extract gateway request
+    mcp_data = event.get("mcp", {})
+    gateway_request = mcp_data.get("gatewayRequest", {})
+    headers = gateway_request.get("headers", {})
+    body = gateway_request.get("body", {})
 
-gateway_client = boto3.client('bedrock-agentcore-gateway')
+    # Extract Authorization header
+    auth_header = headers.get("Authorization", "")
 
-class TestMultiTenantIsolation:
+    # Enforce presence of Bearer token
+    if not auth_header.startswith("Bearer "):
+        return build_error_response("No authorization token provided", body)
 
-    def test_tenant_a_cannot_see_tenant_b_data(self):
-        """Verify data isolation between tenants."""
+    # Decode token and check authorization
+    try:
+        token = auth_header.replace("Bearer ", "")
+        decoded_token = decode_jwt_payload(token)
+        scopes = decoded_token.get("scope", "")
 
-        # Invoke as Tenant A
-        response_a = gateway_client.invoke_tool(
-            gatewayId='gw-xxxx',
-            toolName='list_documents',
-            toolInput={},
-            authContext={'tenant_id': 'tenant-a'}
-        )
+        method = body.get("method", "")
+        tool_name = extract_tool_name(body)
 
-        # Invoke as Tenant B
-        response_b = gateway_client.invoke_tool(
-            gatewayId='gw-xxxx',
-            toolName='list_documents',
-            toolInput={},
-            authContext={'tenant_id': 'tenant-b'}
-        )
+        # Allow tools/list through - filtering handled by response interceptor
+        if method == "tools/list":
+            return build_pass_through_response(auth_header, body)
 
-        # Verify isolation
-        docs_a = response_a['result']['documents']
-        docs_b = response_b['result']['documents']
+        # Allow system tools through - filtering handled by response interceptor
+        if tool_name in SYSTEM_TOOLS:
+            return build_pass_through_response(auth_header, body)
 
-        # No overlap should exist
-        ids_a = {d['id'] for d in docs_a}
-        ids_b = {d['id'] for d in docs_b}
+        # For business tools, enforce FAGC
+        if not tool_name:
+            return build_error_response("No tool name in request", body)
 
-        assert ids_a.isdisjoint(ids_b), "Data leak detected!"
-
-    def test_tool_filtering_by_role(self):
-        """Verify tools are filtered based on user role."""
-
-        # List tools as admin
-        admin_tools = gateway_client.list_tools(
-            gatewayId='gw-xxxx',
-            authContext={'role': 'admin'}
-        )
-
-        # List tools as viewer
-        viewer_tools = gateway_client.list_tools(
-            gatewayId='gw-xxxx',
-            authContext={'role': 'viewer'}
-        )
-
-        assert len(admin_tools['tools']) > len(viewer_tools['tools'])
-
-    def test_unauthorized_tool_access_blocked(self):
-        """Verify viewers cannot access admin tools."""
-
-        with pytest.raises(Exception) as exc_info:
-            gateway_client.invoke_tool(
-                gatewayId='gw-xxxx',
-                toolName='delete_all_data',  # Admin-only tool
-                toolInput={},
-                authContext={'role': 'viewer'}
+        if not check_tool_authorization(scopes, tool_name):
+            return build_error_response(
+                f"Insufficient permission for tool: {tool_name}",
+                body
             )
 
-        assert 'TOOL_NOT_PERMITTED' in str(exc_info.value)
+    except Exception as e:
+        return build_error_response(f"Invalid token - {e}", body)
+
+    # Authorized - pass through
+    return build_pass_through_response(auth_header, body)
 ```
+
+## Step 3: Create Response Interceptor Lambda
+
+The response interceptor filters `tools/list` and semantic search results:
+
+![Response Interceptor - List Tools](/images/day2/list-tool.png)
+
+![Response Interceptor - Semantic Search](/images/day2/search-tool.png)
+
+Create `response_interceptor.py`:
+
+```python
+# response_interceptor.py - Lambda function for response-level FAGC
+# Filters tools/list and semantic search results based on user scopes
+import json
+import time
+import urllib.request
+from jose import jwk, jwt
+from jose.utils import base64url_decode
+
+# These values will be replaced during deployment
+JWKS_URL = "JWKS_URL_PLACEHOLDER"
+CLIENT_ID = "CLIENT_ID_PLACEHOLDER"
+
+# Load JWKS keys at cold start
+with urllib.request.urlopen(JWKS_URL) as f:
+    response = f.read()
+keys = json.loads(response.decode('utf-8'))['keys']
+
+def decode_jwt_payload(token):
+    """Verify and decode JWT payload"""
+    headers = jwt.get_unverified_headers(token)
+    kid = headers['kid']
+
+    # Find matching key
+    key_index = -1
+    for i, key in enumerate(keys):
+        if kid == key['kid']:
+            key_index = i
+            break
+
+    if key_index == -1:
+        raise Exception('Public key not found in jwks.json')
+
+    # Construct the public key
+    public_key = jwk.construct(keys[key_index])
+
+    # Get message and signature
+    message, encoded_signature = str(token).rsplit('.', 1)
+    decoded_signature = base64url_decode(encoded_signature.encode('utf-8'))
+
+    # Verify signature
+    if not public_key.verify(message.encode("utf8"), decoded_signature):
+        raise Exception('Signature verification failed')
+
+    # Get claims
+    claims = jwt.get_unverified_claims(token)
+
+    # Check expiration
+    if time.time() > claims['exp']:
+        raise Exception('Token is expired')
+
+    # Check token use
+    if claims.get('token_use') != 'access':
+        raise Exception("Invalid token use: must be 'access' token")
+
+    return claims
+
+def filter_tools_by_scope(tools, allowed_scopes):
+    """Filter tools based on user's scopes"""
+    if not allowed_scopes:
+        return []
+
+    filtered_tools = []
+    for tool in tools:
+        tool_name = tool.get("name", "")
+
+        # Skip system tools without target separator
+        if "___" not in tool_name:
+            continue
+
+        mcp_target = tool_name.split("___")[0]
+        tool_action = tool_name.split("___")[1]
+
+        for scope in allowed_scopes:
+            # Remove resource server prefix to get actual scope
+            actual_scope = scope.split("/")[-1] if "/" in scope else scope
+
+            # Full access to MCP target
+            if actual_scope == mcp_target:
+                filtered_tools.append(tool)
+                break
+            # Specific tool access
+            elif actual_scope == f"{mcp_target}:{tool_action}":
+                filtered_tools.append(tool)
+                break
+
+    return filtered_tools
+
+def lambda_handler(event, context):
+    print(f"Response Interceptor received event: {json.dumps(event)}")
+
+    # Extract gateway response
+    mcp_data = event.get("mcp", {})
+    gateway_response = mcp_data.get("gatewayResponse", {})
+    headers = gateway_response.get("headers", {})
+    body = gateway_response.get("body", {})
+
+    # Pass through the Authorization header
+    auth_header = headers.get("Authorization", "")
+    token = auth_header.replace("Bearer ", "") if auth_header.startswith("Bearer ") else ""
+
+    filtered_body = body
+
+    try:
+        # Parse JWT to get scopes
+        claims = decode_jwt_payload(token)
+        scope_string = claims.get("scope", "")
+        scopes = scope_string.split() if scope_string else []
+
+        # Get tools from response (supports both tools/list and semantic search)
+        result = body.get("result", {})
+        tools = result.get("tools", [])
+        if not tools:
+            structured_content = result.get("structuredContent", {})
+            tools = structured_content.get("tools", [])
+
+        # Filter tools based on scopes
+        filtered_tools = filter_tools_by_scope(tools, scopes)
+
+        # Update body with filtered tools
+        filtered_body = body.copy()
+        if "result" in filtered_body:
+            if "structuredContent" in filtered_body["result"]:
+                filtered_body["result"]["structuredContent"]["tools"] = filtered_tools
+            else:
+                filtered_body["result"]["tools"] = filtered_tools
+
+            # Also filter content array if it contains embedded tool JSON
+            if "content" in filtered_body["result"]:
+                for content_item in filtered_body["result"]["content"]:
+                    if content_item.get("type") == "text" and "text" in content_item:
+                        try:
+                            content_data = json.loads(content_item["text"])
+                            if "tools" in content_data:
+                                content_filtered = filter_tools_by_scope(content_data["tools"], scopes)
+                                content_data["tools"] = content_filtered
+                                content_item["text"] = json.dumps(content_data)
+                        except (json.JSONDecodeError, KeyError):
+                            pass
+
+    except Exception as e:
+        print(f"Error processing JWT or filtering: {e}")
+        # On error, return original body (fail open for debugging)
+        filtered_body = body
+
+    # Return transformed response
+    return {
+        "interceptorOutputVersion": "1.0",
+        "mcp": {
+            "transformedGatewayResponse": {
+                "statusCode": 200,
+                "headers": {
+                    "Accept": "application/json",
+                    "Authorization": auth_header
+                },
+                "body": filtered_body
+            }
+        }
+    }
+```
+
+## Step 4: Deploy Interceptors to Gateway
+
+Create `deploy_interceptors.py` to package and deploy the Lambdas, then attach them to the Gateway:
+
+```python
+# deploy_interceptors.py - Deploy Lambda interceptors and attach to Gateway
+import boto3
+import json
+import time
+import zipfile
+import subprocess
+import tempfile
+import io
+import os
+from datetime import datetime
+
+REGION = os.environ.get('AWS_DEFAULT_REGION', 'us-east-1')
+
+# Values from previous steps - UPDATE THESE
+GATEWAY_ID = "marsweathergateway-XXXXXX"  # From create_gateway.py output
+USER_POOL_ID = "us-east-1_XXXXXX"  # From setup_cognito.py output
+TARGET_NAME = "NasaMarsWeatherTarget"
+RESOURCE_SERVER_ID = "agentcore-gateway-fagc"
+ADMIN_CLIENT_ID = "XXXXXX"  # From update_cognito_scopes.py output
+
+# Generate timestamp for unique naming
+timestamp = datetime.now().strftime('%Y%m%d-%H%M%S')
+
+# Cognito URLs
+jwks_url = f"https://cognito-idp.{REGION}.amazonaws.com/{USER_POOL_ID}/.well-known/jwks.json"
+
+iam_client = boto3.client('iam', region_name=REGION)
+lambda_client = boto3.client('lambda', region_name=REGION)
+gateway_client = boto3.client('bedrock-agentcore-control', region_name=REGION)
+
+print("Deploying Gateway Interceptors for Fine-Grained Access Control")
+
+# Step 1: Create IAM role for Lambda
+lambda_trust_policy = {
+    "Version": "2012-10-17",
+    "Statement": [{
+        "Effect": "Allow",
+        "Principal": {"Service": "lambda.amazonaws.com"},
+        "Action": "sts:AssumeRole"
+    }]
+}
+
+lambda_role_name = f'fagc-interceptor-role-{timestamp}'
+role_response = iam_client.create_role(
+    RoleName=lambda_role_name,
+    AssumeRolePolicyDocument=json.dumps(lambda_trust_policy)
+)
+lambda_role_arn = role_response['Role']['Arn']
+
+iam_client.attach_role_policy(
+    RoleName=lambda_role_name,
+    PolicyArn='arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+)
+print(f"Created Lambda role: {lambda_role_arn}")
+time.sleep(10)  # Wait for role propagation
+
+# Step 2: Deploy Request Interceptor Lambda
+with open('request_interceptor.py', 'r') as f:
+    request_code = f.read()
+
+# Replace placeholders with actual values
+request_code = request_code.replace("TARGET_NAME_PLACEHOLDER", TARGET_NAME)
+request_code = request_code.replace("RESOURCE_SERVER_ID_PLACEHOLDER", RESOURCE_SERVER_ID)
+request_code = request_code.replace("JWKS_URL_PLACEHOLDER", jwks_url)
+request_code = request_code.replace("CLIENT_ID_PLACEHOLDER", ADMIN_CLIENT_ID)
+
+# Create ZIP with dependencies
+with tempfile.TemporaryDirectory() as temp_dir:
+    subprocess.run(['pip', 'install', 'python-jose[cryptography]', '-t', temp_dir],
+                   check=True, capture_output=True)
+
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+        zip_file.writestr('lambda_function.py', request_code)
+        for root, dirs, files in os.walk(temp_dir):
+            for file in files:
+                file_path = os.path.join(root, file)
+                arc_name = os.path.relpath(file_path, temp_dir)
+                zip_file.write(file_path, arc_name)
+
+zip_buffer.seek(0)
+request_lambda_name = f'fagc-request-interceptor-{timestamp}'
+
+request_lambda_response = lambda_client.create_function(
+    FunctionName=request_lambda_name,
+    Runtime='python3.12',
+    Role=lambda_role_arn,
+    Handler='lambda_function.lambda_handler',
+    Code={'ZipFile': zip_buffer.read()},
+    Timeout=30
+)
+request_lambda_arn = request_lambda_response['FunctionArn']
+print(f"Created Request Interceptor: {request_lambda_arn}")
+
+# Step 3: Deploy Response Interceptor Lambda (similar process)
+with open('response_interceptor.py', 'r') as f:
+    response_code = f.read()
+
+response_code = response_code.replace("JWKS_URL_PLACEHOLDER", jwks_url)
+response_code = response_code.replace("CLIENT_ID_PLACEHOLDER", ADMIN_CLIENT_ID)
+
+with tempfile.TemporaryDirectory() as temp_dir:
+    subprocess.run(['pip', 'install', 'python-jose[cryptography]', '-t', temp_dir],
+                   check=True, capture_output=True)
+
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+        zip_file.writestr('lambda_function.py', response_code)
+        for root, dirs, files in os.walk(temp_dir):
+            for file in files:
+                file_path = os.path.join(root, file)
+                arc_name = os.path.relpath(file_path, temp_dir)
+                zip_file.write(file_path, arc_name)
+
+zip_buffer.seek(0)
+response_lambda_name = f'fagc-response-interceptor-{timestamp}'
+
+response_lambda_response = lambda_client.create_function(
+    FunctionName=response_lambda_name,
+    Runtime='python3.12',
+    Role=lambda_role_arn,
+    Handler='lambda_function.lambda_handler',
+    Code={'ZipFile': zip_buffer.read()},
+    Timeout=30
+)
+response_lambda_arn = response_lambda_response['FunctionArn']
+print(f"Created Response Interceptor: {response_lambda_arn}")
+
+# Step 4: Attach interceptors to Gateway
+# Get current gateway config (update_gateway requires ALL parameters)
+gateway_info = gateway_client.get_gateway(gatewayIdentifier=GATEWAY_ID)
+
+gateway_client.update_gateway(
+    gatewayIdentifier=GATEWAY_ID,
+    name=gateway_info['name'],
+    roleArn=gateway_info['roleArn'],
+    protocolType=gateway_info['protocolType'],
+    authorizerType=gateway_info['authorizerType'],
+    authorizerConfiguration=gateway_info.get('authorizerConfiguration', {}),
+    interceptorConfigurations=[
+        {
+            'interceptor': {'lambda': {'arn': request_lambda_arn}},
+            'interceptionPoints': ['REQUEST'],
+            'inputConfiguration': {'passRequestHeaders': True}
+        },
+        {
+            'interceptor': {'lambda': {'arn': response_lambda_arn}},
+            'interceptionPoints': ['RESPONSE'],
+            'inputConfiguration': {'passRequestHeaders': True}
+        }
+    ]
+)
+
+# Wait for gateway to be ready
+while True:
+    status = gateway_client.get_gateway(gatewayIdentifier=GATEWAY_ID)['status']
+    print(f"Gateway status: {status}")
+    if status == 'READY':
+        break
+    time.sleep(10)
+
+print("\nInterceptors attached to Gateway!")
+print(f"Save these for cleanup:")
+print(f"   LAMBDA_ROLE_NAME = \"{lambda_role_name}\"")
+print(f"   REQUEST_LAMBDA_NAME = \"{request_lambda_name}\"")
+print(f"   RESPONSE_LAMBDA_NAME = \"{response_lambda_name}\"")
+```
+
+<Callout type="info" title="update_gateway Requires All Parameters">
+The `update_gateway` API requires all original parameters (name, roleArn, protocolType, authorizerType) even when only adding interceptors. Always fetch the current config first and include all values.
+</Callout>
+
+Run it:
+
+```bash
+python deploy_interceptors.py
+```
+
+## Step 4b: Update Gateway Allowed Clients
+
+After deploying interceptors, update the Gateway's JWT authorizer to include the FAGC client IDs. Otherwise, the new clients will get "Invalid Bearer token" errors.
+
+Create `update_gateway_clients.py`:
+
+```python
+# update_gateway_clients.py - Add FAGC clients to Gateway's allowed clients list
+import boto3
+import time
+import os
+
+REGION = os.environ.get('AWS_DEFAULT_REGION', 'us-east-1')
+
+# Values from previous steps - UPDATE THESE
+GATEWAY_ID = "marsweathergateway-XXXXXX"
+USER_POOL_ID = "us-east-1_XXXXXX"
+
+# Client IDs - UPDATE THESE
+ORIGINAL_CLIENT_ID = "XXXXXX"  # Original client from setup_cognito.py
+ADMIN_CLIENT_ID = "XXXXXX"  # From update_cognito_scopes.py output
+RESTRICTED_CLIENT_ID = "XXXXXX"  # From update_cognito_scopes.py output
+
+gateway_client = boto3.client('bedrock-agentcore-control', region_name=REGION)
+
+print("Updating Gateway to allow FAGC clients...")
+
+# Get current gateway configuration
+current = gateway_client.get_gateway(gatewayIdentifier=GATEWAY_ID)
+print(f"Current status: {current['status']}")
+
+# Build updated authorizer configuration with all client IDs
+auth_config = {
+    "customJWTAuthorizer": {
+        "allowedClients": [ORIGINAL_CLIENT_ID, ADMIN_CLIENT_ID, RESTRICTED_CLIENT_ID],
+        "discoveryUrl": f"https://cognito-idp.{REGION}.amazonaws.com/{USER_POOL_ID}/.well-known/openid-configuration"
+    }
+}
+
+# Update gateway - must include all required parameters
+gateway_client.update_gateway(
+    gatewayIdentifier=GATEWAY_ID,
+    name=current['name'],
+    roleArn=current['roleArn'],
+    protocolType=current['protocolType'],
+    authorizerType=current['authorizerType'],
+    authorizerConfiguration=auth_config,
+    interceptorConfigurations=current.get('interceptorConfigurations', [])
+)
+
+# Wait for gateway to be ready
+while True:
+    status = gateway_client.get_gateway(gatewayIdentifier=GATEWAY_ID)['status']
+    print(f"Gateway status: {status}")
+    if status == 'READY':
+        break
+    time.sleep(5)
+
+print("\nGateway updated with FAGC clients!")
+```
+
+Run it:
+
+```bash
+python update_gateway_clients.py
+```
+
+## Step 5: Test Access Control
+
+Now let's verify FAGC is working:
+
+```python
+# test_fagc.py - Test Fine-Grained Access Control
+import boto3
+import requests
+import base64
+import os
+
+REGION = os.environ.get('AWS_DEFAULT_REGION', 'us-east-1')
+
+# Values from previous steps - UPDATE THESE
+GATEWAY_URL = "https://marsweathergateway-XXXXXX.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp"
+USER_POOL_ID = "us-east-1_XXXXXX"
+TARGET_NAME = "NasaMarsWeatherTarget"
+RESOURCE_SERVER_ID = "agentcore-gateway-fagc"
+
+# Client IDs from update_cognito_scopes.py
+ADMIN_CLIENT_ID = "XXXXXX"
+RESTRICTED_CLIENT_ID = "XXXXXX"
+
+# Get client secrets from Cognito
+cognito_client = boto3.client('cognito-idp', region_name=REGION)
+admin_desc = cognito_client.describe_user_pool_client(UserPoolId=USER_POOL_ID, ClientId=ADMIN_CLIENT_ID)
+ADMIN_CLIENT_SECRET = admin_desc['UserPoolClient'].get('ClientSecret', '')
+restricted_desc = cognito_client.describe_user_pool_client(UserPoolId=USER_POOL_ID, ClientId=RESTRICTED_CLIENT_ID)
+RESTRICTED_CLIENT_SECRET = restricted_desc['UserPoolClient'].get('ClientSecret', '')
+
+# Get Cognito token endpoint
+pool_info = cognito_client.describe_user_pool(UserPoolId=USER_POOL_ID)
+domain = pool_info['UserPool'].get('Domain')
+TOKEN_URL = f"https://{domain}.auth.{REGION}.amazoncognito.com/oauth2/token"
+
+def get_token(client_id, client_secret, scope):
+    """Get access token from Cognito"""
+    auth_string = base64.b64encode(f"{client_id}:{client_secret}".encode()).decode()
+    response = requests.post(TOKEN_URL, headers={
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Authorization": f"Basic {auth_string}"
+    }, data={"grant_type": "client_credentials", "scope": scope})
+    return response.json()
+
+def list_tools(token):
+    response = requests.post(GATEWAY_URL, headers={
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json"
+    }, json={"jsonrpc": "2.0", "id": "1", "method": "tools/list", "params": {}})
+    return response.json()
+
+def invoke_tool(token, tool_name):
+    response = requests.post(GATEWAY_URL, headers={
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json"
+    }, json={
+        "jsonrpc": "2.0", "id": "1", "method": "tools/call",
+        "params": {"name": f"{TARGET_NAME}___{tool_name}", "arguments": {"feedtype": "json", "ver": "1.0"}}
+    })
+    return response.json()
+
+# Test 1: Admin client (full access)
+print("TEST 1: Admin Client (Full Target Access)")
+admin_scope = f"{RESOURCE_SERVER_ID}/{TARGET_NAME}"
+token_resp = get_token(ADMIN_CLIENT_ID, ADMIN_CLIENT_SECRET, admin_scope)
+admin_token = token_resp["access_token"]
+
+tools = list_tools(admin_token)
+print(f"Admin sees {len(tools.get('result', {}).get('tools', []))} tool(s)")
+
+invoke_resp = invoke_tool(admin_token, "getInsightWeather")
+if "error" in invoke_resp:
+    print(f"Tool invocation DENIED: {invoke_resp['error']}")
+else:
+    print("Tool invocation ALLOWED - Got result!")
+
+# Test 2: Restricted client (no tool access)
+print("\nTEST 2: Restricted Client (No Tool Access)")
+restricted_scope = "gateway-resource-server/gateway:read"
+token_resp = get_token(RESTRICTED_CLIENT_ID, RESTRICTED_CLIENT_SECRET, restricted_scope)
+restricted_token = token_resp["access_token"]
+
+tools = list_tools(restricted_token)
+print(f"Restricted user sees {len(tools.get('result', {}).get('tools', []))} tool(s)")
+
+invoke_resp = invoke_tool(restricted_token, "getInsightWeather")
+if "error" in invoke_resp:
+    print(f"Tool invocation DENIED (expected): {invoke_resp['error'].get('message', invoke_resp['error'])}")
+else:
+    print("WARNING: Tool invocation was ALLOWED (unexpected)")
+```
+
+Expected output:
+
+```txt
+TEST 1: Admin Client (Full Target Access)
+Admin sees 1 tool(s)
+Tool invocation ALLOWED - Got result!
+
+TEST 2: Restricted Client (No Tool Access)
+Restricted user sees 0 tool(s)
+Tool invocation DENIED (expected): Insufficient permission for tool: getInsightWeather
+```
+
+<Callout type="tip" title="Scaling to Multiple Tools">
+  This pattern scales to APIs with many tools:
+  - Define a scope for each tool: `Target:getOrder`, `Target:updateOrder`, `Target:deleteOrder`
+  - Users only see and access tools matching their scopes
+  - Full target scope grants access to all tools
+</Callout>
+
+## Step 6: Cleanup
+
+Create `cleanup_interceptors.py` to remove the FAGC resources:
+
+```python
+# cleanup_interceptors.py - Remove FAGC interceptors
+import boto3
+import time
+import os
+
+REGION = os.environ.get('AWS_DEFAULT_REGION', 'us-east-1')
+
+# Values from deploy_interceptors.py output - UPDATE THESE
+GATEWAY_ID = "marsweathergateway-XXXXXX"
+USER_POOL_ID = "us-east-1_XXXXXX"
+LAMBDA_ROLE_NAME = "fagc-interceptor-role-XXXXXX"
+REQUEST_LAMBDA_NAME = "fagc-request-interceptor-XXXXXX"
+RESPONSE_LAMBDA_NAME = "fagc-response-interceptor-XXXXXX"
+
+iam_client = boto3.client('iam', region_name=REGION)
+lambda_client = boto3.client('lambda', region_name=REGION)
+gateway_client = boto3.client('bedrock-agentcore-control', region_name=REGION)
+cognito = boto3.client('cognito-idp', region_name=REGION)
+
+print("Cleaning up FAGC resources...")
+
+# Step 1: Delete Lambda functions (interceptors will fail without them)
+print("\nStep 1: Deleting Lambda functions...")
+try:
+    lambda_client.delete_function(FunctionName=REQUEST_LAMBDA_NAME)
+    print(f"Deleted: {REQUEST_LAMBDA_NAME}")
+except Exception as e:
+    print(f"Error: {e}")
+
+try:
+    lambda_client.delete_function(FunctionName=RESPONSE_LAMBDA_NAME)
+    print(f"Deleted: {RESPONSE_LAMBDA_NAME}")
+except Exception as e:
+    print(f"Error: {e}")
+
+# Step 2: Delete IAM role
+print("\nStep 2: Deleting IAM role...")
+try:
+    iam_client.detach_role_policy(
+        RoleName=LAMBDA_ROLE_NAME,
+        PolicyArn='arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+    )
+    iam_client.delete_role(RoleName=LAMBDA_ROLE_NAME)
+    print(f"Deleted: {LAMBDA_ROLE_NAME}")
+except Exception as e:
+    print(f"Error: {e}")
+
+# Step 3: Delete Cognito FAGC clients
+print("\nStep 3: Cleaning up Cognito clients...")
+try:
+    clients = cognito.list_user_pool_clients(UserPoolId=USER_POOL_ID, MaxResults=60)
+    for client in clients['UserPoolClients']:
+        if client['ClientName'] in ['fagc-admin-client', 'fagc-restricted-client']:
+            cognito.delete_user_pool_client(UserPoolId=USER_POOL_ID, ClientId=client['ClientId'])
+            print(f"Deleted Cognito client: {client['ClientName']}")
+
+    cognito.delete_resource_server(UserPoolId=USER_POOL_ID, Identifier="agentcore-gateway-fagc")
+    print("Deleted FAGC resource server")
+except Exception as e:
+    print(f"Error: {e}")
+
+print("\nFAGC cleanup complete!")
+print("Note: Gateway interceptors still reference deleted Lambdas - they will fail silently.")
+print("The base Gateway from the Gateway module is NOT deleted.")
+```
+
+<Callout type="info" title="Why Not Remove Interceptors?">
+The Gateway API requires at least 1 interceptor when `interceptorConfigurations` is provided. Since the Lambda functions are deleted, the interceptors will simply fail when invoked. To fully remove interceptors, you would need to recreate the Gateway without them.
+</Callout>
 
 ## Checkpoint
 
 You've learned:
 
-- ✅ Why multi-tenant isolation is critical
-- ✅ How Gateway interceptors work
-- ✅ Implementing request and response interceptors
-- ✅ Dynamic tool filtering by user role
-- ✅ Identity propagation through tool chains
-- ✅ Testing isolation
+- **Gateway Interceptors** run at REQUEST and RESPONSE points
+- **Request Interceptor** blocks unauthorized tool invocations with 403 errors
+- **Response Interceptor** filters tools/list and semantic search results
+- **Scope-based authorization** uses Cognito scopes like `Target:toolName`
+- This pattern **scales** to APIs with many tools and complex permission models
 
-**Next, we'll experience what happens without these protections.**
+**Next, we'll explore what happens when security controls fail.**
 
 <div class="nav-buttons">
   <a href="/days/2/agentcore-gateway" class="nav-button nav-button--prev">
