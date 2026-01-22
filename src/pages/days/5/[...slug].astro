@@ -6,10 +6,15 @@
 import DayLayout from '@/layouts/DayLayout.astro';
 import { getCollection } from 'astro:content';
 import { getSectionsInfo, getAdjacentSections } from '@/lib/content';
+import { isDayPublished } from '@/lib/config';
 
 const dayNumber = 5;
 
 export async function getStaticPaths() {
+  if (import.meta.env.PROD && !isDayPublished(5)) {
+    return [];
+  }
+
   const allSections = await getCollection('days');
   const day5Sections = allSections.filter(
     (entry) => entry.data.dayNumber === 5 && entry.data.order > 0 && entry.data.published

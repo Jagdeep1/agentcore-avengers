@@ -6,9 +6,9 @@
 
 import DayLayout from '@/layouts/DayLayout.astro';
 import { getDayOverview, getSectionsInfo } from '@/lib/content';
+import { isDayPublished } from '@/lib/config';
 
-// Don't build Day 4 in production (GitHub Pages)
-if (import.meta.env.PROD) {
+if (import.meta.env.PROD && !isDayPublished(4)) {
   return Astro.redirect('/');
 }
 

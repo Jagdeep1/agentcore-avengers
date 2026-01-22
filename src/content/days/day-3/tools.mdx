@@ -18,153 +18,169 @@ import Callout from '@/components/content/Callout.astro';
 
 # Code Interpreter & Browser
 
-Memory lets your agent remember. Now let's give it the ability to **do** - execute code, analyze data, and interact with the web.
+Memory lets your agent remember. Now let's give it the ability to **do** - execute code and analyze data.
 
-## AgentCore Code Interpreter
+## Overview
+
+This module demonstrates:
+- **AgentCore Code Interpreter**: Secure Python execution for calculations and data analysis
+- **Browser Tool**: (AWS Console setup required - see callout below)
+
+<Callout type="info" title="Browser Tool Note">
+Browser tool examples require AWS Console setup (creating browser resources, viewing live sessions). This guide focuses on Code Interpreter, which you can run immediately. For Browser tool usage, see [AWS Documentation](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/browser-tool.html).
+</Callout>
+
+## How Code Interpreter Works
+
+The code execution sandbox enables agents to safely process user queries by creating an isolated environment with a code interpreter, shell, and file system. After a Large Language Model helps with tool selection, code is executed within this session, before being returned to the user or agent for synthesis.
 
 ![Code Interpreter Architecture](/images/day-3/code-interpreter-architecture.png)
 
-Code Interpreter provides a secure, sandboxed Python environment where your agent can write and execute code.
+**Architecture Components:**
+1. **Agent** - Uses LLM to understand user query and generate Python code
+2. **Code Interpreter Session** - Isolated sandbox environment for execution
+3. **Execution Environment** - Includes Python runtime, file system, pre-installed libraries
+4. **Response Stream** - Results returned to agent for synthesis
 
-### Why Code Interpreter?
+**Session Configuration:**
+- Default timeout: 900 seconds (15 minutes)
+- Recommended for analysis: 1200 seconds (20 minutes)
+- State persists between executions within same session
+- Region: us-west-2 (US West - Oregon)
 
-Without Code Interpreter:
+## Why Code Interpreter?
+
+**Without Code Interpreter:**
 ```
 User: "What's the average of 15.7, 23.4, 18.9, 21.2?"
-Agent: "Let me calculate... the average is approximately 19.8"
-       (May hallucinate the answer)
+Agent: "The average is approximately 19.8"  ← May hallucinate
 ```
 
-With Code Interpreter:
+**With Code Interpreter:**
 ```
 User: "What's the average of 15.7, 23.4, 18.9, 21.2?"
 Agent: *executes Python code*
        >>> numbers = [15.7, 23.4, 18.9, 21.2]
        >>> sum(numbers) / len(numbers)
        19.8
-Agent: "The average is exactly 19.8"
-       (Computed, not hallucinated)
+Agent: "The average is exactly 19.8"  ← Computed, not hallucinated
 ```
 
-### Setting Up Code Interpreter
+## Step 1: Agent with Code Interpreter
+
+Strands agents can use Code Interpreter for accurate calculations and data analysis.
+
+**Create `agent_with_code_interpreter.py`:**
 
 ```python
-from strands import Agent
+#!/usr/bin/env python3
+"""
+agent_with_code_interpreter.py - Strands Agent with Code Interpreter
+
+Demonstrates using AgentCore Code Interpreter with a Strands agent
+for accurate data analysis and calculations.
+"""
+
+import json
+from bedrock_agentcore.tools.code_interpreter_client import CodeInterpreter
+from strands import Agent, tool
 from strands.models import BedrockModel
-from bedrock_agentcore.tools import code_interpreter
 
-model = BedrockModel(model_id="anthropic.claude-sonnet-4-20250514-v1:0")
+# Initialize Code Interpreter in us-west-2 (where AgentCore is available)
+code_client = CodeInterpreter('us-west-2')
+code_client.start(session_timeout_seconds=1200)  # 20 min for analysis tasks
 
-# Create agent with code interpreter tool
-agent = Agent(
-    model=model,
-    tools=[code_interpreter],
-    system_prompt="""You are a data analysis assistant with Python execution capabilities.
+SYSTEM_PROMPT = """You are a data analysis assistant with Python execution capabilities.
 
-Use the code interpreter to:
-- Analyze data and compute statistics
-- Create visualizations with matplotlib
-- Process and transform data structures
-- Perform mathematical calculations
+VALIDATION PRINCIPLES:
+1. Always validate answers through code execution
+2. Use execute_python to test calculations and logic
+3. Show your work with actual code execution
+4. If uncertain, validate what you can
 
-Always show your work by writing clear, commented code."""
-)
+The sandbox maintains state between executions, so you can refer to previous results.
 
-# Example usage
-response = agent("Calculate the average of [15.7, 23.4, 18.9, 21.2] and show your work")
-print(response.message["content"][0]["text"])
-```
-
-<Callout type="info" title="Built-in Tool">
-The `code_interpreter` from `bedrock_agentcore.tools` is a pre-configured tool that handles all the session management automatically.
-</Callout>
-
-### Using Code Interpreter in Your Agent
-
-```python
-# agent_with_code.py
-from strands import Agent
-from strands.models import BedrockModel
-from strands.tools import tool
-from bedrock_agentcore.tools import CodeInterpreterSession
-
-model = BedrockModel(model_id="anthropic.claude-sonnet-4-20250514-v1:0")
+RESPONSE FORMAT: The execute_python tool returns JSON with:
+- isError: Boolean indicating if there was an error
+- content: Array with execution results
+- structuredContent: stdout, stderr, exitCode, executionTime
+"""
 
 @tool
-def execute_python(code: str) -> str:
-    """Execute Python code and return the result.
+def execute_python(code: str, description: str = "") -> str:
+    """Execute Python code in the sandbox.
 
     Args:
         code: Python code to execute
+        description: Optional description of what the code does
 
     Returns:
-        The output of the code execution
+        JSON response with execution results
     """
-    with CodeInterpreterSession(code_interpreter_id='ci-xxxx') as session:
-        result = session.execute(code)
+    if description:
+        code = f"# {description}\n{code}"
 
-        if result.error:
-            return f"Error: {result.error}"
+    print(f"\nGenerated Code:\n{code}\n")
 
-        return result.output
+    response = code_client.invoke("executeCode", {
+        "code": code,
+        "language": "python",
+        "clearContext": False
+    })
 
-@tool
-def analyze_data(data: str, analysis_type: str) -> str:
-    """Analyze data using Python.
+    for event in response["stream"]:
+        return json.dumps(event["result"])
 
-    Args:
-        data: CSV or JSON data to analyze
-        analysis_type: Type of analysis (summary, correlation, visualization)
+# Use Claude Haiku 4.5 with Cross-region Inference (CRIS)
+model = BedrockModel(model_id="global.anthropic.claude-haiku-4-5-20251001-v1:0")
 
-    Returns:
-        Analysis results
-    """
-    with CodeInterpreterSession(code_interpreter_id='ci-xxxx') as session:
-        # Upload data to session
-        session.upload_data(data, filename='data.csv')
-
-        if analysis_type == 'summary':
-            code = """
-import pandas as pd
-df = pd.read_csv('data.csv')
-print(df.describe().to_string())
-"""
-        elif analysis_type == 'correlation':
-            code = """
-import pandas as pd
-df = pd.read_csv('data.csv')
-numeric_cols = df.select_dtypes(include='number')
-print(numeric_cols.corr().to_string())
-"""
-        elif analysis_type == 'visualization':
-            code = """
-import pandas as pd
-import matplotlib.pyplot as plt
-df = pd.read_csv('data.csv')
-df.hist(figsize=(10, 8))
-plt.savefig('output.png')
-print('Visualization saved to output.png')
-"""
-
-        result = session.execute(code)
-
-        # If visualization, get the image
-        if analysis_type == 'visualization' and not result.error:
-            image = session.download_file('output.png')
-            # Return as base64 or save to S3
-            return f"Visualization created: {len(image)} bytes"
-
-        return result.output
-
-# Create agent with code tools
 agent = Agent(
     model=model,
-    tools=[execute_python, analyze_data],
-    system_prompt="""You are a data analyst assistant with code execution capabilities.
-When asked to perform calculations or analyze data, use the execute_python tool.
-Always show your work by writing clear, commented code."""
+    tools=[execute_python],
+    system_prompt=SYSTEM_PROMPT
 )
+
+try:
+    # Example: Simple calculation
+    query = "Calculate the average of these numbers: 15.7, 23.4, 18.9, 21.2"
+
+    response = agent(query)
+    print(response)
+
+finally:
+    # Always stop the session to release resources
+    code_client.stop()
+    print("\nCode Interpreter session stopped successfully!")
 ```
+
+**Run the script:**
+
+```bash
+python agent_with_code_interpreter.py
+```
+
+**Expected output:**
+
+```
+Tool #1: execute_python
+
+Generated Code:
+
+numbers = [15.7, 23.4, 18.9, 21.2]
+average = sum(numbers) / len(numbers)
+print(f"Average: {average}")
+
+The average of these numbers is 19.8.
+
+Code Interpreter session stopped successfully!
+```
+
+**What just happened:**
+- ✓ Agent wrote Python code to calculate the average
+- ✓ Code Interpreter executed code in secure sandbox with 20-minute timeout
+- ✓ Result is accurate (computed, not hallucinated)
+- ✓ Session was properly cleaned up with `stop()`
+- ✓ Uses explicit model ID for Claude Haiku 4.5
 
 ### Pre-installed Libraries
 
@@ -182,275 +198,313 @@ Code Interpreter includes common data science libraries:
   gigabyte-scale datasets without API limitations.
 </Callout>
 
-### Session Management
+## Step 2: Direct Code Interpreter (No Agent)
+
+Use Code Interpreter directly without an agent framework for programmatic control.
+
+**Create `direct_code_interpreter.py`:**
 
 ```python
-# Sessions maintain state between executions
-with CodeInterpreterSession(code_interpreter_id='ci-xxxx') as session:
-    # Execution 1: Define a function
-    session.execute("""
-def calculate_metrics(values):
-    return {
-        'mean': sum(values) / len(values),
-        'max': max(values),
-        'min': min(values)
-    }
-""")
+#!/usr/bin/env python3
+import json
+from bedrock_agentcore.tools.code_interpreter_client import CodeInterpreter
 
-    # Execution 2: Use the function (state persists)
-    result = session.execute("""
-data = [10, 20, 30, 40, 50]
-metrics = calculate_metrics(data)
-print(metrics)
-""")
-    print(result.output)  # {'mean': 30.0, 'max': 50, 'min': 10}
-```
+REGION = "us-west-2"
 
-## AgentCore Browser
+def main():
+    # Initialize Code Interpreter client
+    code_client = CodeInterpreter(REGION)
 
-![Browser Tool Architecture](/images/day-3/browser-tool-architecture.png)
+    # Start a session with 20-minute timeout for longer analysis tasks
+    code_client.start(session_timeout_seconds=1200)
 
-Browser tool enables web automation - navigating sites, filling forms, clicking buttons, and capturing screenshots.
-
-### Setting Up Browser Tool
-
-```python
-from strands import Agent
-from strands.models import BedrockModel
-from bedrock_agentcore.tools import AgentCoreBrowser
-
-model = BedrockModel(model_id="anthropic.claude-sonnet-4-20250514-v1:0")
-
-# Initialize browser tool
-browser = AgentCoreBrowser()
-
-# Create agent with browser tool
-agent = Agent(
-    model=model,
-    tools=[browser],
-    system_prompt="""You are a web research assistant.
-
-Use the browser tool to:
-- Navigate to websites
-- Extract information from pages
-- Fill forms and interact with elements
-- Take screenshots for verification"""
-)
-
-# Example usage
-response = agent("Go to news.ycombinator.com and summarize the top 3 stories")
-print(response.message["content"][0]["text"])
-```
-
-<Callout type="tip" title="Headless Browser">
-AgentCoreBrowser runs in headless mode by default for efficiency, but can capture screenshots for verification.
-</Callout>
-
-### Using Browser in Your Agent
-
-```python
-from strands.tools import tool
-from bedrock_agentcore.tools import BrowserSession
-
-@tool
-def browse_website(url: str, action: str = "screenshot") -> str:
-    """Browse a website and perform actions.
-
-    Args:
-        url: The URL to navigate to
-        action: Action to perform (screenshot, get_text, get_links)
-
-    Returns:
-        Result of the browser action
-    """
-    with BrowserSession(browser_id='br-xxxx') as browser:
-        # Navigate to URL
-        browser.navigate(url)
-
-        # Wait for page load
-        browser.wait_for_load()
-
-        if action == "screenshot":
-            screenshot = browser.screenshot()
-            # Return as base64 or save
-            return f"Screenshot captured: {len(screenshot)} bytes"
-
-        elif action == "get_text":
-            text = browser.get_text()
-            return text[:5000]  # Limit response size
-
-        elif action == "get_links":
-            links = browser.get_links()
-            return "\n".join([f"- {link['text']}: {link['href']}" for link in links[:20]])
-
-@tool
-def fill_form(url: str, form_data: dict) -> str:
-    """Fill and submit a web form.
-
-    Args:
-        url: The URL with the form
-        form_data: Dictionary of field names to values
-
-    Returns:
-        Result of form submission
-    """
-    with BrowserSession(browser_id='br-xxxx') as browser:
-        browser.navigate(url)
-        browser.wait_for_load()
-
-        # Fill form fields
-        for field, value in form_data.items():
-            browser.fill(f"input[name='{field}']", value)
-
-        # Submit form
-        browser.click("button[type='submit']")
-        browser.wait_for_navigation()
-
-        return f"Form submitted. New URL: {browser.current_url}"
-
-@tool
-def web_search(query: str) -> str:
-    """Search the web and return results.
-
-    Args:
-        query: Search query
-
-    Returns:
-        Search results with titles and URLs
-    """
-    with BrowserSession(browser_id='br-xxxx') as browser:
-        # Navigate to search engine
-        browser.navigate(f"https://www.google.com/search?q={query}")
-        browser.wait_for_load()
-
-        # Extract search results
-        results = browser.evaluate("""
-            Array.from(document.querySelectorAll('div.g')).slice(0, 5).map(el => ({
-                title: el.querySelector('h3')?.textContent,
-                url: el.querySelector('a')?.href,
-                snippet: el.querySelector('.VwiC3b')?.textContent
-            }))
-        """)
-
-        return "\n\n".join([
-            f"**{r['title']}**\n{r['url']}\n{r['snippet']}"
-            for r in results if r['title']
-        ])
-
-# Add browser tools to agent
-agent = Agent(
-    model=model,
-    tools=[browse_website, fill_form, web_search, execute_python, analyze_data],
-    system_prompt="""You are an assistant with web browsing and code execution capabilities.
-Use browse_website for reading web content.
-Use web_search for finding information online.
-Use execute_python for calculations and data analysis."""
-)
-```
-
-### Browser Actions Reference
-
-```python
-# Navigation
-browser.navigate(url)
-browser.back()
-browser.forward()
-browser.refresh()
-
-# Interaction
-browser.click(selector)
-browser.fill(selector, value)
-browser.select(selector, value)
-browser.hover(selector)
-
-# Information
-browser.screenshot()
-browser.get_text()
-browser.get_html()
-browser.get_links()
-browser.evaluate(javascript)
-
-# Waiting
-browser.wait_for_load()
-browser.wait_for_selector(selector)
-browser.wait_for_navigation()
-```
-
-## Combining Tools: Complex Workflows
-
-The real power comes from combining memory, code, and browser:
-
-```python
-# Example: Research and analyze workflow
-@tool
-def research_and_analyze(topic: str) -> str:
-    """Research a topic online and analyze the findings.
-
-    Args:
-        topic: Topic to research
-
-    Returns:
-        Analysis of research findings
-    """
-    # Step 1: Search the web
-    with BrowserSession(browser_id='br-xxxx') as browser:
-        browser.navigate(f"https://www.google.com/search?q={topic}")
-        browser.wait_for_load()
-
-        # Get top results
-        results = browser.evaluate("""
-            Array.from(document.querySelectorAll('div.g a')).slice(0, 3).map(a => a.href)
-        """)
-
-        # Visit each result and extract text
-        texts = []
-        for url in results:
-            browser.navigate(url)
-            browser.wait_for_load()
-            texts.append(browser.get_text()[:2000])
-
-    # Step 2: Analyze with Code Interpreter
-    with CodeInterpreterSession(code_interpreter_id='ci-xxxx') as session:
-        # Combine texts for analysis
-        combined = "\n---\n".join(texts)
-
-        code = f"""
-from collections import Counter
-import re
-
-text = '''{combined}'''
-
-# Word frequency analysis
-words = re.findall(r'\\w+', text.lower())
-common = Counter(words).most_common(20)
-print("Most common terms:")
-for word, count in common:
-    print(f"  {{word}}: {{count}}")
-
-# Basic statistics
-print(f"\\nTotal words: {{len(words)}}")
-print(f"Unique words: {{len(set(words))}}")
+    try:
+        # Example 1: Calculate compound interest
+        code1 = """
+principal = 1000
+rate = 0.05
+years = 10
+final_amount = principal * (1 + rate) ** years
+print(f"Final amount: ${final_amount:,.2f}")
 """
-        result = session.execute(code)
+        response = code_client.invoke("executeCode", {
+            "language": "python",
+            "code": code1
+        })
 
-    return f"Research on '{topic}':\n\n{result.output}"
+        for event in response["stream"]:
+            result = event["result"]
+            if "content" in result:
+                for item in result["content"]:
+                    if item["type"] == "text":
+                        print(item["text"])
+
+        # Example 2: State persists between executions
+        code2 = """
+# Reference variables from previous execution
+interest = final_amount - principal
+print(f"Interest earned: ${interest:,.2f}")
+"""
+        response = code_client.invoke("executeCode", {
+            "language": "python",
+            "code": code2
+        })
+
+        for event in response["stream"]:
+            result = event["result"]
+            if "content" in result:
+                for item in result["content"]:
+                    if item["type"] == "text":
+                        print(item["text"])
+
+    finally:
+        code_client.stop()
+
+if __name__ == "__main__":
+    exit(main())
 ```
 
-<Callout type="warning" title="Tool Safety">
-  These tools are powerful but potentially dangerous without guardrails.
-  Day 4 adds the safety controls needed for production use.
+**Run the script:**
+
+```bash
+python direct_code_interpreter.py
+```
+
+**Expected output:**
+
+```
+Final amount: $1,628.89
+Interest earned: $628.89
+```
+
+**What just happened:**
+- ✓ Started Code Interpreter session programmatically
+- ✓ Executed code directly (no agent)
+- ✓ State persisted between executions (variables retained)
+- ✓ Cleaned up session resources
+
+**Use cases for direct usage:**
+- Programmatic code execution in scripts
+- Integration into existing Python applications
+- Fine-grained control over execution
+- Batch processing and automation
+
+## Advanced: File Operations
+
+Code Interpreter can work with files in the sandbox environment.
+
+**Example: Upload and analyze CSV data:**
+
+```python
+# Upload file to sandbox
+csv_content = """name,age,score
+Alice,25,95
+Bob,30,87
+Charlie,22,92"""
+
+files_to_create = [{
+    "path": "data.csv",
+    "text": csv_content
+}]
+
+# Write files to sandbox
+response = code_client.invoke("writeFiles", {"content": files_to_create})
+
+# List files to verify
+result = code_client.invoke("listFiles", {"path": ""})
+for event in result["stream"]:
+    print(json.dumps(event["result"], indent=2))
+
+# Analyze the uploaded file
+code = """
+import pandas as pd
+df = pd.read_csv('data.csv')
+print(df.describe())
+"""
+response = code_client.invoke("executeCode", {
+    "code": code,
+    "language": "python"
+})
+
+for event in response["stream"]:
+    result = event["result"]
+    if "content" in result:
+        for item in result["content"]:
+            if item["type"] == "text":
+                print(item["text"])
+```
+
+**File Operations Available:**
+- `writeFiles`: Upload files to sandbox
+- `listFiles`: List files in sandbox directory
+- `readFiles`: Read file contents from sandbox
+- `deleteFiles`: Remove files from sandbox
+
+<Callout type="tip" title="S3 Integration">
+Code Interpreter can access files from S3 buckets, enabling analysis of large datasets without API size limitations.
 </Callout>
+
+## AgentCore Browser Tool
+
+Browser tool enables web automation - navigating sites, extracting data, filling forms, and capturing screenshots.
+
+### How Browser Tool Works
+
+The Browser tool provides these capabilities:
+
+- **Navigate websites**: Visit URLs and interact with pages
+- **Extract information**: Get text content, HTML, and links
+- **Form automation**: Fill forms and click buttons
+- **Screenshots**: Capture page visuals for verification
+- **JavaScript execution**: Run custom scripts on pages
+
+### Step 3: Agent with Browser Tool
+
+Strands agents can use Browser tool for intelligent web automation using the `strands_tools.browser.AgentCoreBrowser` integration.
+
+**Install browser tool dependencies:**
+
+```bash
+pip install strands-agents-tools playwright>=1.40.0 requests>=2.31.0 websockets>=11.0.0
+playwright install chromium
+```
+
+**Create `agent_with_browser.py`:**
+
+```python
+#!/usr/bin/env python3
+"""
+agent_with_browser.py - Strands Agent with Browser Tool
+
+Demonstrates using AgentCore Browser tool with a Strands agent
+for intelligent web automation and data extraction.
+"""
+
+import time
+from strands import Agent
+from strands_tools.browser import AgentCoreBrowser
+
+# Initialize the AgentCoreBrowser tool
+agent_core_browser = AgentCoreBrowser(region="us-east-1")
+
+SYSTEM_PROMPT = """You are an intelligent web analyst that specializes in browsing and analyzing websites.
+
+When asked to analyze a website:
+1. Use the browser tool to visit and interact with the website EFFICIENTLY
+2. Focus on extracting key information QUICKLY
+3. Work efficiently and complete your analysis within 2-3 browser interactions
+4. Always provide specific insights with actual data points
+5. Be concise but comprehensive in your analysis
+"""
+
+# Create agent with Claude Haiku model
+agent = Agent(
+    tools=[agent_core_browser.browser],
+    model="global.anthropic.claude-haiku-4-5-20251001-v1:0",
+    system_prompt=SYSTEM_PROMPT
+)
+
+def analyze_website(url: str, question: str = None) -> str:
+    """Analyze a website and extract information.
+
+    Args:
+        url: Website URL to analyze
+        question: Optional specific question to answer
+
+    Returns:
+        Analysis results as string
+    """
+    if question:
+        prompt = f"Visit {url} and answer this question: {question}"
+    else:
+        prompt = f"Please analyze the website at {url} and provide key insights"
+
+    try:
+        print(f"🚀 Starting analysis of {url}...")
+        start_time = time.time()
+
+        response = agent(prompt)
+
+        elapsed_time = time.time() - start_time
+        print(f"✅ Analysis completed in {elapsed_time:.2f} seconds")
+
+        # Extract text from response
+        if response.message.get("content"):
+            return response.message["content"][0]["text"]
+        return str(response)
+
+    except Exception as e:
+        print(f"❌ Error during analysis: {str(e)}")
+        return f"Error occurred: {str(e)}"
+
+if __name__ == "__main__":
+    # Example: Analyze Hacker News (reliable site without bot protection)
+    result = analyze_website(
+        "https://news.ycombinator.com",
+        "What are the top 3 stories on the front page?"
+    )
+    print(result)
+```
+
+**Run the script:**
+
+```bash
+python agent_with_browser.py
+```
+
+**Expected output:**
+
+```
+🚀 Starting analysis of https://news.ycombinator.com...
+Tool #1: browser
+Tool #2: browser
+✅ Analysis completed in 20.06 seconds
+
+Here are the **top 3 stories on Hacker News front page**:
+
+1. **"Story Title 1"** - Brief description of the first story
+2. **"Story Title 2"** - Brief description of the second story
+3. **"Story Title 3"** - Brief description of the third story
+```
+
+**What just happened:**
+- ✓ Agent navigated to Hacker News using Browser tool
+- ✓ Extracted story titles and descriptions from the page
+- ✓ AI processed and summarized the information
+- ✓ Uses headless browser automation (no console setup required)
+
+<Callout type="info" title="Browser Tool Performance">
+Browser tool operations typically complete in 10-20 seconds depending on website complexity. The tool handles JavaScript-rendered pages and can extract data from dynamic content.
+</Callout>
+
+<Callout type="warning" title="Bot Protection">
+Some websites (like MarketWatch, Bloomberg) have anti-bot protection (captcha) that may block automated access. If you encounter captcha issues, try alternative data sources or consider using APIs for financial data.
+</Callout>
+
+### Advanced: Live Session Viewing
+
+For debugging and monitoring, you can view live browser sessions through AWS Console:
+
+1. **AWS Console** → Amazon Bedrock → AgentCore → Browser
+2. **View Live Sessions**: Watch browser sessions in real-time
+3. **Session Recordings**: Review recorded sessions for debugging
+
+For detailed setup, see [AWS Browser Tool Documentation](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/browser-tool.html).
 
 ## Checkpoint
 
 You've now learned:
 
-- ✅ Setting up and using Code Interpreter
-- ✅ Data analysis and visualization
-- ✅ Browser automation and web interaction
-- ✅ Combining tools for complex workflows
+- ✅ **Code Interpreter with agents** - Accurate calculations through code execution
+- ✅ **Direct Code Interpreter usage** - Programmatic control without agents
+- ✅ **State persistence** - Variables maintained between executions
+- ✅ **Pre-installed libraries** - pandas, numpy, matplotlib, scikit-learn available
+- ✅ **Browser tool with agents** - Web automation and data extraction
+- ✅ **AgentCoreBrowser integration** - Headless browser automation via strands_tools
 
-**Next, we'll see what happens when tools aren't properly controlled.**
+**Key Takeaway**: Code Interpreter eliminates hallucinations by computing answers. Browser tool enables agents to interact with the web for real-time data extraction.
+
+**Next**: Day 4 adds guardrails and observability for production-safe agents.
 
 <div class="nav-buttons">
   <a href="/days/3/memory-strategies" class="nav-button nav-button--prev">

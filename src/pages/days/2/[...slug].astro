@@ -6,12 +6,12 @@
 import DayLayout from '@/layouts/DayLayout.astro';
 import { getCollection } from 'astro:content';
 import { getSectionsInfo, getAdjacentSections } from '@/lib/content';
+import { isDayPublished } from '@/lib/config';
 
 const dayNumber = 2;
 
 export async function getStaticPaths() {
-  // Don't build Day 2 pages in production (GitHub Pages)
-  if (import.meta.env.PROD) {
+  if (import.meta.env.PROD && !isDayPublished(2)) {
     return [];
   }
 

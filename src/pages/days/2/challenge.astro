@@ -6,9 +6,9 @@
 import DayLayout from '@/layouts/DayLayout.astro';
 import SelfAssessment from '@/components/course/SelfAssessment.astro';
 import { getDayChallenge, getSectionsInfo } from '@/lib/content';
+import { isDayPublished } from '@/lib/config';
 
-// Don't build Day 2 challenge in production (GitHub Pages)
-if (import.meta.env.PROD) {
+if (import.meta.env.PROD && !isDayPublished(2)) {
   return Astro.redirect('/');
 }
 
