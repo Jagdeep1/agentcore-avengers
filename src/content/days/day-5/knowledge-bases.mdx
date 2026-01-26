@@ -50,7 +50,7 @@ RAG-Powered Agent:
 │                                                  ▼                       │
 │                                          ┌──────────────┐               │
 │                                          │ Vector Store │               │
-│                                          │ (OpenSearch) │               │
+│                                          │ (S3 Vectors) │               │
 │                                          └──────────────┘               │
 │                                                  │                       │
 │  ┌──────────────┐    ┌──────────────┐          │                       │
@@ -65,6 +65,10 @@ RAG-Powered Agent:
 │                      └──────────────┘                                   │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
+
+<Callout type="info" title="S3 Vectors vs OpenSearch">
+  This course uses **S3 Vectors** for vector storage - AWS's newer, simpler approach that doesn't require managing OpenSearch clusters. S3 Vectors is serverless and automatically scales.
+</Callout>
 
 ## When to Use Knowledge Bases
 
@@ -85,26 +89,19 @@ RAG-Powered Agent:
 
 ## Setting Up Your Knowledge Base
 
+We'll create everything programmatically using a single Python script. This approach uses **S3 Vectors** for vector storage - AWS's newer, simpler alternative to OpenSearch Serverless.
+
 ### Prerequisites
 
-1. **S3 Bucket** for documents
-2. **IAM Role** with appropriate permissions
-3. **Embedding Model** access (Titan Embeddings)
+1. **AWS credentials** configured (`aws sts get-caller-identity`)
+2. **boto3 >= 1.34.0** (for S3 Vectors support)
+3. **SEC filings** downloaded (we'll do this first)
 
-### Step 1: Create S3 Bucket and Upload Documents
+<Callout type="warning" title="File Size Limit">
+  Files must be under **1MB** for reliable ingestion. Larger files will fail. We'll truncate the SEC filings to ~800KB.
+</Callout>
 
-```bash
-# Create bucket for SEC filings
-aws s3 mb s3://agentcore-sec-filings-${AWS_ACCOUNT_ID} --profile claude
-
-# Create folder structure
-aws s3api put-object \
-  --bucket agentcore-sec-filings-${AWS_ACCOUNT_ID} \
-  --key filings/ \
-  --profile claude
-```
-
-### Step 2: Download SEC Filings from EDGAR
+### Step 1: Download and Prepare SEC Filings
 
 SEC's EDGAR (Electronic Data Gathering, Analysis, and Retrieval) system provides free access to company filings:
 
@@ -118,27 +115,27 @@ HEADERS = {
     'User-Agent': 'AgentCore Course contact@example.com'
 }
 
-# Sample 10-K filings (annual reports)
+# Sample 10-K filings (annual reports) - VERIFIED ACCESSION NUMBERS
 FILINGS = [
     {
         'company': 'Apple',
         'ticker': 'AAPL',
         'cik': '0000320193',
-        'accession': '0000320193-24-000123',  # 2024 10-K
+        'accession': '0000320193-25-000079',  # FY2024 10-K
         'form': '10-K'
     },
     {
         'company': 'Microsoft',
         'ticker': 'MSFT',
         'cik': '0000789019',
-        'accession': '0000789019-24-000123',
+        'accession': '0000950170-25-100235',  # FY2024 10-K
         'form': '10-K'
     },
     {
         'company': 'Amazon',
         'ticker': 'AMZN',
         'cik': '0001018724',
-        'accession': '0001018724-24-000123',
+        'accession': '0001018724-25-000004',  # 2024 10-K
         'form': '10-K'
     }
 ]
@@ -177,119 +174,195 @@ for filing in FILINGS:
   SEC limits requests to 10 per second. Add delays between downloads in production.
 </Callout>
 
-### Step 3: Add Metadata for Filtering
-
-Create metadata files for KB filtering:
-
-```python
-# create_metadata.py
-import json
-import os
-
-FILINGS_DIR = './filings'
-
-def create_metadata(ticker: str, company: str, form: str, year: int):
-    """Create metadata JSON for a filing."""
-    metadata = {
-        'metadataAttributes': {
-            'ticker': ticker,
-            'company': company,
-            'form': form,
-            'year': year,
-            'source': 'SEC EDGAR'
-        }
-    }
-
-    filename = f"{ticker}_{form}.txt.metadata.json"
-    filepath = os.path.join(FILINGS_DIR, filename)
-
-    with open(filepath, 'w') as f:
-        json.dump(metadata, f, indent=2)
-
-    print(f"Created metadata: {filename}")
-
-# Create metadata for each filing
-create_metadata('AAPL', 'Apple Inc.', '10-K', 2024)
-create_metadata('MSFT', 'Microsoft Corporation', '10-K', 2024)
-create_metadata('AMZN', 'Amazon.com Inc.', '10-K', 2024)
-```
-
-### Step 4: Upload to S3
+**Truncate large files** (SEC filings are typically 9-30MB):
 
 ```bash
-# Upload filings with metadata
-aws s3 sync ./filings s3://agentcore-sec-filings-${AWS_ACCOUNT_ID}/filings/ \
-  --profile claude
-
-# Verify uploads
-aws s3 ls s3://agentcore-sec-filings-${AWS_ACCOUNT_ID}/filings/ --profile claude
+# Truncate to ~800KB for reliable ingestion
+cd filings
+for f in *.txt; do
+    head -c 800000 "$f" > "${f%.txt}_truncated.txt"
+    mv "${f%.txt}_truncated.txt" "$f"
+done
 ```
 
-### Step 5: Create Knowledge Base (Console)
-
-1. Navigate to **Amazon Bedrock** > **Knowledge bases**
-2. Click **Create knowledge base**
-3. Configure:
-   - **Name**: `sec-filings-kb`
-   - **Description**: `SEC EDGAR filings for financial analysis`
-   - **IAM role**: Create new or use existing
-4. **Data source**:
-   - **Type**: Amazon S3
-   - **S3 URI**: `s3://agentcore-sec-filings-${AWS_ACCOUNT_ID}/filings/`
-5. **Embeddings**:
-   - **Model**: Amazon Titan Embeddings G1 - Text
-6. **Vector store**:
-   - **Quick create**: Amazon OpenSearch Serverless
-7. Click **Create knowledge base**
-
-### Step 5 (Alternative): Create via boto3
+Or in Python:
 
 ```python
-# create_knowledge_base.py
-import boto3
-import json
-import time
+# truncate_filings.py
+from pathlib import Path
 
-bedrock_agent = boto3.client('bedrock-agent', region_name='us-west-2')
-ACCOUNT_ID = boto3.client('sts').get_caller_identity()['Account']
+filings_dir = Path('./filings')
+MAX_SIZE = 800_000  # 800KB
 
-# Create Knowledge Base
+for filepath in filings_dir.glob('*.txt'):
+    content = filepath.read_text()
+    if len(content.encode('utf-8')) > MAX_SIZE:
+        # Truncate to MAX_SIZE bytes
+        truncated = content.encode('utf-8')[:MAX_SIZE].decode('utf-8', errors='ignore')
+        filepath.write_text(truncated)
+        print(f"Truncated: {filepath.name}")
+    else:
+        print(f"OK: {filepath.name}")
+```
+
+### Step 2: Create Knowledge Base Infrastructure
+
+We provide a helper script that creates all resources automatically. First, download it from the course repository:
+
+```bash
+# Download the KB infrastructure helper
+curl -O https://raw.githubusercontent.com/Jagdeep1/agentcore-avengers-code/main/create_kb_infrastructure.py
+
+# Run the script (ensure your filings/ directory has the truncated SEC filings)
+python create_kb_infrastructure.py
+```
+
+<Callout type="tip" title="What the script creates">
+  The script automatically creates: S3 bucket, uploads filings, IAM role, S3 Vectors storage, Knowledge Base, data source, runs ingestion, and stores IDs in SSM Parameter Store.
+</Callout>
+
+The script performs these 8 steps:
+
+#### 2.1: Create S3 Data Bucket
+
+```python
+s3.create_bucket(
+    Bucket=DATA_BUCKET_NAME,
+    CreateBucketConfiguration={'LocationConstraint': REGION}
+)
+
+# Block public access
+s3.put_public_access_block(
+    Bucket=DATA_BUCKET_NAME,
+    PublicAccessBlockConfiguration={
+        'BlockPublicAcls': True,
+        'IgnorePublicAcls': True,
+        'BlockPublicPolicy': True,
+        'RestrictPublicBuckets': True
+    }
+)
+```
+
+#### 2.2: Upload SEC Filings
+
+```python
+for f in filings_dir.glob("*.txt"):
+    s3.upload_file(
+        str(f),
+        DATA_BUCKET_NAME,
+        f"filings/{f.name}",
+        ExtraArgs={'ContentType': 'text/plain'}
+    )
+```
+
+#### 2.3: Create IAM Role for Bedrock
+
+```python
+trust_policy = {
+    "Version": "2012-10-17",
+    "Statement": [{
+        "Effect": "Allow",
+        "Principal": {"Service": "bedrock.amazonaws.com"},
+        "Action": "sts:AssumeRole",
+        "Condition": {
+            "StringEquals": {"aws:SourceAccount": ACCOUNT_ID}
+        }
+    }]
+}
+
+iam.create_role(
+    RoleName=ROLE_NAME,
+    AssumeRolePolicyDocument=json.dumps(trust_policy)
+)
+
+# Attach permissions for S3, Bedrock, and S3 Vectors
+permissions_policy = {
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": ["s3:GetObject", "s3:ListBucket"],
+            "Resource": [f"arn:aws:s3:::{DATA_BUCKET_NAME}/*"]
+        },
+        {
+            "Effect": "Allow",
+            "Action": "bedrock:InvokeModel",
+            "Resource": f"arn:aws:bedrock:{REGION}::foundation-model/amazon.titan-embed-text-v2:0"
+        },
+        {
+            "Effect": "Allow",
+            "Action": ["s3vectors:*"],
+            "Resource": "*"
+        }
+    ]
+}
+```
+
+#### 2.4: Create S3 Vectors Storage
+
+```python
+# Create vector bucket
+s3vectors.create_vector_bucket(
+    vectorBucketName=VECTOR_BUCKET_NAME,
+    encryptionConfiguration={'sseType': 'AES256'}
+)
+
+# Create vector index with Titan embed dimensions
+s3vectors.create_index(
+    vectorBucketName=VECTOR_BUCKET_NAME,
+    indexName=VECTOR_INDEX_NAME,
+    dimension=1024,           # Titan Embed v2 dimensions
+    distanceMetric='cosine',  # Similarity metric
+    dataType='float32'
+)
+
+index_arn = f"arn:aws:s3vectors:{REGION}:{ACCOUNT_ID}:bucket/{VECTOR_BUCKET_NAME}/index/{VECTOR_INDEX_NAME}"
+```
+
+<Callout type="info" title="Why S3 Vectors?">
+  S3 Vectors is serverless vector storage that doesn't require managing OpenSearch clusters. It automatically scales and integrates directly with Bedrock Knowledge Bases.
+</Callout>
+
+#### 2.5: Create Knowledge Base
+
+```python
 kb_response = bedrock_agent.create_knowledge_base(
-    name='sec-filings-kb',
-    description='SEC EDGAR filings for financial analysis',
-    roleArn=f'arn:aws:iam::{ACCOUNT_ID}:role/AmazonBedrockKnowledgeBaseRole',
+    name=KB_NAME,
+    description='SEC 10-K filings for financial analysis',
+    roleArn=role_arn,
     knowledgeBaseConfiguration={
         'type': 'VECTOR',
         'vectorKnowledgeBaseConfiguration': {
-            'embeddingModelArn': f'arn:aws:bedrock:us-west-2::foundation-model/amazon.titan-embed-text-v1'
+            'embeddingModelArn': f'arn:aws:bedrock:{REGION}::foundation-model/amazon.titan-embed-text-v2:0',
+            'embeddingModelConfiguration': {
+                'bedrockEmbeddingModelConfiguration': {
+                    'dimensions': 1024,
+                    'embeddingDataType': 'FLOAT32'
+                }
+            }
         }
     },
     storageConfiguration={
-        'type': 'OPENSEARCH_SERVERLESS',
-        'opensearchServerlessConfiguration': {
-            'collectionArn': 'arn:aws:aoss:us-west-2:{ACCOUNT_ID}:collection/xxxxx',
-            'vectorIndexName': 'sec-filings-index',
-            'fieldMapping': {
-                'vectorField': 'embedding',
-                'textField': 'text',
-                'metadataField': 'metadata'
-            }
+        'type': 'S3_VECTORS',
+        's3VectorsConfiguration': {
+            'indexArn': index_arn
         }
     }
 )
 
 KB_ID = kb_response['knowledgeBase']['knowledgeBaseId']
-print(f"Knowledge Base ID: {KB_ID}")
+```
 
-# Create Data Source
+#### 2.6: Create Data Source
+
+```python
 ds_response = bedrock_agent.create_data_source(
     knowledgeBaseId=KB_ID,
-    name='sec-filings-s3',
-    description='SEC filings from S3',
+    name=DATASOURCE_NAME,
     dataSourceConfiguration={
         'type': 'S3',
         's3Configuration': {
-            'bucketArn': f'arn:aws:s3:::agentcore-sec-filings-{ACCOUNT_ID}',
+            'bucketArn': f'arn:aws:s3:::{DATA_BUCKET_NAME}',
             'inclusionPrefixes': ['filings/']
         }
     },
@@ -297,46 +370,74 @@ ds_response = bedrock_agent.create_data_source(
         'chunkingConfiguration': {
             'chunkingStrategy': 'FIXED_SIZE',
             'fixedSizeChunkingConfiguration': {
-                'maxTokens': 512,
-                'overlapPercentage': 20
+                'maxTokens': 200,
+                'overlapPercentage': 10
             }
         }
     }
 )
 
 DATA_SOURCE_ID = ds_response['dataSource']['dataSourceId']
-print(f"Data Source ID: {DATA_SOURCE_ID}")
 ```
 
-### Step 6: Sync Data Source
+#### 2.7: Start Ingestion Job
 
 ```python
-# Trigger ingestion job
-ingestion_response = bedrock_agent.start_ingestion_job(
+job = bedrock_agent.start_ingestion_job(
     knowledgeBaseId=KB_ID,
     dataSourceId=DATA_SOURCE_ID
 )
 
-job_id = ingestion_response['ingestionJob']['ingestionJobId']
-print(f"Ingestion Job ID: {job_id}")
-
-# Wait for completion
+# Poll until complete
 while True:
     status = bedrock_agent.get_ingestion_job(
         knowledgeBaseId=KB_ID,
         dataSourceId=DATA_SOURCE_ID,
-        ingestionJobId=job_id
-    )['ingestionJob']['status']
+        ingestionJobId=job['ingestionJob']['ingestionJobId']
+    )
 
-    print(f"Status: {status}")
+    state = status['ingestionJob']['status']
+    stats = status['ingestionJob'].get('statistics', {})
+    print(f"Status: {state} | Indexed: {stats.get('numberOfNewDocumentsIndexed', 0)}")
 
-    if status in ['COMPLETE', 'FAILED']:
+    if state in ['COMPLETE', 'FAILED']:
         break
+    time.sleep(30)
+```
 
-    time.sleep(10)
+#### 2.8: Store IDs in Parameter Store
+
+```python
+ssm.put_parameter(
+    Name=f"/sec-filings-kb/{UNIQUE_ID}/knowledge-base-id",
+    Value=KB_ID,
+    Type='String',
+    Overwrite=True
+)
+```
+
+### Expected Output
+
+```
+============================================================
+Knowledge Base Infrastructure Created Successfully!
+============================================================
+
+Resources Created:
+  S3 Data Bucket:      sec-filings-xxxxxxxx-data
+  S3 Vector Bucket:    sec-filings-xxxxxxxx-vectors
+  Vector Index:        sec-filings-xxxxxxxx-index
+  Knowledge Base ID:   XXXXXXXXXX
+  Data Source ID:      XXXXXXXXXX
+  IAM Role:           arn:aws:iam::...:role/BedrockKBRole-...
+  SSM Parameters:     /sec-filings-kb/xxxxxxxx/*
+
+Time elapsed: 70.0 seconds
 ```
 
 ## Querying the Knowledge Base
+
+After the infrastructure script completes, you can query your Knowledge Base using the APIs below.
 
 ### RetrieveAndGenerate API
 
@@ -344,13 +445,19 @@ The simplest way - retrieves relevant chunks AND generates a response:
 
 ```python
 import boto3
+import os
 
-bedrock_agent_runtime = boto3.client('bedrock-agent-runtime', region_name='us-west-2')
+REGION = os.environ.get('AWS_REGION', 'us-west-2')
 
-KB_ID = 'your-knowledge-base-id'
-MODEL_ARN = 'arn:aws:bedrock:us-west-2::foundation-model/anthropic.claude-sonnet-4-20250514-v1:0'
+bedrock_agent_runtime = boto3.client('bedrock-agent-runtime', region_name=REGION)
 
-def query_knowledge_base(query: str, ticker: str = None) -> dict:
+# Get KB_ID from environment or config
+KB_ID = os.environ.get('KB_ID', 'your-knowledge-base-id')
+
+# Use cross-region inference profile (recommended for production)
+MODEL_ARN = f"arn:aws:bedrock:{REGION}::inference-profile/us.anthropic.claude-3-5-haiku-20241022-v1:0"
+
+def query_knowledge_base(query: str) -> dict:
     """Query KB with RetrieveAndGenerate."""
 
     config = {
@@ -366,15 +473,6 @@ def query_knowledge_base(query: str, ticker: str = None) -> dict:
         }
     }
 
-    # Add metadata filter if ticker provided
-    if ticker:
-        config['knowledgeBaseConfiguration']['retrievalConfiguration']['vectorSearchConfiguration']['filter'] = {
-            'equals': {
-                'key': 'ticker',
-                'value': ticker
-            }
-        }
-
     response = bedrock_agent_runtime.retrieve_and_generate(
         input={'text': query},
         retrieveAndGenerateConfiguration=config
@@ -386,10 +484,7 @@ def query_knowledge_base(query: str, ticker: str = None) -> dict:
     }
 
 # Example usage
-result = query_knowledge_base(
-    "What are Apple's main risk factors?",
-    ticker='AAPL'
-)
+result = query_knowledge_base("What are Apple's main risk factors?")
 
 print("Response:", result['response'])
 print("\nCitations:")
@@ -398,12 +493,16 @@ for citation in result['citations']:
         print(f"  - {ref['location']['s3Location']['uri']}")
 ```
 
+<Callout type="info" title="Inference Profiles">
+  We use **cross-region inference profiles** (e.g., `us.anthropic.claude-3-5-haiku-20241022-v1:0`) instead of foundation model ARNs. This provides better availability and automatic routing across regions.
+</Callout>
+
 ### Retrieve-Only API
 
-When you need more control over response generation:
+When you need more control over response generation (useful for custom prompts or multi-step reasoning):
 
 ```python
-def retrieve_only(query: str, ticker: str = None, top_k: int = 5) -> list:
+def retrieve_only(query: str, top_k: int = 5) -> list:
     """Retrieve chunks without generating a response."""
 
     retrieval_config = {
@@ -411,11 +510,6 @@ def retrieve_only(query: str, ticker: str = None, top_k: int = 5) -> list:
             'numberOfResults': top_k
         }
     }
-
-    if ticker:
-        retrieval_config['vectorSearchConfiguration']['filter'] = {
-            'equals': {'key': 'ticker', 'value': ticker}
-        }
 
     response = bedrock_agent_runtime.retrieve(
         knowledgeBaseId=KB_ID,
@@ -435,7 +529,7 @@ def retrieve_only(query: str, ticker: str = None, top_k: int = 5) -> list:
     return chunks
 
 # Example: Get raw chunks for custom processing
-chunks = retrieve_only("revenue growth", ticker='MSFT', top_k=3)
+chunks = retrieve_only("revenue growth", top_k=3)
 for chunk in chunks:
     print(f"Score: {chunk['score']:.3f}")
     print(f"Text: {chunk['text'][:200]}...")
@@ -444,20 +538,28 @@ for chunk in chunks:
 
 ## Building the KB Retrieval Tool
 
-Create a Strands tool for the Extract Agent:
+Now we'll create a Strands tool that wraps our Knowledge Base. **This tool will be used in the next section when we build the Extract Agent** - it allows the agent to query SEC filings as part of its data gathering capabilities.
+
+<Callout type="info" title="Why a Tool?">
+  By wrapping the KB in a Strands tool, our agent can decide **when** to query SEC filings based on the user's request. The agent orchestrates multiple tools (market data, SEC filings, etc.) to gather comprehensive information.
+</Callout>
 
 ```python
 # kb_tool.py
 import boto3
+import os
 from strands.tools import tool
 
-bedrock_agent_runtime = boto3.client('bedrock-agent-runtime', region_name='us-west-2')
+REGION = os.environ.get('AWS_REGION', 'us-west-2')
 
-KB_ID = 'your-knowledge-base-id'
-MODEL_ARN = 'arn:aws:bedrock:us-west-2::foundation-model/anthropic.claude-sonnet-4-20250514-v1:0'
+bedrock_agent_runtime = boto3.client('bedrock-agent-runtime', region_name=REGION)
+
+# Load from environment - set these before running your agent
+KB_ID = os.environ.get('KB_ID')
+MODEL_ARN = f"arn:aws:bedrock:{REGION}::inference-profile/us.anthropic.claude-3-5-haiku-20241022-v1:0"
 
 @tool
-def query_sec_filings(query: str, ticker: str = None) -> str:
+def query_sec_filings(query: str) -> str:
     """Query SEC filings from the Knowledge Base for financial information.
 
     Use this tool to find information from company SEC filings including:
@@ -468,11 +570,13 @@ def query_sec_filings(query: str, ticker: str = None) -> str:
 
     Args:
         query: The question to answer from SEC filings
-        ticker: Optional stock ticker to filter results (e.g., 'AAPL', 'MSFT')
 
     Returns:
         Answer generated from SEC filings with citations
     """
+    if not KB_ID:
+        return "Error: KB_ID environment variable not set"
+
     config = {
         'type': 'KNOWLEDGE_BASE',
         'knowledgeBaseConfiguration': {
@@ -485,11 +589,6 @@ def query_sec_filings(query: str, ticker: str = None) -> str:
             }
         }
     }
-
-    if ticker:
-        config['knowledgeBaseConfiguration']['retrievalConfiguration']['vectorSearchConfiguration']['filter'] = {
-            'equals': {'key': 'ticker', 'value': ticker.upper()}
-        }
 
     try:
         response = bedrock_agent_runtime.retrieve_and_generate(
@@ -515,6 +614,20 @@ def query_sec_filings(query: str, ticker: str = None) -> str:
         return f"Error querying SEC filings: {str(e)}"
 ```
 
+**Usage in the Extract Agent (next section):**
+
+```python
+from strands import Agent
+from kb_tool import query_sec_filings
+
+# The agent will use this tool alongside market data tools
+agent = Agent(
+    model=model,
+    tools=[query_sec_filings, get_market_data, ...],
+    system_prompt="You are a financial analyst..."
+)
+```
+
 ## Testing Your Knowledge Base
 
 ### Console Testing
@@ -529,22 +642,28 @@ def query_sec_filings(query: str, ticker: str = None) -> str:
 
 ### Python Testing
 
+Test the KB retrieval tool you created:
+
 ```python
-# test_kb.py
+# test_kb_tool.py
+import os
+os.environ['KB_ID'] = 'your-knowledge-base-id'  # Set from kb_config.json
+
+from kb_tool import query_sec_filings
+
 test_queries = [
-    ("What are Apple's main risk factors?", "AAPL"),
-    ("What was Microsoft's revenue in fiscal 2024?", "MSFT"),
-    ("Describe Amazon's business segments", "AMZN"),
-    ("Compare the risk factors across tech companies", None)
+    "What are Apple's main risk factors?",
+    "What was Microsoft's revenue in fiscal 2024?",
+    "Describe Amazon's business segments",
+    "Compare the risk factors across tech companies"
 ]
 
-for query, ticker in test_queries:
+for query in test_queries:
     print(f"\n{'='*60}")
     print(f"Query: {query}")
-    print(f"Ticker: {ticker}")
     print(f"{'='*60}")
 
-    result = query_sec_filings(query, ticker)
+    result = query_sec_filings(query)
     print(result)
 ```
 
@@ -552,28 +671,40 @@ for query, ticker in test_queries:
 
 ### 1. Chunking Strategy
 
-Choose based on document type:
+Choose based on file size and requirements:
+
+| Strategy | Max File Size | Best For |
+|----------|---------------|----------|
+| `FIXED_SIZE` | No hard limit | Large files (SEC filings, reports) |
+| `SEMANTIC` | 1 MB | Small files with clear structure |
+| `HIERARCHICAL` | Varies | Documents with nested sections |
 
 ```python
-# For SEC filings (structured documents)
+# For SEC filings and large documents (RECOMMENDED)
+# Files must be under 1MB - truncate larger files first
 chunking_config = {
-    'chunkingStrategy': 'SEMANTIC',  # Better for structured docs
+    'chunkingStrategy': 'FIXED_SIZE',
+    'fixedSizeChunkingConfiguration': {
+        'maxTokens': 200,        # Smaller chunks for better retrieval
+        'overlapPercentage': 10  # 10% overlap for context continuity
+    }
+}
+
+# For small files under 1MB only
+chunking_config = {
+    'chunkingStrategy': 'SEMANTIC',  # Has 1MB file size limit!
     'semanticChunkingConfiguration': {
         'maxTokens': 512,
         'bufferSize': 0,
         'breakpointPercentileThreshold': 95
     }
 }
-
-# For unstructured documents
-chunking_config = {
-    'chunkingStrategy': 'FIXED_SIZE',
-    'fixedSizeChunkingConfiguration': {
-        'maxTokens': 300,
-        'overlapPercentage': 20  # 20% overlap for context
-    }
-}
 ```
+
+<Callout type="warning" title="File Size Limits">
+  **SEMANTIC chunking requires files under 1MB.** SEC filings are typically 9-30MB.
+  Truncate large files before ingestion: `head -c 800000 file.txt > file_truncated.txt`
+</Callout>
 
 ### 2. Metadata Filtering
 

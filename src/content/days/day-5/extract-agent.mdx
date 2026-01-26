@@ -36,8 +36,8 @@ The Extract Agent is the data gatherer. It fetches financial data from three sou
 │  │                              TOOLS                                     │  │
 │  │                                                                        │  │
 │  │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐       │  │
-│  │  │  fetch_stock_   │  │  query_sec_     │  │  browser_tool   │       │  │
-│  │  │     data        │  │    filings      │  │   (Day 3)       │       │  │
+│  │  │  fetch_stock_   │  │  query_sec_     │  │ AgentCoreBrowser│       │  │
+│  │  │     data        │  │    filings      │  │    (Day 3)      │       │  │
 │  │  │                 │  │                 │  │                 │       │  │
 │  │  │  Yahoo Finance  │  │  Knowledge Base │  │  Financial News │       │  │
 │  │  │  - Price        │  │  - 10-K reports │  │  - Headlines    │       │  │
@@ -224,20 +224,26 @@ def get_stock_history(ticker: str, period: str = "1y") -> dict:
 
 ## Knowledge Base Tool
 
-Import the KB tool from Module 1:
+Import the KB tool from Module 1. This uses the inference profile ARN and loads the KB ID from environment:
 
 ```python
 # tools/kb_retrieval.py
 import boto3
+import os
 from strands.tools import tool
 
-bedrock_agent_runtime = boto3.client('bedrock-agent-runtime', region_name='us-west-2')
+REGION = os.environ.get('AWS_REGION', 'us-west-2')
 
-KB_ID = 'your-knowledge-base-id'  # From Module 1
-MODEL_ARN = 'arn:aws:bedrock:us-west-2::foundation-model/anthropic.claude-sonnet-4-20250514-v1:0'
+bedrock_agent_runtime = boto3.client('bedrock-agent-runtime', region_name=REGION)
+
+# Load from environment - set KB_ID before running
+KB_ID = os.environ.get('KB_ID')
+
+# Use cross-region inference profile (recommended)
+MODEL_ARN = f"arn:aws:bedrock:{REGION}::inference-profile/us.anthropic.claude-3-5-haiku-20241022-v1:0"
 
 @tool
-def query_sec_filings(query: str, ticker: str = None) -> str:
+def query_sec_filings(query: str) -> str:
     """Query SEC filings from the Knowledge Base.
 
     Use this tool to find information from company SEC filings including:
@@ -248,11 +254,13 @@ def query_sec_filings(query: str, ticker: str = None) -> str:
 
     Args:
         query: The question to answer from SEC filings
-        ticker: Optional stock ticker to filter results (e.g., 'AAPL', 'MSFT')
 
     Returns:
         Answer generated from SEC filings with source citations
     """
+    if not KB_ID:
+        return "Error: KB_ID environment variable not set"
+
     config = {
         'type': 'KNOWLEDGE_BASE',
         'knowledgeBaseConfiguration': {
@@ -265,11 +273,6 @@ def query_sec_filings(query: str, ticker: str = None) -> str:
             }
         }
     }
-
-    if ticker:
-        config['knowledgeBaseConfiguration']['retrievalConfiguration']['vectorSearchConfiguration']['filter'] = {
-            'equals': {'key': 'ticker', 'value': ticker.upper()}
-        }
 
     try:
         response = bedrock_agent_runtime.retrieve_and_generate(
@@ -297,87 +300,47 @@ def query_sec_filings(query: str, ticker: str = None) -> str:
 
 ## Browser Tool for Financial News
 
-The Browser Tool from Day 3 enables web research for real-time financial news:
+The AgentCore Browser Tool from Day 3 enables web research for real-time financial news. We use the `AgentCoreBrowser` class from `strands_tools.browser`:
 
 ```python
 # tools/financial_news.py
-from bedrock_agentcore.tools import browser_tool
-from strands.tools import tool
+from strands_tools.browser import AgentCoreBrowser
 
-@tool
-def fetch_financial_news(ticker: str, max_articles: int = 5) -> dict:
-    """Fetch latest financial news for a company using Browser Tool.
+# Initialize AgentCore Browser (region where AgentCore is available)
+# The browser tool is used directly by the agent, not wrapped in @tool
+agent_core_browser = AgentCoreBrowser(region="us-east-1")
 
-    Use this to get real-time news that might affect stock prices:
-    - Earnings announcements
-    - Product launches
-    - Management changes
-    - Market sentiment
-
-    Args:
-        ticker: Stock symbol (e.g., 'AAPL', 'TSLA')
-        max_articles: Maximum number of articles to fetch
-
-    Returns:
-        Dictionary with news headlines and summaries
-    """
-    # Navigate to Yahoo Finance news page
-    news_url = f"https://finance.yahoo.com/quote/{ticker}/news"
-
-    result = browser_tool.navigate(
-        url=news_url,
-        action="extract_text",
-        wait_for_selector=".news-stream"
-    )
-
-    # Parse the extracted content
-    return dict(
-        ticker=ticker.upper(),
-        source="Yahoo Finance News",
-        content=result.get("text", ""),
-        url=news_url,
-        fetched_at=datetime.now().isoformat()
-    )
-
-
-@tool
-def search_financial_news(query: str) -> dict:
-    """Search for financial news across the web.
-
-    Use for broader market news or specific topics:
-    - "Federal Reserve interest rate decision"
-    - "Tech sector earnings season"
-    - "Oil price forecast"
-
-    Args:
-        query: Search query for financial news
-
-    Returns:
-        Search results with relevant articles
-    """
-    search_url = f"https://news.google.com/search?q={query}+stock+market"
-
-    result = browser_tool.navigate(
-        url=search_url,
-        action="extract_text"
-    )
-
-    return dict(
-        query=query,
-        source="Google News",
-        content=result.get("text", ""),
-        fetched_at=datetime.now().isoformat()
-    )
+# The browser tool is accessed via agent_core_browser.browser
+# and added directly to the agent's tools list
 ```
 
-<Callout type="tip" title="From Day 3">
-  The Browser Tool gives your agent web research capabilities. Review Day 3
-  for browser tool best practices, including rate limiting and ethical scraping.
+<Callout type="info" title="AgentCore Browser">
+  The `AgentCoreBrowser` from `strands_tools.browser` provides headless browser automation through AgentCore. The agent decides when to use it based on the query. See Day 3 for detailed usage.
 </Callout>
+
+Unlike other tools that we wrap with `@tool`, the Browser tool is used directly from the `AgentCoreBrowser` instance:
+
+```python
+# The browser tool is added to the agent like this:
+agent = Agent(
+    model=model,
+    tools=[
+        fetch_stock_data,
+        query_sec_filings,
+        agent_core_browser.browser  # AgentCore Browser tool
+    ],
+    system_prompt=SYSTEM_PROMPT
+)
+```
+
+The agent can then use the browser tool to:
+- Navigate to financial news sites (Yahoo Finance, Google News)
+- Extract headlines and article content
+- Research market sentiment and events
 
 <Callout type="warning" title="Browser Guardrails">
   In production, apply guardrails to restrict browser navigation to approved
-  financial sites. See the Orchestration module for guardrail configuration.
+  financial sites. Some sites have anti-bot protection that may block access.
 </Callout>
 
 ## Building the Extract Agent
@@ -386,14 +349,18 @@ Now combine the tools into a focused extraction agent:
 
 ```python
 # agents/extract_agent.py
+import os
 from strands import Agent
 from strands.models import BedrockModel
+from strands_tools.browser import AgentCoreBrowser
 from bedrock_agentcore.runtime import BedrockAgentCoreApp
 
 # Import tools
 from tools.yahoo_finance import fetch_stock_data, fetch_multiple_stocks, get_stock_history
 from tools.kb_retrieval import query_sec_filings
-from tools.financial_news import fetch_financial_news, search_financial_news
+
+# Initialize AgentCore Browser for financial news research
+agent_core_browser = AgentCoreBrowser(region="us-east-1")
 
 app = BedrockAgentCoreApp()
 
@@ -411,13 +378,11 @@ Your role is to gather financial data from multiple sources:
 - `get_stock_history`: Detailed historical prices for analysis
 - `fetch_multiple_stocks`: Comparing multiple companies
 - `query_sec_filings`: Company filings, risk factors, management discussion
-- `fetch_financial_news`: Recent news for a specific stock
-- `search_financial_news`: Broader market news or topics
+- `browser`: Navigate to financial news sites (Yahoo Finance, Google News) for recent headlines
 
 ### Output Format:
 Always return data in a structured JSON format that downstream agents can process:
 
-```json
 {
   "request_type": "stock_data | sec_filing | comparison",
   "tickers": ["AAPL"],
@@ -427,7 +392,6 @@ Always return data in a structured JSON format that downstream agents can proces
   "sources": ["Yahoo Finance", "SEC 10-K"],
   "timestamp": "ISO timestamp"
 }
-```
 
 ### Best Practices:
 1. Always validate ticker symbols before querying
@@ -442,9 +406,11 @@ Always return data in a structured JSON format that downstream agents can proces
 - Hallucinate data - only return what tools provide
 """
 
+REGION = os.environ.get('AWS_REGION', 'us-west-2')
+
 model = BedrockModel(
-    model_id="anthropic.claude-sonnet-4-20250514-v1:0",
-    region_name="us-west-2"
+    model_id="us.anthropic.claude-sonnet-4-20250514-v1:0",
+    region_name=REGION
 )
 
 extract_agent = Agent(
@@ -454,8 +420,7 @@ extract_agent = Agent(
         fetch_multiple_stocks,
         get_stock_history,
         query_sec_filings,
-        fetch_financial_news,      # Browser tool (Day 3)
-        search_financial_news      # Browser tool (Day 3)
+        agent_core_browser.browser  # AgentCore Browser tool (Day 3)
     ],
     system_prompt=EXTRACT_SYSTEM_PROMPT
 )
@@ -560,20 +525,18 @@ agentcore deploy \
   --name extract-agent \
   --entry agents/extract_agent.py \
   --requirements requirements.txt \
-  --region us-west-2 \
-  --profile claude
+  --region us-west-2
 ```
 
 ### Verify Deployment
 
 ```bash
 # List deployed agents
-agentcore list --profile claude
+agentcore list
 
 # Test invocation
 agentcore invoke extract-agent \
-  --payload '{"prompt": "Get AAPL current price"}' \
-  --profile claude
+  --payload '{"prompt": "Get AAPL current price"}'
 ```
 
 ## Configuration Management
@@ -609,7 +572,7 @@ aws ssm put-parameter \
   --name "/agentcore/extract-agent/kb-id" \
   --value "your-kb-id" \
   --type String \
-  --profile claude
+  --region us-west-2
 ```
 
 ## Error Handling
@@ -653,8 +616,8 @@ def fetch_stock_data_safe(ticker: str, period: str = "1y") -> dict:
 You've now built:
 
 - ✅ Yahoo Finance tool for real-time market data
-- ✅ Integration with Knowledge Base for SEC filings
-- ✅ Browser Tool for financial news (Day 3 integration)
+- ✅ Integration with Knowledge Base for SEC filings (with inference profile ARN)
+- ✅ AgentCoreBrowser integration for financial news (Day 3)
 - ✅ Focused Extract Agent with clear responsibilities
 - ✅ Deployment to AgentCore Runtime
 - ✅ Local and remote testing patterns

@@ -6,10 +6,10 @@ focus: "Guardrails + Observability"
 description: "Implement comprehensive tracing, metrics, and logging to understand and monitor agent behavior."
 estimatedTime: "60 minutes"
 objectives:
-  - "Configure AgentCore traces with CloudWatch integration"
-  - "Set up custom metrics for agent performance"
-  - "Implement structured logging for debugging"
-  - "Build a CloudWatch dashboard for monitoring"
+  - "Deploy an agent to AgentCore Runtime with automatic observability"
+  - "View traces in CloudWatch GenAI Observability dashboard"
+  - "Understand the three pillars: traces, metrics, and logs"
+  - "Set up custom metrics and alerts"
 order: 1
 published: true
 ---
@@ -20,69 +20,163 @@ import Callout from '@/components/content/Callout.astro';
 
 Guardrails prevent problems. **Observability** lets you see when they happen, understand why, and fix them before users notice.
 
+When you deploy agents to AgentCore Runtime, you get comprehensive observability through CloudWatch GenAI Observability—traces showing every step of agent execution, metrics for performance monitoring, and logs for debugging.
+
+## Prerequisites
+
+Before starting, ensure you have:
+
+- **Python 3.10+** installed
+- **AWS credentials** configured with appropriate permissions
+- **Amazon CloudWatch access** in your AWS account
+- **Transaction Search enabled** on CloudWatch (we'll cover this in Step 3)
+
+Install the required dependencies:
+
+```bash
+pip install strands-agents strands-agents-tools boto3 bedrock-agentcore bedrock-agentcore-starter-toolkit aws-opentelemetry-distro~=0.12.1
+```
+
 ## Observability Architecture
 
 ### Local Development
 
 ![Local Observability](/images/day-4/observability-local.png)
 
-During local development, observability data flows to CloudWatch through the OpenTelemetry collector.
+During local development, you run and test your agent directly. No observability infrastructure is needed yet—you're focused on getting the agent logic right.
 
 ### Runtime Deployment
 
 ![Runtime Observability](/images/day-4/observability-runtime.png)
 
-In AgentCore Runtime, observability is automatically configured with managed infrastructure.
+When deployed to AgentCore Runtime, your agent automatically gets:
+- **OpenTelemetry instrumentation** via `aws-opentelemetry-distro`
+- **Trace collection** to CloudWatch
+- **GenAI Observability dashboard** integration
 
 ## The Three Pillars
 
 **Traces** answer "What happened in this specific request?"
-- Request → Auth → Memory Fetch → Tool Call → Response
-- Timing breakdown: 2ms → 15ms → 120ms → 3400ms → 50ms
+- Request → Tool Call → Model Invocation → Response
+- Timing breakdown for each step
+- Full visibility into agent decision-making
 
 **Metrics** answer "How is the system performing overall?"
-- Latency: p50=1.2s, p99=5.3s
-- Requests/min: 145
-- Error rate: 0.3%
+- Latency: p50, p95, p99 percentiles
+- Invocation counts
+- Error rates
 
 **Logs** provide "Details and context"
-- `[ERROR] Tool execution failed: timeout after 60s`
-- `Context: {userId: 'u-123', tool: 'execute_python', ...}`
+- Runtime logs from your agent code
+- Error details for debugging
+- Structured data for analysis
 
-## AgentCore Traces
+## Step 1: Local Agent Development
 
-AgentCore automatically generates traces for every request, showing the complete execution flow.
+Start by creating and testing your agent locally. This lets you experiment without deploying.
 
-### BedrockAgentCoreApp with Automatic Tracing
-
-The `BedrockAgentCoreApp` provides automatic OpenTelemetry instrumentation:
+Create `observable_agent_local.py`:
 
 ```python
+#!/usr/bin/env python3
+"""Local agent for experimentation before deployment"""
 from strands import Agent, tool
 from strands_tools import calculator
-from bedrock_agentcore.runtime import BedrockAgentCoreApp
 from strands.models import BedrockModel
-
-# Initialize AgentCore app with automatic OpenTelemetry
-app = BedrockAgentCoreApp()
+import argparse
+import json
 
 @tool
 def weather():
-    """Get current weather conditions."""
-    return "sunny, 72°F"
+    """Get weather"""
+    return "sunny"
 
-model = BedrockModel(model_id="anthropic.claude-sonnet-4-20250514-v1:0")
+model_id = "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+model = BedrockModel(model_id=model_id)
 
 agent = Agent(
     model=model,
     tools=[calculator, weather],
-    system_prompt="You're a helpful assistant with math and weather capabilities."
+    system_prompt="You're a helpful assistant. You can do simple math calculation, and tell the weather."
+)
+
+def invoke_agent(payload):
+    user_input = payload.get("prompt")
+    response = agent(user_input)
+    return response.message['content'][0]['text']
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("payload", type=str)
+    args = parser.parse_args()
+    response = invoke_agent(json.loads(args.payload))
+    print(response)
+```
+
+Test locally:
+
+```bash
+python observable_agent_local.py '{"prompt": "What is the weather now?"}'
+```
+
+Expected output:
+```
+The weather is currently sunny!
+```
+
+Test the calculator:
+
+```bash
+python observable_agent_local.py '{"prompt": "What is 25 * 17?"}'
+```
+
+Expected output:
+```
+25 * 17 = 425
+```
+
+<Callout type="tip" title="Local First">
+Always develop and test locally before deploying to Runtime. It's faster to iterate and debug.
+</Callout>
+
+## Step 2: Prepare for AgentCore Runtime
+
+Now adapt your agent for Runtime deployment. The key changes are:
+1. Import and initialize `BedrockAgentCoreApp`
+2. Decorate your handler with `@app.entrypoint`
+3. Call `app.run()` in main
+
+Create `observable_agent_runtime.py`:
+
+```python
+#!/usr/bin/env python3
+"""Agent prepared for AgentCore Runtime deployment"""
+from strands import Agent, tool
+from strands_tools import calculator
+from strands.models import BedrockModel
+from bedrock_agentcore.runtime import BedrockAgentCoreApp
+
+app = BedrockAgentCoreApp()
+
+@tool
+def weather():
+    """Get weather"""
+    return "sunny"
+
+model_id = "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+model = BedrockModel(model_id=model_id)
+
+agent = Agent(
+    model=model,
+    tools=[calculator, weather],
+    system_prompt="You're a helpful assistant. You can do simple math calculation, and tell the weather."
 )
 
 @app.entrypoint
 def handle_request(payload):
     """Agent entrypoint with automatic tracing."""
     user_input = payload.get("prompt")
+    print("User input:", user_input)
     response = agent(user_input)
     return response.message['content'][0]['text']
 
@@ -90,181 +184,260 @@ if __name__ == "__main__":
     app.run()
 ```
 
-### OpenTelemetry Configuration
+### What BedrockAgentCoreApp Does
 
-![Configure Observability](/images/day-4/observability-configure.png)
+When you use `BedrockAgentCoreApp`, it automatically:
+- Creates an HTTP server listening on port 8080
+- Implements `/invocations` endpoint for agent requests
+- Implements `/ping` endpoint for health checks
+- Handles proper content types and response formats
+- Integrates with OpenTelemetry for tracing
 
-The `BedrockAgentCoreApp` automatically:
-- Initializes OpenTelemetry exporters
-- Creates trace contexts for each request
-- Captures tool invocations as spans
-- Exports metrics to CloudWatch
+## Step 3: Enable CloudWatch Transaction Search
 
-Install the AWS OpenTelemetry distribution:
+Before deploying, enable Transaction Search in CloudWatch to view traces.
 
-```bash
-pip install aws-opentelemetry-distro
-```
+1. Navigate to **AWS Console → CloudWatch → Settings → Traces and logs**
+2. Enable **"Transaction Search"**
+3. Select **"Ingest spans as structured logs in OpenTelemetry format"**
 
-### Launch and Invoke Flow
+This is required for traces to appear in the GenAI Observability dashboard.
 
-![Launch Agent](/images/day-4/observability-launch.png)
-
-![Invoke Agent](/images/day-4/observability-invoke.png)
-
-<Callout type="tip" title="Automatic Instrumentation">
-When using `BedrockAgentCoreApp`, traces are automatically created. No manual span creation required for standard agent operations.
+<Callout type="warning" title="Enable Transaction Search First">
+Without Transaction Search enabled, your traces won't appear in the dashboard even though the agent is instrumented correctly.
 </Callout>
 
-### Legacy Trace Retrieval
+## Step 4: Deploy to AgentCore Runtime
 
-For direct trace access via boto3:
+Create `requirements.txt` with your dependencies:
+
+```
+strands-agents
+strands-agents-tools
+boto3
+bedrock-agentcore
+bedrock-agentcore-starter-toolkit
+aws-opentelemetry-distro~=0.12.1
+```
+
+Create `deploy_agent.py`:
 
 ```python
+#!/usr/bin/env python3
+"""Deploy agent to AgentCore Runtime"""
+from bedrock_agentcore_starter_toolkit import Runtime
+from boto3.session import Session
+
+boto_session = Session()
+region = boto_session.region_name
+
+agentcore_runtime = Runtime()
+agent_name = "observable_strands_agent"
+
+# Configure deployment
+response = agentcore_runtime.configure(
+    entrypoint="observable_agent_runtime.py",
+    auto_create_execution_role=True,
+    auto_create_ecr=True,
+    requirements_file="requirements.txt",
+    region=region,
+    agent_name=agent_name,
+    memory_mode='NO_MEMORY'
+)
+print("Configuration:", response)
+
+# Launch to AgentCore Runtime
+launch_result = agentcore_runtime.launch()
+print("Launch result:", launch_result)
+```
+
+Run the deployment:
+
+```bash
+python deploy_agent.py
+```
+
+The deployment process:
+1. **Configure** - Generates Dockerfile, validates settings
+2. **CodeBuild** - Builds container image in AWS (no local Docker needed)
+3. **ECR** - Pushes image to Amazon ECR
+4. **AgentCore** - Creates the runtime with observability enabled
+
+<Callout type="info" title="Automatic Instrumentation">
+The starter toolkit automatically adds OpenTelemetry instrumentation to your container:
+```dockerfile
+CMD ["opentelemetry-instrument", "python", "observable_agent_runtime.py"]
+```
+</Callout>
+
+## Step 5: Check Deployment Status
+
+Wait for the runtime to reach READY status.
+
+Create `check_status.py`:
+
+```python
+#!/usr/bin/env python3
+"""Check AgentCore Runtime status using boto3"""
 import boto3
+import yaml
+from pathlib import Path
+import time
 
-# Enable traces when creating an agent session
-agentcore = boto3.client('bedrock-agentcore-runtime', region_name='us-east-1')
+# Load config
+config_path = Path(__file__).parent / ".bedrock_agentcore.yaml"
+with open(config_path) as f:
+    config = yaml.safe_load(f)
 
-response = agentcore.invoke_agent(
-    agentId='agent-xxxx',
-    sessionId='session-123',
-    inputText='User message here',
-    enableTrace=True,  # Enable detailed tracing
-    traceLevel='DETAILED'  # or 'BASIC'
+default_agent = config['default_agent']
+agent_config = config['agents'][default_agent]
+agent_id = agent_config['bedrock_agentcore']['agent_id']
+region = agent_config['aws']['region']
+
+print(f"Checking status for agent: {agent_id}")
+
+# Get status via boto3
+client = boto3.client('bedrock-agentcore-control', region_name=region)
+
+response = client.get_agent_runtime(agentRuntimeId=agent_id)
+status = response['status']
+
+end_status = ['READY', 'CREATE_FAILED', 'DELETE_FAILED', 'UPDATE_FAILED']
+while status not in end_status:
+    time.sleep(10)
+    response = client.get_agent_runtime(agentRuntimeId=agent_id)
+    status = response['status']
+    print(f"Status: {status}")
+
+print(f"Final status: {status}")
+```
+
+Run it:
+
+```bash
+python check_status.py
+```
+
+Expected output:
+```
+Checking status for agent: observable_strands_agent-CtVKj2Dpe2
+Final status: READY
+```
+
+## Step 6: Invoke the Agent
+
+Once the agent is READY, invoke it to generate traces.
+
+Create `invoke_agent.py`:
+
+```python
+#!/usr/bin/env python3
+"""Invoke agent on AgentCore Runtime using boto3"""
+import boto3
+import yaml
+import json
+from pathlib import Path
+
+# Load config
+config_path = Path(__file__).parent / ".bedrock_agentcore.yaml"
+with open(config_path) as f:
+    config = yaml.safe_load(f)
+
+default_agent = config['default_agent']
+agent_config = config['agents'][default_agent]
+agent_arn = agent_config['bedrock_agentcore']['agent_arn']
+region = agent_config['aws']['region']
+
+print(f"Invoking agent: {agent_arn}")
+
+# Invoke via boto3
+client = boto3.client('bedrock-agentcore', region_name=region)
+
+response = client.invoke_agent_runtime(
+    agentRuntimeArn=agent_arn,
+    qualifier="DEFAULT",
+    payload=json.dumps({"prompt": "How is the weather now?"})
 )
 
-# Trace is included in response
-trace = response.get('trace', {})
+# Process response
+if "text/event-stream" in response.get("contentType", ""):
+    content = []
+    for line in response["response"].iter_lines(chunk_size=1):
+        if line:
+            line = line.decode("utf-8")
+            if line.startswith("data: "):
+                line = line[6:]
+                content.append(line)
+    print("Response:", "\n".join(content))
+else:
+    events = []
+    for event in response.get("response", []):
+        events.append(event)
+    if events:
+        print("Response:", json.loads(events[0].decode("utf-8")))
 ```
 
-### Trace Structure
+Run it:
 
-Each trace contains:
-
-```python
-trace = {
-    'traceId': 'trace-abc123',
-    'agentId': 'agent-xxxx',
-    'sessionId': 'session-123',
-    'timestamp': '2025-01-03T21:00:00Z',
-
-    # Input processing
-    'input': {
-        'text': 'User message',
-        'guardrailsApplied': True,
-        'guardrailDecision': 'ALLOWED'
-    },
-
-    # Orchestration steps
-    'orchestration': [
-        {
-            'step': 'memory_retrieval',
-            'startTime': '2025-01-03T21:00:00.100Z',
-            'endTime': '2025-01-03T21:00:00.220Z',
-            'durationMs': 120,
-            'memoriesRetrieved': 3
-        },
-        {
-            'step': 'tool_invocation',
-            'startTime': '2025-01-03T21:00:00.220Z',
-            'endTime': '2025-01-03T21:00:03.620Z',
-            'durationMs': 3400,
-            'tool': 'execute_python',
-            'toolInput': 'import pandas as pd; ...',
-            'toolOutput': 'Result: 42'
-        },
-        {
-            'step': 'model_invocation',
-            'startTime': '2025-01-03T21:00:03.620Z',
-            'endTime': '2025-01-03T21:00:04.820Z',
-            'durationMs': 1200,
-            'modelId': 'anthropic.claude-sonnet-4-20250514-v1:0',
-            'inputTokens': 1500,
-            'outputTokens': 340
-        }
-    ],
-
-    # Output
-    'output': {
-        'text': 'Agent response',
-        'guardrailsApplied': True,
-        'guardrailDecision': 'ALLOWED'
-    },
-
-    # Summary
-    'totalDurationMs': 4720,
-    'status': 'SUCCESS'
-}
+```bash
+python invoke_agent.py
 ```
 
-### Trace Analysis
-
-Extract insights from traces:
-
-```python
-def analyze_trace(trace: dict) -> dict:
-    """Analyze a trace for performance and errors."""
-
-    total_duration = trace['totalDurationMs']
-    steps = trace['orchestration']
-
-    # Find slowest step
-    slowest = max(steps, key=lambda s: s['durationMs'])
-
-    # Calculate token usage and cost
-    model_steps = [s for s in steps if s['step'] == 'model_invocation']
-    total_tokens = sum(s['inputTokens'] + s['outputTokens'] for s in model_steps)
-
-    # Estimate cost (example rates)
-    input_tokens = sum(s['inputTokens'] for s in model_steps)
-    output_tokens = sum(s['outputTokens'] for s in model_steps)
-    cost = (input_tokens * 0.000003) + (output_tokens * 0.000015)
-
-    return {
-        'total_duration_ms': total_duration,
-        'slowest_step': {
-            'name': slowest['step'],
-            'duration_ms': slowest['durationMs'],
-            'percentage': (slowest['durationMs'] / total_duration) * 100
-        },
-        'tool_calls': len([s for s in steps if s['step'] == 'tool_invocation']),
-        'total_tokens': total_tokens,
-        'estimated_cost_usd': cost,
-        'status': trace['status']
-    }
-
-# Example usage
-analysis = analyze_trace(trace)
-print(f"Request took {analysis['total_duration_ms']}ms")
-print(f"Slowest step: {analysis['slowest_step']['name']} ({analysis['slowest_step']['duration_ms']}ms)")
-print(f"Cost: ${analysis['estimated_cost_usd']:.4f}")
+Expected output:
+```
+Invoking agent: arn:aws:bedrock-agentcore:us-east-1:123456789:runtime/observable_strands_agent-CtVKj2Dpe2
+Response: The weather is currently sunny! Great day for outdoor activities.
 ```
 
-## CloudWatch Integration
+<Callout type="tip" title="Generate Multiple Traces">
+Invoke the agent several times with different prompts to generate trace data for the dashboard.
+</Callout>
 
-Send traces, metrics, and logs to CloudWatch for centralized monitoring.
+## Step 7: View Traces in GenAI Observability
 
-### Automatic Trace Publishing
+Now view your traces in the CloudWatch GenAI Observability dashboard.
 
-```python
-import boto3
+### Navigate to the Dashboard
 
-# AgentCore automatically sends traces to CloudWatch
-# Configure log group for traces
-logs = boto3.client('logs', region_name='us-east-1')
+1. Go to **AWS Console → CloudWatch**
+2. Select **Application Signals → GenAI Observability**
+3. Or use the direct URL: `https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#gen-ai-observability/agent-core`
 
-logs.create_log_group(
-    logGroupName='/aws/bedrock/agentcore/traces'
-)
+### Dashboard Overview
 
-# Traces appear as log events
-# Query them with CloudWatch Insights
-```
+The GenAI Observability dashboard shows:
 
-### Custom Metrics
+**Runtime Metrics (All Agents)**
+- Latency distribution across all your agents
+- Invocation counts over time
+- Error rates
 
-Publish agent-specific metrics:
+**Agent-Specific View**
+- Click on your agent to see metrics for just that agent
+- Filter by time range to focus on specific periods
+
+**Sessions View**
+- See all sessions associated with your agent
+- Track conversation flows
+
+**Trace View**
+- Detailed trace information for each invocation
+- Span breakdown showing:
+  - Tool invocations with timing
+  - Model calls with token counts
+  - Error details if any occurred
+
+### What Traces Show
+
+Each trace includes:
+- **Request timing** - Total duration and breakdown by step
+- **Tool calls** - Which tools were invoked and how long each took
+- **Model invocations** - Input/output token counts, latency
+- **Errors** - Stack traces and error messages for debugging
+
+## Advanced: Custom Metrics
+
+Beyond automatic traces, you can publish custom CloudWatch metrics.
 
 ```python
 import boto3
@@ -272,484 +445,130 @@ from datetime import datetime
 
 cloudwatch = boto3.client('cloudwatch', region_name='us-east-1')
 
-def publish_agent_metrics(trace_analysis: dict):
-    """Publish custom metrics from trace analysis."""
+def publish_agent_metrics(duration_ms: float, tokens: int, tool_calls: int):
+    """Publish custom metrics from agent invocation."""
 
     metrics = [
         {
             'MetricName': 'RequestLatency',
-            'Value': trace_analysis['total_duration_ms'],
+            'Value': duration_ms,
             'Unit': 'Milliseconds',
-            'Timestamp': datetime.now()
+            'Timestamp': datetime.now(),
+            'Dimensions': [
+                {'Name': 'AgentName', 'Value': 'observable_strands_agent'}
+            ]
         },
         {
             'MetricName': 'TokensUsed',
-            'Value': trace_analysis['total_tokens'],
+            'Value': tokens,
             'Unit': 'Count',
-            'Timestamp': datetime.now()
-        },
-        {
-            'MetricName': 'RequestCost',
-            'Value': trace_analysis['estimated_cost_usd'],
-            'Unit': 'None',
-            'Timestamp': datetime.now()
+            'Timestamp': datetime.now(),
+            'Dimensions': [
+                {'Name': 'AgentName', 'Value': 'observable_strands_agent'}
+            ]
         },
         {
             'MetricName': 'ToolCalls',
-            'Value': trace_analysis['tool_calls'],
+            'Value': tool_calls,
             'Unit': 'Count',
-            'Timestamp': datetime.now()
+            'Timestamp': datetime.now(),
+            'Dimensions': [
+                {'Name': 'AgentName', 'Value': 'observable_strands_agent'}
+            ]
         }
     ]
 
     cloudwatch.put_metric_data(
-        Namespace='AgentCore/Agent',
+        Namespace='AgentCore/CustomMetrics',
         MetricData=metrics
     )
-
-# After each request
-analysis = analyze_trace(trace)
-publish_agent_metrics(analysis)
 ```
 
-### Metric Dimensions
+## Advanced: CloudWatch Alarms
 
-Add dimensions for filtering:
-
-```python
-def publish_metrics_with_dimensions(trace: dict, analysis: dict):
-    """Publish metrics with dimensions for filtering."""
-
-    dimensions = [
-        {'Name': 'AgentId', 'Value': trace['agentId']},
-        {'Name': 'Environment', 'Value': 'production'},
-        {'Name': 'Status', 'Value': trace['status']}
-    ]
-
-    cloudwatch.put_metric_data(
-        Namespace='AgentCore/Agent',
-        MetricData=[{
-            'MetricName': 'RequestLatency',
-            'Value': analysis['total_duration_ms'],
-            'Unit': 'Milliseconds',
-            'Dimensions': dimensions,
-            'Timestamp': datetime.now()
-        }]
-    )
-
-# Query metrics by dimension
-# Example: "Latency for production environment only"
-```
-
-## Structured Logging
-
-Use structured logging for better searchability:
+Set up alarms for critical thresholds.
 
 ```python
-import logging
-import json
-from datetime import datetime
-
-# Configure structured logger
-logger = logging.getLogger('agentcore')
-logger.setLevel(logging.INFO)
-
-handler = logging.StreamHandler()
-handler.setFormatter(logging.Formatter('%(message)s'))
-logger.addHandler(handler)
-
-def log_structured(level: str, message: str, **kwargs):
-    """Log with structured fields."""
-    log_entry = {
-        'timestamp': datetime.now().isoformat(),
-        'level': level,
-        'message': message,
-        **kwargs
-    }
-    logger.info(json.dumps(log_entry))
-
-# Usage
-log_structured('INFO', 'Agent request started',
-    userId='user-123',
-    sessionId='session-456',
-    agentId='agent-xxxx'
-)
-
-log_structured('ERROR', 'Tool execution failed',
-    userId='user-123',
-    tool='execute_python',
-    error='Timeout after 60s',
-    code_length=450
-)
-```
-
-### Request Logging Middleware
-
-Add logging to all agent requests:
-
-```python
-from functools import wraps
-import time
-
-def log_agent_request(func):
-    """Decorator to log agent requests."""
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        start_time = time.time()
-        request_id = generate_request_id()
-
-        log_structured('INFO', 'Agent request started',
-            request_id=request_id,
-            function=func.__name__,
-            args_length=len(str(args))
-        )
-
-        try:
-            result = func(*args, **kwargs)
-
-            duration_ms = (time.time() - start_time) * 1000
-
-            log_structured('INFO', 'Agent request completed',
-                request_id=request_id,
-                duration_ms=duration_ms,
-                status='success'
-            )
-
-            return result
-
-        except Exception as e:
-            duration_ms = (time.time() - start_time) * 1000
-
-            log_structured('ERROR', 'Agent request failed',
-                request_id=request_id,
-                duration_ms=duration_ms,
-                error=str(e),
-                status='error'
-            )
-
-            raise
-
-    return wrapper
-
-@log_agent_request
-def invoke_agent(agent_id: str, session_id: str, message: str):
-    # Agent invocation logic
-    pass
-```
-
-## CloudWatch Dashboards
-
-Visualize agent performance with dashboards:
-
-```python
-import boto3
-
 cloudwatch = boto3.client('cloudwatch', region_name='us-east-1')
 
-# Create dashboard
-dashboard_body = {
-    "widgets": [
-        {
-            "type": "metric",
-            "properties": {
-                "metrics": [
-                    ["AgentCore/Agent", "RequestLatency", {"stat": "Average"}],
-                    [".", ".", {"stat": "p99"}]
-                ],
-                "period": 300,
-                "stat": "Average",
-                "region": "us-east-1",
-                "title": "Request Latency"
-            }
-        },
-        {
-            "type": "metric",
-            "properties": {
-                "metrics": [
-                    ["AgentCore/Agent", "TokensUsed", {"stat": "Sum"}]
-                ],
-                "period": 300,
-                "stat": "Sum",
-                "region": "us-east-1",
-                "title": "Token Usage (5 min)"
-            }
-        },
-        {
-            "type": "metric",
-            "properties": {
-                "metrics": [
-                    ["AgentCore/Agent", "RequestCost", {"stat": "Sum"}]
-                ],
-                "period": 3600,
-                "stat": "Sum",
-                "region": "us-east-1",
-                "title": "Cost per Hour"
-            }
-        },
-        {
-            "type": "log",
-            "properties": {
-                "query": """
-                    SOURCE '/aws/bedrock/agentcore/traces'
-                    | fields @timestamp, message
-                    | filter level = "ERROR"
-                    | sort @timestamp desc
-                    | limit 20
-                """,
-                "region": "us-east-1",
-                "title": "Recent Errors"
-            }
-        }
-    ]
-}
-
-cloudwatch.put_dashboard(
-    DashboardName='AgentCore-Production',
-    DashboardBody=json.dumps(dashboard_body)
-)
-```
-
-<Callout type="tip" title="Dashboard Best Practices">
-  Include:
-  - Latency (p50, p95, p99)
-  - Error rate
-  - Request volume
-  - Token usage and cost
-  - Guardrail block rate
-  - Tool usage breakdown
-</Callout>
-
-## CloudWatch Insights Queries
-
-Analyze logs with CloudWatch Insights:
-
-```sql
--- Find slowest requests
-fields @timestamp, trace.totalDurationMs, trace.agentId
-| filter trace.totalDurationMs > 5000
-| sort trace.totalDurationMs desc
-| limit 20
-
--- Error rate by agent
-fields trace.agentId, trace.status
-| stats count() as total,
-        sum(trace.status = 'ERROR') as errors
-  by trace.agentId
-| fields trace.agentId, errors / total * 100 as error_rate
-
--- Most expensive requests
-fields @timestamp, trace.traceId, trace.totalDurationMs
-| filter ispresent(trace.orchestration)
-| fields @timestamp,
-         trace.traceId,
-         sum(trace.orchestration[*].inputTokens) as input_tokens,
-         sum(trace.orchestration[*].outputTokens) as output_tokens,
-         (input_tokens * 0.000003 + output_tokens * 0.000015) as cost
-| sort cost desc
-| limit 20
-
--- Tool usage breakdown
-fields trace.orchestration[*].tool as tools
-| filter ispresent(tools)
-| stats count() by tools
-
--- Guardrail block rate
-fields trace.input.guardrailDecision
-| stats count() as total,
-        sum(trace.input.guardrailDecision = 'BLOCKED') as blocked
-| fields blocked / total * 100 as block_rate
-```
-
-## Alerts
-
-Set up CloudWatch alarms:
-
-```python
 # High latency alarm
 cloudwatch.put_metric_alarm(
     AlarmName='AgentCore-HighLatency',
     ComparisonOperator='GreaterThanThreshold',
     EvaluationPeriods=2,
     MetricName='RequestLatency',
-    Namespace='AgentCore/Agent',
+    Namespace='AgentCore/CustomMetrics',
     Period=300,
     Statistic='Average',
     Threshold=5000,  # 5 seconds
     ActionsEnabled=True,
     AlarmActions=['arn:aws:sns:us-east-1:123456789:agent-alerts'],
-    AlarmDescription='Alert when request latency exceeds 5s'
-)
-
-# High error rate alarm
-cloudwatch.put_metric_alarm(
-    AlarmName='AgentCore-HighErrorRate',
-    ComparisonOperator='GreaterThanThreshold',
-    EvaluationPeriods=2,
-    Metrics=[
-        {
-            'Id': 'error_rate',
-            'Expression': 'errors / requests * 100',
-            'Label': 'Error Rate %'
-        },
-        {
-            'Id': 'errors',
-            'MetricStat': {
-                'Metric': {
-                    'Namespace': 'AgentCore/Agent',
-                    'MetricName': 'Errors',
-                    'Dimensions': [{'Name': 'Status', 'Value': 'ERROR'}]
-                },
-                'Period': 300,
-                'Stat': 'Sum'
-            }
-        },
-        {
-            'Id': 'requests',
-            'MetricStat': {
-                'Metric': {
-                    'Namespace': 'AgentCore/Agent',
-                    'MetricName': 'Requests'
-                },
-                'Period': 300,
-                'Stat': 'Sum'
-            }
-        }
-    ],
-    Threshold=5,  # 5% error rate
-    ActionsEnabled=True,
-    AlarmActions=['arn:aws:sns:us-east-1:123456789:agent-alerts']
-)
-
-# Cost alarm
-cloudwatch.put_metric_alarm(
-    AlarmName='AgentCore-HighCost',
-    ComparisonOperator='GreaterThanThreshold',
-    EvaluationPeriods=1,
-    MetricName='RequestCost',
-    Namespace='AgentCore/Agent',
-    Period=3600,
-    Statistic='Sum',
-    Threshold=10.0,  # $10/hour
-    ActionsEnabled=True,
-    AlarmActions=['arn:aws:sns:us-east-1:123456789:cost-alerts']
+    AlarmDescription='Alert when request latency exceeds 5s',
+    Dimensions=[
+        {'Name': 'AgentName', 'Value': 'observable_strands_agent'}
+    ]
 )
 ```
 
-## Complete Observability Stack
+## Cleanup
 
-Put it all together:
+When you're done testing, clean up the resources.
+
+Create `cleanup_agent.py`:
 
 ```python
-# agent_with_observability.py
+#!/usr/bin/env python3
+"""Cleanup AgentCore Runtime resources using boto3"""
 import boto3
-import logging
-import json
-from datetime import datetime
-from strands import Agent
-from strands.models import BedrockModel
+import yaml
+from pathlib import Path
 
-class ObservableAgent:
-    """Agent with full observability."""
+# Load config
+config_path = Path(__file__).parent / ".bedrock_agentcore.yaml"
+with open(config_path) as f:
+    config = yaml.safe_load(f)
 
-    def __init__(self, agent_id: str):
-        self.agent_id = agent_id
-        self.model = BedrockModel(
-            model_id="anthropic.claude-sonnet-4-20250514-v1:0"
-        )
-        self.agent = Agent(model=self.model)
-        self.cloudwatch = boto3.client('cloudwatch')
-        self.logger = self.setup_logger()
+default_agent = config['default_agent']
+agent_config = config['agents'][default_agent]
+agent_id = agent_config['bedrock_agentcore']['agent_id']
+ecr_repository = agent_config['aws']['ecr_repository'].split('/')[1]
+region = agent_config['aws']['region']
 
-    def setup_logger(self):
-        logger = logging.getLogger(f'agent-{self.agent_id}')
-        logger.setLevel(logging.INFO)
-        handler = logging.StreamHandler()
-        handler.setFormatter(logging.Formatter('%(message)s'))
-        logger.addHandler(handler)
-        return logger
+print(f"Cleaning up agent: {agent_id}")
+print(f"ECR repository: {ecr_repository}")
 
-    def log(self, level: str, message: str, **kwargs):
-        log_entry = {
-            'timestamp': datetime.now().isoformat(),
-            'level': level,
-            'agent_id': self.agent_id,
-            'message': message,
-            **kwargs
-        }
-        self.logger.info(json.dumps(log_entry))
+# Create clients
+agentcore_client = boto3.client('bedrock-agentcore-control', region_name=region)
+ecr_client = boto3.client('ecr', region_name=region)
 
-    def publish_metrics(self, metrics: dict):
-        metric_data = []
-        for name, value in metrics.items():
-            metric_data.append({
-                'MetricName': name,
-                'Value': value,
-                'Unit': 'None',
-                'Timestamp': datetime.now(),
-                'Dimensions': [
-                    {'Name': 'AgentId', 'Value': self.agent_id}
-                ]
-            })
+# Delete runtime
+print(f"Deleting agent runtime...")
+agentcore_client.delete_agent_runtime(agentRuntimeId=agent_id)
+print(f"Agent runtime deleted")
 
-        self.cloudwatch.put_metric_data(
-            Namespace='AgentCore/Agent',
-            MetricData=metric_data
-        )
+# Delete ECR repository
+print(f"Deleting ECR repository...")
+ecr_client.delete_repository(repositoryName=ecr_repository, force=True)
+print(f"ECR repository deleted")
 
-    def invoke(self, session_id: str, message: str) -> str:
-        import time
-        start_time = time.time()
+print("\nCleanup complete!")
+```
 
-        self.log('INFO', 'Request started',
-            session_id=session_id,
-            message_length=len(message)
-        )
+Run it:
 
-        try:
-            response = self.agent(message)
-            duration_ms = (time.time() - start_time) * 1000
-
-            self.log('INFO', 'Request completed',
-                session_id=session_id,
-                duration_ms=duration_ms,
-                response_length=len(response)
-            )
-
-            self.publish_metrics({
-                'Requests': 1,
-                'RequestLatency': duration_ms,
-                'Successes': 1
-            })
-
-            return response
-
-        except Exception as e:
-            duration_ms = (time.time() - start_time) * 1000
-
-            self.log('ERROR', 'Request failed',
-                session_id=session_id,
-                duration_ms=duration_ms,
-                error=str(e)
-            )
-
-            self.publish_metrics({
-                'Requests': 1,
-                'RequestLatency': duration_ms,
-                'Errors': 1
-            })
-
-            raise
+```bash
+python cleanup_agent.py
 ```
 
 ## Checkpoint
 
 You've now learned:
 
-- ✅ AgentCore traces and trace analysis
-- ✅ CloudWatch integration for metrics and logs
-- ✅ Structured logging patterns
-- ✅ Building dashboards and alerts
-- ✅ Complete observability implementation
+- **Local development** - Test agents before deploying
+- **Runtime preparation** - Add `BedrockAgentCoreApp` for production
+- **Deployment workflow** - Configure → Launch → Status → Invoke
+- **GenAI Observability** - View traces, metrics, and sessions in CloudWatch
+- **Custom metrics and alarms** - Extend observability for your needs
 
 **Next, we'll learn how to evaluate agent performance.**
 

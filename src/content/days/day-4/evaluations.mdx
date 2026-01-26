@@ -18,168 +18,573 @@ import Callout from '@/components/content/Callout.astro';
 
 # Agent Evaluations
 
-AgentCore Evaluations provides systematic measurement of agent performance through built-in and custom evaluators.
+AgentCore Evaluations provides systematic measurement of agent performance through built-in and custom evaluators. Evaluations use **LLM-as-a-judge** patterns to analyze agent traces and provide actionable quality metrics.
+
+## Prerequisites
+
+Before starting this module, ensure you have:
+
+1. **Deployed agent from observability module** - The agent must be in READY state with traces in CloudWatch
+2. **Dependencies installed** - Run `pip install bedrock-agentcore-starter-toolkit boto3 pyyaml`
+3. **AWS credentials configured** - With permissions for AgentCore Evaluations
+
+<Callout type="info" title="Reusing the Observable Agent">
+This module uses the agent deployed in the [Observability module](/days/4/observability). If you haven't completed that module, do so first.
+</Callout>
 
 ## Evaluation Architecture
 
 ![AgentCore Interfaces](/images/day-4/eval-agentcore-interfaces.png)
 
-AgentCore evaluations integrate with the observability system to analyze agent traces and provide actionable metrics.
+AgentCore provides multiple interfaces for evaluations:
+- **boto3 SDK** - Full control over evaluation APIs
+- **AgentCore Starter Toolkit** - Simplified abstractions for common workflows
 
 ## Metrics Per Level
 
 ![Metrics Per Level](/images/day-4/eval-metrics-per-level.png)
 
-Evaluations operate at three levels:
-- **Session level**: Overall conversation success
-- **Trace level**: Individual request performance
-- **Span level**: Tool and component execution
+Evaluations operate at three levels of agent interaction:
+
+| Level | Scope | Built-in Evaluators |
+|-------|-------|-------------------|
+| **Session** | Complete conversation across multiple turns | Goal Success Rate |
+| **Trace** | Individual request/response pair | Correctness |
+| **Span** | Tool execution within a trace | Tool Selection, Parameter Accuracy |
 
 ## Built-in Evaluators
 
 AgentCore provides four built-in evaluators:
 
-| Evaluator | Purpose |
-|-----------|---------|
-| `Builtin.GoalSuccessRate` | Did the agent achieve the user's goal? |
-| `Builtin.Correctness` | Was the response factually accurate? |
-| `Builtin.ToolSelectionAccuracy` | Did the agent choose the right tools? |
-| `Builtin.ToolParameterAccuracy` | Were tool parameters correct? |
+| Evaluator | Level | Purpose |
+|-----------|-------|---------|
+| `Builtin.GoalSuccessRate` | Session | Did the agent achieve the user's goals? |
+| `Builtin.Correctness` | Trace | Was the response factually accurate? |
+| `Builtin.ToolSelectionAccuracy` | Span | Did the agent choose the right tools? |
+| `Builtin.ToolParameterAccuracy` | Span | Were tool parameters correct? |
 
-## On-Demand Evaluations
+---
+
+## Step 1: Generate Traces for Evaluation
+
+Evaluations require traces from agent invocations. Let's invoke the agent with a **session ID** to group related interactions.
+
+Create `invoke_with_session.py`:
+
+```python
+#!/usr/bin/env python3
+"""Invoke agent with session tracking for evaluations."""
+import boto3
+import json
+import uuid
+from pathlib import Path
+import yaml
+
+# Load config from observability module (reuse deployed agent)
+config_path = Path(__file__).parent.parent / "day4-observability/.bedrock_agentcore.yaml"
+with open(config_path) as f:
+    config = yaml.safe_load(f)
+
+default_agent = config['default_agent']
+agent_config = config['agents'][default_agent]
+agent_arn = agent_config['bedrock_agentcore']['agent_arn']
+agent_id = agent_config['bedrock_agentcore']['agent_id']
+region = agent_config['aws']['region']
+
+print(f"Agent ARN: {agent_arn}")
+print(f"Agent ID: {agent_id}")
+
+# Create boto3 client
+client = boto3.client('bedrock-agentcore', region_name=region)
+
+# Generate session ID for tracking
+session_id = str(uuid.uuid4())
+print(f"\n=== Session ID: {session_id} ===")
+print("(Save this ID for running evaluations)\n")
+
+
+def invoke_agent(prompt: str, session_id: str):
+    """Invoke agent with session tracking"""
+    response = client.invoke_agent_runtime(
+        agentRuntimeArn=agent_arn,
+        qualifier="DEFAULT",
+        sessionId=session_id,  # Track session for evaluation
+        payload=json.dumps({"prompt": prompt})
+    )
+
+    # Process response
+    if "text/event-stream" in response.get("contentType", ""):
+        content = []
+        for line in response["response"].iter_lines(chunk_size=1):
+            if line:
+                line = line.decode("utf-8")
+                if line.startswith("data: "):
+                    line = line[6:]
+                    content.append(line)
+        return "\n".join(content)
+    else:
+        events = []
+        for event in response.get("response", []):
+            events.append(event)
+        if events:
+            return json.loads(events[0].decode("utf-8"))
+        return "No response"
+
+
+# Invoke with multiple prompts to generate traces for evaluation
+prompts = [
+    "What is the weather now?",
+    "How much is 2+2?",
+    "Can you tell me the capital of the US?"  # Out of scope - tests custom evaluator
+]
+
+print("Invoking agent with multiple prompts...\n")
+
+for i, prompt in enumerate(prompts, 1):
+    print(f"--- Prompt {i}: {prompt} ---")
+    try:
+        response = invoke_agent(prompt, session_id)
+        print(f"Response: {response}\n")
+    except Exception as e:
+        print(f"Error: {e}\n")
+
+print("=" * 60)
+print(f"\nSession ID for evaluations: {session_id}")
+print(f"Agent ID: {agent_id}")
+print("\nUse these values in the evaluation scripts.")
+
+# Save session info for other scripts
+session_info = {
+    "session_id": session_id,
+    "agent_id": agent_id,
+    "agent_arn": agent_arn,
+    "region": region
+}
+
+session_file = Path(__file__).parent / "session_info.json"
+with open(session_file, "w") as f:
+    json.dump(session_info, f, indent=2)
+print(f"\nSession info saved to: {session_file}")
+```
+
+Run the script:
+
+```bash
+python invoke_with_session.py
+```
+
+<Callout type="warning" title="Wait for Traces">
+After invoking the agent, wait approximately 1 minute for traces to propagate to CloudWatch before running evaluations.
+</Callout>
+
+---
+
+## Step 2: Run On-Demand Evaluations
+
+On-demand evaluations analyze specific sessions or traces after agent execution.
 
 ![On-Demand Evaluations](/images/day-4/eval-on-demand.png)
 
-On-demand evaluations run after agent execution for batch analysis:
+### How On-Demand Evaluation Works
+
+1. Your agent is invoked and generates traces in AgentCore Observability
+2. Traces are mapped to sessions and stored in CloudWatch
+3. You select which sessions/traces to evaluate
+4. AgentCore Evaluations applies evaluators to the trace data
+
+Create `run_ondemand_eval.py`:
 
 ```python
+#!/usr/bin/env python3
+"""Run on-demand evaluations with built-in evaluators."""
 from bedrock_agentcore_starter_toolkit import Evaluation
+from boto3.session import Session
+from pathlib import Path
+import json
+import sys
 
-eval_client = Evaluation(region="us-west-2")
+# Get region from boto session
+boto_session = Session()
+region = boto_session.region_name
 
-# Run goal success evaluation
+# Load session info from previous invocation
+session_file = Path(__file__).parent / "session_info.json"
+if not session_file.exists():
+    print("Error: session_info.json not found.")
+    print("Please run invoke_with_session.py first to generate traces.")
+    sys.exit(1)
+
+with open(session_file) as f:
+    session_info = json.load(f)
+
+agent_id = session_info['agent_id']
+session_id = session_info['session_id']
+
+print(f"Agent ID: {agent_id}")
+print(f"Session ID: {session_id}")
+
+# Initialize evaluation client
+eval_client = Evaluation(region=region)
+
+# =============================================================================
+# 1. Goal Success Rate (SESSION level)
+# =============================================================================
+print("\n=== Goal Success Rate (Session Level) ===")
+print("Evaluates if the agent achieved the user's goals across the session\n")
+
 goal_results = eval_client.run(
     agent_id=agent_id,
     session_id=session_id,
     evaluators=["Builtin.GoalSuccessRate"]
 )
 
-print(f"Goal Success: {goal_results}")
+for result in goal_results.results:
+    print(f"  Label: {result.label} (Score: {result.value})")
+    print(f"  Explanation: {result.explanation}")
 
-# Run correctness evaluation
+# =============================================================================
+# 2. Correctness (TRACE level)
+# =============================================================================
+print("\n=== Correctness (Trace Level) ===")
+print("Evaluates factual accuracy of each response\n")
+
 correctness_results = eval_client.run(
     agent_id=agent_id,
     session_id=session_id,
     evaluators=["Builtin.Correctness"]
 )
 
-# Run tool evaluations
+for i, result in enumerate(correctness_results.results, 1):
+    print(f"  Trace {i}:")
+    print(f"    Label: {result.label} (Score: {result.value})")
+    print(f"    Explanation: {result.explanation[:100]}...")
+
+# =============================================================================
+# 3. Tool Metrics (SPAN level)
+# =============================================================================
+print("\n=== Tool Metrics (Span Level) ===")
+print("Evaluates tool selection and parameter accuracy\n")
+
 tool_results = eval_client.run(
     agent_id=agent_id,
     session_id=session_id,
-    evaluators=[
-        "Builtin.ToolSelectionAccuracy",
-        "Builtin.ToolParameterAccuracy"
-    ]
+    evaluators=["Builtin.ToolSelectionAccuracy", "Builtin.ToolParameterAccuracy"]
 )
+
+for result in tool_results.results:
+    print(f"  Evaluator: {result.evaluator_name}")
+    print(f"    Label: {result.label} (Score: {result.value})")
+
+# =============================================================================
+# 4. Save Results to File
+# =============================================================================
+print("\n=== Saving Results ===")
+save_results = eval_client.run(
+    agent_id=agent_id,
+    session_id=session_id,
+    evaluators=["Builtin.Correctness"],
+    output="eval_results/all_evaluations.json"
+)
+print("Results saved to: eval_results/all_evaluations.json")
 ```
 
-<Callout type="tip" title="Batch Evaluation">
-On-demand evaluations are ideal for analyzing completed sessions, regression testing, and batch quality assessment.
+Run the evaluations:
+
+```bash
+python run_ondemand_eval.py
+```
+
+<Callout type="tip" title="Result Properties">
+Each evaluation result includes:
+- `label` - Human-readable classification (e.g., "Correct", "Partially Correct")
+- `value` - Numerical score (0.0 to 1.0)
+- `explanation` - LLM's reasoning for the score
+- `token_usage` - Tokens used by the evaluator LLM
+- `context` - Additional evaluation context
 </Callout>
 
-## Online Evaluations
+---
+
+## Step 3: Create Custom Evaluators
+
+Custom evaluators let you define domain-specific evaluation criteria with your own:
+- Evaluator model
+- Evaluation prompts
+- Scoring schema
+
+### Custom Evaluator Configuration
+
+First, create the evaluator configuration file `metric.json`:
+
+```json
+{
+    "llmAsAJudge": {
+        "modelConfig": {
+            "bedrockEvaluatorModelConfig": {
+                "modelId": "global.anthropic.claude-sonnet-4-5-20250929-v1:0",
+                "inferenceConfig": {
+                    "maxTokens": 500,
+                    "temperature": 1.0
+                }
+            }
+        },
+        "instructions": "You are evaluating the quality of the Assistant's response. You are given a task and a candidate response. Is this a good and accurate response to the task?\n\n**IMPORTANT**: A response quality can only be high if the agent remains in its original scope to answer questions about the weather and mathematical queries only. Penalize agents that answer questions outside its original scope with a Very Poor classification.\n\nContext: {context}\nCandidate Response: {assistant_turn}",
+        "ratingScale": {
+            "numerical": [
+                {
+                    "value": 1,
+                    "label": "Very Good",
+                    "definition": "Response is completely accurate and directly answers the question."
+                },
+                {
+                    "value": 0.75,
+                    "label": "Good",
+                    "definition": "Response is mostly accurate with minor issues."
+                },
+                {
+                    "value": 0.50,
+                    "label": "OK",
+                    "definition": "Response is partially correct but contains notable errors."
+                },
+                {
+                    "value": 0.25,
+                    "label": "Poor",
+                    "definition": "Response contains significant errors or misconceptions."
+                },
+                {
+                    "value": 0,
+                    "label": "Very Poor",
+                    "definition": "Response is completely incorrect, irrelevant, or out of scope."
+                }
+            ]
+        }
+    }
+}
+```
+
+### Create the Evaluator
+
+Create `create_custom_evaluator.py`:
+
+```python
+#!/usr/bin/env python3
+"""Create a custom evaluator for response quality."""
+from bedrock_agentcore_starter_toolkit import Evaluation
+from boto3.session import Session
+from pathlib import Path
+import json
+
+# Get region from boto session
+boto_session = Session()
+region = boto_session.region_name
+print(f"Region: {region}")
+
+# Initialize evaluation client
+eval_client = Evaluation(region=region)
+
+# Load custom metric configuration
+metric_path = Path(__file__).parent / "metric.json"
+with open(metric_path) as f:
+    eval_config = json.load(f)
+
+print("Creating custom evaluator: response_quality_for_scope")
+
+# Create the custom evaluator at TRACE level
+custom_evaluator = eval_client.create_evaluator(
+    name="response_quality_for_scope",
+    level="TRACE",  # Evaluates each agent response (trace level)
+    description="Response quality evaluator with 5-level scale that penalizes out-of-scope responses",
+    config=eval_config
+)
+
+evaluator_id = custom_evaluator['evaluatorId']
+print(f"\n=== Custom Evaluator Created ===")
+print(f"Evaluator ID: {evaluator_id}")
+
+# Save evaluator ID for other scripts
+evaluator_info = {
+    "evaluator_id": evaluator_id,
+    "name": "response_quality_for_scope",
+    "level": "TRACE"
+}
+
+evaluator_file = Path(__file__).parent / "evaluator_info.json"
+with open(evaluator_file, "w") as f:
+    json.dump(evaluator_info, f, indent=2)
+print(f"Evaluator info saved to: {evaluator_file}")
+```
+
+Run the script:
+
+```bash
+python create_custom_evaluator.py
+```
+
+<Callout type="info" title="Evaluator Levels">
+When creating a custom evaluator, choose the appropriate level:
+- **TOOL_CALL** - Evaluates individual tool invocations
+- **TRACE** - Evaluates each request/response pair
+- **SESSION** - Evaluates the entire conversation
+</Callout>
+
+### Run with Custom Evaluator
+
+After creating the custom evaluator, run `run_ondemand_eval.py` again - it will automatically detect and use the custom evaluator.
+
+The agent will receive a **Very Poor** rating for the "capital of the US" question since it's outside the agent's scope (weather and math only).
+
+---
+
+## Step 4: Setup Online Evaluations
+
+Online evaluations run continuously in production, automatically evaluating agent interactions based on sampling rules.
 
 ![Online Evaluations](/images/day-4/eval-online.png)
 
-Online evaluations run in real-time as agents execute:
+### How Online Evaluation Works
+
+1. Configure sampling rate and evaluators
+2. AgentCore automatically evaluates production traffic
+3. Results appear in CloudWatch GenAI Observability dashboard
+4. Monitor quality trends and catch regressions
+
+Create `setup_online_eval.py`:
 
 ```python
+#!/usr/bin/env python3
+"""Setup online evaluation configuration for continuous monitoring."""
 from bedrock_agentcore_starter_toolkit import Evaluation
+from boto3.session import Session
+from pathlib import Path
+import json
+import sys
 
-eval_client = Evaluation(region="us-west-2")
+# Get region from boto session
+boto_session = Session()
+region = boto_session.region_name
 
-# Enable online evaluation for an agent
-eval_client.enable_online_evaluation(
+# Load session info to get agent_id
+session_file = Path(__file__).parent / "session_info.json"
+if not session_file.exists():
+    print("Error: session_info.json not found.")
+    sys.exit(1)
+
+with open(session_file) as f:
+    session_info = json.load(f)
+
+agent_id = session_info['agent_id']
+print(f"Agent ID: {agent_id}")
+
+# Initialize evaluation client
+eval_client = Evaluation(region=region)
+
+# Build evaluator list
+evaluator_list = [
+    "Builtin.GoalSuccessRate",
+    "Builtin.Correctness",
+    "Builtin.ToolSelectionAccuracy",
+    "Builtin.ToolParameterAccuracy"
+]
+
+# Add custom evaluator if available
+evaluator_file = Path(__file__).parent / "evaluator_info.json"
+if evaluator_file.exists():
+    with open(evaluator_file) as f:
+        evaluator_info = json.load(f)
+    evaluator_list.append(evaluator_info['evaluator_id'])
+    print(f"Including custom evaluator: {evaluator_info['evaluator_id']}")
+
+print("\n=== Creating Online Evaluation Configuration ===")
+
+response = eval_client.create_online_config(
     agent_id=agent_id,
-    evaluators=["Builtin.GoalSuccessRate", "Builtin.Correctness"]
+    config_name="observable_agent_online_eval",
+    sampling_rate=100,  # 100% for demo; use lower in production (e.g., 10)
+    evaluator_list=evaluator_list,
+    config_description="Online evaluation for observable strands agent",
+    auto_create_execution_role=True
 )
+
+config_id = response['onlineEvaluationConfigId']
+print(f"Config ID: {config_id}")
+
+# Verify configuration
+config_details = eval_client.get_online_config(config_id=config_id)
+print(f"Status: {config_details.get('status', 'Unknown')}")
+
+print("\n=== Online Evaluation Enabled ===")
+print("Future agent invocations will be automatically evaluated.")
 ```
 
-### Online Evaluation Dashboard
+Run the script:
+
+```bash
+python setup_online_eval.py
+```
+
+<Callout type="warning" title="Production Sampling Rate">
+Use a lower sampling rate in production (e.g., 10-20%) to control costs. 100% sampling is only recommended for development and testing.
+</Callout>
+
+---
+
+## Step 5: View Results in Dashboard
+
+After enabling online evaluations, view metrics in the CloudWatch GenAI Observability dashboard:
+
+1. Navigate to **CloudWatch Console** → **GenAI Observability** → **AgentCore** → **Agents**
+2. Select your agent's **DEFAULT** endpoint
+3. View evaluation metrics and trends
 
 ![Online Evaluation Dashboard](/images/day-4/eval-online-dashboard.png)
 
-The CloudWatch dashboard provides real-time visibility into:
-- Success rate trends
-- Tool accuracy metrics
-- Error patterns
-- Performance over time
+The dashboard shows:
+- Evaluation scores over time
+- Per-evaluator metrics breakdown
+- Individual trace evaluations
+- Quality trends and patterns
 
-## Connecting Evaluations to Traces
+---
 
-![Observability Traces](/images/day-4/eval-observability-traces.png)
+## Cleanup
 
-Evaluations leverage the observability traces captured during agent execution:
-
-```python
-from bedrock_agentcore_starter_toolkit import Observability
-
-obs_client = Observability(region="us-west-2")
-
-# Get traces for a session
-traces = obs_client.get_traces(
-    agent_id=agent_id,
-    session_id=session_id
-)
-
-# Traces contain the data evaluators analyze
-for trace in traces:
-    print(f"Trace ID: {trace.trace_id}")
-    print(f"Spans: {len(trace.spans)}")
-```
-
-## Creating Custom Evaluators
-
-For domain-specific evaluation criteria:
+Remove evaluation resources when done:
 
 ```python
+#!/usr/bin/env python3
+"""Cleanup evaluation resources."""
 from bedrock_agentcore_starter_toolkit import Evaluation
+from boto3.session import Session
+from pathlib import Path
+import json
 
-eval_client = Evaluation(region="us-west-2")
+boto_session = Session()
+region = boto_session.region_name
+eval_client = Evaluation(region=region)
 
-# Create a custom evaluator
-custom_evaluator = eval_client.create_evaluator(
-    name="DomainAccuracyEvaluator",
-    description="Evaluates domain-specific accuracy",
-    evaluation_prompt="""
-    Evaluate if the agent response is accurate for financial queries.
-    Consider:
-    - Numerical accuracy
-    - Regulatory compliance mentions
-    - Risk disclosure presence
+# Delete online evaluation config
+online_config_file = Path(__file__).parent / "online_config_info.json"
+if online_config_file.exists():
+    with open(online_config_file) as f:
+        online_config = json.load(f)
+    eval_client.delete_online_config(config_id=online_config['config_id'])
+    print("Online evaluation config deleted")
 
-    Score from 0-100.
-    """,
-    model_id="anthropic.claude-sonnet-4-20250514-v1:0"
-)
-
-# Use custom evaluator
-results = eval_client.run(
-    agent_id=agent_id,
-    session_id=session_id,
-    evaluators=[custom_evaluator.evaluator_id]
-)
+# Delete custom evaluator
+evaluator_file = Path(__file__).parent / "evaluator_info.json"
+if evaluator_file.exists():
+    with open(evaluator_file) as f:
+        evaluator_info = json.load(f)
+    eval_client.delete_evaluator(evaluator_id=evaluator_info['evaluator_id'])
+    print("Custom evaluator deleted")
 ```
 
-<Callout type="warning" title="Custom Evaluator Models">
-Custom evaluators use LLM-as-judge patterns. Choose appropriate models based on evaluation complexity and cost requirements.
-</Callout>
+---
 
 ## Evaluation Best Practices
 
-1. **Start with built-in evaluators** - They cover common quality dimensions
-2. **Add custom evaluators for domain logic** - Financial accuracy, compliance, etc.
+1. **Start with built-in evaluators** - They cover common quality dimensions and require no configuration
+2. **Add custom evaluators for domain logic** - Financial accuracy, compliance, scope enforcement
 3. **Use on-demand for development** - Fast iteration on agent improvements
 4. **Enable online for production** - Continuous monitoring and alerting
 5. **Correlate with traces** - Use trace data to debug low scores
@@ -188,11 +593,11 @@ Custom evaluators use LLM-as-judge patterns. Choose appropriate models based on 
 
 You've now learned:
 
-- ✅ Built-in evaluators for common quality dimensions
-- ✅ On-demand evaluations for batch analysis
-- ✅ Online evaluations for real-time monitoring
-- ✅ Creating custom evaluators for domain-specific criteria
-- ✅ Connecting evaluations to observability traces
+- ✅ How evaluations work at session, trace, and span levels
+- ✅ Running on-demand evaluations with built-in evaluators
+- ✅ Creating custom evaluators with LLM-as-judge patterns
+- ✅ Setting up online evaluations for continuous monitoring
+- ✅ Viewing results in the CloudWatch dashboard
 
 **Next, we'll implement guardrails to protect your agent.**
 

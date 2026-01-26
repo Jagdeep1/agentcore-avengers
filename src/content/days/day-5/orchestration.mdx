@@ -104,19 +104,26 @@ TRANSFORM_AGENT_ARN = "arn:aws:bedrock-agentcore:us-west-2:ACCOUNT:agent-runtime
 REPORT_AGENT_ARN = "arn:aws:bedrock-agentcore:us-west-2:ACCOUNT:agent-runtime/report-agent"
 
 
-def invoke_agent(agent_arn: str, payload: dict) -> str:
+def invoke_agent(agent_arn: str, payload: dict, session_id: str = None) -> str:
     """Invoke an AgentCore agent and return the response."""
+    import uuid
+
+    # Generate session ID if not provided
+    if session_id is None:
+        session_id = str(uuid.uuid4())
+
     response = agentcore_client.invoke_agent_runtime(
         agentRuntimeArn=agent_arn,
-        qualifier="DEFAULT",
+        runtimeSessionId=session_id,  # Required for agent invocation
         payload=json.dumps(payload)
     )
 
     # Handle streaming response
     result = ""
-    for line in response["response"].iter_lines():
-        if line:
-            result += line.decode("utf-8")
+    for event in response.get("responseStream", []):
+        if "chunk" in event:
+            chunk_data = event["chunk"].get("bytes", b"")
+            result += chunk_data.decode("utf-8")
 
     return result
 

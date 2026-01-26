@@ -342,7 +342,14 @@ For complex custom calculations and visualizations:
 
 ```python
 # tools/code_interpreter.py
-from bedrock_agentcore.tools import code_interpreter
+# Code Interpreter is available through strands-tools when running in AgentCore
+
+# Import pattern for AgentCore Code Interpreter:
+try:
+    from strands_tools import code_interpreter
+    code_interpreter_available = True
+except ImportError:
+    code_interpreter_available = False
 
 # The code_interpreter tool is provided by AgentCore
 # It executes Python code in a sandboxed environment
@@ -474,7 +481,13 @@ for i in range(len(assets)):
 from strands import Agent
 from strands.models import BedrockModel
 from bedrock_agentcore.runtime import BedrockAgentCoreApp
-from bedrock_agentcore.tools import code_interpreter
+
+# Import Code Interpreter from strands-tools (available in AgentCore Runtime)
+try:
+    from strands_tools import code_interpreter
+    code_interpreter_tool = code_interpreter
+except ImportError:
+    code_interpreter_tool = None
 
 # Import tools
 from tools.risk_metrics import calculate_risk_metrics, calculate_moving_averages, compare_performance
@@ -543,14 +556,18 @@ model = BedrockModel(
     region_name="us-west-2"
 )
 
+# Build tools list (conditionally include code_interpreter if available)
+tools = [
+    calculate_risk_metrics,
+    calculate_moving_averages,
+    compare_performance,
+]
+if code_interpreter_tool:
+    tools.append(code_interpreter_tool)
+
 transform_agent = Agent(
     model=model,
-    tools=[
-        calculate_risk_metrics,
-        calculate_moving_averages,
-        compare_performance,
-        code_interpreter
-    ],
+    tools=tools,
     system_prompt=TRANSFORM_SYSTEM_PROMPT
 )
 
