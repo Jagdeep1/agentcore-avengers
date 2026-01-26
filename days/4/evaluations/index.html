@@ -1,0 +1,614 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="canonical" href="https://jagdeep1.github.io/agentcore-avengers/days/4/evaluations/"><!-- Favicon --><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><!-- Primary Meta Tags --><title>Agent Evaluations - Day 4 | The AgentCore Initiative</title><meta name="title" content="Agent Evaluations - Day 4 | The AgentCore Initiative"><meta name="description" content="Day 4: Endgame - Guardrails + Observability"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://jagdeep1.github.io/agentcore-avengers/days/4/evaluations/"><meta property="og:title" content="Agent Evaluations - Day 4 | The AgentCore Initiative"><meta property="og:description" content="Day 4: Endgame - Guardrails + Observability"><meta property="og:image" content="https://jagdeep1.github.io/images/og/default.png"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://jagdeep1.github.io/agentcore-avengers/days/4/evaluations/"><meta name="twitter:title" content="Agent Evaluations - Day 4 | The AgentCore Initiative"><meta name="twitter:description" content="Day 4: Endgame - Guardrails + Observability"><meta name="twitter:image" content="https://jagdeep1.github.io/images/og/default.png"><!-- Fonts - Plus Jakarta Sans & Geist Mono --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"><!-- Theme initialization (prevents flash) --><script>
+      (function () {
+        const stored = localStorage.getItem('agentcore-initiative-progress');
+        let theme = 'dark';
+        if (stored) {
+          try {
+            const progress = JSON.parse(stored);
+            theme = progress.theme || 'dark';
+          } catch (e) {}
+        }
+        if (theme === 'system') {
+          theme = window.matchMedia('(prefers-color-scheme: light)').matches
+            ? 'light'
+            : 'dark';
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script><link rel="stylesheet" href="/agentcore-avengers/_astro/_slug_.C0EPBXS6.css">
+<style>.pagination[data-astro-cid-gdqvm76k]{display:flex;justify-content:space-between;gap:1rem}.pagination__link[data-astro-cid-gdqvm76k]{flex:1;max-width:50%;padding:1rem 1.25rem;background:var(--color-bg-elevated);border:var(--border-subtle);border-radius:var(--radius-lg);text-decoration:none;transition:all var(--transition-fast)}.pagination__link[data-astro-cid-gdqvm76k]:hover{background:var(--color-bg-secondary);border-color:var(--border-default)}.pagination__link--prev[data-astro-cid-gdqvm76k]{text-align:left}.pagination__link--next[data-astro-cid-gdqvm76k]{text-align:right;margin-left:auto}.pagination__label[data-astro-cid-gdqvm76k]{display:block;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-muted);margin-bottom:.25rem}.pagination__title[data-astro-cid-gdqvm76k]{display:block;font-size:.9375rem;font-weight:500;color:var(--color-text-primary)}
+</style>
+<link rel="stylesheet" href="/agentcore-avengers/_astro/_slug_.CP5296fy.css"><style>.callout[data-astro-cid-wi7smz4x]{display:flex;gap:1rem;padding:1rem 1.25rem;border-radius:var(--radius-lg);margin:1.5rem 0;border-left:4px solid}.callout--info[data-astro-cid-wi7smz4x]{background:#3b82f614;border-left-color:var(--color-accent-primary)}.callout--info[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-primary)}.callout--warning[data-astro-cid-wi7smz4x]{background:#f59e0b14;border-left-color:var(--color-accent-warning)}.callout--warning[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-warning)}.callout--danger[data-astro-cid-wi7smz4x]{background:#ef444414;border-left-color:var(--color-accent-danger)}.callout--danger[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-danger)}.callout--success[data-astro-cid-wi7smz4x]{background:#10b98114;border-left-color:var(--color-accent-success)}.callout--success[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-success)}.callout--tip[data-astro-cid-wi7smz4x]{background:#8b5cf614;border-left-color:var(--color-accent-purple)}.callout--tip[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-purple)}.callout__icon[data-astro-cid-wi7smz4x]{flex-shrink:0;width:1.25rem;height:1.25rem;margin-top:.125rem}.callout__content[data-astro-cid-wi7smz4x]{flex:1;min-width:0}.callout__title[data-astro-cid-wi7smz4x]{font-weight:600;font-size:.9375rem;color:var(--color-text-primary);margin-bottom:.25rem}.callout__body[data-astro-cid-wi7smz4x]{font-size:.9375rem;color:var(--color-text-secondary);line-height:1.6}.callout__body[data-astro-cid-wi7smz4x] p{margin:0}.callout__body[data-astro-cid-wi7smz4x] p+p{margin-top:.5rem}.callout__body[data-astro-cid-wi7smz4x] code{font-size:.85em}.callout__body[data-astro-cid-wi7smz4x] a{font-weight:500}
+</style></head> <body>  <header class="header" data-astro-cid-mb6pvx4c> <div class="header__container" data-astro-cid-mb6pvx4c> <!-- Logo --> <a href="/agentcore-avengers/" class="header__logo" aria-label="Home" data-astro-cid-mb6pvx4c> <svg class="header__logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" data-astro-cid-mb6pvx4c> <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c></circle> <path d="M16 6 L22 12 L16 18 L10 12 Z" fill="currentColor" opacity="0.5" data-astro-cid-mb6pvx4c></path> <circle cx="16" cy="16" r="4" fill="currentColor" data-astro-cid-mb6pvx4c></circle> </svg> <span class="header__logo-text" data-astro-cid-mb6pvx4c>AgentCore Initiative</span> </a> <!-- Desktop Navigation --> <nav class="header__nav hide-mobile" aria-label="Main navigation" data-astro-cid-mb6pvx4c> <ul class="header__nav-list" data-astro-cid-mb6pvx4c> <li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/days" class="header__nav-link header__nav-link--active" data-astro-cid-mb6pvx4c> Course </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/troubleshooting" class="header__nav-link" data-astro-cid-mb6pvx4c> Troubleshooting </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/reference" class="header__nav-link" data-astro-cid-mb6pvx4c> Reference </a> </li> </ul> </nav> <!-- Actions --> <div class="header__actions" data-astro-cid-mb6pvx4c> <!-- Theme Toggle Button (placeholder - will be React component) --> <button id="theme-toggle" class="header__theme-toggle" aria-label="Toggle theme" type="button" data-astro-cid-mb6pvx4c> <svg class="header__theme-icon header__theme-icon--dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <circle cx="12" cy="12" r="5" data-astro-cid-mb6pvx4c></circle> <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" data-astro-cid-mb6pvx4c></path> </svg> <svg class="header__theme-icon header__theme-icon--light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-mb6pvx4c></path> </svg> </button> <!-- Mobile Menu Toggle --> <button id="mobile-menu-toggle" class="header__mobile-toggle hide-desktop" aria-label="Toggle menu" aria-expanded="false" type="button" data-astro-cid-mb6pvx4c> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <path class="menu-icon" d="M4 6h16M4 12h16M4 18h16" data-astro-cid-mb6pvx4c></path> <path class="close-icon" d="M6 6l12 12M6 18L18 6" style="display: none" data-astro-cid-mb6pvx4c></path> </svg> </button> </div> </div> <!-- Mobile Navigation --> <nav id="mobile-nav" class="header__mobile-nav hide-desktop" aria-label="Mobile navigation" hidden data-astro-cid-mb6pvx4c> <ul class="header__mobile-nav-list" data-astro-cid-mb6pvx4c> <li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/days" class="header__mobile-nav-link header__mobile-nav-link--active" data-astro-cid-mb6pvx4c> Course </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/troubleshooting" class="header__mobile-nav-link" data-astro-cid-mb6pvx4c> Troubleshooting </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/reference" class="header__mobile-nav-link" data-astro-cid-mb6pvx4c> Reference </a> </li> </ul> </nav> </header>  <script type="module">const r=document.getElementById("theme-toggle");r&&r.addEventListener("click",()=>{const e=document.documentElement,t=e.getAttribute("data-theme")==="dark"?"light":"dark";e.setAttribute("data-theme",t);const c=localStorage.getItem("agentcore-initiative-progress");let i={theme:t};if(c)try{i={...JSON.parse(c),theme:t}}catch{}localStorage.setItem("agentcore-initiative-progress",JSON.stringify(i))});const n=document.getElementById("mobile-menu-toggle"),l=document.getElementById("mobile-nav");n&&l&&n.addEventListener("click",()=>{const e=n.getAttribute("aria-expanded")==="true";n.setAttribute("aria-expanded",String(!e)),l.hidden=e;const o=n.querySelector(".menu-icon"),t=n.querySelector(".close-icon");o&&t&&(o.style.display=e?"block":"none",t.style.display=e?"none":"block")});</script> <div class="day-layout" style="--day-accent: #10b981" data-astro-cid-vfeiczyy> <!-- Sidebar --> <aside class="day-layout__sidebar hide-mobile" data-astro-cid-vfeiczyy> <div class="day-layout__sidebar-content" data-astro-cid-vfeiczyy> <!-- Day Header --> <div class="day-layout__day-header" data-astro-cid-vfeiczyy> <span class="day-layout__day-number" data-astro-cid-vfeiczyy>Day 4</span> <h2 class="day-layout__day-title" data-astro-cid-vfeiczyy>Endgame</h2> <p class="day-layout__day-focus" data-astro-cid-vfeiczyy>Guardrails + Observability</p> </div> <!-- Section Navigation --> <nav class="day-layout__nav" aria-label="Day sections" data-astro-cid-vfeiczyy> <ul class="day-layout__nav-list" data-astro-cid-vfeiczyy> <li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/4/observability" class="day-layout__nav-link" data-section="observability" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Observability </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/4/evaluations" class="day-layout__nav-link day-layout__nav-link--active" data-section="evaluations" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Agent Evaluations </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/4/guardrails-basics" class="day-layout__nav-link" data-section="guardrails-basics" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Guardrails Basics </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/4/tool-guardrails" class="day-layout__nav-link" data-section="tool-guardrails" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Tool Guardrails </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/4/controlled-disasters" class="day-layout__nav-link" data-section="controlled-disasters" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Controlled Disasters </a> </li> </ul> </nav> <!-- Challenge Link --> <a href="/agentcore-avengers/days/4/challenge" class="day-layout__challenge-link" data-astro-cid-vfeiczyy> <span class="day-layout__challenge-icon" data-astro-cid-vfeiczyy> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-vfeiczyy> <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" data-astro-cid-vfeiczyy></polygon> </svg> </span>
+Daily Challenge
+</a> </div> </aside> <!-- Main Content --> <main class="day-layout__main" data-astro-cid-vfeiczyy> <article class="day-layout__content prose" data-astro-cid-vfeiczyy>  <h1 id="agent-evaluations">Agent Evaluations</h1>
+<p>AgentCore Evaluations provides systematic measurement of agent performance through built-in and custom evaluators. Evaluations use <strong>LLM-as-a-judge</strong> patterns to analyze agent traces and provide actionable quality metrics.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>Before starting this module, ensure you have:</p>
+<ol>
+<li><strong>Deployed agent from observability module</strong> - The agent must be in READY state with traces in CloudWatch</li>
+<li><strong>Dependencies installed</strong> - Run <code>pip install bedrock-agentcore-starter-toolkit boto3 pyyaml</code></li>
+<li><strong>AWS credentials configured</strong> - With permissions for AgentCore Evaluations</li>
+</ol>
+<aside class="callout callout--info" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Reusing the Observable Agent</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>This module uses the agent deployed in the <a href="/days/4/observability">Observability module</a>. If you haven’t completed that module, do so first.</p> </div> </div> </aside> 
+<h2 id="evaluation-architecture">Evaluation Architecture</h2>
+<p><img src="/agentcore-avengers/images/day-4/eval-agentcore-interfaces.png" alt="AgentCore Interfaces"/></p>
+<p>AgentCore provides multiple interfaces for evaluations:</p>
+<ul>
+<li><strong>boto3 SDK</strong> - Full control over evaluation APIs</li>
+<li><strong>AgentCore Starter Toolkit</strong> - Simplified abstractions for common workflows</li>
+</ul>
+<h2 id="metrics-per-level">Metrics Per Level</h2>
+<p><img src="/agentcore-avengers/images/day-4/eval-metrics-per-level.png" alt="Metrics Per Level"/></p>
+<p>Evaluations operate at three levels of agent interaction:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Level</th><th>Scope</th><th>Built-in Evaluators</th></tr></thead><tbody><tr><td><strong>Session</strong></td><td>Complete conversation across multiple turns</td><td>Goal Success Rate</td></tr><tr><td><strong>Trace</strong></td><td>Individual request/response pair</td><td>Correctness</td></tr><tr><td><strong>Span</strong></td><td>Tool execution within a trace</td><td>Tool Selection, Parameter Accuracy</td></tr></tbody></table>
+<h2 id="built-in-evaluators">Built-in Evaluators</h2>
+<p>AgentCore provides four built-in evaluators:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Evaluator</th><th>Level</th><th>Purpose</th></tr></thead><tbody><tr><td><code>Builtin.GoalSuccessRate</code></td><td>Session</td><td>Did the agent achieve the user’s goals?</td></tr><tr><td><code>Builtin.Correctness</code></td><td>Trace</td><td>Was the response factually accurate?</td></tr><tr><td><code>Builtin.ToolSelectionAccuracy</code></td><td>Span</td><td>Did the agent choose the right tools?</td></tr><tr><td><code>Builtin.ToolParameterAccuracy</code></td><td>Span</td><td>Were tool parameters correct?</td></tr></tbody></table>
+<hr/>
+<h2 id="step-1-generate-traces-for-evaluation">Step 1: Generate Traces for Evaluation</h2>
+<p>Evaluations require traces from agent invocations. Let’s invoke the agent with a <strong>session ID</strong> to group related interactions.</p>
+<p>Create <code>invoke_with_session.py</code>:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-724km8kjr" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-724km8kjr"><code><span class="line"><span style="color:#6A737D">#!/usr/bin/env python3</span></span>
+<span class="line"><span style="color:#9ECBFF">&quot;&quot;&quot;Invoke agent with session tracking for evaluations.&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> boto3</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> json</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> uuid</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> pathlib </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Path</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> yaml</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Load config from observability module (reuse deployed agent)</span></span>
+<span class="line"><span style="color:#E1E4E8">config_path </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Path(</span><span style="color:#79B8FF">__file__</span><span style="color:#E1E4E8">).parent.parent </span><span style="color:#F97583">/</span><span style="color:#9ECBFF"> &quot;day4-observability/.bedrock_agentcore.yaml&quot;</span></span>
+<span class="line"><span style="color:#F97583">with</span><span style="color:#79B8FF"> open</span><span style="color:#E1E4E8">(config_path) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> f:</span></span>
+<span class="line"><span style="color:#E1E4E8">    config </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> yaml.safe_load(f)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">default_agent </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> config[</span><span style="color:#9ECBFF">&#39;default_agent&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">agent_config </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> config[</span><span style="color:#9ECBFF">&#39;agents&#39;</span><span style="color:#E1E4E8">][default_agent]</span></span>
+<span class="line"><span style="color:#E1E4E8">agent_arn </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> agent_config[</span><span style="color:#9ECBFF">&#39;bedrock_agentcore&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;agent_arn&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">agent_id </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> agent_config[</span><span style="color:#9ECBFF">&#39;bedrock_agentcore&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;agent_id&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">region </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> agent_config[</span><span style="color:#9ECBFF">&#39;aws&#39;</span><span style="color:#E1E4E8">][</span><span style="color:#9ECBFF">&#39;region&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Agent ARN: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">agent_arn</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Agent ID: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">agent_id</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Create boto3 client</span></span>
+<span class="line"><span style="color:#E1E4E8">client </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto3.client(</span><span style="color:#9ECBFF">&#39;bedrock-agentcore&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">region_name</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">region)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Generate session ID for tracking</span></span>
+<span class="line"><span style="color:#E1E4E8">session_id </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> str</span><span style="color:#E1E4E8">(uuid.uuid4())</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">=== Session ID: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">session_id</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF"> ===&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;(Save this ID for running evaluations)</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> invoke_agent</span><span style="color:#E1E4E8">(prompt: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, session_id: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Invoke agent with session tracking&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> client.invoke_agent_runtime(</span></span>
+<span class="line"><span style="color:#FFAB70">        agentRuntimeArn</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">agent_arn,</span></span>
+<span class="line"><span style="color:#FFAB70">        qualifier</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;DEFAULT&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        sessionId</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">session_id,  </span><span style="color:#6A737D"># Track session for evaluation</span></span>
+<span class="line"><span style="color:#FFAB70">        payload</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">json.dumps({</span><span style="color:#9ECBFF">&quot;prompt&quot;</span><span style="color:#E1E4E8">: prompt})</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # Process response</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#9ECBFF"> &quot;text/event-stream&quot;</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> response.get(</span><span style="color:#9ECBFF">&quot;contentType&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;&quot;</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#E1E4E8">        content </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> []</span></span>
+<span class="line"><span style="color:#F97583">        for</span><span style="color:#E1E4E8"> line </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> response[</span><span style="color:#9ECBFF">&quot;response&quot;</span><span style="color:#E1E4E8">].iter_lines(</span><span style="color:#FFAB70">chunk_size</span><span style="color:#F97583">=</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#F97583">            if</span><span style="color:#E1E4E8"> line:</span></span>
+<span class="line"><span style="color:#E1E4E8">                line </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> line.decode(</span><span style="color:#9ECBFF">&quot;utf-8&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">                if</span><span style="color:#E1E4E8"> line.startswith(</span><span style="color:#9ECBFF">&quot;data: &quot;</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#E1E4E8">                    line </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> line[</span><span style="color:#79B8FF">6</span><span style="color:#E1E4E8">:]</span></span>
+<span class="line"><span style="color:#E1E4E8">                    content.append(line)</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#9ECBFF"> &quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">.join(content)</span></span>
+<span class="line"><span style="color:#F97583">    else</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        events </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> []</span></span>
+<span class="line"><span style="color:#F97583">        for</span><span style="color:#E1E4E8"> event </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> response.get(</span><span style="color:#9ECBFF">&quot;response&quot;</span><span style="color:#E1E4E8">, []):</span></span>
+<span class="line"><span style="color:#E1E4E8">            events.append(event)</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> events:</span></span>
+<span class="line"><span style="color:#F97583">            return</span><span style="color:#E1E4E8"> json.loads(events[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">].decode(</span><span style="color:#9ECBFF">&quot;utf-8&quot;</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#9ECBFF"> &quot;No response&quot;</span></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Invoke with multiple prompts to generate traces for evaluation</span></span>
+<span class="line"><span style="color:#E1E4E8">prompts </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;What is the weather now?&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;How much is 2+2?&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;Can you tell me the capital of the US?&quot;</span><span style="color:#6A737D">  # Out of scope - tests custom evaluator</span></span>
+<span class="line"><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Invoking agent with multiple prompts...</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">for</span><span style="color:#E1E4E8"> i, prompt </span><span style="color:#F97583">in</span><span style="color:#79B8FF"> enumerate</span><span style="color:#E1E4E8">(prompts, </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;--- Prompt </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">i</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">prompt</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF"> ---&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> invoke_agent(prompt, session_id)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Response: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">response</span><span style="color:#79B8FF">}\n</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    except</span><span style="color:#79B8FF"> Exception</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> e:</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Error: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">e</span><span style="color:#79B8FF">}\n</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 60</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">Session ID for evaluations: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">session_id</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Agent ID: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">agent_id</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">Use these values in the evaluation scripts.&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Save session info for other scripts</span></span>
+<span class="line"><span style="color:#E1E4E8">session_info </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;session_id&quot;</span><span style="color:#E1E4E8">: session_id,</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;agent_id&quot;</span><span style="color:#E1E4E8">: agent_id,</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;agent_arn&quot;</span><span style="color:#E1E4E8">: agent_arn,</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;region&quot;</span><span style="color:#E1E4E8">: region</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">session_file </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Path(</span><span style="color:#79B8FF">__file__</span><span style="color:#E1E4E8">).parent </span><span style="color:#F97583">/</span><span style="color:#9ECBFF"> &quot;session_info.json&quot;</span></span>
+<span class="line"><span style="color:#F97583">with</span><span style="color:#79B8FF"> open</span><span style="color:#E1E4E8">(session_file, </span><span style="color:#9ECBFF">&quot;w&quot;</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> f:</span></span>
+<span class="line"><span style="color:#E1E4E8">    json.dump(session_info, f, </span><span style="color:#FFAB70">indent</span><span style="color:#F97583">=</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">Session info saved to: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">session_file</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span></code></pre></div>
+<p>Run the script:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-ej5yccwas" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-ej5yccwas"><code><span class="line"><span style="color:#B392F0">python</span><span style="color:#9ECBFF"> invoke_with_session.py</span></span></code></pre></div>
+<aside class="callout callout--warning" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Wait for Traces</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>After invoking the agent, wait approximately 1 minute for traces to propagate to CloudWatch before running evaluations.</p> </div> </div> </aside> 
+<hr/>
+<h2 id="step-2-run-on-demand-evaluations">Step 2: Run On-Demand Evaluations</h2>
+<p>On-demand evaluations analyze specific sessions or traces after agent execution.</p>
+<p><img src="/agentcore-avengers/images/day-4/eval-on-demand.png" alt="On-Demand Evaluations"/></p>
+<h3 id="how-on-demand-evaluation-works">How On-Demand Evaluation Works</h3>
+<ol>
+<li>Your agent is invoked and generates traces in AgentCore Observability</li>
+<li>Traces are mapped to sessions and stored in CloudWatch</li>
+<li>You select which sessions/traces to evaluate</li>
+<li>AgentCore Evaluations applies evaluators to the trace data</li>
+</ol>
+<p>Create <code>run_ondemand_eval.py</code>:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-vbtroooxh" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-vbtroooxh"><code><span class="line"><span style="color:#6A737D">#!/usr/bin/env python3</span></span>
+<span class="line"><span style="color:#9ECBFF">&quot;&quot;&quot;Run on-demand evaluations with built-in evaluators.&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> bedrock_agentcore_starter_toolkit </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Evaluation</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> boto3.session </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Session</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> pathlib </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Path</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> json</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> sys</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Get region from boto session</span></span>
+<span class="line"><span style="color:#E1E4E8">boto_session </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Session()</span></span>
+<span class="line"><span style="color:#E1E4E8">region </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto_session.region_name</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Load session info from previous invocation</span></span>
+<span class="line"><span style="color:#E1E4E8">session_file </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Path(</span><span style="color:#79B8FF">__file__</span><span style="color:#E1E4E8">).parent </span><span style="color:#F97583">/</span><span style="color:#9ECBFF"> &quot;session_info.json&quot;</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#F97583"> not</span><span style="color:#E1E4E8"> session_file.exists():</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Error: session_info.json not found.&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Please run invoke_with_session.py first to generate traces.&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    sys.exit(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">with</span><span style="color:#79B8FF"> open</span><span style="color:#E1E4E8">(session_file) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> f:</span></span>
+<span class="line"><span style="color:#E1E4E8">    session_info </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> json.load(f)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">agent_id </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> session_info[</span><span style="color:#9ECBFF">&#39;agent_id&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">session_id </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> session_info[</span><span style="color:#9ECBFF">&#39;session_id&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Agent ID: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">agent_id</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Session ID: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">session_id</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Initialize evaluation client</span></span>
+<span class="line"><span style="color:#E1E4E8">eval_client </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Evaluation(</span><span style="color:#FFAB70">region</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">region)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># =============================================================================</span></span>
+<span class="line"><span style="color:#6A737D"># 1. Goal Success Rate (SESSION level)</span></span>
+<span class="line"><span style="color:#6A737D"># =============================================================================</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">=== Goal Success Rate (Session Level) ===&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Evaluates if the agent achieved the user&#39;s goals across the session</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">goal_results </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> eval_client.run(</span></span>
+<span class="line"><span style="color:#FFAB70">    agent_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">agent_id,</span></span>
+<span class="line"><span style="color:#FFAB70">    session_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">session_id,</span></span>
+<span class="line"><span style="color:#FFAB70">    evaluators</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span><span style="color:#9ECBFF">&quot;Builtin.GoalSuccessRate&quot;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">for</span><span style="color:#E1E4E8"> result </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> goal_results.results:</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;  Label: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">result.label</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF"> (Score: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">result.value</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">)&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;  Explanation: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">result.explanation</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># =============================================================================</span></span>
+<span class="line"><span style="color:#6A737D"># 2. Correctness (TRACE level)</span></span>
+<span class="line"><span style="color:#6A737D"># =============================================================================</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">=== Correctness (Trace Level) ===&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Evaluates factual accuracy of each response</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">correctness_results </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> eval_client.run(</span></span>
+<span class="line"><span style="color:#FFAB70">    agent_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">agent_id,</span></span>
+<span class="line"><span style="color:#FFAB70">    session_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">session_id,</span></span>
+<span class="line"><span style="color:#FFAB70">    evaluators</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span><span style="color:#9ECBFF">&quot;Builtin.Correctness&quot;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">for</span><span style="color:#E1E4E8"> i, result </span><span style="color:#F97583">in</span><span style="color:#79B8FF"> enumerate</span><span style="color:#E1E4E8">(correctness_results.results, </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;  Trace </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">i</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">:&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;    Label: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">result.label</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF"> (Score: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">result.value</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">)&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;    Explanation: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">result.explanation[:</span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">]</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">...&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># =============================================================================</span></span>
+<span class="line"><span style="color:#6A737D"># 3. Tool Metrics (SPAN level)</span></span>
+<span class="line"><span style="color:#6A737D"># =============================================================================</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">=== Tool Metrics (Span Level) ===&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Evaluates tool selection and parameter accuracy</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">tool_results </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> eval_client.run(</span></span>
+<span class="line"><span style="color:#FFAB70">    agent_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">agent_id,</span></span>
+<span class="line"><span style="color:#FFAB70">    session_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">session_id,</span></span>
+<span class="line"><span style="color:#FFAB70">    evaluators</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span><span style="color:#9ECBFF">&quot;Builtin.ToolSelectionAccuracy&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;Builtin.ToolParameterAccuracy&quot;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">for</span><span style="color:#E1E4E8"> result </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> tool_results.results:</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;  Evaluator: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">result.evaluator_name</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;    Label: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">result.label</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF"> (Score: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">result.value</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">)&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># =============================================================================</span></span>
+<span class="line"><span style="color:#6A737D"># 4. Save Results to File</span></span>
+<span class="line"><span style="color:#6A737D"># =============================================================================</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">=== Saving Results ===&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">save_results </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> eval_client.run(</span></span>
+<span class="line"><span style="color:#FFAB70">    agent_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">agent_id,</span></span>
+<span class="line"><span style="color:#FFAB70">    session_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">session_id,</span></span>
+<span class="line"><span style="color:#FFAB70">    evaluators</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span><span style="color:#9ECBFF">&quot;Builtin.Correctness&quot;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">    output</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;eval_results/all_evaluations.json&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Results saved to: eval_results/all_evaluations.json&quot;</span><span style="color:#E1E4E8">)</span></span></code></pre></div>
+<p>Run the evaluations:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-zi3d2vrcy" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-zi3d2vrcy"><code><span class="line"><span style="color:#B392F0">python</span><span style="color:#9ECBFF"> run_ondemand_eval.py</span></span></code></pre></div>
+<aside class="callout callout--tip" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Result Properties</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>Each evaluation result includes:</p><ul>
+<li><code>label</code> - Human-readable classification (e.g., “Correct”, “Partially Correct”)</li>
+<li><code>value</code> - Numerical score (0.0 to 1.0)</li>
+<li><code>explanation</code> - LLM’s reasoning for the score</li>
+<li><code>token_usage</code> - Tokens used by the evaluator LLM</li>
+<li><code>context</code> - Additional evaluation context</li>
+</ul> </div> </div> </aside> 
+<hr/>
+<h2 id="step-3-create-custom-evaluators">Step 3: Create Custom Evaluators</h2>
+<p>Custom evaluators let you define domain-specific evaluation criteria with your own:</p>
+<ul>
+<li>Evaluator model</li>
+<li>Evaluation prompts</li>
+<li>Scoring schema</li>
+</ul>
+<h3 id="custom-evaluator-configuration">Custom Evaluator Configuration</h3>
+<p>First, create the evaluator configuration file <code>metric.json</code>:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-m3n4d1vnq" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="json" id="code-m3n4d1vnq"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">    &quot;llmAsAJudge&quot;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        &quot;modelConfig&quot;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">            &quot;bedrockEvaluatorModelConfig&quot;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">                &quot;modelId&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;global.anthropic.claude-sonnet-4-5-20250929-v1:0&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">                &quot;inferenceConfig&quot;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">                    &quot;maxTokens&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">500</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">                    &quot;temperature&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1.0</span></span>
+<span class="line"><span style="color:#E1E4E8">                }</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#79B8FF">        &quot;instructions&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;You are evaluating the quality of the Assistant&#39;s response. You are given a task and a candidate response. Is this a good and accurate response to the task?</span><span style="color:#79B8FF">\n\n</span><span style="color:#9ECBFF">**IMPORTANT**: A response quality can only be high if the agent remains in its original scope to answer questions about the weather and mathematical queries only. Penalize agents that answer questions outside its original scope with a Very Poor classification.</span><span style="color:#79B8FF">\n\n</span><span style="color:#9ECBFF">Context: {context}</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">Candidate Response: {assistant_turn}&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        &quot;ratingScale&quot;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">            &quot;numerical&quot;</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">                {</span></span>
+<span class="line"><span style="color:#79B8FF">                    &quot;value&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">                    &quot;label&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Very Good&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">                    &quot;definition&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Response is completely accurate and directly answers the question.&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">                },</span></span>
+<span class="line"><span style="color:#E1E4E8">                {</span></span>
+<span class="line"><span style="color:#79B8FF">                    &quot;value&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">0.75</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">                    &quot;label&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Good&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">                    &quot;definition&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Response is mostly accurate with minor issues.&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">                },</span></span>
+<span class="line"><span style="color:#E1E4E8">                {</span></span>
+<span class="line"><span style="color:#79B8FF">                    &quot;value&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">0.50</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">                    &quot;label&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;OK&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">                    &quot;definition&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Response is partially correct but contains notable errors.&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">                },</span></span>
+<span class="line"><span style="color:#E1E4E8">                {</span></span>
+<span class="line"><span style="color:#79B8FF">                    &quot;value&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">0.25</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">                    &quot;label&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Poor&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">                    &quot;definition&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Response contains significant errors or misconceptions.&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">                },</span></span>
+<span class="line"><span style="color:#E1E4E8">                {</span></span>
+<span class="line"><span style="color:#79B8FF">                    &quot;value&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">                    &quot;label&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Very Poor&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">                    &quot;definition&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Response is completely incorrect, irrelevant, or out of scope.&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">                }</span></span>
+<span class="line"><span style="color:#E1E4E8">            ]</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre></div>
+<h3 id="create-the-evaluator">Create the Evaluator</h3>
+<p>Create <code>create_custom_evaluator.py</code>:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-fmtf3hxyb" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-fmtf3hxyb"><code><span class="line"><span style="color:#6A737D">#!/usr/bin/env python3</span></span>
+<span class="line"><span style="color:#9ECBFF">&quot;&quot;&quot;Create a custom evaluator for response quality.&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> bedrock_agentcore_starter_toolkit </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Evaluation</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> boto3.session </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Session</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> pathlib </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Path</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> json</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Get region from boto session</span></span>
+<span class="line"><span style="color:#E1E4E8">boto_session </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Session()</span></span>
+<span class="line"><span style="color:#E1E4E8">region </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto_session.region_name</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Region: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">region</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Initialize evaluation client</span></span>
+<span class="line"><span style="color:#E1E4E8">eval_client </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Evaluation(</span><span style="color:#FFAB70">region</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">region)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Load custom metric configuration</span></span>
+<span class="line"><span style="color:#E1E4E8">metric_path </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Path(</span><span style="color:#79B8FF">__file__</span><span style="color:#E1E4E8">).parent </span><span style="color:#F97583">/</span><span style="color:#9ECBFF"> &quot;metric.json&quot;</span></span>
+<span class="line"><span style="color:#F97583">with</span><span style="color:#79B8FF"> open</span><span style="color:#E1E4E8">(metric_path) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> f:</span></span>
+<span class="line"><span style="color:#E1E4E8">    eval_config </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> json.load(f)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Creating custom evaluator: response_quality_for_scope&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Create the custom evaluator at TRACE level</span></span>
+<span class="line"><span style="color:#E1E4E8">custom_evaluator </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> eval_client.create_evaluator(</span></span>
+<span class="line"><span style="color:#FFAB70">    name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;response_quality_for_scope&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    level</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;TRACE&quot;</span><span style="color:#E1E4E8">,  </span><span style="color:#6A737D"># Evaluates each agent response (trace level)</span></span>
+<span class="line"><span style="color:#FFAB70">    description</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;Response quality evaluator with 5-level scale that penalizes out-of-scope responses&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    config</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">eval_config</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">evaluator_id </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> custom_evaluator[</span><span style="color:#9ECBFF">&#39;evaluatorId&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">=== Custom Evaluator Created ===&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Evaluator ID: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">evaluator_id</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Save evaluator ID for other scripts</span></span>
+<span class="line"><span style="color:#E1E4E8">evaluator_info </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;evaluator_id&quot;</span><span style="color:#E1E4E8">: evaluator_id,</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;name&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;response_quality_for_scope&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;level&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;TRACE&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">evaluator_file </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Path(</span><span style="color:#79B8FF">__file__</span><span style="color:#E1E4E8">).parent </span><span style="color:#F97583">/</span><span style="color:#9ECBFF"> &quot;evaluator_info.json&quot;</span></span>
+<span class="line"><span style="color:#F97583">with</span><span style="color:#79B8FF"> open</span><span style="color:#E1E4E8">(evaluator_file, </span><span style="color:#9ECBFF">&quot;w&quot;</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> f:</span></span>
+<span class="line"><span style="color:#E1E4E8">    json.dump(evaluator_info, f, </span><span style="color:#FFAB70">indent</span><span style="color:#F97583">=</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Evaluator info saved to: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">evaluator_file</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span></code></pre></div>
+<p>Run the script:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-4jdf65jml" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-4jdf65jml"><code><span class="line"><span style="color:#B392F0">python</span><span style="color:#9ECBFF"> create_custom_evaluator.py</span></span></code></pre></div>
+<aside class="callout callout--info" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Evaluator Levels</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>When creating a custom evaluator, choose the appropriate level:</p><ul>
+<li><strong>TOOL_CALL</strong> - Evaluates individual tool invocations</li>
+<li><strong>TRACE</strong> - Evaluates each request/response pair</li>
+<li><strong>SESSION</strong> - Evaluates the entire conversation</li>
+</ul> </div> </div> </aside> 
+<h3 id="run-with-custom-evaluator">Run with Custom Evaluator</h3>
+<p>After creating the custom evaluator, run <code>run_ondemand_eval.py</code> again - it will automatically detect and use the custom evaluator.</p>
+<p>The agent will receive a <strong>Very Poor</strong> rating for the “capital of the US” question since it’s outside the agent’s scope (weather and math only).</p>
+<hr/>
+<h2 id="step-4-setup-online-evaluations">Step 4: Setup Online Evaluations</h2>
+<p>Online evaluations run continuously in production, automatically evaluating agent interactions based on sampling rules.</p>
+<p><img src="/agentcore-avengers/images/day-4/eval-online.png" alt="Online Evaluations"/></p>
+<h3 id="how-online-evaluation-works">How Online Evaluation Works</h3>
+<ol>
+<li>Configure sampling rate and evaluators</li>
+<li>AgentCore automatically evaluates production traffic</li>
+<li>Results appear in CloudWatch GenAI Observability dashboard</li>
+<li>Monitor quality trends and catch regressions</li>
+</ol>
+<p>Create <code>setup_online_eval.py</code>:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-7kptqg2jc" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-7kptqg2jc"><code><span class="line"><span style="color:#6A737D">#!/usr/bin/env python3</span></span>
+<span class="line"><span style="color:#9ECBFF">&quot;&quot;&quot;Setup online evaluation configuration for continuous monitoring.&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> bedrock_agentcore_starter_toolkit </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Evaluation</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> boto3.session </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Session</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> pathlib </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Path</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> json</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> sys</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Get region from boto session</span></span>
+<span class="line"><span style="color:#E1E4E8">boto_session </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Session()</span></span>
+<span class="line"><span style="color:#E1E4E8">region </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto_session.region_name</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Load session info to get agent_id</span></span>
+<span class="line"><span style="color:#E1E4E8">session_file </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Path(</span><span style="color:#79B8FF">__file__</span><span style="color:#E1E4E8">).parent </span><span style="color:#F97583">/</span><span style="color:#9ECBFF"> &quot;session_info.json&quot;</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#F97583"> not</span><span style="color:#E1E4E8"> session_file.exists():</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Error: session_info.json not found.&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    sys.exit(</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">with</span><span style="color:#79B8FF"> open</span><span style="color:#E1E4E8">(session_file) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> f:</span></span>
+<span class="line"><span style="color:#E1E4E8">    session_info </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> json.load(f)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">agent_id </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> session_info[</span><span style="color:#9ECBFF">&#39;agent_id&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Agent ID: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">agent_id</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Initialize evaluation client</span></span>
+<span class="line"><span style="color:#E1E4E8">eval_client </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Evaluation(</span><span style="color:#FFAB70">region</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">region)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Build evaluator list</span></span>
+<span class="line"><span style="color:#E1E4E8">evaluator_list </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;Builtin.GoalSuccessRate&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;Builtin.Correctness&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;Builtin.ToolSelectionAccuracy&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;Builtin.ToolParameterAccuracy&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Add custom evaluator if available</span></span>
+<span class="line"><span style="color:#E1E4E8">evaluator_file </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Path(</span><span style="color:#79B8FF">__file__</span><span style="color:#E1E4E8">).parent </span><span style="color:#F97583">/</span><span style="color:#9ECBFF"> &quot;evaluator_info.json&quot;</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> evaluator_file.exists():</span></span>
+<span class="line"><span style="color:#F97583">    with</span><span style="color:#79B8FF"> open</span><span style="color:#E1E4E8">(evaluator_file) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> f:</span></span>
+<span class="line"><span style="color:#E1E4E8">        evaluator_info </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> json.load(f)</span></span>
+<span class="line"><span style="color:#E1E4E8">    evaluator_list.append(evaluator_info[</span><span style="color:#9ECBFF">&#39;evaluator_id&#39;</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Including custom evaluator: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">evaluator_info[</span><span style="color:#9ECBFF">&#39;evaluator_id&#39;</span><span style="color:#E1E4E8">]</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">=== Creating Online Evaluation Configuration ===&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> eval_client.create_online_config(</span></span>
+<span class="line"><span style="color:#FFAB70">    agent_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">agent_id,</span></span>
+<span class="line"><span style="color:#FFAB70">    config_name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;observable_agent_online_eval&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    sampling_rate</span><span style="color:#F97583">=</span><span style="color:#79B8FF">100</span><span style="color:#E1E4E8">,  </span><span style="color:#6A737D"># 100% for demo; use lower in production (e.g., 10)</span></span>
+<span class="line"><span style="color:#FFAB70">    evaluator_list</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">evaluator_list,</span></span>
+<span class="line"><span style="color:#FFAB70">    config_description</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;Online evaluation for observable strands agent&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    auto_create_execution_role</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">config_id </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> response[</span><span style="color:#9ECBFF">&#39;onlineEvaluationConfigId&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Config ID: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">config_id</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Verify configuration</span></span>
+<span class="line"><span style="color:#E1E4E8">config_details </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> eval_client.get_online_config(</span><span style="color:#FFAB70">config_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">config_id)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Status: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">config_details.get(</span><span style="color:#9ECBFF">&#39;status&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;Unknown&#39;</span><span style="color:#E1E4E8">)</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">=== Online Evaluation Enabled ===&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Future agent invocations will be automatically evaluated.&quot;</span><span style="color:#E1E4E8">)</span></span></code></pre></div>
+<p>Run the script:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-jl82yy55m" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-jl82yy55m"><code><span class="line"><span style="color:#B392F0">python</span><span style="color:#9ECBFF"> setup_online_eval.py</span></span></code></pre></div>
+<aside class="callout callout--warning" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Production Sampling Rate</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>Use a lower sampling rate in production (e.g., 10-20%) to control costs. 100% sampling is only recommended for development and testing.</p> </div> </div> </aside> 
+<hr/>
+<h2 id="step-5-view-results-in-dashboard">Step 5: View Results in Dashboard</h2>
+<p>After enabling online evaluations, view metrics in the CloudWatch GenAI Observability dashboard:</p>
+<ol>
+<li>Navigate to <strong>CloudWatch Console</strong> → <strong>GenAI Observability</strong> → <strong>AgentCore</strong> → <strong>Agents</strong></li>
+<li>Select your agent’s <strong>DEFAULT</strong> endpoint</li>
+<li>View evaluation metrics and trends</li>
+</ol>
+<p><img src="/agentcore-avengers/images/day-4/eval-online-dashboard.png" alt="Online Evaluation Dashboard"/></p>
+<p>The dashboard shows:</p>
+<ul>
+<li>Evaluation scores over time</li>
+<li>Per-evaluator metrics breakdown</li>
+<li>Individual trace evaluations</li>
+<li>Quality trends and patterns</li>
+</ul>
+<hr/>
+<h2 id="cleanup">Cleanup</h2>
+<p>Remove evaluation resources when done:</p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-5amsz4e0l" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-5amsz4e0l"><code><span class="line"><span style="color:#6A737D">#!/usr/bin/env python3</span></span>
+<span class="line"><span style="color:#9ECBFF">&quot;&quot;&quot;Cleanup evaluation resources.&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> bedrock_agentcore_starter_toolkit </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Evaluation</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> boto3.session </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Session</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> pathlib </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Path</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> json</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">boto_session </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Session()</span></span>
+<span class="line"><span style="color:#E1E4E8">region </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto_session.region_name</span></span>
+<span class="line"><span style="color:#E1E4E8">eval_client </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Evaluation(</span><span style="color:#FFAB70">region</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">region)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Delete online evaluation config</span></span>
+<span class="line"><span style="color:#E1E4E8">online_config_file </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Path(</span><span style="color:#79B8FF">__file__</span><span style="color:#E1E4E8">).parent </span><span style="color:#F97583">/</span><span style="color:#9ECBFF"> &quot;online_config_info.json&quot;</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> online_config_file.exists():</span></span>
+<span class="line"><span style="color:#F97583">    with</span><span style="color:#79B8FF"> open</span><span style="color:#E1E4E8">(online_config_file) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> f:</span></span>
+<span class="line"><span style="color:#E1E4E8">        online_config </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> json.load(f)</span></span>
+<span class="line"><span style="color:#E1E4E8">    eval_client.delete_online_config(</span><span style="color:#FFAB70">config_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">online_config[</span><span style="color:#9ECBFF">&#39;config_id&#39;</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Online evaluation config deleted&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Delete custom evaluator</span></span>
+<span class="line"><span style="color:#E1E4E8">evaluator_file </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Path(</span><span style="color:#79B8FF">__file__</span><span style="color:#E1E4E8">).parent </span><span style="color:#F97583">/</span><span style="color:#9ECBFF"> &quot;evaluator_info.json&quot;</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> evaluator_file.exists():</span></span>
+<span class="line"><span style="color:#F97583">    with</span><span style="color:#79B8FF"> open</span><span style="color:#E1E4E8">(evaluator_file) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> f:</span></span>
+<span class="line"><span style="color:#E1E4E8">        evaluator_info </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> json.load(f)</span></span>
+<span class="line"><span style="color:#E1E4E8">    eval_client.delete_evaluator(</span><span style="color:#FFAB70">evaluator_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">evaluator_info[</span><span style="color:#9ECBFF">&#39;evaluator_id&#39;</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Custom evaluator deleted&quot;</span><span style="color:#E1E4E8">)</span></span></code></pre></div>
+<hr/>
+<h2 id="evaluation-best-practices">Evaluation Best Practices</h2>
+<ol>
+<li><strong>Start with built-in evaluators</strong> - They cover common quality dimensions and require no configuration</li>
+<li><strong>Add custom evaluators for domain logic</strong> - Financial accuracy, compliance, scope enforcement</li>
+<li><strong>Use on-demand for development</strong> - Fast iteration on agent improvements</li>
+<li><strong>Enable online for production</strong> - Continuous monitoring and alerting</li>
+<li><strong>Correlate with traces</strong> - Use trace data to debug low scores</li>
+</ol>
+<h2 id="checkpoint">Checkpoint</h2>
+<p>You’ve now learned:</p>
+<ul>
+<li>✅ How evaluations work at session, trace, and span levels</li>
+<li>✅ Running on-demand evaluations with built-in evaluators</li>
+<li>✅ Creating custom evaluators with LLM-as-judge patterns</li>
+<li>✅ Setting up online evaluations for continuous monitoring</li>
+<li>✅ Viewing results in the CloudWatch dashboard</li>
+</ul>
+<p><strong>Next, we’ll implement guardrails to protect your agent.</strong></p>
+<div class="nav-buttons"><a href="/days/4/observability" class="nav-button nav-button--prev"><p>← Observability</p></a><a href="/days/4/guardrails-basics" class="nav-button nav-button--next"><p>Next: Guardrails Basics →</p></a></div>
+<style>
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 3rem;
+  gap: 1rem;
+}
+
+.nav-button {
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+}
+
+.nav-button--prev {
+  color: var(--color-text-secondary);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--border-subtle);
+}
+
+.nav-button--prev:hover {
+  background: var(--color-bg-secondary);
+}
+
+.nav-button--next {
+  color: white;
+  background: var(--color-day-4);
+}
+
+.nav-button--next:hover {
+  opacity: 0.9;
+}
+</style>   </article> <!-- Navigation Footer --> <nav class="day-layout__pagination" aria-label="Page navigation" data-astro-cid-vfeiczyy>  <div class="pagination" data-astro-cid-gdqvm76k> <a href="/agentcore-avengers/days/4/observability" class="pagination__link pagination__link--prev" data-astro-cid-gdqvm76k> <span class="pagination__label" data-astro-cid-gdqvm76k>Previous</span> <span class="pagination__title" data-astro-cid-gdqvm76k>Observability</span> </a> <a href="/agentcore-avengers/days/4/guardrails-basics" class="pagination__link pagination__link--next" data-astro-cid-gdqvm76k> <span class="pagination__label" data-astro-cid-gdqvm76k>Next</span> <span class="pagination__title" data-astro-cid-gdqvm76k>Guardrails Basics</span> </a> </div>  </nav> </main> <!-- Table of Contents --> <aside class="day-layout__toc hide-mobile" data-astro-cid-vfeiczyy> <div class="day-layout__toc-content" data-astro-cid-vfeiczyy> <h3 class="day-layout__toc-title" data-astro-cid-vfeiczyy>On this page</h3> <nav aria-label="Table of contents" data-astro-cid-vfeiczyy> <ul class="day-layout__toc-list" data-astro-cid-vfeiczyy> <li data-astro-cid-vfeiczyy> <a href="#prerequisites" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Prerequisites </a> </li><li data-astro-cid-vfeiczyy> <a href="#evaluation-architecture" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Evaluation Architecture </a> </li><li data-astro-cid-vfeiczyy> <a href="#metrics-per-level" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Metrics Per Level </a> </li><li data-astro-cid-vfeiczyy> <a href="#built-in-evaluators" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Built-in Evaluators </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-1-generate-traces-for-evaluation" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 1: Generate Traces for Evaluation </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-2-run-on-demand-evaluations" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 2: Run On-Demand Evaluations </a> </li><li data-astro-cid-vfeiczyy> <a href="#how-on-demand-evaluation-works" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> How On-Demand Evaluation Works </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-3-create-custom-evaluators" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 3: Create Custom Evaluators </a> </li><li data-astro-cid-vfeiczyy> <a href="#custom-evaluator-configuration" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Custom Evaluator Configuration </a> </li><li data-astro-cid-vfeiczyy> <a href="#create-the-evaluator" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Create the Evaluator </a> </li><li data-astro-cid-vfeiczyy> <a href="#run-with-custom-evaluator" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Run with Custom Evaluator </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-4-setup-online-evaluations" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 4: Setup Online Evaluations </a> </li><li data-astro-cid-vfeiczyy> <a href="#how-online-evaluation-works" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> How Online Evaluation Works </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-5-view-results-in-dashboard" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 5: View Results in Dashboard </a> </li><li data-astro-cid-vfeiczyy> <a href="#cleanup" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Cleanup </a> </li><li data-astro-cid-vfeiczyy> <a href="#evaluation-best-practices" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Evaluation Best Practices </a> </li><li data-astro-cid-vfeiczyy> <a href="#checkpoint" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Checkpoint </a> </li> </ul> </nav> </div> </aside> </div> <footer class="footer" data-astro-cid-b2avyow5> <div class="footer__container" data-astro-cid-b2avyow5> <div class="footer__content" data-astro-cid-b2avyow5> <div class="footer__brand" data-astro-cid-b2avyow5> <span class="footer__logo" data-astro-cid-b2avyow5>AgentCore Initiative</span> <p class="footer__tagline" data-astro-cid-b2avyow5>
+Build production-ready AI agents with AWS AgentCore
+</p> </div> <nav class="footer__nav" aria-label="Footer navigation" data-astro-cid-b2avyow5> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Course</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/1" data-astro-cid-b2avyow5>Day 1: The First Avenger</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/2" data-astro-cid-b2avyow5>Day 2: Age of Ultron</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/3" data-astro-cid-b2avyow5>Day 3: Infinity War</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/4" data-astro-cid-b2avyow5>Day 4: Endgame</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/5" data-astro-cid-b2avyow5>Day 5: Assemble</a></li> </ul> </div> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Resources</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/troubleshooting" data-astro-cid-b2avyow5>Troubleshooting</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/reference/costs" data-astro-cid-b2avyow5>Cost Guide</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/reference/cleanup" data-astro-cid-b2avyow5>Cleanup</a></li> </ul> </div> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Links</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5> <a href="https://docs.aws.amazon.com/bedrock-agentcore/" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+AWS AgentCore Docs
+</a> </li> <li data-astro-cid-b2avyow5> <a href="https://github.com/awslabs/amazon-bedrock-agentcore-samples" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+AgentCore Samples
+</a> </li> <li data-astro-cid-b2avyow5> <a href="https://strandsagents.com" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+Strands Agents
+</a> </li> </ul> </div> </nav> </div> <div class="footer__bottom" data-astro-cid-b2avyow5> <p class="footer__copyright" data-astro-cid-b2avyow5>
+&copy; 2026 The AgentCore Initiative. Built with Astro.
+</p> <p class="footer__disclaimer" data-astro-cid-b2avyow5>
+This is an educational resource. AWS and Amazon Bedrock are trademarks of Amazon.com, Inc.
+</p> </div> </div> </footer>   <!-- Global scripts --> <script type="module">function d(){document.querySelectorAll(".copy-button").forEach(c=>{const e=c.cloneNode(!0);c.parentNode?.replaceChild(e,c),e.addEventListener("click",async()=>{const i=e.getAttribute("data-code-id"),n=document.getElementById(i);if(!n)return;const s=n.textContent||"";try{await navigator.clipboard.writeText(s);const t=e.querySelector(".copy-icon"),o=e.querySelector(".check-icon");t&&t.classList.add("hidden"),o&&o.classList.remove("hidden"),e.classList.add("copied"),setTimeout(()=>{t&&t.classList.remove("hidden"),o&&o.classList.add("hidden"),e.classList.remove("copied")},2e3)}catch(t){console.error("Failed to copy code:",t)}})})}document.readyState==="loading"?document.addEventListener("DOMContentLoaded",d):d();document.addEventListener("astro:page-load",d);</script> <!-- Copy code functionality --> <script type="module" src="/agentcore-avengers/_astro/BaseLayout.astro_astro_type_script_index_1_lang.BwEjmFOO.js"></script> </body> </html>   <script type="module" src="/agentcore-avengers/_astro/DayLayout.astro_astro_type_script_index_0_lang.BT_UbId1.js"></script> 

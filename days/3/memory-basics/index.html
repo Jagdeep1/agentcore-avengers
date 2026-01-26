@@ -1,0 +1,886 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="canonical" href="https://jagdeep1.github.io/agentcore-avengers/days/3/memory-basics/"><!-- Favicon --><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><!-- Primary Meta Tags --><title>Memory Basics - Day 3 | The AgentCore Initiative</title><meta name="title" content="Memory Basics - Day 3 | The AgentCore Initiative"><meta name="description" content="Day 3: Infinity War - Memory + Tools"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://jagdeep1.github.io/agentcore-avengers/days/3/memory-basics/"><meta property="og:title" content="Memory Basics - Day 3 | The AgentCore Initiative"><meta property="og:description" content="Day 3: Infinity War - Memory + Tools"><meta property="og:image" content="https://jagdeep1.github.io/images/og/default.png"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://jagdeep1.github.io/agentcore-avengers/days/3/memory-basics/"><meta name="twitter:title" content="Memory Basics - Day 3 | The AgentCore Initiative"><meta name="twitter:description" content="Day 3: Infinity War - Memory + Tools"><meta name="twitter:image" content="https://jagdeep1.github.io/images/og/default.png"><!-- Fonts - Plus Jakarta Sans & Geist Mono --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"><!-- Theme initialization (prevents flash) --><script>
+      (function () {
+        const stored = localStorage.getItem('agentcore-initiative-progress');
+        let theme = 'dark';
+        if (stored) {
+          try {
+            const progress = JSON.parse(stored);
+            theme = progress.theme || 'dark';
+          } catch (e) {}
+        }
+        if (theme === 'system') {
+          theme = window.matchMedia('(prefers-color-scheme: light)').matches
+            ? 'light'
+            : 'dark';
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script><link rel="stylesheet" href="/agentcore-avengers/_astro/_slug_.C0EPBXS6.css">
+<style>.pagination[data-astro-cid-brrrquba]{display:flex;justify-content:space-between;gap:1rem}.pagination__link[data-astro-cid-brrrquba]{flex:1;max-width:50%;padding:1rem 1.25rem;background:var(--color-bg-elevated);border:var(--border-subtle);border-radius:var(--radius-lg);text-decoration:none;transition:all var(--transition-fast)}.pagination__link[data-astro-cid-brrrquba]:hover{background:var(--color-bg-secondary);border-color:var(--border-default)}.pagination__link--prev[data-astro-cid-brrrquba]{text-align:left}.pagination__link--next[data-astro-cid-brrrquba]{text-align:right;margin-left:auto}.pagination__label[data-astro-cid-brrrquba]{display:block;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-muted);margin-bottom:.25rem}.pagination__title[data-astro-cid-brrrquba]{display:block;font-size:.9375rem;font-weight:500;color:var(--color-text-primary)}
+</style>
+<link rel="stylesheet" href="/agentcore-avengers/_astro/_slug_.CP5296fy.css"><style>.callout[data-astro-cid-wi7smz4x]{display:flex;gap:1rem;padding:1rem 1.25rem;border-radius:var(--radius-lg);margin:1.5rem 0;border-left:4px solid}.callout--info[data-astro-cid-wi7smz4x]{background:#3b82f614;border-left-color:var(--color-accent-primary)}.callout--info[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-primary)}.callout--warning[data-astro-cid-wi7smz4x]{background:#f59e0b14;border-left-color:var(--color-accent-warning)}.callout--warning[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-warning)}.callout--danger[data-astro-cid-wi7smz4x]{background:#ef444414;border-left-color:var(--color-accent-danger)}.callout--danger[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-danger)}.callout--success[data-astro-cid-wi7smz4x]{background:#10b98114;border-left-color:var(--color-accent-success)}.callout--success[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-success)}.callout--tip[data-astro-cid-wi7smz4x]{background:#8b5cf614;border-left-color:var(--color-accent-purple)}.callout--tip[data-astro-cid-wi7smz4x] .callout__icon[data-astro-cid-wi7smz4x]{color:var(--color-accent-purple)}.callout__icon[data-astro-cid-wi7smz4x]{flex-shrink:0;width:1.25rem;height:1.25rem;margin-top:.125rem}.callout__content[data-astro-cid-wi7smz4x]{flex:1;min-width:0}.callout__title[data-astro-cid-wi7smz4x]{font-weight:600;font-size:.9375rem;color:var(--color-text-primary);margin-bottom:.25rem}.callout__body[data-astro-cid-wi7smz4x]{font-size:.9375rem;color:var(--color-text-secondary);line-height:1.6}.callout__body[data-astro-cid-wi7smz4x] p{margin:0}.callout__body[data-astro-cid-wi7smz4x] p+p{margin-top:.5rem}.callout__body[data-astro-cid-wi7smz4x] code{font-size:.85em}.callout__body[data-astro-cid-wi7smz4x] a{font-weight:500}
+</style></head> <body>  <header class="header" data-astro-cid-mb6pvx4c> <div class="header__container" data-astro-cid-mb6pvx4c> <!-- Logo --> <a href="/agentcore-avengers/" class="header__logo" aria-label="Home" data-astro-cid-mb6pvx4c> <svg class="header__logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" data-astro-cid-mb6pvx4c> <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c></circle> <path d="M16 6 L22 12 L16 18 L10 12 Z" fill="currentColor" opacity="0.5" data-astro-cid-mb6pvx4c></path> <circle cx="16" cy="16" r="4" fill="currentColor" data-astro-cid-mb6pvx4c></circle> </svg> <span class="header__logo-text" data-astro-cid-mb6pvx4c>AgentCore Initiative</span> </a> <!-- Desktop Navigation --> <nav class="header__nav hide-mobile" aria-label="Main navigation" data-astro-cid-mb6pvx4c> <ul class="header__nav-list" data-astro-cid-mb6pvx4c> <li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/days" class="header__nav-link header__nav-link--active" data-astro-cid-mb6pvx4c> Course </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/troubleshooting" class="header__nav-link" data-astro-cid-mb6pvx4c> Troubleshooting </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/reference" class="header__nav-link" data-astro-cid-mb6pvx4c> Reference </a> </li> </ul> </nav> <!-- Actions --> <div class="header__actions" data-astro-cid-mb6pvx4c> <!-- Theme Toggle Button (placeholder - will be React component) --> <button id="theme-toggle" class="header__theme-toggle" aria-label="Toggle theme" type="button" data-astro-cid-mb6pvx4c> <svg class="header__theme-icon header__theme-icon--dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <circle cx="12" cy="12" r="5" data-astro-cid-mb6pvx4c></circle> <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" data-astro-cid-mb6pvx4c></path> </svg> <svg class="header__theme-icon header__theme-icon--light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-astro-cid-mb6pvx4c></path> </svg> </button> <!-- Mobile Menu Toggle --> <button id="mobile-menu-toggle" class="header__mobile-toggle hide-desktop" aria-label="Toggle menu" aria-expanded="false" type="button" data-astro-cid-mb6pvx4c> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-mb6pvx4c> <path class="menu-icon" d="M4 6h16M4 12h16M4 18h16" data-astro-cid-mb6pvx4c></path> <path class="close-icon" d="M6 6l12 12M6 18L18 6" style="display: none" data-astro-cid-mb6pvx4c></path> </svg> </button> </div> </div> <!-- Mobile Navigation --> <nav id="mobile-nav" class="header__mobile-nav hide-desktop" aria-label="Mobile navigation" hidden data-astro-cid-mb6pvx4c> <ul class="header__mobile-nav-list" data-astro-cid-mb6pvx4c> <li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/days" class="header__mobile-nav-link header__mobile-nav-link--active" data-astro-cid-mb6pvx4c> Course </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/troubleshooting" class="header__mobile-nav-link" data-astro-cid-mb6pvx4c> Troubleshooting </a> </li><li data-astro-cid-mb6pvx4c> <a href="/agentcore-avengers/reference" class="header__mobile-nav-link" data-astro-cid-mb6pvx4c> Reference </a> </li> </ul> </nav> </header>  <script type="module">const r=document.getElementById("theme-toggle");r&&r.addEventListener("click",()=>{const e=document.documentElement,t=e.getAttribute("data-theme")==="dark"?"light":"dark";e.setAttribute("data-theme",t);const c=localStorage.getItem("agentcore-initiative-progress");let i={theme:t};if(c)try{i={...JSON.parse(c),theme:t}}catch{}localStorage.setItem("agentcore-initiative-progress",JSON.stringify(i))});const n=document.getElementById("mobile-menu-toggle"),l=document.getElementById("mobile-nav");n&&l&&n.addEventListener("click",()=>{const e=n.getAttribute("aria-expanded")==="true";n.setAttribute("aria-expanded",String(!e)),l.hidden=e;const o=n.querySelector(".menu-icon"),t=n.querySelector(".close-icon");o&&t&&(o.style.display=e?"block":"none",t.style.display=e?"none":"block")});</script> <div class="day-layout" style="--day-accent: #8b5cf6" data-astro-cid-vfeiczyy> <!-- Sidebar --> <aside class="day-layout__sidebar hide-mobile" data-astro-cid-vfeiczyy> <div class="day-layout__sidebar-content" data-astro-cid-vfeiczyy> <!-- Day Header --> <div class="day-layout__day-header" data-astro-cid-vfeiczyy> <span class="day-layout__day-number" data-astro-cid-vfeiczyy>Day 3</span> <h2 class="day-layout__day-title" data-astro-cid-vfeiczyy>Infinity War</h2> <p class="day-layout__day-focus" data-astro-cid-vfeiczyy>Memory + Tools</p> </div> <!-- Section Navigation --> <nav class="day-layout__nav" aria-label="Day sections" data-astro-cid-vfeiczyy> <ul class="day-layout__nav-list" data-astro-cid-vfeiczyy> <li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/3/memory-basics" class="day-layout__nav-link day-layout__nav-link--active" data-section="memory-basics" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Memory Basics </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/3/memory-strategies" class="day-layout__nav-link" data-section="memory-strategies" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Memory Strategies </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/3/tools" class="day-layout__nav-link" data-section="tools" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Code Interpreter &amp; Browser </a> </li><li data-astro-cid-vfeiczyy> <a href="/agentcore-avengers/days/3/controlled-disasters" class="day-layout__nav-link" data-section="controlled-disasters" data-astro-cid-vfeiczyy> <span class="day-layout__nav-check" aria-hidden="true" data-astro-cid-vfeiczyy> <svg viewBox="0 0 16 16" fill="none" data-astro-cid-vfeiczyy> <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" data-astro-cid-vfeiczyy></circle> <path class="check-mark" d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-vfeiczyy></path> </svg> </span> Controlled Disasters </a> </li> </ul> </nav> <!-- Challenge Link --> <a href="/agentcore-avengers/days/3/challenge" class="day-layout__challenge-link" data-astro-cid-vfeiczyy> <span class="day-layout__challenge-icon" data-astro-cid-vfeiczyy> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-vfeiczyy> <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" data-astro-cid-vfeiczyy></polygon> </svg> </span>
+Daily Challenge
+</a> </div> </aside> <!-- Main Content --> <main class="day-layout__main" data-astro-cid-vfeiczyy> <article class="day-layout__content prose" data-astro-cid-vfeiczyy>  <h1 id="memory-basics">Memory Basics</h1>
+<p>Remember Day 1? Your agent forgot everything between requests. That’s because AI models are inherently stateless - each request starts fresh with no knowledge of previous interactions.</p>
+<p><strong>AgentCore Memory</strong> solves this by providing managed memory services that persist context across interactions.</p>
+<h2 id="agentcore-memory-architecture">AgentCore Memory Architecture</h2>
+<p><img src="/agentcore-avengers/images/day-3/memory-overview.png" alt="Memory Overview"/></p>
+<p>AgentCore Memory provides two complementary memory systems:</p>
+<ul>
+<li><strong>Short-term memory</strong>: Raw conversation events for immediate context</li>
+<li><strong>Long-term memory</strong>: Semantic extraction and consolidation for persistent knowledge</li>
+</ul>
+<h3 id="short-term-memory-architecture">Short-term Memory Architecture</h3>
+<p><img src="/agentcore-avengers/images/day-3/short-term-memory-architecture.png" alt="Short-term Memory Architecture"/></p>
+<p>Short-term memory stores raw conversation events:</p>
+<ul>
+<li>Recent message retrieval with <code>get_last_k_turns()</code></li>
+<li>Event creation with <code>create_event()</code></li>
+<li>Session-based conversation tracking</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Feature</th><th>Short-term Memory</th><th>Long-term Memory</th></tr></thead><tbody><tr><td><strong>Scope</strong></td><td>Single session</td><td>Across all sessions</td></tr><tr><td><strong>Duration</strong></td><td>Session lifetime</td><td>Persistent</td></tr><tr><td><strong>Content</strong></td><td>Raw conversation turns</td><td>Extracted insights</td></tr></tbody></table>
+<aside class="callout callout--info" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>When to Use Each</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p><strong>Short-term</strong>: For immediate context like “what did I just ask?”</p><p><strong>Long-term</strong>: For persistent knowledge like “what are my preferences?”</p> </div> </div> </aside> 
+<h2 id="prerequisites">Prerequisites</h2>
+<p>Before you begin, ensure you have:</p>
+<ul>
+<li>AWS credentials configured (<code>aws configure</code>)</li>
+<li>Python 3.10+ installed</li>
+<li>Virtual environment activated from the course root:
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-fyj2ih9kb" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-fyj2ih9kb"><code><span class="line"><span style="color:#79B8FF">source</span><span style="color:#9ECBFF"> ../.venv/bin/activate</span></span></code></pre></div>
+</li>
+<li>Required packages:
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-a2o8r251f" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-a2o8r251f"><code><span class="line"><span style="color:#B392F0">pip</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> bedrock-agentcore</span><span style="color:#9ECBFF"> bedrock-agentcore-starter-toolkit</span><span style="color:#9ECBFF"> strands-agents</span></span></code></pre></div>
+</li>
+</ul>
+<h2 id="step-1-create-a-memory-resource">Step 1: Create a Memory Resource</h2>
+<p>We’ll create an AgentCore Memory with a semantic strategy. Semantic strategy automatically extracts facts and insights from conversations for long-term storage.</p>
+<p><strong>Create <code>create_memory.py</code>:</strong></p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-0q62k4sy1" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-0q62k4sy1"><code><span class="line"><span style="color:#6A737D">#!/usr/bin/env python3</span></span>
+<span class="line"><span style="color:#9ECBFF">&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#9ECBFF">create_memory.py - Create an AgentCore Memory with semantic strategy</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">This script creates a memory resource with both short-term and long-term memory</span></span>
+<span class="line"><span style="color:#9ECBFF">capabilities using a semantic strategy.</span></span>
+<span class="line"><span style="color:#9ECBFF">&quot;&quot;&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> bedrock_agentcore_starter_toolkit.operations.memory.manager </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> MemoryManager</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> bedrock_agentcore_starter_toolkit.operations.memory.models.strategies </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> SemanticStrategy</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Configuration</span></span>
+<span class="line"><span style="color:#79B8FF">REGION</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;us-east-1&quot;</span><span style="color:#6A737D">  # Change this to your preferred region</span></span>
+<span class="line"><span style="color:#79B8FF">MEMORY_NAME</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;Day3AgentMemory&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">():</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Create memory resource with semantic strategy.&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Creating AgentCore Memory Resource&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#6A737D">        # Initialize memory manager</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">1. Initializing MemoryManager for region: </span><span style="color:#79B8FF">{REGION}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        memory_manager </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> MemoryManager(</span><span style="color:#FFAB70">region_name</span><span style="color:#F97583">=</span><span style="color:#79B8FF">REGION</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Create memory with semantic strategy</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">2. Creating memory: &#39;</span><span style="color:#79B8FF">{MEMORY_NAME}</span><span style="color:#9ECBFF">&#39;&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;   - Enabling short-term memory (conversation history)&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;   - Enabling long-term memory (semantic extraction)&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">   This will take 2-3 minutes to become ACTIVE...&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">        memory </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> memory_manager.get_or_create_memory(</span></span>
+<span class="line"><span style="color:#FFAB70">            name</span><span style="color:#F97583">=</span><span style="color:#79B8FF">MEMORY_NAME</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">            description</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;Day 3 agent memory with semantic strategy&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">            strategies</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span></span>
+<span class="line"><span style="color:#E1E4E8">                SemanticStrategy(</span></span>
+<span class="line"><span style="color:#FFAB70">                    name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;semanticLongTermMemory&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">                    namespaces</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span><span style="color:#9ECBFF">&#39;/strategies/</span><span style="color:#79B8FF">{memoryStrategyId}</span><span style="color:#9ECBFF">/actors/</span><span style="color:#79B8FF">{actorId}</span><span style="color:#9ECBFF">&#39;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">                )</span></span>
+<span class="line"><span style="color:#E1E4E8">            ]</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Display results</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">&quot;</span><span style="color:#F97583"> +</span><span style="color:#9ECBFF"> &quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;✓ Memory Created Successfully!&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Memory ID: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">memory.get(</span><span style="color:#9ECBFF">&#39;id&#39;</span><span style="color:#E1E4E8">)</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Memory Name: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">memory.get(</span><span style="color:#9ECBFF">&#39;name&#39;</span><span style="color:#E1E4E8">)</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Status: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">memory.get(</span><span style="color:#9ECBFF">&#39;status&#39;</span><span style="color:#E1E4E8">)</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Description: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">memory.get(</span><span style="color:#9ECBFF">&#39;description&#39;</span><span style="color:#E1E4E8">)</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Save memory ID to file for other scripts</span></span>
+<span class="line"><span style="color:#F97583">        with</span><span style="color:#79B8FF"> open</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&#39;memory_id.txt&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;w&#39;</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> f:</span></span>
+<span class="line"><span style="color:#E1E4E8">            f.write(memory.get(</span><span style="color:#9ECBFF">&#39;id&#39;</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">✓ Memory ID saved to &#39;memory_id.txt&#39;&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">&quot;</span><span style="color:#F97583"> +</span><span style="color:#9ECBFF"> &quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Next Steps:&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;1. Wait for memory status to become ACTIVE (~2-3 minutes)&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;2. Run integrate_memory.py to connect this memory to an agent&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    except</span><span style="color:#79B8FF"> Exception</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> e:</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">✗ Error creating memory: </span><span style="color:#79B8FF">{str</span><span style="color:#E1E4E8">(e)</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">Troubleshooting:&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;- Verify AWS credentials are configured (aws configure)&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;- Ensure you have permissions for bedrock-agentcore:CreateMemory&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;- Check that AgentCore Memory is available in </span><span style="color:#79B8FF">{REGION}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#79B8FF"> 1</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> 0</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#79B8FF"> __name__</span><span style="color:#F97583"> ==</span><span style="color:#9ECBFF"> &quot;__main__&quot;</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#79B8FF">    exit</span><span style="color:#E1E4E8">(main())</span></span></code></pre></div>
+<p><strong>Run the script:</strong></p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-tub69n12z" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-tub69n12z"><code><span class="line"><span style="color:#79B8FF">cd</span><span style="color:#9ECBFF"> test_code/day3-memory-basics</span></span>
+<span class="line"><span style="color:#B392F0">python</span><span style="color:#9ECBFF"> create_memory.py</span></span></code></pre></div>
+<p><strong>Expected output:</strong></p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-zhyy2xrw9" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext" id="code-zhyy2xrw9"><code><span class="line"><span>======================================================================</span></span>
+<span class="line"><span>Creating AgentCore Memory Resource</span></span>
+<span class="line"><span>======================================================================</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>1. Initializing MemoryManager for region: us-east-1</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>2. Creating memory: &#39;Day3AgentMemory&#39;</span></span>
+<span class="line"><span>   - Enabling short-term memory (conversation history)</span></span>
+<span class="line"><span>   - Enabling long-term memory (semantic extraction)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>   This will take 2-3 minutes to become ACTIVE...</span></span>
+<span class="line"><span>⏳ Memory: CREATING, Strategies: 0/1 active (10s elapsed)</span></span>
+<span class="line"><span>⏳ Memory: CREATING, Strategies: 0/1 active (20s elapsed)</span></span>
+<span class="line"><span>...</span></span>
+<span class="line"><span>⏳ Memory: ACTIVE, Strategies: 1/1 active (175s elapsed)</span></span>
+<span class="line"><span>✅ Memory is ACTIVE (took 175s)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>======================================================================</span></span>
+<span class="line"><span>✓ Memory Created Successfully!</span></span>
+<span class="line"><span>======================================================================</span></span>
+<span class="line"><span>Memory ID: Day3AgentMemory-YqEt0ACsBb</span></span>
+<span class="line"><span>Memory Name: Day3AgentMemory</span></span>
+<span class="line"><span>Status: ACTIVE</span></span>
+<span class="line"><span>Description: Day 3 agent memory with semantic strategy</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>✓ Memory ID saved to &#39;memory_id.txt&#39;</span></span></code></pre></div>
+<aside class="callout callout--info" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Understanding Memory Strategies</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>A <strong>memory strategy</strong> defines how conversations are processed into long-term memories:</p><ul>
+<li><strong>Semantic Strategy</strong>: Extracts factual information (e.g., “The user works with Python”)</li>
+<li><strong>User Preference Strategy</strong>: Identifies preferences (e.g., “The user prefers TypeScript”)</li>
+<li><strong>Summary Strategy</strong>: Creates condensed session summaries</li>
+</ul><p>We’re starting with semantic strategy - the most versatile option for general knowledge extraction.</p> </div> </div> </aside> 
+<p><strong>What just happened:</strong></p>
+<ul>
+<li>✓ Created an AgentCore Memory resource with semantic extraction</li>
+<li>✓ Memory is now ACTIVE and ready to store conversations</li>
+<li>✓ Semantic strategy will automatically extract facts from conversations</li>
+<li>✓ Memory ID saved locally for use in subsequent steps</li>
+</ul>
+<h2 id="step-2-integrate-memory-with-a-strands-agent">Step 2: Integrate Memory with a Strands Agent</h2>
+<p>Now we’ll create a Strands agent that automatically saves and retrieves memories using the <code>AgentCoreMemorySessionManager</code>.</p>
+<p><strong>Create <code>integrate_memory.py</code>:</strong></p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-uqu5hhfcx" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-uqu5hhfcx"><code><span class="line"><span style="color:#6A737D">#!/usr/bin/env python3</span></span>
+<span class="line"><span style="color:#9ECBFF">&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#9ECBFF">integrate_memory.py - Integrate AgentCore Memory with a Strands Agent</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">This script demonstrates how to connect an AgentCore Memory to a Strands agent</span></span>
+<span class="line"><span style="color:#9ECBFF">using the AgentCoreMemorySessionManager.</span></span>
+<span class="line"><span style="color:#9ECBFF">&quot;&quot;&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> datetime </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> datetime</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Agent</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> strands.models </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> BedrockModel</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> bedrock_agentcore.memory.integrations.strands.config </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> AgentCoreMemoryConfig</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> bedrock_agentcore.memory.integrations.strands.session_manager </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> AgentCoreMemorySessionManager</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Configuration</span></span>
+<span class="line"><span style="color:#79B8FF">REGION</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;us-east-1&quot;</span></span>
+<span class="line"><span style="color:#79B8FF">MODEL_ID</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;us.anthropic.claude-3-5-sonnet-20241022-v2:0&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">():</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Create a Strands agent with AgentCore Memory integration.&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Integrating AgentCore Memory with Strands Agent&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#6A737D">        # Load memory ID from file</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">1. Loading memory ID from memory_id.txt...&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">        with</span><span style="color:#79B8FF"> open</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&#39;memory_id.txt&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;r&#39;</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> f:</span></span>
+<span class="line"><span style="color:#E1E4E8">            memory_id </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> f.read().strip()</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;   Memory ID: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">memory_id</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Create unique actor and session IDs</span></span>
+<span class="line"><span style="color:#E1E4E8">        timestamp </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> datetime.now().strftime(</span><span style="color:#9ECBFF">&quot;%Y%m</span><span style="color:#79B8FF">%d</span><span style="color:#9ECBFF">%H%M%S&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        actor_id </span><span style="color:#F97583">=</span><span style="color:#F97583"> f</span><span style="color:#9ECBFF">&quot;user_</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">timestamp</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">        session_id </span><span style="color:#F97583">=</span><span style="color:#F97583"> f</span><span style="color:#9ECBFF">&quot;session_</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">timestamp</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">2. Creating session identifiers:&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;   Actor ID: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">actor_id</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;   Session ID: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">session_id</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Configure memory</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">3. Configuring AgentCore Memory...&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        agentcore_memory_config </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> AgentCoreMemoryConfig(</span></span>
+<span class="line"><span style="color:#FFAB70">            memory_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">memory_id,</span></span>
+<span class="line"><span style="color:#FFAB70">            session_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">session_id,</span></span>
+<span class="line"><span style="color:#FFAB70">            actor_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">actor_id</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Create session manager</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;   Creating memory session manager for region: </span><span style="color:#79B8FF">{REGION}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        session_manager </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> AgentCoreMemorySessionManager(</span></span>
+<span class="line"><span style="color:#FFAB70">            agentcore_memory_config</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">agentcore_memory_config,</span></span>
+<span class="line"><span style="color:#FFAB70">            region_name</span><span style="color:#F97583">=</span><span style="color:#79B8FF">REGION</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Create Bedrock model</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">4. Initializing Bedrock model: </span><span style="color:#79B8FF">{MODEL_ID}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        model </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> BedrockModel(</span></span>
+<span class="line"><span style="color:#FFAB70">            model_id</span><span style="color:#F97583">=</span><span style="color:#79B8FF">MODEL_ID</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">            region_name</span><span style="color:#F97583">=</span><span style="color:#79B8FF">REGION</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Create agent with memory</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">5. Creating Strands agent with memory integration...&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        agent </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Agent(</span></span>
+<span class="line"><span style="color:#FFAB70">            model</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">model,</span></span>
+<span class="line"><span style="color:#FFAB70">            system_prompt</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">                &quot;You are a helpful assistant with memory capabilities. &quot;</span></span>
+<span class="line"><span style="color:#9ECBFF">                &quot;You can remember information from past conversations and use it &quot;</span></span>
+<span class="line"><span style="color:#9ECBFF">                &quot;to provide personalized responses. Always acknowledge when you &quot;</span></span>
+<span class="line"><span style="color:#9ECBFF">                &quot;remember something from a previous interaction.&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">            ),</span></span>
+<span class="line"><span style="color:#FFAB70">            session_manager</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">session_manager,</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">&quot;</span><span style="color:#F97583"> +</span><span style="color:#9ECBFF"> &quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;✓ Agent Created Successfully with Memory!&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Test the agent with a simple conversation</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">6. Testing agent with memory...&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">&quot;</span><span style="color:#F97583"> +</span><span style="color:#9ECBFF"> &quot;-&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">        user_input_1 </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> &quot;Hi! My name is Alex and I work as a software engineer.&quot;</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;User: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">user_input_1</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        response_1 </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> agent(user_input_1)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Agent: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">response_1</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">&quot;</span><span style="color:#F97583"> +</span><span style="color:#9ECBFF"> &quot;-&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">        user_input_2 </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> &quot;I really enjoy working with Python and AWS.&quot;</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;User: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">user_input_2</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        response_2 </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> agent(user_input_2)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Agent: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">response_2</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">&quot;</span><span style="color:#F97583"> +</span><span style="color:#9ECBFF"> &quot;-&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">        user_input_3 </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> &quot;What do you know about me?&quot;</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;User: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">user_input_3</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        response_3 </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> agent(user_input_3)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;Agent: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">response_3</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">&quot;</span><span style="color:#F97583"> +</span><span style="color:#9ECBFF"> &quot;-&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">&quot;</span><span style="color:#F97583"> +</span><span style="color:#9ECBFF"> &quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;What just happened:&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;✓ Memory resource loaded from memory_id.txt&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;✓ Session manager configured with unique actor/session IDs&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;✓ Strands agent created with automatic memory integration&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;✓ Agent conversation history automatically saved to memory&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;✓ Agent can recall information from the conversation&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">  Note: Short-term memory is working immediately.&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;  Long-term memory extraction will happen in the background.&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Save session info for test script</span></span>
+<span class="line"><span style="color:#F97583">        with</span><span style="color:#79B8FF"> open</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&#39;session_info.txt&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;w&#39;</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> f:</span></span>
+<span class="line"><span style="color:#E1E4E8">            f.write(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">memory_id</span><span style="color:#79B8FF">}\n{</span><span style="color:#E1E4E8">actor_id</span><span style="color:#79B8FF">}\n{</span><span style="color:#E1E4E8">session_id</span><span style="color:#79B8FF">}\n</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">✓ Session info saved to &#39;session_info.txt&#39; for testing&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">&quot;</span><span style="color:#F97583"> +</span><span style="color:#9ECBFF"> &quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Next Steps:&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;1. Wait 60-90 seconds for long-term memory extraction&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;2. Run test_memory.py to query short-term and long-term memories&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    except</span><span style="color:#79B8FF"> FileNotFoundError</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">✗ Error: memory_id.txt not found&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">Please run create_memory.py first to create a memory resource.&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#F97583">    except</span><span style="color:#79B8FF"> Exception</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> e:</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">✗ Error: </span><span style="color:#79B8FF">{str</span><span style="color:#E1E4E8">(e)</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">Troubleshooting:&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;- Verify AWS credentials are configured&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;- Ensure memory resource exists and is ACTIVE&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;- Check model access for </span><span style="color:#79B8FF">{MODEL_ID}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;- Verify AgentCore Memory is available in </span><span style="color:#79B8FF">{REGION}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#79B8FF"> 1</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> 0</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#79B8FF"> __name__</span><span style="color:#F97583"> ==</span><span style="color:#9ECBFF"> &quot;__main__&quot;</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#79B8FF">    exit</span><span style="color:#E1E4E8">(main())</span></span></code></pre></div>
+<p><strong>Run the script:</strong></p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-c5d4sof7z" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-c5d4sof7z"><code><span class="line"><span style="color:#B392F0">python</span><span style="color:#9ECBFF"> integrate_memory.py</span></span></code></pre></div>
+<p><strong>Expected output:</strong></p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-tenpcedk7" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext" id="code-tenpcedk7"><code><span class="line"><span>======================================================================</span></span>
+<span class="line"><span>Integrating AgentCore Memory with Strands Agent</span></span>
+<span class="line"><span>======================================================================</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>1. Loading memory ID from memory_id.txt...</span></span>
+<span class="line"><span>   Memory ID: Day3AgentMemory-YqEt0ACsBb</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>2. Creating session identifiers:</span></span>
+<span class="line"><span>   Actor ID: user_20260120134925</span></span>
+<span class="line"><span>   Session ID: session_20260120134925</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>3. Configuring AgentCore Memory...</span></span>
+<span class="line"><span>   Creating memory session manager for region: us-east-1</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>4. Initializing Bedrock model: us.anthropic.claude-3-5-sonnet-20241022-v2:0</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>5. Creating Strands agent with memory integration...</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>======================================================================</span></span>
+<span class="line"><span>✓ Agent Created Successfully with Memory!</span></span>
+<span class="line"><span>======================================================================</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>6. Testing agent with memory...</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>----------------------------------------------------------------------</span></span>
+<span class="line"><span>User: Hi! My name is Alex and I work as a software engineer.</span></span>
+<span class="line"><span>Agent: Hello Alex! Nice to meet you. I&#39;ll remember that you&#39;re a software</span></span>
+<span class="line"><span>engineer - that will help me provide more relevant responses in our future</span></span>
+<span class="line"><span>conversations. What kind of software development work do you do?</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>----------------------------------------------------------------------</span></span>
+<span class="line"><span>User: I really enjoy working with Python and AWS.</span></span>
+<span class="line"><span>Agent: Thanks for sharing that! I&#39;ll remember that you work with Python and</span></span>
+<span class="line"><span>AWS technologies. That&#39;s a great combination - Python is excellent for cloud</span></span>
+<span class="line"><span>development and AWS is the leading cloud platform.</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>----------------------------------------------------------------------</span></span>
+<span class="line"><span>User: What do you know about me?</span></span>
+<span class="line"><span>Agent: From our previous conversation, I remember:</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>1. Your name is Alex</span></span>
+<span class="line"><span>2. You work as a software engineer</span></span>
+<span class="line"><span>3. You enjoy working with Python programming language</span></span>
+<span class="line"><span>4. You work with AWS (Amazon Web Services)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>That&#39;s what I know about you so far!</span></span>
+<span class="line"><span>----------------------------------------------------------------------</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>======================================================================</span></span>
+<span class="line"><span>What just happened:</span></span>
+<span class="line"><span>======================================================================</span></span>
+<span class="line"><span>✓ Memory resource loaded from memory_id.txt</span></span>
+<span class="line"><span>✓ Session manager configured with unique actor/session IDs</span></span>
+<span class="line"><span>✓ Strands agent created with automatic memory integration</span></span>
+<span class="line"><span>✓ Agent conversation history automatically saved to memory</span></span>
+<span class="line"><span>✓ Agent can recall information from the conversation</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  Note: Short-term memory is working immediately.</span></span>
+<span class="line"><span>  Long-term memory extraction will happen in the background.</span></span>
+<span class="line"><span>======================================================================</span></span></code></pre></div>
+<aside class="callout callout--success" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Memory Integration Complete!</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p>The <code>AgentCoreMemorySessionManager</code> automatically handles:</p><ul>
+<li><strong>Saving messages</strong> to memory after each turn</li>
+<li><strong>Loading context</strong> when the agent initializes</li>
+<li><strong>Session management</strong> for tracking conversation boundaries</li>
+</ul><p>No manual memory API calls needed!</p> </div> </div> </aside> 
+<p><strong>What just happened:</strong></p>
+<ul>
+<li>✓ Loaded the memory resource created in Step 1</li>
+<li>✓ Created a Strands agent with automatic memory integration</li>
+<li>✓ Agent remembered information within the same session (short-term memory)</li>
+<li>✓ Conversation was automatically saved for long-term extraction</li>
+</ul>
+<h2 id="step-3-test-memory-retrieval">Step 3: Test Memory Retrieval</h2>
+<p>Wait 60-90 seconds for the background long-term memory extraction to complete, then run this script to query both short-term and long-term memories.</p>
+<p><strong>Create <code>test_memory.py</code>:</strong></p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-v6ku6cgfd" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-v6ku6cgfd"><code><span class="line"><span style="color:#6A737D">#!/usr/bin/env python3</span></span>
+<span class="line"><span style="color:#9ECBFF">&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#9ECBFF">test_memory.py - Test short-term and long-term memory retrieval</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">This script demonstrates querying both short-term memory (conversation history)</span></span>
+<span class="line"><span style="color:#9ECBFF">and long-term memory (extracted facts and insights).</span></span>
+<span class="line"><span style="color:#9ECBFF">&quot;&quot;&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> bedrock_agentcore.memory.session </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> MemorySessionManager</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Configuration</span></span>
+<span class="line"><span style="color:#79B8FF">REGION</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;us-east-1&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">():</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Test memory retrieval from AgentCore Memory.&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Testing AgentCore Memory - Short-term and Long-term&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#6A737D">        # Load session info from file</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">1. Loading session info from session_info.txt...&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">        with</span><span style="color:#79B8FF"> open</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&#39;session_info.txt&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;r&#39;</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> f:</span></span>
+<span class="line"><span style="color:#E1E4E8">            lines </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> f.read().strip().split(</span><span style="color:#9ECBFF">&#39;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">            memory_id </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> lines[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">            actor_id </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> lines[</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">            session_id </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> lines[</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;   Memory ID: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">memory_id</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;   Actor ID: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">actor_id</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;   Session ID: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">session_id</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Create session manager</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">2. Creating MemorySessionManager for region: </span><span style="color:#79B8FF">{REGION}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        session_manager </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> MemorySessionManager(</span></span>
+<span class="line"><span style="color:#FFAB70">            memory_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">memory_id,</span></span>
+<span class="line"><span style="color:#FFAB70">            region_name</span><span style="color:#F97583">=</span><span style="color:#79B8FF">REGION</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">        session </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> session_manager.create_memory_session(</span></span>
+<span class="line"><span style="color:#FFAB70">            actor_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">actor_id,</span></span>
+<span class="line"><span style="color:#FFAB70">            session_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">session_id</span></span>
+<span class="line"><span style="color:#E1E4E8">        )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Test short-term memory</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">&quot;</span><span style="color:#F97583"> +</span><span style="color:#9ECBFF"> &quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;SHORT-TERM MEMORY (Conversation History)&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">3. Retrieving last 10 conversation turns...&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        turns </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> session.get_last_k_turns(</span><span style="color:#FFAB70">k</span><span style="color:#F97583">=</span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> turns:</span></span>
+<span class="line"><span style="color:#79B8FF">            print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">   Found </span><span style="color:#79B8FF">{len</span><span style="color:#E1E4E8">(turns)</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF"> turns in short-term memory&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">            print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;   (Showing first turn as example)&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#6A737D">            # Note: Turns are stored in internal format, showing count is sufficient</span></span>
+<span class="line"><span style="color:#F97583">        else</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#79B8FF">            print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;   No conversation turns found in short-term memory.&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Test long-term memory</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">&quot;</span><span style="color:#F97583"> +</span><span style="color:#9ECBFF"> &quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;LONG-TERM MEMORY (Extracted Insights)&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">4. Checking if long-term memories have been extracted...&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;   (This may take 60-90 seconds after conversation)&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Try to list long-term memories</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">5. Listing all long-term memory records...&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">        try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">            memory_records </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> session.list_long_term_memory_records(</span></span>
+<span class="line"><span style="color:#FFAB70">                namespace_prefix</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;/&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">            )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">            if</span><span style="color:#E1E4E8"> memory_records:</span></span>
+<span class="line"><span style="color:#79B8FF">                print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">   Found </span><span style="color:#79B8FF">{len</span><span style="color:#E1E4E8">(memory_records)</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF"> long-term memory record(s):&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">                for</span><span style="color:#E1E4E8"> i, record </span><span style="color:#F97583">in</span><span style="color:#79B8FF"> enumerate</span><span style="color:#E1E4E8">(memory_records, </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#79B8FF">                    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">   Record </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">i</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">:&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">                    content </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> record.get(</span><span style="color:#9ECBFF">&#39;content&#39;</span><span style="color:#E1E4E8">, {})</span></span>
+<span class="line"><span style="color:#F97583">                    if</span><span style="color:#79B8FF"> isinstance</span><span style="color:#E1E4E8">(content, </span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#E1E4E8">                        text </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> content.get(</span><span style="color:#9ECBFF">&#39;text&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">                        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;   Content: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">text</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">                    print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;   &quot;</span><span style="color:#F97583"> +</span><span style="color:#9ECBFF"> &quot;-&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 66</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">            else</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#79B8FF">                print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">   ⏳ No long-term memories extracted yet.&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">                print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">   This is normal if less than 60-90 seconds have passed.&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">                print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;   Long-term memory extraction happens asynchronously.&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        except</span><span style="color:#79B8FF"> Exception</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> e:</span></span>
+<span class="line"><span style="color:#79B8FF">            print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">   ⏳ Long-term memory not yet available: </span><span style="color:#79B8FF">{str</span><span style="color:#E1E4E8">(e)</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Try semantic search</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">6. Performing semantic search on long-term memories...&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">        try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">            search_results </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> session.search_long_term_memories(</span></span>
+<span class="line"><span style="color:#FFAB70">                query</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;What are the user&#39;s technical skills and preferences?&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">                namespace_prefix</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;/&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">                top_k</span><span style="color:#F97583">=</span><span style="color:#79B8FF">3</span></span>
+<span class="line"><span style="color:#E1E4E8">            )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">            if</span><span style="color:#E1E4E8"> search_results:</span></span>
+<span class="line"><span style="color:#79B8FF">                print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">   Found </span><span style="color:#79B8FF">{len</span><span style="color:#E1E4E8">(search_results)</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF"> relevant memories:&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">                for</span><span style="color:#E1E4E8"> i, record </span><span style="color:#F97583">in</span><span style="color:#79B8FF"> enumerate</span><span style="color:#E1E4E8">(search_results, </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#E1E4E8">                    content </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> record.get(</span><span style="color:#9ECBFF">&#39;content&#39;</span><span style="color:#E1E4E8">, {})</span></span>
+<span class="line"><span style="color:#F97583">                    if</span><span style="color:#79B8FF"> isinstance</span><span style="color:#E1E4E8">(content, </span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#E1E4E8">                        text </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> content.get(</span><span style="color:#9ECBFF">&#39;text&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">                        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">   Result </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">i</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">text</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">            else</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#79B8FF">                print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">   ⏳ No searchable long-term memories yet.&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">        except</span><span style="color:#79B8FF"> Exception</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> e:</span></span>
+<span class="line"><span style="color:#79B8FF">            print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">   ⏳ Semantic search not yet available&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Summary</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">&quot;</span><span style="color:#F97583"> +</span><span style="color:#9ECBFF"> &quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;What just happened:&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;✓ Retrieved short-term memory (conversation history)&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;✓ Checked for long-term memory records (facts extraction)&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;✓ Attempted semantic search on long-term memories&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">  Short-term memory: Available immediately after conversation&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;  Long-term memory: Extracted asynchronously (60-90 seconds)&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">&quot;</span><span style="color:#F97583"> +</span><span style="color:#9ECBFF"> &quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Next Steps:&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;1. If long-term memories aren&#39;t showing yet, wait and run again&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;2. Run cleanup_memory.py to delete the memory resource&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    except</span><span style="color:#79B8FF"> FileNotFoundError</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">✗ Error: session_info.txt not found&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">Please run integrate_memory.py first to create a session.&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#F97583">    except</span><span style="color:#79B8FF"> Exception</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> e:</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">✗ Error: </span><span style="color:#79B8FF">{str</span><span style="color:#E1E4E8">(e)</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">Troubleshooting:&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;- Verify AWS credentials are configured&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;- Ensure memory resource exists and is ACTIVE&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;- Verify AgentCore Memory is available in </span><span style="color:#79B8FF">{REGION}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#79B8FF"> 1</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> 0</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#79B8FF"> __name__</span><span style="color:#F97583"> ==</span><span style="color:#9ECBFF"> &quot;__main__&quot;</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#79B8FF">    exit</span><span style="color:#E1E4E8">(main())</span></span></code></pre></div>
+<p><strong>Run the script:</strong></p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-1lth4dd3r" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-1lth4dd3r"><code><span class="line"><span style="color:#6A737D"># Wait 60-90 seconds after running integrate_memory.py, then:</span></span>
+<span class="line"><span style="color:#B392F0">python</span><span style="color:#9ECBFF"> test_memory.py</span></span></code></pre></div>
+<p><strong>Expected output:</strong></p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-lq483pk9j" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext" id="code-lq483pk9j"><code><span class="line"><span>======================================================================</span></span>
+<span class="line"><span>Testing AgentCore Memory - Short-term and Long-term</span></span>
+<span class="line"><span>======================================================================</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>1. Loading session info from session_info.txt...</span></span>
+<span class="line"><span>   Memory ID: Day3AgentMemory-YqEt0ACsBb</span></span>
+<span class="line"><span>   Actor ID: user_20260120134925</span></span>
+<span class="line"><span>   Session ID: session_20260120134925</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>2. Creating MemorySessionManager for region: us-east-1</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>======================================================================</span></span>
+<span class="line"><span>SHORT-TERM MEMORY (Conversation History)</span></span>
+<span class="line"><span>======================================================================</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>3. Retrieving last 10 conversation turns...</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>   Found 4 turns in short-term memory</span></span>
+<span class="line"><span>   (Showing first turn as example)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>======================================================================</span></span>
+<span class="line"><span>LONG-TERM MEMORY (Extracted Insights)</span></span>
+<span class="line"><span>======================================================================</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>4. Checking if long-term memories have been extracted...</span></span>
+<span class="line"><span>   (This may take 60-90 seconds after conversation)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>5. Listing all long-term memory records...</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>   Found 4 long-term memory record(s):</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>   Record 1:</span></span>
+<span class="line"><span>   Content: The user&#39;s name is Alex.</span></span>
+<span class="line"><span>   ------------------------------------------------------------------</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>   Record 2:</span></span>
+<span class="line"><span>   Content: The user works as a software engineer.</span></span>
+<span class="line"><span>   ------------------------------------------------------------------</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>   Record 3:</span></span>
+<span class="line"><span>   Content: The user enjoys working with Python.</span></span>
+<span class="line"><span>   ------------------------------------------------------------------</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>   Record 4:</span></span>
+<span class="line"><span>   Content: The user works with AWS.</span></span>
+<span class="line"><span>   ------------------------------------------------------------------</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>6. Performing semantic search on long-term memories...</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>   Found 3 relevant memories:</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>   Result 1: The user enjoys working with Python.</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>   Result 2: The user works as a software engineer.</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>   Result 3: The user works with AWS.</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>======================================================================</span></span>
+<span class="line"><span>What just happened:</span></span>
+<span class="line"><span>======================================================================</span></span>
+<span class="line"><span>✓ Retrieved short-term memory (conversation history)</span></span>
+<span class="line"><span>✓ Checked for long-term memory records (facts extraction)</span></span>
+<span class="line"><span>✓ Attempted semantic search on long-term memories</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  Short-term memory: Available immediately after conversation</span></span>
+<span class="line"><span>  Long-term memory: Extracted asynchronously (60-90 seconds)</span></span>
+<span class="line"><span>======================================================================</span></span></code></pre></div>
+<aside class="callout callout--tip" role="note" data-astro-cid-wi7smz4x> <div class="callout__icon" data-astro-cid-wi7smz4x> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wi7smz4x> <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/> </svg> </div> <div class="callout__content" data-astro-cid-wi7smz4x> <p class="callout__title" data-astro-cid-wi7smz4x>Understanding Memory Extraction</p> <div class="callout__body" data-astro-cid-wi7smz4x> <p><strong>Short-term memory</strong> stores raw conversation turns and is available immediately.</p><p><strong>Long-term memory</strong> extraction happens asynchronously:</p><ol>
+<li>Conversation events are written to memory</li>
+<li>Background process analyzes the events (~60-90 seconds)</li>
+<li>Semantic strategy extracts key facts and insights</li>
+<li>Facts are stored as searchable memory records</li>
+</ol><p>The <code>search_long_term_memories()</code> function uses semantic search to find the most relevant memories for a given query.</p> </div> </div> </aside> 
+<p><strong>What just happened:</strong></p>
+<ul>
+<li>✓ Retrieved short-term memory showing all conversation turns</li>
+<li>✓ Retrieved long-term memory showing extracted facts:
+<ul>
+<li>User’s name (Alex)</li>
+<li>User’s role (software engineer)</li>
+<li>User’s preferences (Python, AWS)</li>
+</ul>
+</li>
+<li>✓ Performed semantic search to find relevant technical facts</li>
+<li>✓ Verified both memory systems are working correctly</li>
+</ul>
+<h2 id="step-4-cleanup">Step 4: Cleanup</h2>
+<p>When you’re done testing, delete the memory resource to avoid ongoing charges.</p>
+<p><strong>Create <code>cleanup_memory.py</code>:</strong></p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-r2obrwc69" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-r2obrwc69"><code><span class="line"><span style="color:#6A737D">#!/usr/bin/env python3</span></span>
+<span class="line"><span style="color:#9ECBFF">&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#9ECBFF">cleanup_memory.py - Delete AgentCore Memory resource</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">This script deletes the memory resource to clean up after testing.</span></span>
+<span class="line"><span style="color:#9ECBFF">&quot;&quot;&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> bedrock_agentcore_starter_toolkit.operations.memory.manager </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> MemoryManager</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Configuration</span></span>
+<span class="line"><span style="color:#79B8FF">REGION</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> &quot;us-east-1&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> main</span><span style="color:#E1E4E8">():</span></span>
+<span class="line"><span style="color:#9ECBFF">    &quot;&quot;&quot;Delete the AgentCore Memory resource.&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Cleaning up AgentCore Memory Resource&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#6A737D">        # Load memory ID from file</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">1. Loading memory ID from memory_id.txt...&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">        with</span><span style="color:#79B8FF"> open</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&#39;memory_id.txt&#39;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&#39;r&#39;</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> f:</span></span>
+<span class="line"><span style="color:#E1E4E8">            memory_id </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> f.read().strip()</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;   Memory ID: </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">memory_id</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Initialize memory manager</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">2. Initializing MemoryManager for region: </span><span style="color:#79B8FF">{REGION}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        memory_manager </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> MemoryManager(</span><span style="color:#FFAB70">region_name</span><span style="color:#F97583">=</span><span style="color:#79B8FF">REGION</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Delete memory</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">3. Deleting memory resource...&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">        memory_manager.delete_memory(</span><span style="color:#FFAB70">memory_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">memory_id)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">&quot;</span><span style="color:#F97583"> +</span><span style="color:#9ECBFF"> &quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;✓ Memory Resource Deleted Successfully!&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        # Clean up local files</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">4. Cleaning up local files...&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">        import</span><span style="color:#E1E4E8"> os</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> os.path.exists(</span><span style="color:#9ECBFF">&#39;memory_id.txt&#39;</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#E1E4E8">            os.remove(</span><span style="color:#9ECBFF">&#39;memory_id.txt&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">            print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;   ✓ Removed memory_id.txt&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> os.path.exists(</span><span style="color:#9ECBFF">&#39;session_info.txt&#39;</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#E1E4E8">            os.remove(</span><span style="color:#9ECBFF">&#39;session_info.txt&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">            print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;   ✓ Removed session_info.txt&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">&quot;</span><span style="color:#F97583"> +</span><span style="color:#9ECBFF"> &quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;Cleanup Complete!&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;=&quot;</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 70</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    except</span><span style="color:#79B8FF"> FileNotFoundError</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">✗ Error: memory_id.txt not found&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">Memory may have already been deleted.&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#F97583">    except</span><span style="color:#79B8FF"> Exception</span><span style="color:#F97583"> as</span><span style="color:#E1E4E8"> e:</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">&quot;</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">✗ Error: </span><span style="color:#79B8FF">{str</span><span style="color:#E1E4E8">(e)</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#79B8FF"> 1</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> 0</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#79B8FF"> __name__</span><span style="color:#F97583"> ==</span><span style="color:#9ECBFF"> &quot;__main__&quot;</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#79B8FF">    exit</span><span style="color:#E1E4E8">(main())</span></span></code></pre></div>
+<p><strong>Run the script:</strong></p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-8q735dj4i" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="bash" id="code-8q735dj4i"><code><span class="line"><span style="color:#B392F0">python</span><span style="color:#9ECBFF"> cleanup_memory.py</span></span></code></pre></div>
+<p><strong>Expected output:</strong></p>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-b4laht52p" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="plaintext" id="code-b4laht52p"><code><span class="line"><span>======================================================================</span></span>
+<span class="line"><span>Cleaning up AgentCore Memory Resource</span></span>
+<span class="line"><span>======================================================================</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>1. Loading memory ID from memory_id.txt...</span></span>
+<span class="line"><span>   Memory ID: Day3AgentMemory-YqEt0ACsBb</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>2. Initializing MemoryManager for region: us-east-1</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>3. Deleting memory resource...</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>======================================================================</span></span>
+<span class="line"><span>✓ Memory Resource Deleted Successfully!</span></span>
+<span class="line"><span>======================================================================</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>4. Cleaning up local files...</span></span>
+<span class="line"><span>   ✓ Removed memory_id.txt</span></span>
+<span class="line"><span>   ✓ Removed session_info.txt</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>======================================================================</span></span>
+<span class="line"><span>Cleanup Complete!</span></span>
+<span class="line"><span>======================================================================</span></span></code></pre></div>
+<p><strong>What just happened:</strong></p>
+<ul>
+<li>✓ Memory resource deleted from AWS</li>
+<li>✓ Local files cleaned up</li>
+<li>✓ No ongoing charges for memory storage</li>
+</ul>
+<h2 id="memory-api-reference">Memory API Reference</h2>
+<h3 id="core-memory-operations">Core Memory Operations</h3>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-7o1ncykru" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-7o1ncykru"><code><span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> bedrock_agentcore.memory </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> MemoryClient</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">memory_client </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> MemoryClient(</span><span style="color:#FFAB70">region_name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;us-east-1&#39;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Create a memory resource</span></span>
+<span class="line"><span style="color:#E1E4E8">memory </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> memory_client.create_memory(</span></span>
+<span class="line"><span style="color:#FFAB70">    name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;my-memory&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    description</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;Memory for my agent&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    strategies</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[{</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;semanticMemoryStrategy&quot;</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;name&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;Facts&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">            &quot;namespaces&quot;</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">&quot;/facts/</span><span style="color:#79B8FF">{actorId}</span><span style="color:#9ECBFF">&quot;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }]</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Create conversation events</span></span>
+<span class="line"><span style="color:#E1E4E8">memory_client.create_event(</span></span>
+<span class="line"><span style="color:#FFAB70">    memory_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">memory[</span><span style="color:#9ECBFF">&#39;id&#39;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">    actor_id</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;user-123&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    session_id</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;session-456&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    messages</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span></span>
+<span class="line"><span style="color:#E1E4E8">        (</span><span style="color:#9ECBFF">&quot;Hello, I need help with Python&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;USER&quot;</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">        (</span><span style="color:#9ECBFF">&quot;I&#39;d be happy to help! What do you need?&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;ASSISTANT&quot;</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    ]</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Retrieve memories</span></span>
+<span class="line"><span style="color:#E1E4E8">memories </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> memory_client.retrieve_memories(</span></span>
+<span class="line"><span style="color:#FFAB70">    memory_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">memory[</span><span style="color:#9ECBFF">&#39;id&#39;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">    namespace</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;/facts/user-123&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    query</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;What are my preferences?&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    top_k</span><span style="color:#F97583">=</span><span style="color:#79B8FF">5</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Delete memory</span></span>
+<span class="line"><span style="color:#E1E4E8">memory_client.delete_memory(</span><span style="color:#FFAB70">memory_id</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">memory[</span><span style="color:#9ECBFF">&#39;id&#39;</span><span style="color:#E1E4E8">])</span></span></code></pre></div>
+<h3 id="session-management">Session Management</h3>
+<div class="code-block-wrapper"><button class="copy-button" data-code-id="code-oolpgooxk" aria-label="Copy code to clipboard" type="button"><svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg><svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><pre class="code-block" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word" tabindex="0" data-language="python" id="code-oolpgooxk"><code><span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> bedrock_agentcore.memory.session </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> MemorySessionManager</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">session_manager </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> MemorySessionManager(</span></span>
+<span class="line"><span style="color:#FFAB70">    memory_id</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;mem-xxxx&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    region_name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;us-east-1&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Create a session</span></span>
+<span class="line"><span style="color:#E1E4E8">session </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> session_manager.create_memory_session(</span></span>
+<span class="line"><span style="color:#FFAB70">    actor_id</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;user-123&#39;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    session_id</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&#39;session-456&#39;</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Get recent turns</span></span>
+<span class="line"><span style="color:#E1E4E8">recent_turns </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> session.get_last_k_turns(</span><span style="color:#FFAB70">k</span><span style="color:#F97583">=</span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># List long-term memories</span></span>
+<span class="line"><span style="color:#E1E4E8">memories </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> session.list_long_term_memory_records(</span></span>
+<span class="line"><span style="color:#FFAB70">    namespace_prefix</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;/&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Search long-term memories</span></span>
+<span class="line"><span style="color:#E1E4E8">results </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> session.search_long_term_memories(</span></span>
+<span class="line"><span style="color:#FFAB70">    query</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;What are my preferences?&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    namespace_prefix</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;/&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    top_k</span><span style="color:#F97583">=</span><span style="color:#79B8FF">5</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span></code></pre></div>
+<h2 id="checkpoint">Checkpoint</h2>
+<p>At this point, you have:</p>
+<ul>
+<li>✅ Created an AgentCore Memory resource with semantic strategy</li>
+<li>✅ Integrated memory with a Strands agent using session manager</li>
+<li>✅ Tested short-term memory (immediate conversation recall)</li>
+<li>✅ Tested long-term memory (extracted facts and semantic search)</li>
+<li>✅ Cleaned up resources</li>
+</ul>
+<p><strong>Next, we’ll explore advanced memory strategies for specialized extraction patterns.</strong></p>
+<div class="nav-buttons"><a href="/days/3" class="nav-button nav-button--prev"><p>← Back to Overview</p></a><a href="/days/3/memory-strategies" class="nav-button nav-button--next"><p>Next: Memory Strategies →</p></a></div>
+<style>
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 3rem;
+  gap: 1rem;
+}
+
+.nav-button {
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+}
+
+.nav-button--prev {
+  color: var(--color-text-secondary);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--border-subtle);
+}
+
+.nav-button--prev:hover {
+  background: var(--color-bg-secondary);
+}
+
+.nav-button--next {
+  color: white;
+  background: var(--color-day-3);
+}
+
+.nav-button--next:hover {
+  opacity: 0.9;
+}
+</style>   </article> <!-- Navigation Footer --> <nav class="day-layout__pagination" aria-label="Page navigation" data-astro-cid-vfeiczyy>  <div class="pagination" data-astro-cid-brrrquba> <a href="/agentcore-avengers/days/3/day-3" class="pagination__link pagination__link--prev" data-astro-cid-brrrquba> <span class="pagination__label" data-astro-cid-brrrquba>Previous</span> <span class="pagination__title" data-astro-cid-brrrquba>Overview</span> </a> <a href="/agentcore-avengers/days/3/memory-strategies" class="pagination__link pagination__link--next" data-astro-cid-brrrquba> <span class="pagination__label" data-astro-cid-brrrquba>Next</span> <span class="pagination__title" data-astro-cid-brrrquba>Memory Strategies</span> </a> </div>  </nav> </main> <!-- Table of Contents --> <aside class="day-layout__toc hide-mobile" data-astro-cid-vfeiczyy> <div class="day-layout__toc-content" data-astro-cid-vfeiczyy> <h3 class="day-layout__toc-title" data-astro-cid-vfeiczyy>On this page</h3> <nav aria-label="Table of contents" data-astro-cid-vfeiczyy> <ul class="day-layout__toc-list" data-astro-cid-vfeiczyy> <li data-astro-cid-vfeiczyy> <a href="#agentcore-memory-architecture" class="day-layout__toc-link" data-astro-cid-vfeiczyy> AgentCore Memory Architecture </a> </li><li data-astro-cid-vfeiczyy> <a href="#short-term-memory-architecture" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Short-term Memory Architecture </a> </li><li data-astro-cid-vfeiczyy> <a href="#prerequisites" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Prerequisites </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-1-create-a-memory-resource" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 1: Create a Memory Resource </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-2-integrate-memory-with-a-strands-agent" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 2: Integrate Memory with a Strands Agent </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-3-test-memory-retrieval" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 3: Test Memory Retrieval </a> </li><li data-astro-cid-vfeiczyy> <a href="#step-4-cleanup" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Step 4: Cleanup </a> </li><li data-astro-cid-vfeiczyy> <a href="#memory-api-reference" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Memory API Reference </a> </li><li data-astro-cid-vfeiczyy> <a href="#core-memory-operations" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Core Memory Operations </a> </li><li data-astro-cid-vfeiczyy> <a href="#session-management" class="day-layout__toc-link day-layout__toc-link--nested" data-astro-cid-vfeiczyy> Session Management </a> </li><li data-astro-cid-vfeiczyy> <a href="#checkpoint" class="day-layout__toc-link" data-astro-cid-vfeiczyy> Checkpoint </a> </li> </ul> </nav> </div> </aside> </div> <footer class="footer" data-astro-cid-b2avyow5> <div class="footer__container" data-astro-cid-b2avyow5> <div class="footer__content" data-astro-cid-b2avyow5> <div class="footer__brand" data-astro-cid-b2avyow5> <span class="footer__logo" data-astro-cid-b2avyow5>AgentCore Initiative</span> <p class="footer__tagline" data-astro-cid-b2avyow5>
+Build production-ready AI agents with AWS AgentCore
+</p> </div> <nav class="footer__nav" aria-label="Footer navigation" data-astro-cid-b2avyow5> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Course</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/1" data-astro-cid-b2avyow5>Day 1: The First Avenger</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/2" data-astro-cid-b2avyow5>Day 2: Age of Ultron</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/3" data-astro-cid-b2avyow5>Day 3: Infinity War</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/4" data-astro-cid-b2avyow5>Day 4: Endgame</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/days/5" data-astro-cid-b2avyow5>Day 5: Assemble</a></li> </ul> </div> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Resources</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/troubleshooting" data-astro-cid-b2avyow5>Troubleshooting</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/reference/costs" data-astro-cid-b2avyow5>Cost Guide</a></li> <li data-astro-cid-b2avyow5><a href="/agentcore-avengers/reference/cleanup" data-astro-cid-b2avyow5>Cleanup</a></li> </ul> </div> <div class="footer__nav-section" data-astro-cid-b2avyow5> <h4 class="footer__nav-title" data-astro-cid-b2avyow5>Links</h4> <ul class="footer__nav-list" data-astro-cid-b2avyow5> <li data-astro-cid-b2avyow5> <a href="https://docs.aws.amazon.com/bedrock-agentcore/" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+AWS AgentCore Docs
+</a> </li> <li data-astro-cid-b2avyow5> <a href="https://github.com/awslabs/amazon-bedrock-agentcore-samples" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+AgentCore Samples
+</a> </li> <li data-astro-cid-b2avyow5> <a href="https://strandsagents.com" target="_blank" rel="noopener noreferrer" data-astro-cid-b2avyow5>
+Strands Agents
+</a> </li> </ul> </div> </nav> </div> <div class="footer__bottom" data-astro-cid-b2avyow5> <p class="footer__copyright" data-astro-cid-b2avyow5>
+&copy; 2026 The AgentCore Initiative. Built with Astro.
+</p> <p class="footer__disclaimer" data-astro-cid-b2avyow5>
+This is an educational resource. AWS and Amazon Bedrock are trademarks of Amazon.com, Inc.
+</p> </div> </div> </footer>   <!-- Global scripts --> <script type="module">function d(){document.querySelectorAll(".copy-button").forEach(c=>{const e=c.cloneNode(!0);c.parentNode?.replaceChild(e,c),e.addEventListener("click",async()=>{const i=e.getAttribute("data-code-id"),n=document.getElementById(i);if(!n)return;const s=n.textContent||"";try{await navigator.clipboard.writeText(s);const t=e.querySelector(".copy-icon"),o=e.querySelector(".check-icon");t&&t.classList.add("hidden"),o&&o.classList.remove("hidden"),e.classList.add("copied"),setTimeout(()=>{t&&t.classList.remove("hidden"),o&&o.classList.add("hidden"),e.classList.remove("copied")},2e3)}catch(t){console.error("Failed to copy code:",t)}})})}document.readyState==="loading"?document.addEventListener("DOMContentLoaded",d):d();document.addEventListener("astro:page-load",d);</script> <!-- Copy code functionality --> <script type="module" src="/agentcore-avengers/_astro/BaseLayout.astro_astro_type_script_index_1_lang.BwEjmFOO.js"></script> </body> </html>   <script type="module" src="/agentcore-avengers/_astro/DayLayout.astro_astro_type_script_index_0_lang.BT_UbId1.js"></script> 
